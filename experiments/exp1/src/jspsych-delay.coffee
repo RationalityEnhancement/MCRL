@@ -39,6 +39,7 @@ jsPsych.plugins['delay'] = do ->
           )
         )
 
+      # TODO: This should be done with setInterval
       tick = ->
         seconds--
         if seconds < 0
