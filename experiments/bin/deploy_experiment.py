@@ -6,7 +6,6 @@ import subprocess
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from termcolor import colored
 
-EXP_PATH = os.path.join("exp1")
 
 
 def upload(args):
@@ -15,11 +14,11 @@ def upload(args):
     deploy_path = "%s:%s" % (address, args.dest)
 
     src_paths = [
-        os.path.relpath(os.path.join(EXP_PATH, "passenger_wsgi.py")),
-        os.path.relpath(os.path.join(EXP_PATH, "static")),
-        os.path.relpath(os.path.join(EXP_PATH, "templates")),
-        os.path.relpath(os.path.join(EXP_PATH, "remote-config.txt")),
-        os.path.relpath(os.path.join(EXP_PATH, "custom.py"))
+        os.path.relpath(os.path.join(args.path, "passenger_wsgi.py")),
+        os.path.relpath(os.path.join(args.path, "static")),
+        os.path.relpath(os.path.join(args.path, "templates")),
+        os.path.relpath(os.path.join(args.path, "remote-config.txt")),
+        os.path.relpath(os.path.join(args.path, "custom.py"))
     ]
     dst_paths = [
         root_path,
@@ -59,10 +58,10 @@ def archive(args):
     if not args.archive:
         return
     import re
-    with open('experiment/remote-config.txt') as f:
+    with open('{}/remote-config.txt'.format(args.path)) as f:
         version = re.search('experiment_code_version = (\w+)', f.read()).group(1)
 
-        dest = 'archive/%s' % version
+        dest = '.archive/%s' % version
         if os.path.isdir(dest):
             ok = input('Already deployed version %s. Continue? y/[n]  '
                        % version).startswith('y')
@@ -71,13 +70,13 @@ def archive(args):
                 exit(1)
         
         os.makedirs(dest, exist_ok=True)
-        cmd = 'rsync -av --delete-after --copy-links %s %s' % ('experiment', dest)
+        cmd = 'rsync -av --delete-after --copy-links %s %s' % (args.path, dest)
         print(colored(cmd, 'blue'))
         subprocess.call(cmd, shell=True)
 
 
 def check_debug(args):
-    with open('experiment/static/js/experiment.js') as f:
+    with open('{}/static/js/experiment.js'.format(args.path)) as f:
         if 'DEBUG = true' in f.read():
             ok = input('DEBUG flag is set in experiment.js. Continue? y/[n]  ').startswith('y')
             if not ok:
@@ -85,18 +84,18 @@ def check_debug(args):
                 exit(1)
 
 
-
-
 if __name__ == "__main__":
     parser = ArgumentParser(
         formatter_class=ArgumentDefaultsHelpFormatter)
-
+    parser.add_argument(
+        'path',
+        help='local path of exeriment')
     parser.add_argument(
         "-u", "--user",
         default="cocosci",
         help="Username to login to the server.")
     parser.add_argument(
-        "-H", "--host",
+        "--host",
         default="cocosci-mcrl.dreamhosters.com",
         help="Hostname of the experiment server.")
     parser.add_argument(
@@ -111,13 +110,12 @@ if __name__ == "__main__":
         default=2000,
         help="Bandwidth limit for transfer")
     parser.add_argument(
-        "dest",
+        "-dest",
         default="/home/cocosci/cocosci-mcrl.dreamhosters.com/experiment",
-        nargs="?",
         help="Destination path on the experiment server.")
     parser.add_argument(
-        "-A",
-        default=True,
+        "-a", '--archive',
+        default=False,
         type=bool,
         help="Do not archive experiment/.")
 
