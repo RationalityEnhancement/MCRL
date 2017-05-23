@@ -184,7 +184,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       }).appendTo(this.display);
       mdp = this;
       LOG_INFO('new MouselabMDP', this);
-      $('#jspsych-target').append("<div id=\"graph-feedback\" class=\"modal\">\n  <div id=\"graph-feedback-content\" class=\"modal-content\">\n    <h3>Default</h3>\n  </div>\n</div>");
+      $('#jspsych-target').append("<div id=\"mdp-feedback\" class=\"modal\">\n  <div id=\"mdp-feedback-content\" class=\"modal-content\">\n    <h3>Default</h3>\n  </div>\n</div>");
     }
 
     MouselabMDP.prototype.handleKey = function(s0, a) {
@@ -301,7 +301,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
       var head, info, msg, penalty, redGreenSpan, result;
       result = {
-        delay: 0
+        delay: 4
       };
       this.data.delays.push(result.delay);
       redGreenSpan = function(txt, val) {

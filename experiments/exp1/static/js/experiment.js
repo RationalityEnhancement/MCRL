@@ -6,7 +6,7 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, DEBUG, DEMO, PARAMS, condition, counterbalance, createStartButton, delay, initializeExperiment, psiturk,
+var BLOCKS, DEBUG, DEMO, PARAMS, TRIALS, condition, counterbalance, createStartButton, delay, initializeExperiment, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -31,6 +31,8 @@ BLOCKS = void 0;
 
 PARAMS = void 0;
 
+TRIALS = void 0;
+
 delay = function(time, func) {
   return setTimeout(func, time);
 };
@@ -51,6 +53,7 @@ $(window).on('load', function() {
     PARAMS.bonus_rate = .1;
     PARAMS.start_time = Date(Date.now());
     BLOCKS = expData.blocks;
+    TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);
     if (DEBUG || DEMO) {
       createStartButton();

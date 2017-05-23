@@ -44,6 +44,7 @@ Object.defineProperty(Array.prototype, "diff", {enumerable: false});
 
 
 
+TRIALS = undefined
 
 meta_MDP=metaMDP()
 
@@ -55,7 +56,7 @@ action_was_move = new Array()
 moves   = new Array()
 clicks  = new Array()
 
-object_level_PRs = loadObjectLevelPRs()
+// object_level_PRs = loadObjectLevelPRs()
 
 /*
 conditions: 1 = optimal delays, optimal message; 0 = fixed delays, no message;
@@ -80,6 +81,7 @@ function metaMDP(){
         object_level_MDP: [],
         locations: [],
         state: [],
+        previous_state: [],
         locations_by_step: [],
         locations_by_path: [],
         action_nrs: {right: 1, up: 2, left: 3, down: 4},
@@ -88,7 +90,7 @@ function metaMDP(){
             this.object_level_MDP=this.object_level_MDPs[problem_nr]
             this.locations=getLocations(problem_nr)            
             
-            subject_value_of_1h=10; //50 dollars worth of subjective utility per hour
+            subject_value_of_1h=20; //50 dollars worth of subjective utility per hour
             nr_trials = Object.size(this.object_level_MDPs)
             sec_per_h=3600
             this.delay_per_point = 0.05/(subject_value_of_1h*nr_trials)*sec_per_h;
@@ -134,7 +136,65 @@ function metaMDP(){
     return meta_MDP;
 }
 
-function getPR(state,actions){
+
+function getPR(state,action_sequence){
+    
+    meta_MDP.cost_per_click=PARAMS.info_cost
+    
+    var PRs = new Array()
+    
+    var current_state = deepCopy(state)
+    
+    for (var i in action_sequence){
+        
+        Q_a=predictQValue(current_state,action_sequence[i],current_state)
+        
+        var available_actions=getActions(state)
+        
+        var Q_values = new Array()
+        for (var a in available_actions)
+        {
+            Q_values.push(predictQValue(current_state,available_actions[a],current_state)) 
+        }
+        var V_s = _.max(Q_values)
+        
+        var PR = Q_a-V_s
+        //PR=0 if there is only one possible move and it was taken
+        if (action_sequence[i].is_move & current_state.mu_Q[current_state.s-1].length==1){
+            PR = 0;    
+        }
+        //if you chose the option with the higher none value in the last step, then PR=0
+        var is_last_step=current_state.step==current_state.nr_steps
+        
+        if(action.is_move & is_last_step){        
+            var children=getDownStreamStates(current_state)
+            var observed_all_children = true
+            var child_rewards= new Array()
+            for (c in children){
+                var child_value = state.observations[children[c]-1]
+                child_rewards.push(child_value)
+                if (isNaN(child_value) | child_value == null){
+                    var observed_everything=false
+                    break
+                }
+            }        
+            var chose_well = state.observations[action_sequence[i].move.next_state-1] == _.max(child_rewards)
+
+            if (is_last_step & observed_all_children & chose_well){
+                PR=0
+            }
+        }
+        PRs.push(PR)
+        
+        current_state = getNextState(current_state,action_sequence[i])
+    }
+    
+    return sum(PRs)
+    
+}
+
+/*
+function getPROld(state,actions){
     meta_MDP.cost_per_click = PARAMS.info_cost
   
     var next_state=getNextState(state,actions,true)
@@ -147,6 +207,7 @@ function getPR(state,actions){
     
     for (a in actions){
         if (actions[a].is_move){
+            //if (isNaN(environment_model.observations[actions[a].move.next_state-1]) || environment_model.observations[actions[a].move.next_state-1]==null){
             if (isNaN(environment_model.observations[actions[a].move.next_state-1]) || environment_model.observations[actions[a].move.next_state-1]==null){
                 var ER=meta_MDP.mean_payoff
             }
@@ -167,6 +228,8 @@ function getPR(state,actions){
     //To improve the quality of the feedback, we could use E[V(S_{t+1})] instead of V(s_{t+1}).
     //This would take longer to compute and would also be more effort to implement.
 }
+*/
+
 
 function computeDelay(initial_state,actions){   
     //returns the delay in seconds corresponding to the PR for starting in initial_state and taking the actions in the array actions
@@ -248,7 +311,6 @@ function registerMove(direction){
     }
     
     var delay=computeDelay(meta_MDP.state,clicks.concat([move]))
-
     
     var last_move = moves.slice(-1).pop()
     
@@ -447,8 +509,8 @@ function getLocations(problem_nr){
 }
 
 function getTrials(){
-    var experiment = loadJson("static/json/condition_0_0.json");
-    var trials=experiment.trials;
+    // var experiment = loadJson("static/json/condition_1.json");
+    var trials=TRIALS
     
     //TODO: Move this information into the JSON file. Otherwise this code won't generalize to other layouts.
     for (t in trials){
@@ -525,7 +587,9 @@ function updateBelief(meta_MDP,state,new_observations){
                 state.sigma_Q[node.nr-1]=new Array()
                 state.moves[node.nr-1] = new Array()
                 
-                for (var a in node.actions){
+                available_actions=node.actions
+                
+                for (var a in available_actions){
                     var action=node.actions[a];
                     
                     var action_nr=meta_MDP.action_nrs[a];
@@ -533,16 +597,22 @@ function updateBelief(meta_MDP,state,new_observations){
                     var next_state=meta_MDP.locations_by_path[node.path.concat(action_nr).toString()];
 
                     if (isNaN(state.observations[next_state.nr-1]) || state.observations[next_state.nr-1]==null){
-                        state.mu_Q[node.nr-1].push(meta_MDP.mean_payoff+state.mu_V[next_state.nr-1]);
-                        state.sigma_Q[node.nr-1].push(Math.sqrt(Math.pow(meta_MDP.std_payoff,2)+Math.pow(state.sigma_V[next_state.nr-1],2)));
+                        state.mu_Q[node.nr-1][action_nr-1]=meta_MDP.mean_payoff+state.mu_V[next_state.nr-1];
+                        //state.mu_Q[node.nr-1].push(meta_MDP.mean_payoff+state.mu_V[next_state.nr-1]);
+                        state.sigma_Q[node.nr-1][action_nr-1]=Math.sqrt(Math.pow(meta_MDP.std_payoff,2)+Math.pow(state.sigma_V[next_state.nr-1],2));
+                        //state.sigma_Q[node.nr-1].push(Math.sqrt(Math.pow(meta_MDP.std_payoff,2)+Math.pow(state.sigma_V[next_state.nr-1],2)));
                     }
                     else{
-                        state.mu_Q[node.nr-1].push(state.observations[next_state.nr-1]+state.mu_V[next_state.nr-1])
-                        state.sigma_Q[node.nr-1].push(state.sigma_V[next_state.nr-1])                        
+                        state.mu_Q[node.nr-1][action_nr-1]=state.observations[next_state.nr-1]+state.mu_V[next_state.nr-1]
+                        //state.mu_Q[node.nr-1].push(state.observations[next_state.nr-1]+state.mu_V[next_state.nr-1])
+                        state.sigma_Q[node.nr-1][action_nr-1]=state.sigma_V[next_state.nr-1]                        
+                        //state.sigma_Q[node.nr-1].push(state.sigma_V[next_state.nr-1])                        
                     }
                     state.moves[node.nr-1].push(a)
                 }
 
+                state.mu_Q[node.nr-1]=state.mu_Q[node.nr-1].filter(function(val) { return val !== undefined; })
+                state.sigma_Q[node.nr-1]=state.sigma_Q[node.nr-1].filter(function(val) { return val !== undefined;})                
                 //b) Update belief about state value V
                 var EV_and_sigma=EVOfMaxOfGaussians(state.mu_Q[node.nr-1],state.sigma_Q[node.nr-1]);
                 state.mu_V[node.nr-1]=EV_and_sigma[0];
@@ -603,7 +673,7 @@ function valueFunction(state,environment_model){
             
             available_actions=getActions(state)
             for (a in available_actions){
-                Q_hat.push(predictQValue(state,available_actions[a]))
+                Q_hat.push(predictQValue(state,available_actions[a],environment_model))
             }
             
             console.log('Q_hat', Q_hat)
@@ -613,32 +683,102 @@ function valueFunction(state,environment_model){
     return V
 }
 
-function predictQValue(state,computation){
+function predictQValue(state,computation,environment_model){
     feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
+            feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.6:
-            feature_weights = {VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
+            feature_weights = {VPI: 0.6118, VOC1: 1.2708, ER: 1.3215}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.8:
-            feature_weights = {VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
+            feature_weights = {VPI: 0.6779, VOC1: 0.7060, ER: 1.2655};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
     console.log('weights', feature_weights)
 
     }
     
-    VPI = computeVPI(state,computation)
-    VOC1 = computeMyopicVOC(state,computation)
-    ER = computeExpectedRewardOfActing(state,computation)
+    meta_MDP.cost_per_click = PARAMS.info_cost
+    
+    var VPI = computeVPI(state,computation,environment_model)
+    var VOC1 = computeMyopicVOC(state,computation,environment_model)
+    var ER = computeExpectedRewardOfActing(state,environment_model)
     
     var Q_hat= feature_weights.VPI*VPI+feature_weights.VOC1*VOC1 + feature_weights.ER*ER
     return Q_hat
 }
 
-function computeExpectedRewardOfActing(state){
+function computeExpectedRewardOfActing(state,environment_model){
+    var plan = makePlan(state,environment_model)
+    var ER = evaluatePlan(state,plan,environment_model)
+    
+    return ER
+}
+
+function makePlan(state,environment_model){
+    var plan = new Array()
+
+    var location_nr=state.s;
+    var step=state.step;
+    
+    var current_state=state;
+    while (step<=state.nr_steps){
+        var max_Q = _.max(environment_model.mu_Q[location_nr-1])        
+        var a=_.indexOf(environment_model.mu_Q[location_nr-1],max_Q)        
+        
+        var available_actions=getMoves(meta_MDP.locations[current_state.s])
+        //var action = available_actions[a]
+        
+        /*
+        var actions=getActions(current_state)
+        */
+        
+        var action_nrs=new Array()
+        for (i in available_actions){
+            action_nrs.push(available_actions[i].move.action_nr)                          
+        }
+        action_nrs.sort()        
+        action_nr=action_nrs[a]
+
+        for (i in available_actions){
+            if (available_actions[i].move.action_nr==action_nr){
+                action = available_actions[i]
+                plan.push(action)  
+            }
+        }
+
+        current_state = getNextState(current_state,action,false)
+        location_nr=current_state.s
+        step=step+1;
+    }
+    
+    return plan
+}
+
+function evaluatePlan(state,plan,environment_model){
+    
+    var ER=0
+
+    var current_state=state
+    for (var a in plan){
+        var action = plan[a]
+        current_state=getNextState(current_state,action,false)
+        
+        if (isNaN(environment_model.observations[current_state.s-1]) | environment_model.observations[current_state.s-1]==null){
+            ER+=meta_MDP.mean_payoff
+        }
+        else{
+            ER+=environment_model.observations[current_state.s-1]
+        }
+            
+    }
+    
+    return ER
+}
+
+function computeExpectedRewardOfActingOld(state){
     
     if (state.mu_Q[state.s-1] == null){
         return 0
@@ -655,14 +795,20 @@ function computeExpectedRewardOfActing(state){
 function computeMyopicVOC(state,c){
      
     if (c.is_click)  {
+        
+        if (state.mu_Q[state.s-1].length==1){
+            return -meta_MDP.cost_per_click
+        }
+        
         if ((isNaN(state.observations[c.cell]) || state.observations[c.cell]==null)  && c.cell>1){
 
             if (_.contains(getDownStreamStates(state),c.cell)){
                 locations=getLocations(0)
                 path=locations[c.cell].path;
 
-                a=path[state.step-1];                        
+                var a=path[state.step-1];                        
                 mu_prior=state.mu_Q[state.s-1];
+                                
 
 
                 //if hallway state
@@ -676,7 +822,13 @@ function computeMyopicVOC(state,c){
                     sibling_rewards= new Array()
                     for (s in siblings){
                         //if (!isNaN(state.observations[siblings[s]])){
-                        sibling_rewards.push(state.observations[siblings[s]])
+                        
+                        if (state.observations[siblings[s]]==null){
+                            sibling_rewards.push(NaN)
+                        }
+                        else{
+                            sibling_rewards.push(state.observations[siblings[s]])
+                        }
                         //}
                     }
                     
@@ -725,14 +877,14 @@ if (appears_best){
 
     //To change the decision, the sampled value would have to be less than ub
     ub=mu_beta+meta_MDP.mean_payoff-mu_alpha;                
-    VOC=meta_MDP.std_payoff**2*normPDF(ub,meta_MDP.mean_payoff,meta_MDP.std_payoff)- (mu_alpha-mu_beta)*normCDF(ub,meta_MDP.mean_payoff,meta_MDP.std_payoff);
+    VOC=meta_MDP.std_payoff**2*normPDF(ub,meta_MDP.mean_payoff,meta_MDP.std_payoff)- (mu_alpha-mu_beta)*normCDF(ub,meta_MDP.mean_payoff,meta_MDP.std_payoff) - meta_MDP.cost_per_click;
 }
 else{
     //information is valuable if it reveals that action is optimal
     
     //To change the decision, the sampled value would have to be larger than lb.
     lb=mu_alpha+meta_MDP.mean_payoff-mu_prior[a-1];                
-    VOC=meta_MDP.std_payoff**2*normPDF(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff)- (mu_alpha-mu_prior[a-1])*(1-normCDF(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff));
+    VOC=meta_MDP.std_payoff**2*normPDF(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff)- (mu_alpha-mu_prior[a-1])*(1-normCDF(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff))- meta_MDP.cost_per_click;
 }
     
 return VOC
@@ -881,7 +1033,7 @@ return VPI
 function costOfPlanning(state,planning_horizon){
     //compute the number and length of all paths from the current 
     var current_location=meta_MDP.locations[state.s];
-    var moves=getMoves(current_location);
+    var available_actions=getMoves(meta_MDP.locations[state.s])
 
     var cost_of_planning=0;
     if (planning_horizon>0){

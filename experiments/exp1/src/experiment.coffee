@@ -36,6 +36,7 @@ psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 BLOCKS = undefined
 PARAMS = undefined
+TRIALS = undefined
 
 # because the order of arguments of setTimeout is awful.
 delay = (time, func) -> setTimeout func, time
@@ -67,6 +68,7 @@ $(window).on 'load', ->
     PARAMS.bonus_rate = .1
     PARAMS.start_time = Date(Date.now())
     BLOCKS = expData.blocks
+    TRIALS = BLOCKS.standard
     psiturk.recordUnstructuredData 'params', PARAMS
 
     if DEBUG or DEMO

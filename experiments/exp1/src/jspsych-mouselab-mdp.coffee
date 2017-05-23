@@ -183,8 +183,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       # feedback element
       $('#jspsych-target').append """
-      <div id="graph-feedback" class="modal">
-        <div id="graph-feedback-content" class="modal-content">
+      <div id="mdp-feedback" class="modal">
+        <div id="mdp-feedback-content" class="modal-content">
           <h3>Default</h3>
         </div>
       </div>
@@ -303,7 +303,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       #       when 3 then 1
 
       result =
-        delay: 0
+        delay: 4
           
       @data.delays.push(result.delay)
             

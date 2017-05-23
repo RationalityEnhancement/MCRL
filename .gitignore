@@ -5,4 +5,4 @@ __pycache__
 experiments/data/human_raw
 experiments/*/.psiturk_history
 experiments/*/participants.db
-experiments/exp1/participants.db
+experiments/*/server.log
