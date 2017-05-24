@@ -1,0 +1,102 @@
+costs=[0.01,0.40,0.80,1.60,2.80];
+nr_initial_values=24;
+continue_previous_run=false;
+
+evaluate_BSARSA=false;
+evaluate_full_observation_policy=false;
+
+try_new_initializations=true;
+
+if try_new_initializations
+    mu0(:,1)=[1;1;1];
+    mu0(:,2)=[0;0;0];
+    mu0(:,3)=[0;0;1];
+    mu0(:,4)=[0;1;0];
+    mu0(:,5)=[1;0;0];
+    mu0(:,6)=[1;1;0];
+    mu0(:,7)=[1;0;1];
+    mu0(:,8)=[0;1;1];
+    mu0(:,9)=[0.5;0.5;0.5];
+    
+    sigmas=0.1:0.1:0.3;
+    
+    mu_ind=1:size(mu0,2);
+    sigma_ind=1:numel(sigmas);
+    
+    [M,S]=meshgrid(mu_ind,sigma_ind);
+    untried_initializations = union(find(S(:)==2),find(M==9));
+    
+    %untried_initializations=untried_initializations([2,4,8]);
+    
+    nr_initial_values=numel(untried_initializations);
+    
+        
+    c=1.6;
+    parfor i=1:nr_initial_values
+        tic()
+        init=untried_initializations(i);
+        solve_MouselabMDP_locally(c,init,false)
+        disp(['finished run with initial mu=[',num2str(mu0(:,M(init))'),...
+            '], sigma=',num2str(sigmas(S(init)))])
+        toc()
+        
+        %load(['../results/MouselabMDPFitBayesianSARSA',...
+        %int2str(round(100*c)),'_',int2str(M(init)),'_',int2str(S(init)),...
+        %'.mat'])
+        %ER(i)=result.reward(1)
+    end
+end
+%%
+untried_initializations = union(find(S(:)==2),find(M==9));
+
+%untried_initializations=untried_initializations([2,4,8]);
+
+nr_initial_values=numel(untried_initializations);
+    
+for i=1:nr_initial_values
+        %{
+        tic()
+        init=untried_initializations(i);
+        solve_MouselabMDP_locally(c,init,false)
+        disp(['finished run with initial mu=[',num2str(mu0(:,M(init))'),...
+            '], sigma=',num2str(sigmas(S(init)))])
+        toc()
+        %}
+    init=untried_initializations(i);
+        load(['../results/MouselabMDPFitBayesianSARSA',...
+        int2str(round(100*c)),'_',int2str(M(init)),'_',int2str(S(init)),...
+        '.mat'])
+        ER(i)=result.reward(1)
+end
+
+
+%% Direct Policy Search
+w=[0.1;0.5;1];
+c=1.60;
+nr_episodes=1000;
+ER_hat=@(w) evaluatePolicy([w(:);1],c,nr_episodes);
+d=2;
+
+x_input_domain = [0 1; 0 1];
+nb_iter=25;
+result_display=true; result_save=true; plot_func=false; plot_point=false;
+
+addpath(pwd)
+
+GPO_path='MatlabTools/Gaussian_Optimization/'
+addpath(genpath(GPO_path))
+cd(GPO_path)
+[x, fx, X_sample, F_sample, result] = ...
+                     IMGPO_default_run_stochastic_objective(ER_hat, d, x_input_domain, nb_iter, ...
+                     result_display, result_save, plot_func, plot_point)
+
+B0.w_hat=[x(:);1];
+BO.ER=fx;
+BO.cost=c;
+BO.nb_iter=nb_iter;
+
+ER_hat2=ER_hat(x)
+ER_hat3=ER_hat(x)
+
+
+%% value function approximation

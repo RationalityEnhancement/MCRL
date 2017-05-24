@@ -1,0 +1,11 @@
+#! /bin/sh
+
+MYPID=$$
+export MYPID
+MYHOST=`hostname`
+export MYHOST
+
+% NEED TO SET THIS TO THE BINARY PATH FOR MATLAB
+/path/to/matlab/bin/matlab -nojvm -nosplash $*
+
+

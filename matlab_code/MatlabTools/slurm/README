@@ -1,0 +1,27 @@
+SLURM QUEUING AND QUERYING FUNCTIONS
+-------------------------------------------------------------------------------
+[slurmBatch.m]
+Sends jobs to the slurm queue.
+
+NOTE:
+In order to use slurmBatch.m, you will need to have the shell scripts 
+matlab_background and matlab_nojvm in your shell search path. You will also
+need to edit matlab_nojvm to point to the network executale for matlab. You
+also need to edit the variable <outHome> in slurmBatch.m and slurmLogs.m to a 
+common location to store scripts and logs.
+
+[slurmCancel.m] 
+Use to cancel jobs running or pending on the queue.
+
+[slurmQuery.m]
+Use to query information regarding jobs on the queue.
+
+[slurmLogs.m]
+Use to print out current logs and errors for jobs sent to the queue.
+
+ANOTHER NOTE:
+You need to have munge running for all of these commands to work. munge can be 
+restarted from the shell command line (assuming you have a sudoers account):
+
+	$ sudo service munge restart
+------------------------------------------------------------------------------

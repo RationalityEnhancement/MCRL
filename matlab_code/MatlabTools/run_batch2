@@ -1,0 +1,360 @@
+#!/bin/zsh
+# 
+launchprocesses=1	 
+
+numscripts=9 # number of jobs
+numproc=69   # number of matlab workers per job
+mem=2500		 # Mb memory per processor 
+lsfmem=1024	 # Mb memory per processor for LSF jobs
+
+runtime=2159 # in minutes 
+#runtime=479 # in minutes 
+#runtime=59 # in minutes 
+
+cruntime=2159 # in minutes 
+#cruntime=479 # in minutes 
+#cruntime=59 # in minutes 
+
+code='data_analysis_mixed_effects'	
+dir='/cluster/home/phys/flieder/PreferenceLearning/' 
+batchname='ModelEvidencesSingleSubject' 
+name=${batchname}
+killbatchfiles=1
+
+myemail='flieder@biomed.ee.ethz.ch'
+
+# matlab path for license server 
+MATLAB=/cluster/apps/matlab/7.14
+
+################################################################################
+############### main part of script - do not edit ##############################
+################################################################################
+
+tmpdir=$dir$batchname
+jobdir=$tmpdir'/job'
+
+
+if [[ ${killbatchfiles} == 1 ]] ; then 
+	rm -rf ${tmpdir}/*
+fi
+
+# what number of processes to request on actual host
+# this differs: brutuslsf8h needs 1, then figure rest out out itself, local needs to be told 
+if [[ ${numproc} -le 12 ]]; then numprochost=${numproc}; 
+else; numprochost=1; 
+fi 
+
+# which matlab licenses to wait for 
+if [[ ${numproc} -le 12 ]]; then
+
+	licneeded=0
+	lic=(MATLAB Distrib_Computing_Toolbox Optimization_Toolbox)
+	for ((i=1;i<=$#lic;i=i+1)); do licneeded[$i]=${numscripts};done
+	# how many licenses needed in total 
+	eachneeds=1		         
+	# how many licenses of each are needed by each job 
+
+	# print available relevant licenses 
+	lmstat -a -f MATLAB -c $MATLAB/license.dat | grep Total
+	lmstat -a -f MATLAB -c $MATLAB/license.dat | grep huysq | wc
+	lmstat -a -f Distrib_Computing_Toolbox -c $MATLAB/license.dat | grep Total
+	lmstat -a -f Distrib_Computing_Toolbox -c $MATLAB/license.dat | grep huysq | wc
+	lmstat -a -f Optimization_Toolbox -c $MATLAB/license.dat | grep Total
+	lmstat -a -f Optimization_Toolbox -c $MATLAB/license.dat | grep huysq | wc
+
+elif [[ ${numproc} -gt 12 ]]; then
+	# print available relevant licenses 
+	lmstat -a -f MATLAB -c $MATLAB/license.dat | grep Total
+	lmstat -a -f MATLAB -c $MATLAB/license.dat | grep huysq | wc
+	lmstat -a -f MATLAB_Distrib_Comp_Engine -c $MATLAB/license.dat | grep Total
+	lmstat -a -f MATLAB_Distrib_Comp_Engine -c $MATLAB/license.dat | grep huysq | wc
+
+	distrunning=()
+	distrunningproc=()
+	donelist=()
+	for ((i=1;i<=$numscripts;i=i+1)); do 
+		distrunning[$i]=0
+		distrunningproc[$i]=0
+		donelist[$i]=0
+	done
+
+fi
+
+# loop over variable whichinf 
+count=0;
+for ((whichinf=1;whichinf<=$numscripts;whichinf=whichinf+1)); do 
+
+	filename=${batchname}_inf${whichinf}
+
+	(( count = count + 1 ))
+	echo writing ${filename}
+
+	# make further subdirectories for each job so matlab can put its scheduler
+	# data in there and not get confused by multiple instances running 
+	thisjobdir=${jobdir}${whichinf}
+	mkdir ${thisjobdir}
+
+	#----------------------------------------------------------------------------
+	# deal with limits on matlab licenses and license server 
+	#----------------------------------------------------------------------------
+	while; do 
+
+		if [[ ${numproc} -le 12 ]]; then # -----------  LOCAL POOL -------------------
+
+			for ((i=1;i<=$#lic;i=i+1)); do suffavail[$i]=0;done
+			totavail=0
+			for ((i=1;i<=$#lic;i=i+1)); do 
+				foo=`lmstat -a -f $lic[${i}] -c $MATLAB/license.dat | sed -n 12p | sed 's/.*(Total of //g'`
+				ntotal=`echo $foo[1,4] | sed 's/[a-zA-Z]*//g'`
+				foo=`echo $foo | sed 's/.*Total of //g'`
+				nused=`echo $foo[1,4] | sed 's/[a-zA-Z]*//g'`
+				navail=$(( $ntotal - $nused ))
+				if [[ $eachneeds -le $navail ]]; then
+					suffavail[${i}]=1
+					totavail=$(( $totavail + 1 ))
+				fi 
+			done
+
+			foo=`lmstat -a -f $lic[4] -c $MATLAB/license.dat | grep huysq | wc`
+			myoptimused=$foo[1,3]
+			foo=`echo $foo[1,9] | sed 's/[ a-zA-Z]//g'`
+
+			echo $foo
+			echo '...'
+				echo $totavail
+				echo $myoptimused
+				echo $eachneeds
+
+			if [[ $totavail == $#lic && $myoptimused -lt 10 ]]; then 
+				for ((i=1;i<=$#lic;i=i+1)); do 
+					licneeded[$i]=$(( $licneeded[$i] - $eachneeds ))
+				done
+				echo Sufficient matlab licenses should be available... starting 
+				echo In total, still need this many licences: $licneeded
+				break 
+			elif [[ $totavail == 4 && $myoptimused -ge 10 ]]; then  
+				echo Systemwide enough licenses available, but I am using 10 Optimization licenses
+				echo Waiting 10 seconds
+				sleep 10s
+			else 
+				echo '*** Insufficient matlab licences ***'
+				echo In total, still need this many licenses: $licneeded
+				echo Waiting 10 seconds 
+				sleep 10s
+			fi 
+
+
+		elif [[ ${numproc} -gt 12 ]]; then # -----------  LSF8h POOL -------------------
+
+			foo=`lmstat -a -f MATLAB -c $MATLAB/license.dat | sed -n 12p | sed 's/.*(Total of //g'`
+			ntotal=`echo $foo[1,4] | sed 's/[a-zA-Z]*//g'`
+			foo=`echo $foo | sed 's/.*Total of //g'`
+			nused=`echo $foo[1,4] | sed 's/[a-zA-Z]*//g'`
+			matavail=$(( $ntotal - $nused ))
+
+			# how many are available on the system? 
+			foo=`lmstat -a -f MATLAB_Distrib_Comp_Engine -c $MATLAB/license.dat | grep $user | wc `
+			distmine=`echo $foo[5,8] | sed 's/[a-zA-Z]*//g'`
+
+			# how many of mine are running? 
+			foo=`lmstat -a -f MATLAB_Distrib_Comp_Engine -c $MATLAB/license.dat | sed -n 12p | sed 's/.*(Total of //g'`
+			ntotal=`echo $foo[1,4] | sed 's/[a-zA-Z]*//g'`
+			foo=`echo $foo | sed 's/.*Total of //g'`
+			nused=`echo $foo[1,4] | sed 's/[a-zA-Z]*//g'`
+			distavail=$(( $ntotal - $nused ))
+
+			# how many have I submitted that are not yet done 
+			# check if each script is done 
+			for ((i=1;i<=$numscripts;i=i+1)); do 
+				if [[ $distrunning[$i] -gt 0 && -e ${tmpdir}/done.${batchname}_inf$[i] ]]; then 
+					distrunning[$i]=0
+					distrunningproc[$i]=0
+					donelist[$i]=1
+				fi
+			done
+
+			# how many processors should I be occupying 
+			totalocc=0
+			for ((i=1;i<=$numscripts;i=i+1)); do 
+				totalocc=$(( $totalocc + $distrunningproc[$i] ))
+			done
+
+			# the number that is waiting is the difference between what I am using
+			# and what I should be using given what I have submitted and what is
+			# not yet done 
+			waitingprocs=$(( $totalocc - $distmine ))
+
+			# what I should submit should not exceed total available - waitingprocs
+			submlimit=$(( $distavail - $waitingprocs ))
+
+			if [[ $submlimit -ge $numproc && $matavail -ge 1 ]]; then 
+				echo Sufficient licenses should be available... starting 
+				echo Need Dist Comp $numproc, $submlimit unclaimed \(using $totalocc out of total of $distavail\)
+				echo Need one Matlab license and have $matavail 
+				distrunning[$whichinf]=1
+				distrunningproc[$whichinf]=$numproc
+				donelist[$whichinf]=0
+				break 
+			elif [[ $submlimit -lt $numproc ]]; then 
+				echo \*\*\* Insufficient distributed computing licenses about \*\*\* 
+				echo Need $numproc Dist Comp and have $distavail on system, but using $totalocc
+				echo Will try again to run job ${whichinf}/${numscripts} with ${numproc} processors 
+				echo ... Waiting 30s ...
+				sleep 30s
+			fi 
+		fi
+	done
+
+
+
+#-------------------------------------------------------------------------------
+# make the matlab.m file which will run the code 'code' with the variable
+# 'whichinf'
+# NB: don't indent this, won't work nicely with cat 
+
+cat > ${tmpdir}/in_$filename.m << EOF
+% ${filename} is job number ${count}
+clear all
+tic
+cd ${dir};
+whichinf=${whichinf} % which code instance is being run 
+poolsize=${numproc} % this determines the number of matlab workers
+failed=0;
+
+while 1 
+
+	if poolsize>1 & poolsize<13; %  ------------ 'local' matlabpool ------------------
+
+		Lic{1}='MATLAB';
+		Lic{2}='Optimization_Toolbox';
+		Lic{3}='Distrib_Computing_Toolbox';
+
+		% Check out one set of all the licenses we need 
+		for k=1:length(Lic); 
+			while ~license('checkout',Lic{k}); fprintf(['No license ' Lic{k} '... waiting\n' ]); 
+				fprintf('---------------------------------------------------------')
+				fprintf('No license %s. Checking with lmstat: \n',Lic{k});
+				for j=1:length(Lic)
+					eval(['!lmstat -a -f ' Lic{j} ' -c /cluster/apps/matlab/7.14/license.dat | grep Total']) 
+					eval(['!lmstat -a -f ' Lic{j} ' -c /cluster/apps/matlab/7.14/license.dat | grep huysq']) 
+				end
+				fprintf('Waiting 5s ----------------------------------------------')
+				pause(5)
+			end
+		end
+
+		% ensure the parallel.settings file is readable 
+		while ~exist('/cluster/home03/itet/huysq/.matlab/R2012b/parallel.settings'); 
+			fprintf('Can''t read parallel.settings file\n');
+			pause(5)
+		end 
+
+		cluster = parcluster();
+		cluster.JobStorageLocation='${thisjobdir}';      % tell scheduler to use a specific local directory
+
+
+	elseif poolsize>12 & poolsize<129 %  ---------- 'BrutusLSF8h' matlabpool --------------
+
+		% ensure the parallel.settings file is readable 
+		while ~exist('/cluster/home03/itet/huysq/.matlab/R2012b/parallel.settings'); 
+			fprintf('Can''t read parallel.settings file\n');
+			pause(5)
+		end 
+
+		cluster = parcluster('BrutusLSF8h');
+		cluster.JobStorageLocation = '${thisjobdir}/';   % subdirectory.
+		cluster.SubmitArguments='-R "rusage[mem=${lsfmem}]" -W ${cruntime}'  % Workers need less memory.
+
+	end
+
+	matlabpool(cluster,poolsize)  % tell matlabpool to use the specific scheduler sched
+	nworkers=matlabpool('size');
+	fprintf('\n\nMatlabpool size = %i\n\n',nworkers)
+
+	if nworkers<poolsize; 
+		fprintf('Insufficient workers obtained, closing matlabpool and trying again... \n');
+		matlabpool close
+		failed = failed+1;
+		if failed > 5; 
+			fprintf('Can''t obtain sufficient workers. Quitting... ')
+			quit
+		end
+	elseif nworkers==poolsize; 
+		fprintf('Sufficient workers obtained. Starting.\n');
+		break; 
+	end
+
+end
+
+${code}; % execute code containing paralell matlab code 
+fprintf('\n\n***** Completed successfully *****\n\n')
+if poolsize>1; matlabpool close; end; % close matlabpool 
+toc
+quit;	% quit matlab 
+
+EOF
+
+
+
+#-------------------------------------------------------------------------------
+# now make the shell script file that runs matlab 
+# NB: don't indent this, won't work nicely with cat 
+
+cat > ${tmpdir}/script_${filename} << EOF
+#!/bin/zsh 
+	cd $tmpdir
+	export LSB_MAILTO=${myemail}
+	export OMP_NUM_THREADS=${numprochost}
+	/cluster/apps/matlab/8.0/bin/./matlab -nodisplay -nosplash -singleCompThread > ${tmpdir}/out_${filename} < ${tmpdir}/in_${filename}.m
+	echo done > ${tmpdir}/done.${filename}
+EOF
+
+#-------------------------------------------------------------------------------
+# and finally submit the shell script file to bsub 
+#
+
+	chmod a+x ${tmpdir}/script_${filename} 
+	if [[ ${launchprocesses} == 1 ]] ; then 
+		echo submitting job $count
+		bsub -N -R "rusage[mem=$mem]" -n ${numprochost} -W ${runtime} -J ${name}_${whichinf} -o $tmpdir/bout_${filename} < ${tmpdir}/script_${filename}  
+		if [[ ${whichinf} -lt ${numscripts} ]]; then 
+			echo wait 5 seconds
+			sleep 5s
+		fi
+	fi
+	echo "---------------------------------------------------------------------------"
+
+done
+
+#-------------------------------------------------------------------------------
+# make little script to check status of jobs
+#
+cat > ${tmpdir}/checkscripts << EOF
+#!/bin/zsh
+for a in out_${batchname}_inf*; do 
+	foo1=\`cat \$a | grep Completed \`
+	foo2=\`cat \$a | grep Sampling \`
+	if   [[ \$#foo1 -gt 0 ]] ; then 
+		echo \$a Completed. 
+	elif [[ \$#foo2 -gt 0 ]] ; then 
+		echo \$a Sampling... 
+	else 
+		echo \$a \`cat \$a | grep EMit | tail -n1 \` 
+	fi
+done
+EOF
+chmod ug+x ${tmpdir}/checkscripts
+
+#-------------------------------------------------------------------------------
+# make little script to kill jobs 
+
+cat > ${tmpdir}/killscripts << EOF
+#!/bin/zsh
+for ((i=1;i<=${numscripts};i=i+1)); do 
+	bkill -J ${batchname}_\$i
+done
+EOF
+chmod ug+x ${tmpdir}/killscripts
+
+echo "DONE"
+
