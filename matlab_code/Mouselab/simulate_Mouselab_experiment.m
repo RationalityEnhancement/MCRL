@@ -13,7 +13,7 @@ for t=1:nr_trials
         [5],[6],[6],[7],[7],[8],[8],[9],[9]};
 end
 
-cost_per_click=1.60;
+cost_per_click=2.80;
 meta_MDP=MouselabMDPMetaMDPNIPS(true,'featureBased',4.5,10.6,control_experiment,cost_per_click);
 meta_MDP.object_level_MDP=control_experiment(1);
 

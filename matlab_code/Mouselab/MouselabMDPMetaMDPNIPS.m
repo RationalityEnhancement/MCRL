@@ -1370,7 +1370,39 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                         
             Q_hat=weights.VPI*meta_MDP.computeVPI(state,computation)+...
                weights.VOC1*meta_MDP.myopicVOC(state,computation)+...
-               weights.ER*max(state.mu_Q(state.s,:));               
+               weights.ER*meta_MDP.expectedRewardOfActing(state);               
+        end
+        
+        function ER=expectedRewardOfActing(meta_MDP,state)
+            plan=meta_MDP.makePlan(state);
+            ER=meta_MDP.evaluatePlan(plan,state);
+        end
+        
+        function plan=makePlan(meta_MDP,state)
+            
+            plan=zeros(state.nr_steps-state.step+1,1);
+            
+            current_location=state.s;
+            for step=state.step:state.nr_steps
+                plan(step)=argmax(state.mu_Q(current_location,:));
+                current_location=meta_MDP.object_level_MDP.nextState(current_location,plan(step));
+            end
+            
+        end
+        
+        function ER=evaluatePlan(meta_MDP,plan,state)
+            ER=0;
+            location=state.s;
+            for a=1:length(plan)
+                location=meta_MDP.object_level_MDP.nextState(location,plan(a));
+                
+                if isnan(state.observations(location))
+                    ER=ER+meta_MDP.mean_payoff;
+                else
+                    ER=ER+state.observations(location);
+                end
+
+            end
         end
     end
     

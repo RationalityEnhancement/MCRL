@@ -413,6 +413,8 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
         
         function [r,next_state,PR]=simulateTransition(meta_MDP,state,c)
             
+            start_state=state;
+            
             if c.is_computation
                 if isnan(state.observations(c.state)) %not observed yet
                     
@@ -477,7 +479,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 elseif strcmp(meta_MDP.pseudoreward_type,'regretReduction')
                     PR=meta_MDP.regretReduction(state,next_state);
                 elseif strcmp(meta_MDP.pseudoreward_type,'featureBased')
-                    PR = meta_MDP.featureBasedPR(state,c);
+                    PR = meta_MDP.featureBasedPR(start_state,c);
                 end
             else
                 PR=0;
@@ -1357,7 +1359,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             
             Qs=zeros(numel(available_actions),1);
             for a=1:numel(available_actions)
-                Qs(a)=predictQ(meta_MDP,state,available_actions(a));
+                Qs(a)=meta_MDP.predictQ(state,available_actions(a));
             end
             
             PR=Q_c-max(Qs);
@@ -1368,7 +1370,33 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                         
             Q_hat=weights.VPI*meta_MDP.computeVPI(state,computation)+...
                weights.VOC1*meta_MDP.myopicVOC(state,computation)+...
-               weights.ER*max(state.mu_Q(state.s,:));               
+               weights.ER*meta_MDP.expectedRewardOfActing(state);               
+        end
+        
+        function ER=expectedRewardOfActing(meta_MDP,state)
+            plan=meta_MDP.makePlan(state);
+            ER=meta_MDP.evaluatePlan(plan,state);
+        end
+        
+        function plan=makePlan(meta_MDP,state)
+            
+            plan=zeros(state.nr_steps-state.step+1,1);
+            
+            current_location=state.s;
+            for step=state.step:state.nr_steps
+                plan(step)=argmax(state.mu_Q(current_location,:));
+                current_location=meta_MDP.object_level_MDP.nextState(current_location,plan(step));
+            end
+            
+        end
+        
+        function ER=evaluatePlan(meta_MDP,plan,state)
+            ER=0;
+            location=state.s;
+            for a=1:length(plan)
+                if 
+                ER=ER+state.observations
+            end
         end
     end
     

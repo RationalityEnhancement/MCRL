@@ -484,7 +484,7 @@ function getClicks(state){
             click={
                 is_move: false,
                 is_click: true,
-                cell: parseInt(o),
+                cell: parseInt(o)+1,
                 move: []
             }
             
@@ -520,7 +520,8 @@ function getLocations(problem_nr){
 }
 
 function getTrials(){
-    var experiment = loadJson("static/json/condition_1.json");
+    //var experiment = loadJson("static/json/condition_1.json");
+    var experiment = loadJson("static/json/condition_0_0.json");
     var trials=experiment.trials;
     
     //TODO: Move this information into the JSON file. Otherwise this code won't generalize to other layouts.
