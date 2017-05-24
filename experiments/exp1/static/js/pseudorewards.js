@@ -44,7 +44,6 @@ Object.defineProperty(Array.prototype, "diff", {enumerable: false});
 
 
 
-TRIALS = undefined
 
 meta_MDP=metaMDP()
 
@@ -56,7 +55,7 @@ action_was_move = new Array()
 moves   = new Array()
 clicks  = new Array()
 
-// object_level_PRs = loadObjectLevelPRs()
+object_level_PRs = loadObjectLevelPRs()
 
 /*
 conditions: 1 = optimal delays, optimal message; 0 = fixed delays, no message;
@@ -138,6 +137,9 @@ function metaMDP(){
 
 
 function getPR(state,action_sequence){
+    //getPR returns the sum of the pseudo-rewards taking a sequence of actions in a given state. The result should be zero if all actions are optimal and negative otherwise. 
+    //state: state struct
+    //action_sequence: array of action structs
     
     meta_MDP.cost_per_click=PARAMS.info_cost
     
@@ -277,7 +279,11 @@ function getObjectLevelPR(problem_nr,initial_state,actions){
     return PRs        
 }
 
-function registerMove(direction){
+function registerMove(direction){    
+    //returns the delay and type of feedback message
+    //adds the move to the array moves
+    //updates the state of meta_MDP
+    //direction is a string ("right","up","left", or "down")
     
     var last_move=action_was_move.lastIndexOf(true)
     
@@ -377,6 +383,9 @@ function registerClick(cell_nr){
 }
 
 function getNextState(state,actions,update_belief){
+    //getNextState(s,actions,update_belief) returns the state that results from taking a series of actions in state s without changing state s
+    //If update_belief is false, then the location will be udpated but mu_Q and sigma_Q won't be updated.
+    
     
     if (update_belief === undefined){
         var update_belief=true;
@@ -437,6 +446,8 @@ function getActions(state){
 }
 
 function getMoves(current_location){
+    //returns the moves available in the current location
+    
     //moves
     var moves=new Array()
     
@@ -509,8 +520,8 @@ function getLocations(problem_nr){
 }
 
 function getTrials(){
-    // var experiment = loadJson("static/json/condition_1.json");
-    var trials=TRIALS
+    var experiment = loadJson("static/json/condition_1.json");
+    var trials=experiment.trials;
     
     //TODO: Move this information into the JSON file. Otherwise this code won't generalize to other layouts.
     for (t in trials){
@@ -558,6 +569,10 @@ function updateBelief(meta_MDP,state,new_observations){
         mu_Q(s,a): expected return of starting in object-level state s and performing object-level action a according to meta_MDP.observations and meta_MDP.p_payoffs 
         mu_V(s): expected return of starting in object-level state s and following the optimal object-level policy according to meta_MDP.observations and meta_MDP.p_payoffs. The expectation is taken with respect to the probability distribution encoded by the meta-level state and the ?optimal policy? maximizes the reward expected according to the probability distribution encoded by the meta-level state
         sigma_Q(s,a), sigma_V(s): uncertainty around the expectations mu_Q(s,a) and mu_V(s).
+        
+        The value of new_observations should not affect the result, it is only used to speed up the computation.
+        
+        This function should be equivalent to the updateBelief method of MouselabMDPMetaMDPNIPS.m
     */
     
     //0. Determine which beliefs have to be updated
@@ -627,6 +642,7 @@ function updateBelief(meta_MDP,state,new_observations){
 }
 
 function valueFunction(state,environment_model){        
+    //returns the approximate value function V_PR(state | environment model)  specified by PARAMS.PR_type. state is the argument of the value function and the value is computed with respect to the information in environment_model.
     
     switch(PARAMS.PR_type){
         case 1: //PRs based on the full-observation policy
@@ -683,7 +699,9 @@ function valueFunction(state,environment_model){
     return V
 }
 
-function predictQValue(state,computation,environment_model){
+function predictQValue(state,computation){
+    //predictQValue(s,c) returns the Q-value our feature-based approximation predicts for performing computation c in state s.
+    
     feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
@@ -702,31 +720,34 @@ function predictQValue(state,computation,environment_model){
     
     meta_MDP.cost_per_click = PARAMS.info_cost
     
-    var VPI = computeVPI(state,computation,environment_model)
-    var VOC1 = computeMyopicVOC(state,computation,environment_model)
-    var ER = computeExpectedRewardOfActing(state,environment_model)
+    var VPI = computeVPI(state,computation)
+    var VOC1 = computeMyopicVOC(state,computation)
+    var ER = computeExpectedRewardOfActing(state)
     
     var Q_hat= feature_weights.VPI*VPI+feature_weights.VOC1*VOC1 + feature_weights.ER*ER
     return Q_hat
 }
 
-function computeExpectedRewardOfActing(state,environment_model){
-    var plan = makePlan(state,environment_model)
-    var ER = evaluatePlan(state,plan,environment_model)
+function computeExpectedRewardOfActing(state){
+    //returns the sum of the rewards the agent expects to receive for acting without further deliberation according to the belief encoded by the current state.
+    var plan = makePlan(state)
+    var ER = evaluatePlan(state,plan)
     
     return ER
 }
 
-function makePlan(state,environment_model){
+function makePlan(state){
+    //makePlan(state) returns an array of action structs. Each action has the highest state.mu_Q(location,:) value for the location in which it is chosen.
+    
     var plan = new Array()
 
     var location_nr=state.s;
     var step=state.step;
     
-    var current_state=state;
+    var current_state=deepCopy(state);
     while (step<=state.nr_steps){
-        var max_Q = _.max(environment_model.mu_Q[location_nr-1])        
-        var a=_.indexOf(environment_model.mu_Q[location_nr-1],max_Q)        
+        var max_Q = _.max(state.mu_Q[location_nr-1])        
+        var a=_.indexOf(state.mu_Q[location_nr-1],max_Q)        
         
         var available_actions=getMoves(meta_MDP.locations[current_state.s])
         //var action = available_actions[a]
@@ -757,20 +778,22 @@ function makePlan(state,environment_model){
     return plan
 }
 
-function evaluatePlan(state,plan,environment_model){
+function evaluatePlan(state,plan){
+    //evaluatePlan(s,plan) determines the reward the agent expects to receive for executing the plan from the current location according to the beliefs encoded by state s. The expected reward is the sum of observed or unobserved rewards along the path. If the reward is unobserved, then it is replaced by the avg. payoff.
+    //plan is an array containing action structs, each of which is a valid move.
     
     var ER=0
 
-    var current_state=state
+    var current_state=deepCopy(state)
     for (var a in plan){
         var action = plan[a]
         current_state=getNextState(current_state,action,false)
         
-        if (isNaN(environment_model.observations[current_state.s-1]) | environment_model.observations[current_state.s-1]==null){
+        if (isNaN(state.observations[current_state.s-1]) | state.observations[current_state.s-1]==null){
             ER+=meta_MDP.mean_payoff
         }
         else{
-            ER+=environment_model.observations[current_state.s-1]
+            ER+=state.observations[current_state.s-1]
         }
             
     }
@@ -778,6 +801,7 @@ function evaluatePlan(state,plan,environment_model){
     return ER
 }
 
+/*
 function computeExpectedRewardOfActingOld(state){
     
     if (state.mu_Q[state.s-1] == null){
@@ -791,8 +815,10 @@ function computeExpectedRewardOfActingOld(state){
         return _.max(state.mu_Q[state.s-1])
     }
 }
+*/
 
 function computeMyopicVOC(state,c){
+    //Computes the myoptic VOC (VOC1, Equation 4 in the NIPS paper) in a highly efficient manner. VOC1 is -cost(c) if the computation cannot improve the decision. VOC1 is positive if the expected improvement in decision quality from a single computation is higher than the cost of computation and negative else. The output should be identical to the outputs of the method myopicVOC of MouselabMDPMetaMDPNIPS in Matlab.
      
     if (c.is_click)  {
         
@@ -865,6 +891,7 @@ function myopicVOCAdditive(mu_prior,a){
 //mu_prior: prior means of returns of available actions
 //sigma_prior: prior uncertainty of returns of available actions
 //a: action about which more information is being collected
+//This function should behave in the same way as the method myopicVOCAdditive of MouselabMDPMetaMDPNIPS.m.
 
 mu_sorted = mu_prior.slice(0).sort(function(a, b){return b - a})
 mu_alpha = mu_sorted[0]
@@ -881,7 +908,6 @@ if (appears_best){
 }
 else{
     //information is valuable if it reveals that action is optimal
-    
     //To change the decision, the sampled value would have to be larger than lb.
     lb=mu_alpha+meta_MDP.mean_payoff-mu_prior[a-1];                
     VOC=meta_MDP.std_payoff**2*normPDF(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff)- (mu_alpha-mu_prior[a-1])*(1-normCDF(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff))- meta_MDP.cost_per_click;
@@ -891,13 +917,13 @@ return VOC
 
 }
 
-function myopicVOCMaxUnknown(mu_prior,a){
-    
+function myopicVOCMaxUnknown(mu_prior,a){    
 //This function evaluates the VOC of inspecting a leaf cell
 //downstream of the current state where the values of the other leaf(s) is/are known.
 //mu_prior: prior means of returns of available actions            
 //a: action about which more information is being collected
 //known_alternative: maximum of the other known leafs
+//This function should behave identically to the method myopicVOCMaxUnknown of MouselabMDPMetaMDPNIPS.m
 
 mu_sorted = mu_prior.slice(0).sort(function(a, b){return b - a})
 mu_alpha = mu_sorted[0]
@@ -930,6 +956,11 @@ return VOC
 }
 
 function myopicVOCMaxKnown(mu_prior,a,known_alternative){
+    //computes the myopic VOC of inspecting a leaf when the rewards of all other leafs are known
+    //mu_prior: prior means of the actions available in the current state
+    //number of object level action about which information would be collected (branch of the leaf)
+    //known_alternative: max. of the rewards of the siblings of the leaf node
+//This function should behave identically to the method myopicVOCMaxKnown of MouselabMDPMetaMDPNIPS.m
     
     mu_sorted = mu_prior.slice(0).sort(function(a, b){return b - a})
     mu_alpha = mu_sorted[0]
@@ -954,8 +985,7 @@ function myopicVOCMaxKnown(mu_prior,a,known_alternative){
         }                                                
     }
     else{
-        //information is valuable if it reveals that action is optimal                
-
+        //information is valuable if it reveals that action is optimal       
         //To change the decision, the sampled value would have to be larger than lb
         lb=mu_alpha-mu_prior[a-1]+E_max;
 
@@ -965,9 +995,9 @@ function myopicVOCMaxKnown(mu_prior,a,known_alternative){
     return VOC
 }
 
-
-
 function computeVPI(state,metalevel_action){
+//returns the value of perfect information (Equation 5 in the NIPS paper)
+//This function's input-output behavior should agree with the method computeVPI of MouselabMDPMetaMDPNIPS.m
 
 if (metalevel_action.is_move)
     return 0
@@ -1050,6 +1080,8 @@ function costOfPlanning(state,planning_horizon){
 }
 
 function getDownStreamStates(state){
+    //returns all states that can be reached from state
+    
     var downstream=[];
 
     var states=meta_MDP.locations;
@@ -1072,6 +1104,8 @@ function getDownStreamStates(state){
 }
 
 function getUpStreamStates(observed_states){
+    //returns all states from which any of the observed_states can be reached
+    
     var upstream=[];
 
     var states=meta_MDP.locations
@@ -1133,7 +1167,7 @@ checkWindowSize = function(width, height, display) {
     return display.show();
   }
 };
-    
+	
 function isScalar(obj){
     return (/string|number|boolean/).test(typeof obj);
 }

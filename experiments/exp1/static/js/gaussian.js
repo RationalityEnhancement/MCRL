@@ -49,6 +49,8 @@ function normPDF(x,mu,sigma) {
 
 
 function maxOfGaussiansPDF(x,mu,sigma){
+    //returns the probability density p(max {X_0,...,X_n}) where X_i ~ N(mu[i],sigma[i]).
+    //This function should always return the same value as MatlabTools/pdfOfMaxOfGaussians.m
     
     if (typeof(x)=="number"){
 		x=[x]
@@ -95,6 +97,8 @@ function EVOfMaxOfGaussians(mu,sigma){
 //E[max {X_1,...,X_n}] and STD[max {X_1,...,X_n}] for n normally distributed
 //random variables X_1,...,X_n with means mu(1),...,mu(n), and standard
 //deviations sigma(1),...,sigma(n).
+//The output of this function should be equal to that of 
+//MatlabTools/EVofMaxOfGaussians.m.
 
 var max_sigma=getMaxOfArray(sigma)    
     
@@ -140,6 +144,7 @@ else{
 
 
 function integral(a, b, dx, f) {
+//This function returns the Euler's rule approximation to the integral of f from a to b with step size dx.
 	
 	// calculate the number of trapezoids
 	var n = (b - a) / dx;
@@ -164,12 +169,28 @@ function integral(a, b, dx, f) {
 	} 
 	return Area;
 }
+
+function ETruncatedNormal(mu,sigma,x_min,x_max){
+    //ETruncatedNormal(mu,sigma,x_min,x_max) returns the value of $\int_a^b normpdf(x,mu)*x dx$
+    
+    realmax=1000000;
+    
+    int_below=normCDF(x_min,mu,sigma)*_.max([-realmax,x_min]);
+    int_above=(1-normCDF(x_max,mu,sigma))*_.min([realmax,x_max]);
+
+    int_middle=mu*(normCDF(x_max,mu,sigma)-normCDF(x_min,mu,sigma))-sigma**2*(normPDF(x_max,mu,sigma)-normPDF(x_min,mu,sigma));
+    
+    EV=int_below+int_middle+int_above;
+    
+}
                      
                      
 function getMaxOfArray(numArray) {
-  return Math.max.apply(null, numArray);
+  //returns the largest value in numArray even if the array and ignores NaN and null entries.
+  return _.max(numArray)//Math.max.apply(null, numArray);
 }
         
 function getMinOfArray(numArray) {
-  return Math.min.apply(null, numArray);
+  //returns the smallest value in numArray even if the array and ignores NaN and null entries.    
+  return _.min(numArray)//Math.min.apply(null, numArray);
 }

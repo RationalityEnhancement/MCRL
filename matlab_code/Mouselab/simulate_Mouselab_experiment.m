@@ -1,5 +1,7 @@
 clear
 
+addpath('../MatlabTools')
+
 load ControlExperiment
 load ControlTrialProperties
 
