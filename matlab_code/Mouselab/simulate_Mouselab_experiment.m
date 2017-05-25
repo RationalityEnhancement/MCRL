@@ -22,4 +22,50 @@ meta_MDP.object_level_MDP=control_experiment(1);
 
 actions=meta_MDP.getActions(state)
 
-[r,next_state,PR]=meta_MDP.simulateTransition(state,actions(8))
+[r,next_state,PR]=meta_MDP.simulateTransition(state,actions(13))
+
+[r,next_state2,PR]=meta_MDP.simulateTransition(next_state,actions(14))
+
+%test belief updates for all possible clicks
+clicks=actions(5:end);
+for c=1:length(clicks)
+    [r,s_next,PR]=meta_MDP.simulateTransition(state,clicks(c));
+    mu_V_values(:,c)=s_next.mu_V
+end
+
+[r,s_next1,PR]=meta_MDP.simulateTransition(state,clicks(9));
+[r,s_next2,PR]=meta_MDP.simulateTransition(s_next1,clicks(10));
+[r,s_next3,PR]=meta_MDP.simulateTransition(s_next1,clicks(5));
+[r,s_next4,PR]=meta_MDP.simulateTransition(s_next1,clicks(13));
+
+%test makePlan
+%1. Deciding based on full-information
+s_temp=state;
+for c=1:numel(clicks)
+    [r,s_temp]=meta_MDP.simulateTransition(s_temp,clicks(c));
+end
+plan=meta_MDP.makePlan(s_temp)
+
+%2. Planning based on incomplete information
+s_temp2=state;
+for c=1:round(numel(clicks)/2)
+    [r,s_temp2]=meta_MDP.simulateTransition(s_temp2,clicks(c));
+end
+plan2=meta_MDP.makePlan(s_temp2)
+
+%3. Planning from an intermediate state
+[r,s_temp3]=meta_MDP.simulateTransition(s_temp2,actions(1));
+plan3=meta_MDP.makePlan(s_temp3)
+evaluatePlan(meta_MDP,plan3,s_temp3)
+
+
+%% test computation of PRs
+current_state=state;
+for c=1:length(clicks)
+    [r,current_state,PR_clicks(c)]=simulateTransition(meta_MDP,current_state,clicks(c))
+end
+
+current_state=state;
+for c=1:length(actions)
+    [r,current_state,PR_actions(c)]=simulateTransition(meta_MDP,state,actions(c))
+end

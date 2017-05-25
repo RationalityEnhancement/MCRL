@@ -41,7 +41,7 @@ for e=1:numel(experiment)
     experiment(e).actions_by_state=actions_by_state;
     experiment(e).hallway_states=2:9;
     experiment(e).leafs=10:17;
-    experiment(e).parent_by_state=[1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9];
+    experiment(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
 end
 
 

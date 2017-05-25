@@ -50,7 +50,12 @@ function normPDF(x,mu,sigma) {
 
 function maxOfGaussiansPDF(x,mu,sigma){
     //returns the probability density p(max {X_0,...,X_n}) where X_i ~ N(mu[i],sigma[i]).
-    //This function should always return the same value as MatlabTools/pdfOfMaxOfGaussians.m
+    //This function should always return approximately the same value as MatlabTools/pdfOfMaxOfGaussians.m
+    //This functions expects that all elements of sigma are greater than zero and throws an error otherwise.
+    
+    if (sigma.some(function(x){return x<=0})){
+        throw new Error('maxOfGaussiansPDF: All sigmas have to be greater than 0.','gaussian.js',56)
+    }
     
     if (typeof(x)=="number"){
 		x=[x]
@@ -171,7 +176,7 @@ function integral(a, b, dx, f) {
 }
 
 function ETruncatedNormal(mu,sigma,x_min,x_max){
-    //ETruncatedNormal(mu,sigma,x_min,x_max) returns the value of $\int_a^b normpdf(x,mu)*x dx$
+    //ETruncatedNormal(mu,sigma,x_min,x_max) returns the value of $\int_a^b normpdf(x,mu)*min(max(x,x_min),x_max)    dx$
     
     realmax=1000000;
     
@@ -181,6 +186,8 @@ function ETruncatedNormal(mu,sigma,x_min,x_max){
     int_middle=mu*(normCDF(x_max,mu,sigma)-normCDF(x_min,mu,sigma))-sigma**2*(normPDF(x_max,mu,sigma)-normPDF(x_min,mu,sigma));
     
     EV=int_below+int_middle+int_above;
+    
+    return EV
     
 }
                      

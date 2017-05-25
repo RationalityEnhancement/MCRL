@@ -1,3 +1,7 @@
+clear
+
+addpath('../MatlabTools')
+
 load ControlExperiment
 load ControlTrialProperties
 
@@ -5,9 +9,11 @@ nr_trials=length(control_experiment);
 for t=1:nr_trials
     control_experiment(t).hallway_states=2:9;
     control_experiment(t).leafs=10:17;
+    control_experiment(t).parent_by_state={[],[1],[1],[1],[1],[2],[3],[4],...
+        [5],[6],[6],[7],[7],[8],[8],[9],[9]};
 end
 
-cost_per_click=1.60;
+cost_per_click=2.80;
 meta_MDP=MouselabMDPMetaMDPNIPS(true,'featureBased',4.5,10.6,control_experiment,cost_per_click);
 meta_MDP.object_level_MDP=control_experiment(1);
 
@@ -16,4 +22,33 @@ meta_MDP.object_level_MDP=control_experiment(1);
 
 actions=meta_MDP.getActions(state)
 
-[r,next_state,PR]=meta_MDP.simulateTransition(state,actions(8))
+[r,next_state,PR]=meta_MDP.simulateTransition(state,actions(13))
+
+[r,next_state2,PR]=meta_MDP.simulateTransition(next_state,actions(14))
+
+%test belief updates for all possible clicks
+clicks=actions(5:end);
+for c=1:length(clicks)
+    [r,s_next,PR]=meta_MDP.simulateTransition(state,clicks(c));
+    mu_V_values(:,c)=s_next.mu_V
+end
+
+[r,s_next1,PR]=meta_MDP.simulateTransition(state,clicks(9));
+[r,s_next2,PR]=meta_MDP.simulateTransition(s_next1,clicks(10));
+[r,s_next3,PR]=meta_MDP.simulateTransition(s_next1,clicks(5));
+[r,s_next4,PR]=meta_MDP.simulateTransition(s_next1,clicks(13));
+
+%test makePlan
+%1. Deciding based on full-information
+s_temp=state;
+for c=1:numel(clicks)
+    [r,s_temp]=meta_MDP.simulateTransition(s_temp,clicks(c));
+end
+plan=meta_MDP.makePlan(s_temp)
+
+%2. Deciding based on incomplete information
+s_temp2=state;
+for c=1:round(numel(clicks)/2)
+    [r,s_temp2]=meta_MDP.simulateTransition(s_temp2,clicks(c));
+end
+plan=meta_MDP.makePlan(s_temp2)

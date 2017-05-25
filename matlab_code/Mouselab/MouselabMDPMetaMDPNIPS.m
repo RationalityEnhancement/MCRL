@@ -163,6 +163,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
 
             
             [meta_MDP.reward_function,meta_MDP.rewards]=meta_MDP.sampleRewards();
+            meta_MDP.object_level_MDP.rewards=meta_MDP.reward_function;
             
             meta_MDP=meta_MDP.setActions(state);
             
@@ -211,11 +212,11 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                         next_state=meta_MDP.object_level_MDP.states_by_path(num2str([node.path;action]));
                         
                         
-                        if isnan(state.observations(node.nr))
+                        if isnan(state.observations(next_state.nr))
                             state.mu_Q(node.nr,action)=meta_MDP.mean_payoff+state.mu_V(next_state.nr);
                             state.sigma_Q(node.nr,action)=sqrt(meta_MDP.std_payoff^2+state.sigma_V(next_state.nr)^2);
                         else
-                            state.mu_Q(node.nr,action)=state.observations(node.nr)+state.mu_V(next_state.nr);
+                            state.mu_Q(node.nr,action)=state.observations(next_state.nr)+state.mu_V(next_state.nr);
                             state.sigma_Q(node.nr,action)=state.sigma_V(next_state.nr);
                         end
                     end
@@ -415,6 +416,19 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             
             start_state=state;
             
+            if meta_MDP.add_pseudorewards
+                if strcmp(meta_MDP.pseudoreward_type,'myopicVOC')
+                    PR=meta_MDP.myopicVOC(state,c);
+                elseif strcmp(meta_MDP.pseudoreward_type,'regretReduction')
+                    PR=meta_MDP.regretReduction(state,next_state);
+                elseif strcmp(meta_MDP.pseudoreward_type,'featureBased')
+                    PR = meta_MDP.featureBasedPR(start_state,c);
+                end
+            else
+                PR=0;
+            end
+            
+            
             if c.is_computation
                 if isnan(state.observations(c.state)) %not observed yet
                     
@@ -472,19 +486,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                                 
                 %end the episode
             end
-            
-            if meta_MDP.add_pseudorewards
-                if strcmp(meta_MDP.pseudoreward_type,'myopicVOC')
-                    PR=meta_MDP.myopicVOC(state,c);
-                elseif strcmp(meta_MDP.pseudoreward_type,'regretReduction')
-                    PR=meta_MDP.regretReduction(state,next_state);
-                elseif strcmp(meta_MDP.pseudoreward_type,'featureBased')
-                    PR = meta_MDP.featureBasedPR(start_state,c);
-                end
-            else
-                PR=0;
-            end
-                        
+                                    
         end
         
         function [state,decision]=decide(meta_MDP,state,c)
@@ -650,7 +652,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             moves=meta_MDP.object_level_MDP.actions;
             nr_moves=numel(moves);
             
-            payoffs=NaN(nr_locations,nr_moves);
+            payoffs=NaN(nr_locations,nr_locations,nr_moves);
             rewards=zeros(nr_locations,1);
             
             rewards(1)=0;
@@ -658,10 +660,10 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 for m=1:nr_moves
                     
                     if ismember(m,locations(l).available_actions)
-                        v=meta_MDP.mean_payoff+meta_MDP.std_payoff*randn();
-                        payoffs(l,m)=max(meta_MDP.min_payoff,min(meta_MDP.max_payoff,round(100*v)/100));
+                        v=meta_MDP.mean_payoff+meta_MDP.std_payoff*randn();                        
                         next_state=meta_MDP.object_level_MDP.nextState(locations(l).nr,m);
-                        rewards(next_state)=payoffs(l,m);
+                        payoffs(l,next_state,m)=max(meta_MDP.min_payoff,min(meta_MDP.max_payoff,round(100*v)/100));
+                        rewards(next_state)=payoffs(l,next_state,m);
                     else
                         payoffs(l,m)=NaN;
                     end
@@ -1153,16 +1155,17 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             if a==alpha
                 %information is valuable if it reveals that action c is suboptimal
                 
-                lb=meta_MDP.mean_payoff-3*meta_MDP.std_payoff;
+                lb=-inf;%meta_MDP.mean_payoff-5*meta_MDP.std_payoff;
                 ub=meta_MDP.mean_payoff;
                 
                 VOC=integral(@(x) normpdf(x,meta_MDP.mean_payoff,meta_MDP.std_payoff).*...
                     max(0, mu_beta - (mu_alpha-E_max+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,...
-                    x,inf))),lb,ub)-meta_MDP.cost_per_click;                
+                    x,inf))),lb,ub)-meta_MDP.cost_per_click;  
+                %normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_max+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff, x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))
             else
                 %information is valuable if it reveals that action is optimal                
                 lb=meta_MDP.mean_payoff;
-                ub=meta_MDP.mean_payoff+3*meta_MDP.std_payoff;
+                ub=inf;%meta_MDP.mean_payoff+5*meta_MDP.std_payoff;
                 
                 VOC=integral(@(x) normpdf(x,meta_MDP.mean_payoff,meta_MDP.std_payoff).*...
                     max(0, (mu_prior(a)-E_max+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,...
@@ -1380,12 +1383,13 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
         
         function plan=makePlan(meta_MDP,state)
             
-            plan=zeros(state.nr_steps-state.step+1,1);
+            nr_steps=state.nr_steps-state.step+1;
+            plan=zeros(nr_steps,1);
             
             current_location=state.s;
-            for step=state.step:state.nr_steps
-                plan(step)=argmax(state.mu_Q(current_location,:));
-                current_location=meta_MDP.object_level_MDP.nextState(current_location,plan(step));
+            for s=1:nr_steps
+                plan(s)=argmax(state.mu_Q(current_location,:));
+                current_location=meta_MDP.object_level_MDP.nextState(current_location,plan(s));
             end
             
         end

@@ -1,4 +1,11 @@
 function p=pdfOfMaxOfGaussians(x,mu,sigma)
+%returns the probability density of the maximum of n Gauassians with means
+%mu_1,...,mu_n and standard deviation sigma_1,...,sigma_n. All sigmas are
+%assumed to be greater than 0.
+
+if any(sigma<=0)
+    throw(MException('pdfOfMaxOfGaussians:invalidInput','All sigmas have to be greater than 0.'))
+end
 
 n=numel(mu);
 

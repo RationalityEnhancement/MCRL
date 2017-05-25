@@ -43,8 +43,6 @@ Array.prototype.diff = function(a) {
 Object.defineProperty(Array.prototype, "diff", {enumerable: false});
 
 
-
-
 meta_MDP=metaMDP()
 
 
@@ -522,7 +520,7 @@ function getLocations(problem_nr){
 function getTrials(){
     //var experiment = loadJson("static/json/condition_1.json");
     var experiment = loadJson("static/json/condition_0_0.json");
-    var trials=experiment.trials;
+    var trials=experiment.blocks.standard
     
     //TODO: Move this information into the JSON file. Otherwise this code won't generalize to other layouts.
     for (t in trials){
@@ -1256,18 +1254,7 @@ function test(){
         
 }
 
-function test2(){
-    
-    var condition=1
-    meta_MDP.init(2)    
-
-    registerClick(2)
-    registerClick(3)
-    registerClick(4)
-    registerClick(5)
-    registerMove("up")
-}
-
+/*
 function recomputeDelays(){
     
     var temp_condition=condition
@@ -1322,6 +1309,7 @@ function recomputeDelays(){
     download(JSON.stringify(clicks_and_paths), 'clicks_and_paths.json', 'text/plain');
 
 }
+*/
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;

@@ -1,4 +1,6 @@
-costs=[0.01,2.80]; %,1.60 is already taken care of
+addpath('../MatlabTools/')
+
+costs=[0.01,1.60,2.80]; %,1.60 is already taken care of
 
 parfor c=1:numel(costs)
     policySearchMouselabMDP(costs(c))
@@ -41,18 +43,18 @@ for e=1:numel(experiment)
 end
 
 costs=[0.01,1.60,2.80];
-w_observe_everything=[1;0;1];
-w_observe_nothing=[-1.3;0.4;0.3];
+%w_observe_everything=[1;1;1];
+%w_observe_nothing=[-1.3;0.4;0.3];
 
-[ER_hat_nothing,result_nothing]=evaluatePolicy(w_observe_nothing,2.80,1000)
+%[ER_hat_everything,result_everything]=evaluatePolicy(w_observe_everything,0.01,1000)
+%[ER_hat_nothing,result_nothing]=evaluatePolicy(w_observe_nothing,2.80,1000)
 
 for c=1:numel(costs)
     
-    load('[BO_c',int2str(100*costs(c)),'n25.mat'])
+    load(['../../results/BO/BO_c',int2str(100*costs(c)),'n25.mat'])
     
     w_policy=BO.w_hat;
-    glm_policy=BayesianGLM(3);
-    glm_policy.sigma=0.0001;
+    glm_policy=BayesianGLM(3,1e-6);
     glm_policy.mu_n=w_policy;
     glm_policy.mu_0=w_policy;
     nr_episodes=1000;
@@ -65,3 +67,5 @@ for c=1:numel(costs)
     [glm_Q(c),MSE(:,c),R_total(:,c)]=BayesianValueFunctionRegression(meta_MDP,feature_extractor,nr_episodes,glm_policy)
     
 end
+fit.glm=glm_Q; fit.MSE=MSE; fit.R_total=R_total;
+save ../../results/BO/valueFunctionFit.mat fit
