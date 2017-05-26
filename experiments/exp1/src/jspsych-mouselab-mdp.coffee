@@ -101,7 +101,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @edgeLabels='reward'  # object mapping from edge names (s0 + '__' + s1) to labels
         @edgeDisplay='always'  # one of 'never', 'hover', 'click', 'always'
         @edgeClickCost=0  # subtracted from score every time an edge is clicked
-        @trialID=null
+        @trial_i=null
 
         @stateRewards=null
         
@@ -125,7 +125,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @invKeys = _.invert @keys
       @data =
         delays: []
-        trialID: @trialID
+        trial_i: @trial_i
         trialIndex: @trialIndex
         score: 0
         path: []
@@ -402,6 +402,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     run: =>
       LOG_DEBUG 'run'
+      meta_MDP.init @trial_i
       do @buildMap
       do @startTimer
       fabric.Image.fromURL @playerImage, ((img) =>

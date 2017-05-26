@@ -47,7 +47,7 @@ $(window).on('load', function() {
   return delay(300, function() {
     var ERROR, expData;
     console.log('Loading data');
-    expData = deepLoadJson("static/json/condition_" + condition + "_" + counterbalance + ".json");
+    expData = loadJson("static/json/condition_" + condition + "_" + counterbalance + ".json");
     console.log('expData', expData);
     PARAMS = expData.params;
     PARAMS.info_cost = 0.05;
