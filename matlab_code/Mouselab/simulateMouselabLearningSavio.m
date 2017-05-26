@@ -1,5 +1,7 @@
 function simulateMouselabLearningSavio(repetition,condition,with_PR)
 
+rng((1+repetition)^(1+3*log(abs((condition+1)*(with_PR+1)))))
+
 addpath('/global/home/users/flieder/matlab_code/MatlabTools/')
 %create meta-level MDP
 
@@ -44,7 +46,7 @@ for e=1:numel(experiment)
     experiment(e).actions_by_state=actions_by_state;
     experiment(e).hallway_states=2:9;
     experiment(e).leafs=10:17;
-    experiment(e).parent_by_state=[1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9];
+    experiment(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
 end
 
 meta_MDP_with_PR=MouselabMDPMetaMDPNIPS(add_pseudorewards,pseudoreward_type,mean_payoff,std_payoff,experiment);

@@ -7,6 +7,8 @@ parfor c=1:numel(costs)
 end
 
 %%
+clear
+
 addpath([pwd,'/MatlabTools/'])
 %create meta-level MDP
 
@@ -57,12 +59,12 @@ parfor c=1:numel(costs)
     glm_policy=BayesianGLM(3,1e-6);
     glm_policy.mu_n=w_policy;
     glm_policy.mu_0=w_policy;
-    nr_episodes=1000;
+    nr_episodes=10000;
     
     meta_MDP=MouselabMDPMetaMDPNIPS(add_pseudorewards,pseudoreward_type,mean_payoff,std_payoff,experiment);
     meta_MDP.cost_per_click=costs(c);
     
-    feature_extractor=@(s,c,meta_MDP) meta_MDP.extractStateActionFeatures(s,c);
+    feature_extractor=@(s,c,meta_MDP) [meta_MDP.extractStateActionFeatures(s,c); c.is_computation*meta_MDP.cost_per_click];
     
     [glm_Q(c),MSE(:,c),R_total(:,c)]=BayesianValueFunctionRegression(meta_MDP,feature_extractor,nr_episodes,glm_policy)
     

@@ -1,9 +1,20 @@
 function policySearchMouselabMDP(c)
 
-%addpath('/global/home/users/flieder/matlab_code/')
-%addpath('/global/home/users/flieder/matlab_code/MatlabTools/')
-addpath('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/')
-addpath('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/MatlabTools/')
+username = getenv('USER');
+Falk_local=strcmp(username,'Falk');
+
+if Falk_local    
+    root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/';    
+else
+    root_dir='/global/home/users/flieder/';    
+end
+
+work_dir=[root_dir,'matlab_code/'];
+toolbox_dir=[work_dir,'MatlabTools/'];
+GPO_dir = [toolbox_dir,'Gaussian_Optimization/'];
+addpath(work_dir)
+addpath(toolbox_dir)
+addpath(genpath(GPO_dir))
 
 %% Direct Policy Search
 nr_episodes=1000;
@@ -14,12 +25,7 @@ x_input_domain = [-1 1; -1 1];
 nb_iter=35;
 result_display=true; result_save=true; plot_func=false; plot_point=false;
 
-addpath(pwd)
-
-%GPO_path='/global/home/users/flieder/matlab_code/MatlabTools/Gaussian_Optimization';
-GPO_path='~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/MatlabTools/Gaussian_Optimization/';
-addpath(genpath(GPO_path))
-cd(GPO_path)
+cd(GPO_dir)
 [x, fx, X_sample, F_sample, result] = ...
     IMGPO_default_run_stochastic_objective(ER_hat, d, x_input_domain, nb_iter, ...
     result_display, result_save, plot_func, plot_point)
@@ -29,7 +35,5 @@ BO.ER=fx;
 BO.cost=c;
 BO.nb_iter=nb_iter;
 BO.nr_episodes=nr_episodes;
-%cd('../../')
-%save(['../../results/BO/BO_c',int2str(100*c),'n',int2str(nb_iter),'.mat'],'BO')
-save(['~/Dropbox/PhD/Metacognitive RL/MCRL/results/BO/BO_c',int2str(100*c),'n',int2str(nb_iter),'.mat'],'BO')
+save([root_dir,'results/BO/BO_c',int2str(100*c),'n',int2str(nb_iter),'.mat'],'BO')
 end

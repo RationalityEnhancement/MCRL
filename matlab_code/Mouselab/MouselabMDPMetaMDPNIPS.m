@@ -72,7 +72,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 'uncertainty reduction','sigma(R)','p(best action)','sigma(best action)',...
                 'underplanning','complete planning','cost'};
             
-            feature_names={'VPI','VOC','E[R|guess]'};%{state_feature_names{:}, action_feature_names{:}};
+            feature_names={'VPI','VOC','E[R|guess]','cost'};%{state_feature_names{:}, action_feature_names{:}};
             
             meta_MDP.feature_names=feature_names;
             
@@ -84,11 +84,11 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             
             switch(meta_MDP.cost_per_click)
                 case 0.01
-                    meta_MDP.PR_feature_weights=struct('VPI',1.2065, 'VOC1', 2.1510, 'ER', 1.5298);
+                    meta_MDP.PR_feature_weights=struct('VPI',1.8208, 'VOC1', -0.1239, 'ER', 1.0056,'cost',-0.7844);
                 case 1.60
-                    meta_MDP.PR_feature_weights=struct('VPI',0.6118, 'VOC1', 1.2708, 'ER', 1.3215);
+                    meta_MDP.PR_feature_weights=struct('VPI',1.2550, 'VOC1', 0.0436, 'ER', 0.9681,'cost',-1.5807);
                 case 2.80
-                    meta_MDP.PR_feature_weights=struct('VPI',0.6779, 'VOC1', 0.7060, 'ER', 1.2655);
+                    meta_MDP.PR_feature_weights=struct('VPI',0.8983, 'VOC1', 0.1525, 'ER', 0.9499,'cost',-1.2027);
             end
         end
         
@@ -152,6 +152,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             state.T=meta_MDP.object_level_MDP.T;
             state.A=meta_MDP.object_level_MDP.actions;
             state.available_actions = find(any(squeeze(state.T(state.s,:,:))));
+            state.getAvailableActions= @(location) find(any(squeeze(state.T(location,:,:))));
             
             state.nr_steps=meta_MDP.object_level_MDP.horizon;
             state.has_plan=false;
@@ -781,8 +782,9 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 
                 location=state.s;
                 
-                a_star=argmax(state.mu_Q(location,:));                
-                [~,b]=kthLargestElement(state.mu_Q(location,:),2);
+                a_star=state.available_actions(argmax(state.mu_Q(location,state.available_actions)));                
+                [~,b_temp]=kthLargestElement(state.mu_Q(location,state.available_actions),2);
+                b=state.available_actions(b_temp);
                 
                 [E_max,sigma_max]=EVofMaxOfGaussians(state.mu_Q(location,:),...
                     state.sigma_Q(location,:));
@@ -866,7 +868,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 [VOC,meta_MDP]=meta_MDP.myopicVOC(state,c);
             end
             
-            ER_act=max(state.mu_Q(state.s,:));
+            ER_act=meta_MDP.expectedRewardOfActing(state);
             
             %{
             action_features=[expected_regret;regret_reduction;VOC;...
@@ -1257,7 +1259,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                             sigma_mu = state.sigma_Q(state.s,corresponding_action);
                             E_mu = state.mu_Q(state.s,corresponding_action);
                             
-                            best_alternative = max(state.mu_Q(state.s,setdiff(1:4,corresponding_action)));
+                            best_alternative = max(state.mu_Q(state.s,setdiff(state.available_actions,corresponding_action)));
                             delta_mu = E_mu - best_alternative;
                             
                             if computation.is_decision_mechanism
@@ -1270,7 +1272,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                         end
                     end
                 else
-                    [Q_blinkered(c),computation.move]=max(state.mu_Q(state.s,:));
+                    [Q_blinkered(c),computation.move]=max(state.mu_Q(state.s,state.available_actions));
                 end
             end
             
@@ -1373,7 +1375,8 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                         
             Q_hat=weights.VPI*meta_MDP.computeVPI(state,computation)+...
                weights.VOC1*meta_MDP.myopicVOC(state,computation)+...
-               weights.ER*meta_MDP.expectedRewardOfActing(state);               
+               weights.ER*meta_MDP.expectedRewardOfActing(state)+...;
+               weights.cost*computation.is_computation*meta_MDP.cost_per_click;
         end
         
         function ER=expectedRewardOfActing(meta_MDP,state)
@@ -1388,10 +1391,10 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             
             current_location=state.s;
             for s=1:nr_steps
-                plan(s)=argmax(state.mu_Q(current_location,:));
+                available_actions=state.getAvailableActions(current_location);
+                plan(s)=available_actions(argmax(state.mu_Q(current_location,available_actions)));
                 current_location=meta_MDP.object_level_MDP.nextState(current_location,plan(s));
-            end
-            
+            end            
         end
         
         function ER=evaluatePlan(meta_MDP,plan,state)

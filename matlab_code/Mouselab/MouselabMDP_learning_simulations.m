@@ -42,26 +42,26 @@ for e=1:numel(experiment)
     experiment(e).actions_by_state=actions_by_state;
     experiment(e).hallway_states=2:9;
     experiment(e).leafs=10:17;
-    experiment(e).parent_by_state=[1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9];
+    experiment(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
 end
 
-costs=[0.01,0.05,0.10,0.20,0.40,0.80,1.60];
+costs=[0.01,0.05,0.10,0.20,0.40,0.80,1.60,2.80];
 c=1;
 
-meta_MDP_with_PR=MouselabMDPMetaMDPNIPS(add_pseudorewards,pseudoreward_type,mean_payoff,std_payoff,experiment);
-meta_MDP_with_PR.cost_per_click=costs(c);
-meta_MDP_with_PR.PR_feature_weights=weights_low_cost;
+meta_MDP_with_PR=MouselabMDPMetaMDPNIPS(add_pseudorewards,pseudoreward_type,mean_payoff,std_payoff,experiment,costs(c));
+%meta_MDP_with_PR.cost_per_click=costs(c);
+%meta_MDP_with_PR.PR_feature_weights=weights_low_cost;
 
-meta_MDP_without_PR=MouselabMDPMetaMDPNIPS(false,'',mean_payoff,std_payoff,experiment);
-meta_MDP_without_PR.cost_per_click=costs(c);
+meta_MDP_without_PR=MouselabMDPMetaMDPNIPS(false,'',mean_payoff,std_payoff,experiment,costs(c));
+%meta_MDP_without_PR.cost_per_click=costs(c);
 
-mu0=[1;1;1];
+mu0=[0;0;0;0];
 nr_features=numel(mu0);
 sigma0=0.1;
 glm0=BayesianGLM(nr_features,sigma0);
 glm0.mu_n=mu0(:);
 
-feature_extractor=@(s,c,meta_MDP) meta_MDP.extractStateActionFeatures(s,c);
+feature_extractor=@(s,c,meta_MDP) [meta_MDP.extractStateActionFeatures(s,c); meta_MDP.cost_per_click*c.is_computation];
 
 %load MouselabMDPMetaMDPTestFeb-17-2017
 
@@ -82,9 +82,34 @@ for rep=1:nr_reps
 
 end
 
-[mean(returns_with_PR(:)),sem(returns_with_PR(:))]
-[mean(returns_without_PR(:)),sem(returns_without_PR(:))]
+
+%% load and plot results
+clear
+root_dir='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
+
+costs=[0.01;1.60;2.80];
+nr_reps=20;
+
+for rep=1:nr_reps
+    for c=1:length(costs)
+        with_PR=load([root_dir,'results/learning/MouselabLearningWithPR_rep',int2str(rep),'_condition',int2str(c),'.mat']);
+        without_PR=load([root_dir,'results/learning/MouselabLearningWithoutPR_rep',int2str(rep),'_condition',int2str(c),'.mat']);
+        
+        returns_with_PR(:,rep,c)=with_PR.result.returns_with_PR;
+        returns_without_PR(:,rep,c)=without_PR.result.returns_without_PR;
+        
+        avg_returns_with_PR(rep,c)=with_PR.result.avg_return_with_PR(1);
+        avg_returns_without_PR(rep,c)=without_PR.result.avg_return_without_PR(1);
+        
+        sem_returns_with_PR(rep,c)=with_PR.result.avg_return_with_PR(2);
+        sem_returns_without_PR(rep,c)=without_PR.result.avg_return_without_PR(2);
+    end
+end
+
+
+[mean(avg_returns_with_PR);sem(avg_returns_with_PR)]
+[mean(avg_returns_without_PR);sem(avg_returns_without_PR)]
 
 figure()
-plot(smooth(returns_with_PR,100)),hold on
+errorbar(squeeze(mean(returns_with_PR,2)),squeeze(std(returns_with_PR,[],2))),hold on
 plot(smooth(returns_without_PR,100))

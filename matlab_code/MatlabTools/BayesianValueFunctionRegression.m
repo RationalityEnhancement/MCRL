@@ -23,10 +23,13 @@ mu=zeros(size(feature_extractor(s0,actions(1),mdp)));
 nr_features=length(mu);
 glm_Q=BayesianGLM(nr_features,0.1);
 
+w_old(:,1)=mu;
 
 avg_MSE=zeros(nr_episodes,1);
 
 R_total=zeros(nr_episodes,1);
+
+
 nr_observations=0;
 for i=1:nr_episodes
     rewards=zeros(0,1);
@@ -40,7 +43,14 @@ for i=1:nr_episodes
         t=t+1;
                 
         %1. Choose action by Thompson sampling
-        action=contextualThompsonSampling(s,mdp,glm_policy);
+        if t==1
+            %the first action is chosen at random. This ensures that the
+            %algorithm learns to be accurate for all state-action pairs and
+            %not only those that the policy would execute.
+            action=drawSample(mdp.getActions(s));
+        else
+            action=contextualThompsonSampling(s,mdp,glm_policy);
+        end
         features=feature_extractor(s,action,mdp)';
         F=[F;features];
         
@@ -72,7 +82,9 @@ for i=1:nr_episodes
     glm_Q=glm_Q.update(F,returns);
     
     if mod(i,250)==0
-        disp(['Completed episode ',int2str(i)])
+        disp(['Completed episode ',int2str(i),', dw=',num2str(norm(glm_Q.mu_n(:)-w_old(:))),', w_old: ',mat2str(roundsd(w_old(:),4)),'',...
+            ', w_new=',mat2str(roundsd(glm_Q.mu_n(:),4))])
+        w_old=glm_Q.mu_n(:);
     end
     %disp(['MSE=',num2str(avg_MSE(i)),', |mu_n|=',num2str(norm(glm.mu_n)),', return: ',num2str(R_total(i))])
 end

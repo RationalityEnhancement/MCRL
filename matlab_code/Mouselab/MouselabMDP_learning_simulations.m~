@@ -82,4 +82,31 @@ for rep=1:nr_reps
 
 end
 
-[mean(returns_with_PR(:)),sem
+
+%% load and plot results
+clear
+root_dir='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
+
+costs=[0.01;1.60;2.80];
+nr_reps=20;
+
+for rep=1:nr_reps
+    for c=1:length(costs)
+        with_PR=load([root_dir,'results/learning/MouselabLearningWithPR_rep',int2str(rep),'_condition',int2str(c),'.mat']);
+        without_PR=load([root_dir,'results/learning/MouselabLearningWithoutPR_rep',int2str(rep),'_condition',int2str(c),'.mat']);
+        
+        avg_returns_with_PR(rep,c)=with_PR.result.avg_return_with_PR(1);
+        avg_returns_without_PR(rep,c)=without_PR.result.avg_return_without_PR(1);
+        
+        sem_returns_with_PR(rep,c)=with_PR.result.avg_return_with_PR(2);
+        sem_returns_without_PR(rep,c)=without_PR.result.avg_return_without_PR(2);
+    end
+end
+
+
+[mean(avg_returns_with_PR);sem(avg_returns_with_PR)]
+[mean(avg_returns_without_PR);sem(avg_returns_without_PR)]
+
+figure()
+plot(smooth(returns_with_PR,100)),hold on
+plot(smooth(returns_without_PR,100))
