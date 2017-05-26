@@ -279,8 +279,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         r = @stateRewards[s1]
       return [r, s1]
 
-
-
     recordQuery: (queryType, targetType, target) =>
       @canvas.renderAll()
       LOG_DEBUG "recordQuery #{queryType} #{targetType} #{target}"
@@ -289,8 +287,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @data.queries[queryType][targetType].time.push Date.now() - @initTime
 
     displayFeedback: (a, s1) =>
-      # feedback = registerMove a
-      # console.log 'feedback', feedback
+      feedback = registerMove a
+      console.log 'feedback', feedback
     
       # if PARAMS.PR_type
       #   result =

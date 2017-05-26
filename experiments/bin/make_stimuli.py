@@ -31,7 +31,6 @@ class Stims(Stimulator):
     # ---------- Create stimuli ---------- #
 
     def trial(self, params):
-        params.pop('trial')
         graph, layout = build(**params)
         return {
             'graph': graph,
@@ -55,5 +54,5 @@ def rescale(layout):
 
 
 if __name__ == '__main__':
-    Stims().run()
+    Stims('exp1').run()
 

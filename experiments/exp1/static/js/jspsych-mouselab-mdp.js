@@ -299,7 +299,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
-      var head, info, msg, penalty, redGreenSpan, result;
+      var feedback, head, info, msg, penalty, redGreenSpan, result;
+      feedback = registerMove(a);
+      console.log('feedback', feedback);
       result = {
         delay: 4
       };

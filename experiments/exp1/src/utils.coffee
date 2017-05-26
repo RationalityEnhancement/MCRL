@@ -3,6 +3,19 @@ markdown = (txt) -> converter.makeHtml(txt)
 
 getTime = -> (new Date).getTime()
 
+img = (name) -> """<img class='display' src='static/images/#{name}.png'/>"""
+
+fmtMoney = (v) -> '$' + v.toFixed(2)
+
+reformatTrial = (old) ->
+  trial =
+    trialID: old.trial_i
+    graph: null
+    initialState: old.initial
+
+  return trial
+
+
 loadJson = (file) ->
   result = $.ajax
     dataType: 'json'
