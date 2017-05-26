@@ -62,7 +62,7 @@ $(window).on 'load', ->
 
   delay 300, ->
     console.log 'Loading data'
-    expData = deepLoadJson "static/json/condition_#{condition}_#{counterbalance}.json"
+    expData = loadJson "static/json/condition_#{condition}_#{counterbalance}.json"
     console.log 'expData', expData
     PARAMS = expData.params
     PARAMS.bonus_rate = .1

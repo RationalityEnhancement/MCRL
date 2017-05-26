@@ -13,7 +13,7 @@ def standard_to_pseudo():
         def state(s):
             return {
                 'reward': trial['stateRewards'][s],
-                'path': None,
+                'path': trial['path'][s],
                 'actions': {k: [int(v[1]), v[0]]
                             for k, v in trial['graph'][s].items()},
             }
@@ -36,6 +36,7 @@ def mat_to_standard():
         graph = {}
         layout = {}
         stateRewards = {}
+        path = {}
         # path = {}
         for s in t['states'][0]:
             name = s['nr']
@@ -56,7 +57,7 @@ def mat_to_standard():
             layout[name] = [x, y]
 
             stateRewards[name] = round(s['reward'], 2)
-            # path[name] = s['path']
+            path[name] = s['path']
 
         return {
             'trial_i': i,
@@ -68,6 +69,7 @@ def mat_to_standard():
             'stateLabels': 'reward',
             'stateClickCost': 0.05,
             'edgeDisplay': 'never',
+            'path': path,
         }
 
 
