@@ -3,6 +3,17 @@ markdown = (txt) -> converter.makeHtml(txt)
 
 getTime = -> (new Date).getTime()
 
+
+
+reformatTrial = (old) ->
+  trial =
+    trialID: old.trial_i
+    graph: null
+    initialState: old.initial
+
+  return trial
+
+
 loadJson = (file) ->
   result = $.ajax
     dataType: 'json'

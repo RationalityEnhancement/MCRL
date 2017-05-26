@@ -123,8 +123,8 @@ class Stimulator(object, metaclass=_StimulatorMeta):
                 block_name = block_params.get('block', 'block_{}'.format(block_i))
                 cond['blocks'][block_name] = block = []
                 for trial_i, trial_params in enumerate(self.trials({**cond_params, **block_params})):
-                    trial_params['trial'] = trial_i
                     trial = self.trial(trial_params)
+                    trial['trial_i'] = trial_i
                     block.append(trial)
                     print('trial_i = {}'.format(trial_i))
 

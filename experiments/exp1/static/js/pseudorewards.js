@@ -296,6 +296,9 @@ function getObjectLevelPR(problem_nr,initial_state,actions){
     return PRs        
 }
 
+function initializeMDP(...)
+function getFeedback(s0, a, s1, clicks)
+
 function registerMove(direction){    
     //returns the delay and type of feedback message
     //adds the move to the array moves
