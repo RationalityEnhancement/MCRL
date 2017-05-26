@@ -65,8 +65,12 @@ $(window).on 'load', ->
     expData = loadJson "static/json/condition_#{condition}_#{counterbalance}.json"
     console.log 'expData', expData
     PARAMS = expData.params
-    PARAMS.bonus_rate = .1
+    
+    PARAMS.info_cost = 0.05
+    PARAMS.PR_type = condition
     PARAMS.start_time = Date(Date.now())
+
+    # PARAMS.bonus_rate = .1
     BLOCKS = expData.blocks
     TRIALS = BLOCKS.standard
     psiturk.recordUnstructuredData 'params', PARAMS
@@ -100,7 +104,8 @@ createStartButton = ->
 initializeExperiment = ->
   console.log 'INITIALIZE EXPERIMENT'
 
-  N_TRIAL = BLOCKS.standard.length
+  N_TRIALS = BLOCKS.standard.length
+
   #  ======================== #
   #  ========= TEXT ========= #
   #  ======================== #
@@ -110,21 +115,42 @@ initializeExperiment = ->
   # of global variables defined in this file at the time the function
   # is called.
 
-
   text =
     debug: -> if DEBUG then "`DEBUG`" else ''
-    pseudo: ->
-      switch PARAMS.pseudo_f
-        when 'full'
-          """
-          The number of stars on a circle indicates the maximum amount of money
-          you can earn if you pass through that circle.
-          """
-        when 'value'
-          """
-          The number of stars on a circle indicates the maximum amount of money
-          you can earn starting from that circle.
-          """
+
+    feedback: ->
+      if PARAMS.PR_type
+        [markdown """
+          # Instructions
+
+          <b>You will receive feedback about your planning. This feedback will
+          help you learn how to make better decisions.</b> After each flight, if
+          you did not plan optimally, a feedback message will apear. This message
+          will tell you two things:
+
+          1. Whether you observed too few relevant values or if you observed
+             irrelevant values (values of locations that you cant fly to).
+          2. Whether you flew along the best route given your current location and
+             the information you had about the values of other locations.
+
+          In the example below, not enough relevant values were observed, and
+          as a result there is a 41 second timeout penalty. <b>The duration of
+          the timeout penalty is proportional to how poorly you planned your
+          route:</b> the more money you could have earned from observing more
+          values and/or choosing a better route, the longer the delay. <b>If
+          you perform optimally, no feedback will be shown and you can proceed
+          immediately.</b>
+
+          <div align="center"><img src="static/images/feedback.png" width=600></div>
+        """]
+      else []
+
+    constantDelay: ->
+      if PARAMS.PR_type
+        ""
+      else
+        "Note: there will be short delays after taking some flights."
+
 
 
   # ================================= #
@@ -150,9 +176,9 @@ initializeExperiment = ->
           return true
       return false
 
-  class GraphBlock extends Block
+  class MDPBlock extends Block
     type: 'mouselab-mdp'
-    playerImage: 'static/images/spider.png'
+    # playerImage: 'static/images/spider.png'
     _init: -> @trialCount = 0
 
 
@@ -160,129 +186,108 @@ initializeExperiment = ->
   #  ========= EXPERIMENT ========= #
   #  ============================== #
 
-  img = (name) -> """<img class='display' src='static/images/#{name}.png'/>"""
+  debug_slide = new Block
+    type: 'html'
+    url: 'test.html'
+
+
 
   instructions = new Block
     type: "instructions"
-    pages: -> [
+    pages: [
       markdown """
-        # Introduction
+        # Instructions #{text.debug()}
 
-        In this HIT, you will play a game called *Web of Cash*. You will guide
-        a money-loving spider through a spider web, gaining or losing money
-        for every move you make. Your goal is to maximize the profit for each
-        round. Note the direction of the arrows: You can only travel right,
-        never left. For each move, you can decide whether to go up or down.
+        In this game, you are in charge of flying an aircraft. As shown below,
+        you will begin in the central location. The arrows show which actions
+        are available in each location. Note that once you have made a move you
+        cannot go back; you can only move forward along the arrows. There are
+        eight possible final destinations labelled 1-8 in the image below. On
+        your way there, you will visit two intermediate locations. <b>Every
+        location you visit will add or subtract money to your account</b>, and
+        your task is to earn as much money as possible. <b>To find out how much
+        money you earn or lose in a location, you have to click on it.</b> You
+        can uncover the value of as many or as few locations as you wish.
 
-        #{img 'example1'}
+        <div align="center"><img src="static/js/images/instruction_images/Slide1.png" width=600></div>
 
+        To navigate the airplane, use the arrows (the example above is non-interactive).
+        You can uncover the value of a location at any time. Click "Next" to proceed.
       """
 
       markdown """
-        # Bonus Pay
+        # Instructions
 
-        To make things more exciting, you will earn **real money** based on
-        how well you do in the game. After you complete all #{N_TRIAL} rounds,
-        we will calculate the average profit you made on all the trials. Your bonus
-        will be #{PARAMS.bonus_rate * 100}% of that amount, up to
-        a maximum of **$2.30**!
-
-        
-        #{img 'money'}
-      """
-      
-      markdown """
-        # Inspecting the Web
-
-        In the previous example, the money you would make by crossing each
-        arrow was shown on the arrow. However, in the real game, these numbers
-        will not be shown when the round starts! Fortunately, **you can reveal the value of
-        an arrow by clicking on it.**
-
-        #{img 'example2'}
-
+        You will play the game for #{N_TRIALS} rounds. The value of every location will
+        change from each round to the next. At the begining of each round, the
+        value of every location will be hidden, and you will only discover the
+        value of the locations you click on. The example below shows the value
+        of every location, just to give you an example of values you could see
+        if you clicked on every location. <b>Every time you click a circle to
+        observe its value, you pay a fee of #{fmtMoney PARAMS.info_cost}.</b>
+        Each time you move to a
+        location, your profit will be adjusted. If you move to a location with
+        a hidden value, your profit will still be adjusted according to the
+        value of that location. #{do text.constantDelay}
       """
 
-      markdown """
-        # Helpful Stars
-
-        In some rounds, some circles will have stars on them. **You can click on
-        those circles to reveal the number of stars**. These stars provide
-        information that can **help you earn more money!** #{text.pseudo()}
-        For example: in the image below, you can earn $18 starting from the
-        position circled in blue by following the path indicated by the purple
-        circles.
-
-        #{img 'example3'}
-      """
+    ] . concat (do text.feedback) .concat [
 
       markdown """
-        # In case of technical difficulties
+        # Instructions
 
-        We've tried our best to prevent any glitches, but no one's perfect! If
-        something goes wrong during the experiment, you can always email
-        fredcallaway@berkeley.edu. However, the fastest way to get reimbursed for
-        your time is to fill out the following form. We suggest you copy down
-        the URL now, just in case. Please include a short description of what
-        happened and where you were in the experiment (e.g. what round number)
-        Thanks!
+        There are two more important things to understand:
+        1. You must spend at least 45 seconds on each round. A countdown timer
+           will show you how much more time you must spend on the round. You
+           won’t be able to proceed to the next round before the countdown has
+           finished, but you can take as much time as you like afterwards.
+        2. </b>You will earn <u>real money</u> for your flights.</b> Specifically,
+           one of the #{N_TRIALS} rounds will be chosen at random and you will receive 5%
+           of your earnings in that round as a bonus payment.
 
-        https://goo.gl/forms/CW0cAKyOHipFGXZE2
-      """
-
-      markdown """
-        # Quiz
-
-        Next up is a short quiz to confirm that you understand how to play
-        *Web of Cash*. If you get any questions wrong, you'll be sent back to
-        the instructions to review before taking the quiz again. Good luck!
+         You may proceed to take an entry quiz, or go back to review the instructions.
       """
     ]
     show_clickable_nav: true
 
 
   quiz = new Block
-    type: 'survey-multi-choice'  # note: I've edited this jspysch file
     preamble: -> markdown """
       # Quiz
     """
+    type: 'survey-multi-choice'  # note: I've edited this jspysch file
     questions: [
-      """
-        What will your bonus be based on?
-      """
-      # """
-      #   What does it mean for an arrow to have -3 on it?
-      # """
-      """
-        What does it mean for a location to have 7 stars on it?
-      """
-      """
-        What does it mean when there is a question mark on an arrow?
-      """
-    ]
+      "True or false: The hidden values will change each time I start a new round."
+      "How much does it cost to observe each hidden value?"
+      "How many hidden values am I allowed to observe in each round?"
+      "How is your bonus determined?"
+      ] .concat (if PARAMS.PR_type then [
+        "What does the feedback teach you?"
+    ] else [])
     options: [
-      ['Profit', 'Stars', 'Both profit and stars']
-      [
-        'You will receive $70 for visiting that location'
-        'You can earn a maximum of $7 after visiting that location'
-        'You can earn a maximum of $7 in the entire round if you visit that location'
-      ]
-      [
-        'You will receive no money for crossing that arrow'
-        'You will receive a random amount of money for crossing that arrow'
-        'You can click on the question mark to reveal the value of that arrow'
-      ]
-
+      ['True', 'False']
+      ['$0.01', '$0.05', '$1.60', '$2.80']
+      ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish']
+      ['10% of my best score on any round'
+       '10% of my total score on all rounds'
+       '5% of my best score on any round'
+       '5% of my score on a random round']
+      ['Whether I observed the rewards of relevant locations.'
+       'Whether I chose the move that was best according to the information I had.'
+       'The length of the delay is based on how much more money I could have earned by planning and deciding better.'
+       'All of the above.']
     ]
-    required: [true, true, true]
+    required: [true, true, true, true, true]
     correct: [
-      'Profit'
-      'You can earn a maximum of $7 after visiting that location'
-      'You can click on the question mark to reveal the value of that arrow'
+      'True'
+      fmtMoney PARAMS.info_cost
+      'As many or as few as I wish'
+      '5% of my score on a random round'
+      'All of the above.'
     ]
     on_mistake: (data) ->
-      alert """You got at least one question wrong. We'll send you back to review
-               the instructions; then you can try again."""
+      alert """You got at least one question wrong. We'll send you back to the
+               instructions and then you can try again."""
 
 
   instruct_loop = new Block
@@ -301,8 +306,8 @@ initializeExperiment = ->
   #   t.pseudo = t.stim.pseudo
 
 
-  main = new GraphBlock
-    timeline: BLOCKS.standard
+  main = new MDPBlock
+    timeline: _.shuffle TRIALS
 
 
   finish = new Block
@@ -338,15 +343,24 @@ initializeExperiment = ->
   # ========= START AND END THE EXPERIMENT ========= #
   # ================================================ #
 
+  # calculateBonus = ->
+  #   if BONUS?
+  #     return BONUS
+  #   data = jsPsych.data.getTrialsOfType 'mouselab-mdp'
+  #   bonus = mean (_.pluck data, 'score')
+  #   bonus = (Math.round (bonus * 100)) / 100
+  #   BONUS =  (Math.max 0, bonus) * PARAMS.bonus_rate
+  #   psiturk.recordUnstructuredData 'final_bonus', BONUS
+  #   return BONUS
+
   # bonus is the score on a random trial.
   BONUS = undefined
   calculateBonus = ->
+    if DEBUG then return 0
     if BONUS?
       return BONUS
-    data = jsPsych.data.getTrialsOfType 'mouselab-mdp'
-    bonus = mean (_.pluck data, 'score')
-    bonus = (Math.round (bonus * 100)) / 100
-    BONUS =  (Math.max 0, bonus) * PARAMS.bonus_rate
+    data = jsPsych.data.getTrialsOfType 'graph'
+    BONUS = 0.05 * Math.max 0, (_.sample data).score
     psiturk.recordUnstructuredData 'final_bonus', BONUS
     return BONUS
   
