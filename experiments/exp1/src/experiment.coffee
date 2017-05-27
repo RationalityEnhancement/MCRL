@@ -17,7 +17,8 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 0
+  condition = 1
+  counterbalance = 0    
 else
   console.log """
   # =============================== #
@@ -25,10 +26,10 @@ else
   # =============================== #
   """
 
-if mode is "{{ mode }}"
-  DEMO = true
-  condition = 0
-  counterbalance = 0
+#if mode is "{{ mode }}"
+#  DEMO = true
+#  condition = 0
+#  counterbalance = 0
 
 
 # Globals.
