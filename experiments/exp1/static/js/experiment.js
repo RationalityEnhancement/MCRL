@@ -10,11 +10,11 @@ var BLOCKS, DEBUG, DEMO, N_TRIALS, PARAMS, TRIALS, condition, counterbalance, cr
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-DEBUG = false;
+DEBUG = true;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 0;
+  condition = 1;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
@@ -53,12 +53,12 @@ $(window).on('load', function() {
     console.log('expData', expData);
     PARAMS = expData.conditions[condition % 3];
     PARAMS.start_time = Date(Date.now());
+    PARAMS.message = 'full';
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);
     if (DEBUG || DEMO) {
-      createStartButton();
-      return PARAMS.message = true;
+      return createStartButton();
     } else {
       console.log('Testing saveData');
       ERROR = null;

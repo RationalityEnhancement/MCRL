@@ -9,7 +9,7 @@ Demonstrates the jsych-mdp plugin
 
 
 
-DEBUG = no
+DEBUG = true
 
 if DEBUG
   console.log """
@@ -17,7 +17,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 0
+  condition = 1
 else
   console.log """
   # =============================== #
@@ -67,6 +67,7 @@ $(window).on 'load', ->
     console.log 'expData', expData
     PARAMS = expData.conditions[condition % 3]
     PARAMS.start_time = Date(Date.now())
+    PARAMS.message = 'full'
 
     # PARAMS.bonus_rate = .1
     BLOCKS = expData.blocks
@@ -75,7 +76,6 @@ $(window).on 'load', ->
 
     if DEBUG or DEMO
       createStartButton()
-      PARAMS.message = true
     else
       console.log 'Testing saveData'
       ERROR = null
