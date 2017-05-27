@@ -124,10 +124,24 @@ function metaMDP(){
             var current_location = meta_MDP.locations[meta_MDP.state.s]            
             var action_index=argmax(belief_state.mu_Q[belief_state.s-1])
             
+            var available_moves = belief_state.moves[belief_state.s-1]
+            var action_nrs = new Array()
+            for (var a in available_moves){
+                action_nrs.push(meta_MDP.action_nrs[available_moves[a]])
+            }
+            action_nrs.sort()
+                                    
             var rational_moves = new Array()
             for (var i=0; i<action_index.length; i++){
-                rational_moves.push(belief_state.moves[belief_state.s-1][action_index[i]])
+                var action_nr = action_nrs[action_index[i]]
+                for (a in available_moves){
+                    if (meta_MDP.action_nrs[available_moves[a]]==action_nr){
+                        var direction = available_moves[a]
+                    }
+                }                
+                rational_moves.push(direction)
             }
+
             return rational_moves
         }
     }
