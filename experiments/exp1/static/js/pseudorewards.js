@@ -165,7 +165,7 @@ function getPR(state,action_sequence){
         if (action_sequence[i].is_move & current_state.mu_Q[current_state.s-1].length==1){
             PR = 0;    
         }
-        //if you chose the option with the higher none value in the last step, then PR=0
+        //if you chose the option with the higher value in the last step, then PR=0
         var is_last_step=current_state.step==current_state.nr_steps
         
         if(action.is_move & is_last_step){        
@@ -173,14 +173,14 @@ function getPR(state,action_sequence){
             var observed_all_children = true
             var child_rewards= new Array()
             for (c in children){
-                var child_value = state.observations[children[c]-1]
+                var child_value = current_state.observations[children[c]-1]
                 child_rewards.push(child_value)
                 if (isNaN(child_value) | child_value == null){
                     var observed_everything=false
                     break
                 }
             }        
-            var chose_well = state.observations[action_sequence[i].move.next_state-1] == _.max(child_rewards)
+            var chose_well = current_state.observations[action_sequence[i].move.next_state-1] == _.max(child_rewards)
 
             if (is_last_step & observed_all_children & chose_well){
                 PR=0
@@ -725,17 +725,33 @@ function predictQValue(state,computation){
     
     var VPI = computeVPI(state,computation)
     var VOC1 = computeMyopicVOC(state,computation)
-    var ER = computeExpectedRewardOfActing(state)
+    var ER = computeExpectedRewardOfActing(state,computation)
     var cost = -meta_MDP.cost_per_click
     
     var Q_hat= feature_weights.VPI*VPI+feature_weights.VOC1*VOC1 + feature_weights.ER*ER+feature_weights.cost*cost
     return Q_hat
 }
 
-function computeExpectedRewardOfActing(state){
+function computeExpectedRewardOfActing(state,action){
     //returns the sum of the rewards the agent expects to receive for acting without further deliberation according to the belief encoded by the current state.
-    var plan = makePlan(state)
-    var ER = evaluatePlan(state,plan)
+    
+    if (action.is_click){    
+        var plan = makePlan(state)
+        var ER = evaluatePlan(state,plan)
+    }
+    else{
+        //the action is a move
+        var plan=new Array()
+        plan.push(action)
+        var next_state=deepCopy(state)
+        next_state.step= state.step+1
+        next_state.s = action.move.next_state
+        
+        if (next_state.s<=next_state.nr_steps){
+            plan.push(makePlan(next_state))
+        }
+        var ER = evaluatePlan(state,plan)        
+    }
     
     return ER
 }

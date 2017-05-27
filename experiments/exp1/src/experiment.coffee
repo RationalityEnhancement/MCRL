@@ -9,7 +9,7 @@ Demonstrates the jsych-mdp plugin
 
 
 
-DEBUG = no
+DEBUG = true
 
 if DEBUG
   console.log """
@@ -17,7 +17,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 0
+  condition = 2
 else
   console.log """
   # =============================== #
@@ -28,7 +28,7 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 0
+  condition = 1
   counterbalance = 0
 
 
