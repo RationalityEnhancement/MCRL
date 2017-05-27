@@ -14,11 +14,7 @@ DEBUG = true;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-<<<<<<< HEAD
   condition = 1;
-=======
-  condition = 2;
->>>>>>> 857484585769fbe26e9843b0e7f0ef7da13f929e
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
