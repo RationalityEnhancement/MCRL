@@ -1,4 +1,4 @@
-all: 
+all:
 	coffee -o static/js -cb src/*
 
 watch:
