@@ -6,18 +6,23 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, DEBUG, PARAMS, TRIALS, condition, counterbalance, createStartButton, delay, initializeExperiment, psiturk,
+var BLOCKS, DEBUG, DEMO, N_TRIALS, PARAMS, TRIALS, condition, counterbalance, createStartButton, delay, initializeExperiment, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-DEBUG = true;
+DEBUG = false;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 1;
-  counterbalance = 0;
+  condition = 0;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
+}
+
+if (mode === "{{ mode }}") {
+  DEMO = true;
+  condition = 0;
+  counterbalance = 0;
 }
 
 psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
@@ -27,6 +32,8 @@ BLOCKS = void 0;
 PARAMS = void 0;
 
 TRIALS = void 0;
+
+N_TRIALS = void 0;
 
 delay = function(time, func) {
   return setTimeout(func, time);
@@ -42,7 +49,7 @@ $(window).on('load', function() {
   return delay(300, function() {
     var ERROR, expData;
     console.log('Loading data');
-    expData = loadJson("static/json/condition_" + condition + "_" + counterbalance + ".json");
+    expData = loadJson("static/json/condition_0_0.json");
     console.log('expData', expData);
     PARAMS = expData.conditions[condition % 3];
     PARAMS.start_time = Date(Date.now());
@@ -82,7 +89,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var BONUS, Block, MDPBlock, N_TRIALS, QuizLoop, TextBlock, calculateBonus, debug_slide, experiment_timeline, finish, instruct_loop, instructions, main, prompt_resubmit, quiz, reprompt, save_data, text;
+  var BONUS, Block, MDPBlock, QuizLoop, TextBlock, calculateBonus, debug_slide, experiment_timeline, finish, instruct_loop, instructions, main, prompt_resubmit, quiz, reprompt, save_data, text;
   console.log('INITIALIZE EXPERIMENT');
   N_TRIALS = BLOCKS.standard.length;
   text = {
