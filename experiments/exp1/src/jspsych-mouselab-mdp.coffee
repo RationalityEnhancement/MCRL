@@ -291,8 +291,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       console.log 'feedback', feedback
     
       # if PARAMS.PR_type
-      #   result =
-      #     delay: Math.round feedback.delay
+      result =
+        delay: Math.round feedback.delay
       # else
       #   result =
       #     delay: switch @nMoves
@@ -300,8 +300,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       #       when 2 then 0
       #       when 3 then 1
 
-      result =
-        delay: 4
+      #result =
+      #  delay: 4
           
       @data.delays.push(result.delay)
             

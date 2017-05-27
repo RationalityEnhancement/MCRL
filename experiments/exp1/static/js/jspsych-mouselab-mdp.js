@@ -303,7 +303,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       feedback = registerMove(a);
       console.log('feedback', feedback);
       result = {
-        delay: 4
+        delay: Math.round(feedback.delay)
       };
       this.data.delays.push(result.delay);
       redGreenSpan = function(txt, val) {
