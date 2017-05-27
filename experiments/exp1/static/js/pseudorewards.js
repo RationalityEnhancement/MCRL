@@ -726,7 +726,7 @@ function predictQValue(state,computation){
     var VPI = computeVPI(state,computation)
     var VOC1 = computeMyopicVOC(state,computation)
     var ER = computeExpectedRewardOfActing(state,computation)
-    var cost = -meta_MDP.cost_per_click
+    var cost = computation.is_click*meta_MDP.cost_per_click
     
     var Q_hat= feature_weights.VPI*VPI+feature_weights.VOC1*VOC1 + feature_weights.ER*ER+feature_weights.cost*cost
     return Q_hat
@@ -747,7 +747,7 @@ function computeExpectedRewardOfActing(state,action){
         next_state.step= state.step+1
         next_state.s = action.move.next_state
         
-        if (next_state.s<=next_state.nr_steps){
+        if (next_state.step<=next_state.nr_steps){
             plan.push(makePlan(next_state))
         }
         var ER = evaluatePlan(state,plan)        
