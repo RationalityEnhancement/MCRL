@@ -217,6 +217,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     # Called when a state is clicked on.
     clickState: (g, s) =>
       LOG_DEBUG "clickState #{s}"
+      registerClick s
       if @stateLabels and @stateDisplay is 'click' and not g.label.text
         @addScore -@stateClickCost
         g.setLabel (@getStateLabel s)
