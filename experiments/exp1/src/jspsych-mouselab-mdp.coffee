@@ -110,7 +110,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @playerImage='static/images/plane.png'
         SIZE=120  # determines the size of states, text, etc...
 
-        leftMessage='Round: 1/1'
+        leftMessage='Round: #{TRIAL_INDEX}/1'
         centerMessage='&nbsp;'
         rightMessage='Score: <span id=mouselab-score/>'
         lowerMessage=KEY_DESCRIPTION
