@@ -97,7 +97,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
         @stateLabels=null  # object mapping from state names to labels
         @stateDisplay='never'  # one of 'never', 'hover', 'click', 'always'
-        @stateClickCost=0  # subtracted from score every time a state is clicked
+        @stateClickCost=PARAMS.info_cost  # subtracted from score every time a state is clicked
         @edgeLabels='reward'  # object mapping from edge names (s0 + '__' + s1) to labels
         @edgeDisplay='always'  # one of 'never', 'hover', 'click', 'always'
         @edgeClickCost=0  # subtracted from score every time an edge is clicked
