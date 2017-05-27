@@ -9,7 +9,7 @@ Demonstrates the jsych-mdp plugin
 
 
 
-DEBUG = yes
+DEBUG = no
 
 if DEBUG
   console.log """
@@ -17,8 +17,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 1
-  counterbalance = 0    
+  condition = 0
 else
   console.log """
   # =============================== #
@@ -26,10 +25,11 @@ else
   # =============================== #
   """
 
-#if mode is "{{ mode }}"
-#  DEMO = true
-#  condition = 0
-#  counterbalance = 0
+if mode is "{{ mode }}"
+  # Viewing experiment not through the PsiTurk server
+  DEMO = true
+  condition = 0
+  counterbalance = 0
 
 
 # Globals.
@@ -38,7 +38,7 @@ psiturk = new PsiTurk uniqueId, adServerLoc, mode
 BLOCKS = undefined
 PARAMS = undefined
 TRIALS = undefined
-
+N_TRIALS = undefined
 # because the order of arguments of setTimeout is awful.
 delay = (time, func) -> setTimeout func, time
 
@@ -63,7 +63,7 @@ $(window).on 'load', ->
 
   delay 300, ->
     console.log 'Loading data'
-    expData = loadJson "static/json/condition_#{condition}_#{counterbalance}.json"
+    expData = loadJson "static/json/condition_0_0.json"
     console.log 'expData', expData
     PARAMS = expData.conditions[condition % 3]
     PARAMS.start_time = Date(Date.now())
