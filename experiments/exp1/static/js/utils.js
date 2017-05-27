@@ -13,7 +13,7 @@ getTime = function() {
 };
 
 img = function(name) {
-  return "<img class='display' src='static/images/" + name + ".png'/>";
+  return "<img class='display' src='static/images/" + name + "'/>";
 };
 
 fmtMoney = function(v) {

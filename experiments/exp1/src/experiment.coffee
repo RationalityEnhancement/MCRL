@@ -138,8 +138,6 @@ initializeExperiment = ->
           values and/or choosing a better route, the longer the delay. <b>If
           you perform optimally, no feedback will be shown and you can proceed
           immediately.</b>
-
-          <div align="center"><img src="static/images/feedback.png" width=600></div>
         """]
       else []
 
@@ -207,7 +205,8 @@ initializeExperiment = ->
         money you earn or lose in a location, you have to click on it.</b> You
         can uncover the value of as many or as few locations as you wish.
 
-        <div align="center"><img src="static/js/images/instruction_images/Slide1.png" width=600></div>
+        
+        #{img('Slide1.png')}
 
         To navigate the airplane, use the arrows (the example above is non-interactive).
         You can uncover the value of a location at any time. Click "Next" to proceed.
