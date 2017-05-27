@@ -1,4 +1,4 @@
-function [glm_Q,MSE,R_total]=BayesianValueFunctionRegression(mdp,feature_extractor,nr_episodes,glm_policy)
+function [glm_Q,MSE,R_total]=BayesianValueFunctionRegression(mdp,feature_extractor,nr_episodes,glm_policy,training_data)
 %Bayesian regression is used to estimate the value function of the policy
 %defined by Thompson sampling with the supplied GLM.
 %inputs:
@@ -14,10 +14,9 @@ function [glm_Q,MSE,R_total]=BayesianValueFunctionRegression(mdp,feature_extract
 %  2. avg_MSE: average mean-squared error in the prediction of the state
 %  value by training episode.
 
-
+mdp.object_level_MDP=mdp.object_level_MDPs(1);
 [s0,mdp0]=mdp.newEpisode();
 actions=mdp0.actions;
-
 
 mu=zeros(size(feature_extractor(s0,actions(1),mdp)));
 nr_features=length(mu);
@@ -31,26 +30,50 @@ R_total=zeros(nr_episodes,1);
 
 
 nr_observations=0;
+
+nr_training_examples=length(training_data.state_actions);
+training_data_order=shuffle(1:nr_training_examples);
+
 for i=1:nr_episodes
     rewards=zeros(0,1);
     F=zeros(0,nr_features);
     
-   [s,mdp]=mdp.randomStart();
-    
+   %[s,mdp]=mdp.randomStart();
+   %Get the state in which the i-th action was taken
+   [s,mdp]=mdp.getStateFromActionSequence(training_data,training_data_order(i)-1);
+   
+   if s.step>s.nr_steps
+       continue;
+   end
+   
     t=0; %time step within episode
 
     while not(mdp.isTerminalState(s))
         t=t+1;
                 
-        %1. Choose action by Thompson sampling
+        %1. Choose first action according to what the participant did and
+        %choose subsequent actions according to the policy to be evaluated        
         if t==1
-            %the first action is chosen at random. This ensures that the
-            %algorithm learns to be accurate for all state-action pairs and
-            %not only those that the policy would execute.
-            action=drawSample(mdp.getActions(s));
+            action_id=training_data.state_actions(training_data_order(i));
+            
+            is_click=action_id<100;
+            
+            if is_click
+                %participant chose a click
+                action = struct('is_decision_mechanism',false,...
+                'is_computation',true,'planning_horizon',0,'decision',0,...
+                'from_state',s.s,'move',0,'state',action_id);
+            else
+                %participant chose a move
+                action = struct('is_decision_mechanism',true,...
+                'is_computation',false,'planning_horizon',0,'decision',0,...
+                'from_state',s.s,'move',0,'state',action_id-100);                
+            end
+            
         else
             action=contextualThompsonSampling(s,mdp,glm_policy);
         end
+        
         features=feature_extractor(s,action,mdp)';
         F=[F;features];
         

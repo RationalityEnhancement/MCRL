@@ -92,7 +92,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             end
         end
         
-        function [state,meta_MDP]=newEpisode(meta_MDP)
+        function [state,meta_MDP]=newEpisode(meta_MDP,problem_nr)
             
             meta_MDP.episode=meta_MDP.episode+1;
             
@@ -103,7 +103,9 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             
             %meta_MDP.payoff_matrix=meta_MDP.samplePayoffMatrix();
             %meta_MDP.outcome_probabilities=meta_MDP.sampleOutcomeProbabilities();
-            problem_nr=1+mod(meta_MDP.episode-1,numel(meta_MDP.object_level_MDPs));
+            if not(exist('problem_nr','var'))
+                problem_nr=1+mod(meta_MDP.episode-1,numel(meta_MDP.object_level_MDPs));
+            end
             meta_MDP.object_level_MDP=meta_MDP.object_level_MDPs(problem_nr);
             
             meta_MDP.total_nr_clicks=meta_MDP.nr_cells;
@@ -432,8 +434,10 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             
             if c.is_computation
                 if isnan(state.observations(c.state)) %not observed yet
+                    c_from = meta_MDP.object_level_MDP.parent_by_state(c.state);
+                    c_move = find(meta_MDP.object_level_MDP.T(c_from{1},c.state,:));
                     
-                    state.observations(c.state)=meta_MDP.object_level_MDP.rewards(c.from_state,c.state,c.move);%meta_MDP.object_level_MDP.rewards(c.from_state,c.state,c.move);
+                    state.observations(c.state)=meta_MDP.object_level_MDP.rewards(c_from{1},c.state,c_move);%meta_MDP.object_level_MDP.rewards(c.from_state,c.state,c.move);
                     next_state=meta_MDP.updateBelief(state,c.state);
                     
                 else %the box had already been opened before
@@ -453,7 +457,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                     c.decision);                
                 next_state.available_actions = find(any(squeeze(next_state.T(next_state.s,:,:))));
                 
-                r=meta_MDP.rewards(next_state.s);%meta_MDP.object_level_MDP.rewards(state.s,next_state.s,c.decision)-...
+                r=meta_MDP.object_level_MDP.rewards(state.s,next_state.s,c.decision);%-...
                   %  meta_MDP.costOfPlanning(state,c);
                                 
                 if isnan(next_state.s)
@@ -1410,6 +1414,77 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 end
 
             end
+        end
+        
+        function [current_state,meta_MDP]=getStateFromActionSequence(meta_MDP,data,index)
+            %find the relevant entries
+            
+            if index==0
+                trial_ID=data.trialID(1);
+                trial=data.trials(trial_ID);
+                meta_MDP.object_level_MDP=trial;
+                meta_MDP.rewards=trial.rewards;
+                current_state=meta_MDP.newEpisode();
+            else                
+                trial_ID=data.trialID(index)+1;
+                trial=data.trials(trial_ID);
+                meta_MDP.object_level_MDP=trial;
+                meta_MDP.rewards=trial.rewards;                
+                
+                state=meta_MDP.newEpisode();
+                
+                if index==1
+                    start_index=index;
+                else
+                    start_index=index;
+                    transition_found=false;
+                    while not(transition_found)
+                        transition_found=or(data.trialID(start_index)~=data.trialID(start_index-1),...
+                            data.trialNr(start_index)~=data.trialNr(start_index-1));
+                        
+                        if not(transition_found)
+                            start_index=start_index-1;
+                        end
+                        
+                        if start_index==1
+                            transition_found=true;
+                        end
+                    end
+                end
+                indices=start_index:index;
+                
+                current_state = state;
+                for i=1:length(indices)
+                    %simulate transitions
+                    computation_id = data.state_actions(indices(i));
+                    is_click=computation_id<100;
+                    
+                    
+                    if is_click
+                        c_to=computation_id;
+                        c_from=meta_MDP.object_level_MDP.parent_by_state{computation_id};
+                        c_move = find(meta_MDP.object_level_MDP.T(c_from,c_to,:));
+                        current_state.observations(computation_id)=...
+                            meta_MDP.object_level_MDP.rewards(c_from,c_to,c_move);
+                        
+                        current_state=meta_MDP.updateBelief(current_state,computation_id);
+                    else
+                        new_location = computation_id-100;
+                        move_nr = find(meta_MDP.object_level_MDP.T(current_state.s,new_location,:));
+                        
+                        current_state.observations(current_state.s)=...
+                            meta_MDP.object_level_MDP.rewards(current_state.s,...
+                            new_location,move_nr);
+                        
+                        current_state.s = new_location;
+                        current_state.step=current_state.step+1;
+                        current_state=meta_MDP.updateBelief(current_state,new_location);
+                        
+                        
+                    end
+                end
+            end
+            
         end
     end
     

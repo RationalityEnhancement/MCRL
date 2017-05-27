@@ -482,17 +482,13 @@ save('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/trial_proper
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/trial_properties_March1.mat')
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/experiment_March1.mat')
 
-all_trials=experiment; clear experiment
-properties_all_trials=trial_properties; clear trial_properties
-
-selected_16trials=[1:12,16:19];
-selected_12trials=[1:9,16:18];
-experiment=all_trials(selected_12trials);
-trial_properties=properties_all_trials(selected_12trials);
-experiment_json=rmfield(experiment,'states_by_path');
-savejson('',experiment_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/Experiment.json')
-save PilotExperiment experiment
-save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties.mat', 'trial_properties')
+selected_trials=[1:12,16:19];
+control_experiment=experiment(selected_trials);
+control_trial_properties=trial_properties(selected_trials);
+experiment_json=rmfield(control_experiment,'states_by_path')
+savejson('',experiment_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/MouselabMDPControlExperiment.json')
+save ControlExperiment control_experiment
+save('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/trial_properties_control_experiment.mat', 'control_trial_properties')
 
 
 

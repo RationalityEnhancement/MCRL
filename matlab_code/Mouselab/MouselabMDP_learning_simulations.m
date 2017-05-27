@@ -111,5 +111,5 @@ end
 [mean(avg_returns_without_PR);sem(avg_returns_without_PR)]
 
 figure()
-errorbar(squeeze(mean(returns_with_PR,2)),squeeze(std(returns_with_PR,[],2))),hold on
-plot(smooth(returns_without_PR,100))
+errorbar(squeeze(mean(returns_with_PR,2)),...
+    squeeze(std(returns_with_PR,[],2))),hold on

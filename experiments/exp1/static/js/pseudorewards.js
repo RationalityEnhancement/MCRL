@@ -707,13 +707,14 @@ function predictQValue(state,computation){
     feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
+            feature_weights = {VPI: 2.9952, VOC1: -0.4455, ER: 1.0155, cost: 2.8427};
+            //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.6:
-            feature_weights = {VPI: 0.6118, VOC1: 1.2708, ER: 1.3215}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
+            feature_weights = {VPI: 0.8452, VOC1: 0.3786, ER: 1.0048, cost: -2.2474}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.8:
-            feature_weights = {VPI: 0.6779, VOC1: 0.7060, ER: 1.2655};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
+            feature_weights = {VPI: -0.8690, VOC1: 0.9012, ER: 0.8991, cost: -0.4512};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
     console.log('weights', feature_weights)
@@ -725,8 +726,9 @@ function predictQValue(state,computation){
     var VPI = computeVPI(state,computation)
     var VOC1 = computeMyopicVOC(state,computation)
     var ER = computeExpectedRewardOfActing(state)
+    var cost = -meta_MDP.cost_per_click
     
-    var Q_hat= feature_weights.VPI*VPI+feature_weights.VOC1*VOC1 + feature_weights.ER*ER
+    var Q_hat= feature_weights.VPI*VPI+feature_weights.VOC1*VOC1 + feature_weights.ER*ER+feature_weights.cost*cost
     return Q_hat
 }
 
