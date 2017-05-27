@@ -3,7 +3,7 @@ markdown = (txt) -> converter.makeHtml(txt)
 
 getTime = -> (new Date).getTime()
 
-img = (name) -> """<img class='display' src='static/images/#{name}.png'/>"""
+img = (name) -> """<img class='display' src='static/images/#{name}'/>"""
 
 fmtMoney = (v) -> '$' + v.toFixed(2)
 
