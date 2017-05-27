@@ -49,9 +49,7 @@ $(window).on('load', function() {
     console.log('Loading data');
     expData = loadJson("static/json/condition_" + condition + "_" + counterbalance + ".json");
     console.log('expData', expData);
-    PARAMS = expData.params;
-    PARAMS.info_cost = 0.05;
-    PARAMS.PR_type = condition;
+    PARAMS = expData.conditions[condition % 3];
     PARAMS.start_time = Date(Date.now());
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;

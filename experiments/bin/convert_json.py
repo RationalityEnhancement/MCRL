@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import json
 import sys
 sys.path.append('lib')
@@ -67,7 +67,6 @@ def mat_to_standard():
             'stateRewards': stateRewards,
             'stateDisplay': 'click',
             'stateLabels': 'reward',
-            'stateClickCost': 0.05,
             'edgeDisplay': 'never',
             'path': path,
         }
@@ -82,13 +81,17 @@ def mat_to_standard():
         data = json.load(f)
     
     trials = [parse_trial(t, i) for i, t in enumerate(data)]
+
+    conditions = list(dict_product({
+        'info_cost': [0.01, 1.60, 2.80],
+        'PR_type': 2
+    }))
     cond = {
         'params': {
             'creation_date': str(datetime.now()),
-            'counter_i': 0,
-            'cond_i': 0,
         },
-        'blocks': {'standard': trials}
+        'blocks': {'standard': trials},
+        'conditions': conditions
     }
     with open(outfile, 'w+') as f:
         print('writing', outfile)
