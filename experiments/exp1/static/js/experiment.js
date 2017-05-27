@@ -14,7 +14,7 @@ DEBUG = true;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 2;
+  condition = 1;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
@@ -53,12 +53,12 @@ $(window).on('load', function() {
     console.log('expData', expData);
     PARAMS = expData.conditions[condition % 3];
     PARAMS.start_time = Date(Date.now());
+    PARAMS.message = 'full';
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);
     if (DEBUG || DEMO) {
-      createStartButton();
-      return PARAMS.message = true;
+      return createStartButton();
     } else {
       console.log('Testing saveData');
       ERROR = null;
