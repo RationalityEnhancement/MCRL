@@ -69,15 +69,6 @@ $(window).on 'load', ->
     PARAMS.start_time = Date(Date.now())
     PARAMS.message = 'full'
 
-    costLevel =
-      switch PARAMS.info_cost
-        when 0.01 then 'low'
-        when 1.60 then 'med'
-        when 2.80 then 'high'
-        else throw new Error('bad info_cost')
-
-    console.log 'costLevel', costLevel
-
     # PARAMS.bonus_rate = .1
     BLOCKS = expData.blocks
     TRIALS = BLOCKS.standard
@@ -112,6 +103,14 @@ initializeExperiment = ->
   console.log 'INITIALIZE EXPERIMENT'
 
   N_TRIALS = BLOCKS.standard.length
+
+  costLevel =
+    switch PARAMS.info_cost
+      when 0.01 then 'low'
+      when 1.60 then 'med'
+      when 2.80 then 'high'
+      else throw new Error('bad info_cost')
+
 
   #  ======================== #
   #  ========= TEXT ========= #
@@ -234,7 +233,7 @@ initializeExperiment = ->
         if you clicked on every location. <b>Every time you click a circle to
         observe its value, you pay a fee of #{fmtMoney PARAMS.info_cost}.</b>
 
-        #{img('task_images/Slide2_' + cost_level + '.png')}
+        #{img('task_images/Slide2_' + costLevel + '.png')}
 
         Each time you move to a
         location, your profit will be adjusted. If you move to a location with
@@ -340,7 +339,7 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      #instruct_loop
+      instruct_loop
       main
       finish
     ]
