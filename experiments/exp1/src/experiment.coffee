@@ -234,7 +234,7 @@ initializeExperiment = ->
         if you clicked on every location. <b>Every time you click a circle to
         observe its value, you pay a fee of #{fmtMoney PARAMS.info_cost}.</b>
 
-        #{img('task_images/Slide2_' + cost_level + '.png')}
+        #{img('task_images/Slide2_' + costLevel + '.png')}
 
         Each time you move to a
         location, your profit will be adjusted. If you move to a location with
