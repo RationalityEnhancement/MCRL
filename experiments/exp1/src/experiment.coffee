@@ -126,7 +126,7 @@ initializeExperiment = ->
 
     feedback: ->
       if PARAMS.PR_type
-        [markdown """
+        [markdown """  
           # Instructions
 
           <b>You will receive feedback about your planning. This feedback will
@@ -147,9 +147,10 @@ initializeExperiment = ->
           you perform optimally, no feedback will be shown and you can proceed
           immediately.</b> The example message here is not necessarily representative of the feedback you'll receive.
 
-        #{img('task_images/Slide4.png')}
+          #{img('task_images/Slide4.png')}
 
-        """]
+          """
+        ]
       else []
 
     constantDelay: ->
