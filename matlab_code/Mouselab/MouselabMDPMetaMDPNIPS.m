@@ -872,7 +872,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 [VOC,meta_MDP]=meta_MDP.myopicVOC(state,c);
             end
             
-            ER_act=meta_MDP.expectedRewardOfActing(state);
+            ER_act=meta_MDP.expectedRewardOfActing(state,c);
             
             %{
             action_features=[expected_regret;regret_reduction;VOC;...
@@ -1379,24 +1379,35 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                         
             Q_hat=weights.VPI*meta_MDP.computeVPI(state,computation)+...
                weights.VOC1*meta_MDP.myopicVOC(state,computation)+...
-               weights.ER*meta_MDP.expectedRewardOfActing(state)+...;
+               weights.ER*meta_MDP.expectedRewardOfActing(state,computation)+...;
                weights.cost*computation.is_computation*meta_MDP.cost_per_click;
         end
         
-        function ER=expectedRewardOfActing(meta_MDP,state)
-            plan=meta_MDP.makePlan(state);
+        function ER=expectedRewardOfActing(meta_MDP,state,computation)
+            plan=meta_MDP.makePlan(state,computation);
             ER=meta_MDP.evaluatePlan(plan,state);
         end
         
-        function plan=makePlan(meta_MDP,state)
+        function plan=makePlan(meta_MDP,state,computation)
             
             nr_steps=state.nr_steps-state.step+1;
             plan=zeros(nr_steps,1);
             
+            
             current_location=state.s;
             for s=1:nr_steps
-                available_actions=state.getAvailableActions(current_location);
-                plan(s)=available_actions(argmax(state.mu_Q(current_location,available_actions)));
+                
+                if and(s==1,computation.is_decision_mechanism)
+                    
+                    if computation.decision==0
+                        [~,computation.decision]=meta_MDP.decide(state,computation);
+                    end
+                    
+                    plan(s)=computation.decision;
+                else
+                    available_actions=state.getAvailableActions(current_location);
+                    plan(s)=available_actions(argmax(state.mu_Q(current_location,available_actions)));
+                end
                 current_location=meta_MDP.object_level_MDP.nextState(current_location,plan(s));
             end            
         end

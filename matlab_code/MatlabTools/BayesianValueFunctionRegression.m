@@ -65,9 +65,10 @@ for i=1:nr_episodes
                 'from_state',s.s,'move',0,'state',action_id);
             else
                 %participant chose a move
+                c_move=find(mdp.object_level_MDP.T(s.s,action_id-100,:));
                 action = struct('is_decision_mechanism',true,...
-                'is_computation',false,'planning_horizon',0,'decision',0,...
-                'from_state',s.s,'move',0,'state',action_id-100);                
+                'is_computation',false,'planning_horizon',0,'decision',c_move,...
+                'from_state',s.s,'move',c_move,'state',action_id-100);                
             end
             
         else

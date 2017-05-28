@@ -160,6 +160,62 @@ function getPR(state,action_sequence){
     //state: state struct
     //action_sequence: array of action structs
     
+    meta_MDP.cost_per_click=PARAMS.info_cost    
+    
+    //1. Predict the Q-value of the click sequence
+    var click_sequence = new Array()
+    var moves = new Array()
+    for (var i in action_sequence){
+        
+        action_sequence[i].cell=parseInt(action_sequence[i].cell)
+        
+        if (action_sequence[i].is_click){
+            click_sequence.push(action_sequence[i])
+        }
+        else{
+            moves.push(action_sequence[i])
+        }
+    }    
+    var Q_clicks = predictQValueOfSequence(state,click_sequence) 
+        
+    //2. Compute the state-value before the click sequence and PR for click sequence
+    var available_actions=getActions(state)        
+    var Q_values = new Array()
+    for (var a in available_actions)
+    {
+        Q_values.push(predictQValue(state,available_actions[a])) 
+    }
+    var V_s = _.max(Q_values)        
+    var PR_clicks = _.min([0,Q_clicks-V_s])
+            
+    //3. Predict the Q-value of the move
+    var state_after_clicks = getNextState(state,click_sequence)    
+    var Q_move=predictQValue(state_after_clicks,moves[0])
+
+    //4. Compute the value of the state after the click sequence
+    var available_actions2=getActions(state_after_clicks)        
+    var Q_values2 = new Array()
+    for (var a in available_actions2)
+    {
+        Q_values2.push(predictQValue(state_after_clicks,available_actions2[a])) 
+    }
+    var V_s_move = _.max(Q_values2)        
+    var PR_move = Q_move-V_s_move
+    //PR=0 if there is only one possible move and it was taken
+    if (state_after_clicks.mu_Q[state_after_clicks.s-1].length==1){
+        PR_move = 0;    
+    }
+    PR = PR_clicks+PR_move
+        
+    return PR    
+}
+
+
+function getPROld(state,action_sequence){
+    //getPR returns the sum of the pseudo-rewards taking a sequence of actions in a given state. The result should be zero if all actions are optimal and negative otherwise. 
+    //state: state struct
+    //action_sequence: array of action structs
+    
     meta_MDP.cost_per_click=PARAMS.info_cost
     
     var PRs = new Array()
@@ -168,14 +224,16 @@ function getPR(state,action_sequence){
     
     for (var i in action_sequence){
         
-        Q_a=predictQValue(current_state,action_sequence[i],current_state)
+        action_sequence[i].cell=parseInt(action_sequence[i].cell)
         
-        var available_actions=getActions(state)
+        Q_a=predictQValue(current_state,action_sequence[i])
+        
+        var available_actions=getActions(current_state)
         
         var Q_values = new Array()
         for (var a in available_actions)
         {
-            Q_values.push(predictQValue(current_state,available_actions[a],current_state)) 
+            Q_values.push(predictQValue(current_state,available_actions[a])) 
         }
         var V_s = _.max(Q_values)
         
@@ -803,14 +861,14 @@ function predictQValue(state,computation){
     feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {VPI: 2.9952, VOC1: -0.4455, ER: 1.0155, cost: 2.8427};
+            feature_weights = {VPI: 2.9950, VOC1: -0.4458, ER: 1.0156, cost: 2.8368};
             //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.6:
-            feature_weights = {VPI: 0.8452, VOC1: 0.3786, ER: 1.0048, cost: -2.2474}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
+            feature_weights = {VPI: 0.8455, VOC1: 0.3778, ER: 1.0050, cost: -2.2508}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.8:
-            feature_weights = {VPI: -0.8690, VOC1: 0.9012, ER: 0.8991, cost: -0.4512};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
+            feature_weights = {VPI: -0.8684, VOC1: 0.9016, ER: 0.8992, cost: -0.4534};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
     console.log('weights', feature_weights)
@@ -828,8 +886,56 @@ function predictQValue(state,computation){
     return Q_hat
 }
 
+function predictQValueOfSequence(state,computations){
+    //predictQValue(s,c) returns the Q-value our feature-based approximation predicts for performing computation c in state s.
+    
+    feature_weights = null;
+    switch(PARAMS.info_cost){
+        case 0.01:
+            feature_weights = {VPI: 2.9950, VOC1: -0.4458, ER: 1.0156, cost: 2.8368};
+            //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
+            break;
+        case 1.6:
+            feature_weights = {VPI: 0.8455, VOC1: 0.3778, ER: 1.0050, cost: -2.2508}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
+            break;
+        case 2.8:
+            feature_weights = {VPI: -0.8684, VOC1: 0.9016, ER: 0.8992, cost: -0.4534};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
+            break;
+
+    console.log('weights', feature_weights)
+
+    }
+    
+    //1. Compute the sum of the VPIs and VOC1 values of the individual computations and the sum of the costs
+    VPIs = new Array()
+    VOC1s = new Array()
+    costs = new Array()
+    current_state=deepCopy(state)
+    for (c in computations){
+        VPIs.push(computeVPI(current_state,computations[c]))
+        VOC1s.push(computeMyopicVOC(current_state,computations[c]))
+        costs.push(computations[c].is_click*meta_MDP.cost_per_click)
+        
+        current_state = getNextState(current_state,computations[c])
+    }
+    ER= computeExpectedRewardOfActing(state,computations[0])
+    
+    //2. predict the Q-value of the sequence
+    Q_seq = feature_weights.VPI*sum(VPIs)+feature_weights.VOC1*sum(VOC1s) + feature_weights.ER*ER+feature_weights.cost*sum(costs)
+    
+    return Q_seq
+        
+}
+
 function computeExpectedRewardOfActing(state,action){
     //returns the sum of the rewards the agent expects to receive for acting without further deliberation according to the belief encoded by the current state.
+    
+    if (action == undefined){
+        var plan = makePlan(state)
+        var ER = evaluatePlan(state,plan)
+        return ER
+    }
+    
     
     if (action.is_click){    
         var plan = makePlan(state)
