@@ -291,12 +291,14 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @data.queries[queryType][targetType].time.push Date.now() - @initTime
 
     displayFeedback: (a, s1) =>
-      feedback = registerMove a
-      console.log 'feedback', feedback
+      result = registerMove a
+      result.delay = Math.round result.delay  
+      feedback = result    
+      console.log 'feedback', result
     
       # if PARAMS.PR_type
-      result =
-        delay: Math.round feedback.delay
+      #result =
+      #  delay: Math.round feedback.delay
       # else
       #   result =
       #     delay: switch @nMoves

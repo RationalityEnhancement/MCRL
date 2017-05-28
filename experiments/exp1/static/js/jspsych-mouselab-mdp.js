@@ -304,11 +304,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
       var feedback, head, info, msg, penalty, redGreenSpan, result;
-      feedback = registerMove(a);
-      console.log('feedback', feedback);
-      result = {
-        delay: Math.round(feedback.delay)
-      };
+      result = registerMove(a);
+      result.delay = Math.round(result.delay);
+      feedback = result;
+      console.log('feedback', result);
       this.data.delays.push(result.delay);
       redGreenSpan = function(txt, val) {
         return "<span style='color: " + (redGreen(val)) + "; font-weight: bold;'>" + txt + "</span>";
