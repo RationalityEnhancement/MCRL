@@ -37,8 +37,7 @@ See comments throughout for hints
         /* ad.html  - the ad that people view first */
         #adlogo {
           width: 200px;
-          padding: 10px;
-          display: block;
+          padding: 2px;
         }
 
         #container-ad {
@@ -55,7 +54,6 @@ See comments throughout for hints
 <div id="container-ad" class="media">
     <div class="media-left pull-left" href='#'>
         <img id="adlogo" src="{{ server_location }}/static/images/berkeley.png" alt="Lab Logo" />
-        <!-- <img id="adlogo" src="static/images/berkeley.png" alt="Lab Logo" /> -->
     </div>
     <div class="media-body">
 
@@ -72,33 +70,31 @@ See comments throughout for hints
        <h1>Call for participants</h1>
        <p>The Computational Cognitive Science Group at the University
            of California, Berkeley (UC Berkeley) is looking for online
-           participants for a brief experiment on decision making.</p>
+           participants for a brief experiment on how people make decisions.</p>
 
-       <p>You will have the opportunity to earn a bonus of up to $2.30 in addition
-          to the base payment of $1.00. The experiment will take roughly 20
-          minutes to complete.</p>
+           <p>This HIT takes about 30 minutes. You will play an airplane flight simulation game for 20 rounds. You will decide where to fly your plane in order to maximize earnings. This pays $1.50 plus a performance bonus of up to $5.00.</p>
 
-       <p>The requirements for participation are:</p>
+               <p>The requirements are:</p>
 
-       <ul>
-          <li>You are at least 18 years old,</li>
-          <li>You have normal vision or wear corrective lenses, and</li>
-          <li>You are a fluent English speaker.</li>
-      </ul>
+               <ul>
+                  <li>You are at least 18 years old,</li>
+                  <li>You have normal vision or wear corrective lenses, and</li>
+                  <li>You are a fluent English speaker.</li>
+              </ul>
 
-      <p>Note: the experiment will only work in recent browsers, and
-       may have difficulty loading on slower connections.</p>
+              <p>Note: the experiment will only work in recent browsers, and
+               may have difficulty loading on slower connections.</p>
 
-       <div class="alert alert-warning">
-         <strong>This task can only be completed once.</strong>
-         If you have already completed this task before the system will not
-         allow you to run again. If this looks familiar please return the
-         HIT so someone else can participate.
-     </div>
-     <p>
-         Otherwise, please click the "Accept HIT" button on the Amazon site
-         above to begin the task.
-     </p>
+               <div class="alert alert-warning">
+                 <strong>This task can only be completed once.</strong>
+                 If you have already completed this task before the system will not
+                 allow you to run again. If this looks familiar please return the
+                 HIT so someone else can participate.
+             </div>
+             <p>
+                 Otherwise, please click the "Accept HIT" button on the Amazon site
+                 above to begin the task.
+             </p>
 
         {% else %}
 
@@ -114,8 +110,6 @@ See comments throughout for hints
                  openwindow() function below if you want you experiment
                  to work.
              -->
-            <!-- <img id="adlogo" left;" src="{{ server_location }}/static/images/berkeley.png" alt="Lab Logo" /> -->
-
              <h1>Thank you for accepting this HIT!</h1>
              <p>
                  By clicking the following URL link, you will be taken to the experiment,

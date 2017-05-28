@@ -126,7 +126,7 @@ initializeExperiment = ->
 
     feedback: ->
       if PARAMS.PR_type
-        [markdown """  
+        [markdown """
           # Instructions
 
           <b>You will receive feedback about your planning. This feedback will
