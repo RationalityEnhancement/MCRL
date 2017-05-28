@@ -361,7 +361,7 @@ function registerMove(direction){
             }
         }
         
-        if (_.max(Q_moves)>Q_click+0.05){
+        if (_.max(Q_moves) - Q_click > 0.50/meta_MDP.delay_per_point){
             observed_too_much = true;
         }
         
@@ -381,7 +381,7 @@ function registerMove(direction){
             Q_moves.push(predictQValue(intermediate_state,available_actions[a]))
         }        
     }    
-    var observed_too_little= (_.max(Q_clicks)> _.max(Q_moves) + 0.05)
+    var observed_too_little= (_.max(Q_clicks)- _.max(Q_moves) > 0.50/meta_MDP.delay_per_point)
     
     /*
     //feedback message based on full-observation policy:
