@@ -139,7 +139,7 @@ initializeExperiment = ->
           you perform optimally, no feedback will be shown and you can proceed
           immediately.</b>
 
-        #{img(fmtMoney PARAMS.info_cost + '/task_images/Slide4.png')}
+        #{img fmtMoney(PARAMS.info_cost) + '/task_images/Slide4.png'}
 
         """]
       else []
@@ -208,7 +208,7 @@ initializeExperiment = ->
         money you earn or lose in a location, you have to click on it.</b> You
         can uncover the value of as many or as few locations as you wish.
 
-        #{img(fmtMoney PARAMS.info_cost + '/task_images/Slide1.png')}
+        #{img fmtMoney(PARAMS.info_cost) + '/task_images/Slide1.png'}
 
         To navigate the airplane, use the arrows (the example above is non-interactive).
         You can uncover the value of a location at any time. Click "Next" to proceed.
@@ -225,7 +225,7 @@ initializeExperiment = ->
         if you clicked on every location. <b>Every time you click a circle to
         observe its value, you pay a fee of #{fmtMoney PARAMS.info_cost}.</b>
 
-        #{img(fmtMoney PARAMS.info_cost + '/task_images/Slide2.png')}
+        #{img fmtMoney(PARAMS.info_cost) + '/task_images/Slide2.png'}
 
         Each time you move to a
         location, your profit will be adjusted. If you move to a location with
@@ -247,7 +247,7 @@ initializeExperiment = ->
            one of the #{N_TRIALS} rounds will be chosen at random and you will receive 5%
            of your earnings in that round as a bonus payment.
 
-        #{img(fmtMoney PARAMS.info_cost + '/task_images/Slide3.png')}
+        #{img fmtMoney(PARAMS.info_cost) + '/task_images/Slide3.png'}
 
          You may proceed to take an entry quiz, or go back to review the instructions.
       """
@@ -331,7 +331,7 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      # instruct_loop
+      instruct_loop
       main
       finish
     ]
@@ -410,4 +410,4 @@ initializeExperiment = ->
     on_data_update: (data) ->
       console.log 'data', data
       psiturk.recordTrialData data
-
+      
