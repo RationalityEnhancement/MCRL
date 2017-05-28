@@ -464,8 +464,7 @@ function getNextState(state,actions,update_belief){
     for (a in actions){
         
         action= actions[a]
-        
-        
+                
         if (action.is_click){        
             next_state.observations[action.cell-1]=meta_MDP.locations[action.cell].reward
             
@@ -606,10 +605,10 @@ function getLocations(problem_nr){
 }
 
 function getTrials(){
-    var experiment = loadJson("static/json/condition_0.json");
-    var trials=experiment.trials;
-    // var trials = loadJson("static/json/trials.json");
-    // console.log('TRIALS', trials)
+    //var experiment = loadJson("static/json/condition_0_0.json");
+    //var trials=experiment.trials;
+    var trials = loadJson("static/json/trials.json");
+    console.log('TRIALS', trials)
     
     //TODO: Move this information into the JSON file. Otherwise this code won't generalize to other layouts.
     for (t in trials){
@@ -840,7 +839,7 @@ function computeExpectedRewardOfActing(state,action){
         next_state.s = action.move.next_state
         
         if (next_state.step<=next_state.nr_steps){
-            plan.push(makePlan(next_state))
+            plan=plan.concat(makePlan(next_state))
         }
         var ER = evaluatePlan(state,plan)        
     }
@@ -1051,14 +1050,14 @@ if (appears_best){
  
     lb=meta_MDP.mean_payoff-3*meta_MDP.std_payoff;
     ub=meta_MDP.mean_payoff;
-    delta_x=meta_MDP.std_payoff/100.0;
+    delta_x=meta_MDP.std_payoff/25.0;
     VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_max[0]+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff, x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))])})-meta_MDP.cost_per_click; 
 }
 else{
     //information is valuable if it reveals that action is optimal                
     lb=meta_MDP.mean_payoff;
     ub=meta_MDP.mean_payoff+3*meta_MDP.std_payoff;
-    delta_x=meta_MDP.std_payoff/100.0;
+    delta_x=meta_MDP.std_payoff/25.0;
     
     VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0, (mu_prior[a-1]-E_max[0]+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))-mu_alpha])})-meta_MDP.cost_per_click;                                
 }
