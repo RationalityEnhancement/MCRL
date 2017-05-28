@@ -69,12 +69,13 @@ $(window).on 'load', ->
     PARAMS.start_time = Date(Date.now())
     PARAMS.message = 'full'
 
-
+    PARAMS.info_cost = 0.02
     costLevel =
       switch PARAMS.info_cost
         when 0.01 then 'low'
         when 1.60 then 'med'
         when 2.80 then 'high'
+        else throw new Error('bad info_cost')
 
     console.log 'costLevel', costLevel
 

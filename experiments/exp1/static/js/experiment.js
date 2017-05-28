@@ -54,6 +54,7 @@ $(window).on('load', function() {
     PARAMS = expData.conditions[condition % 3];
     PARAMS.start_time = Date(Date.now());
     PARAMS.message = 'full';
+    PARAMS.info_cost = 0.02;
     costLevel = (function() {
       switch (PARAMS.info_cost) {
         case 0.01:
@@ -62,6 +63,8 @@ $(window).on('load', function() {
           return 'med';
         case 2.80:
           return 'high';
+        default:
+          throw new Error('bad info_cost');
       }
     })();
     console.log('costLevel', costLevel);
