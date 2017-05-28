@@ -69,6 +69,15 @@ $(window).on 'load', ->
     PARAMS.start_time = Date(Date.now())
     PARAMS.message = 'full'
 
+
+    costLevel =
+      switch PARAMS.info_cost
+        when 0.01 then 'low'
+        when 1.60 then 'med'
+        when 2.80 then 'high'
+
+    console.log 'costLevel', costLevel
+
     # PARAMS.bonus_rate = .1
     BLOCKS = expData.blocks
     TRIALS = BLOCKS.standard
