@@ -17,7 +17,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 2
+  condition = 0
 else
   console.log """
   # =============================== #
@@ -331,7 +331,7 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      instruct_loop
+      #instruct_loop
       main
       finish
     ]

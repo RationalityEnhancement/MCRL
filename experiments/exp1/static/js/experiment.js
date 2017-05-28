@@ -14,7 +14,7 @@ DEBUG = true;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 2;
+  condition = 0;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
@@ -231,7 +231,7 @@ initializeExperiment = function() {
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [instruct_loop, main, finish];
+    experiment_timeline = [main, finish];
   } else {
     experiment_timeline = [instruct_loop, main, finish];
   }

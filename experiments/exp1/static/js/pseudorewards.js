@@ -180,10 +180,14 @@ function getPR(state,action_sequence){
         var V_s = _.max(Q_values)
         
         var PR = Q_a-V_s
+        
+
         //PR=0 if there is only one possible move and it was taken
         if (action_sequence[i].is_move & current_state.mu_Q[current_state.s-1].length==1){
             PR = 0;    
         }
+        
+        /*
         //if you chose the option with the higher value in the last step, then PR=0
         var is_last_step=current_state.step==current_state.nr_steps
         
@@ -205,6 +209,7 @@ function getPR(state,action_sequence){
                 PR=0
             }
         }
+        */
         PRs.push(PR)
         
         current_state = getNextState(current_state,action_sequence[i])
