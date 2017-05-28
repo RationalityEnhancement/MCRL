@@ -535,8 +535,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     setLabel: (txt) ->
       # LOG_DEBUG "setLabel #{txt}"
-      if txt?
-        @label.setText "#{txt}"
+      if "#{txt}"
+        @label.setText "$#{txt}"
         @label.setFill (redGreen txt)
       else
         @label.setText ''

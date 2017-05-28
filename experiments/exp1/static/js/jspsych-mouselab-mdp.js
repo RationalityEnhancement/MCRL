@@ -583,8 +583,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     }
 
     State.prototype.setLabel = function(txt) {
-      if (txt != null) {
-        this.label.setText("" + txt);
+      if ("" + txt) {
+        this.label.setText("$" + txt);
         this.label.setFill(redGreen(txt));
       } else {
         this.label.setText('');

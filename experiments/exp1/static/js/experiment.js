@@ -47,13 +47,24 @@ $(window).on('load', function() {
   loadTimeout = delay(12000, slowLoad);
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
   return delay(300, function() {
-    var ERROR, expData;
+    var ERROR, costLevel, expData;
     console.log('Loading data');
     expData = loadJson("static/json/condition_0_0.json");
     console.log('expData', expData);
     PARAMS = expData.conditions[condition % 3];
     PARAMS.start_time = Date(Date.now());
     PARAMS.message = 'full';
+    costLevel = (function() {
+      switch (PARAMS.info_cost) {
+        case 0.01:
+          return 'low';
+        case 1.60:
+          return 'med';
+        case 2.80:
+          return 'high';
+      }
+    })();
+    console.log('costLevel', costLevel);
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);
