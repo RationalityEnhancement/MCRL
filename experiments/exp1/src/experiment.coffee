@@ -9,7 +9,7 @@ Demonstrates the jsych-mdp plugin
 
 
 
-DEBUG = true
+DEBUG = false
 
 if DEBUG
   console.log """
@@ -132,14 +132,14 @@ initializeExperiment = ->
              the information you had about the values of other locations.
 
           In the example below, not enough relevant values were observed, and
-          as a result there is a 41 second timeout penalty. <b>The duration of
+          as a result there is a 15 second timeout penalty. <b>The duration of
           the timeout penalty is proportional to how poorly you planned your
           route:</b> the more money you could have earned from observing more
           values and/or choosing a better route, the longer the delay. <b>If
           you perform optimally, no feedback will be shown and you can proceed
           immediately.</b>
 
-        #{img fmtMoney(PARAMS.info_cost) + '/task_images/Slide4.png'}
+        #{img('task_images/Slide4.png'}
 
         """]
       else []
@@ -208,7 +208,7 @@ initializeExperiment = ->
         money you earn or lose in a location, you have to click on it.</b> You
         can uncover the value of as many or as few locations as you wish.
 
-        #{img fmtMoney(PARAMS.info_cost) + '/task_images/Slide1.png'}
+        #{img('task_images/Slide1.png'}
 
         To navigate the airplane, use the arrows (the example above is non-interactive).
         You can uncover the value of a location at any time. Click "Next" to proceed.
@@ -225,7 +225,7 @@ initializeExperiment = ->
         if you clicked on every location. <b>Every time you click a circle to
         observe its value, you pay a fee of #{fmtMoney PARAMS.info_cost}.</b>
 
-        #{img fmtMoney(PARAMS.info_cost) + '/task_images/Slide2.png'}
+        #{img(‘task_images/Slide2_’ + cost_level + ‘.png'}
 
         Each time you move to a
         location, your profit will be adjusted. If you move to a location with
@@ -247,7 +247,7 @@ initializeExperiment = ->
            one of the #{N_TRIALS} rounds will be chosen at random and you will receive 5%
            of your earnings in that round as a bonus payment.
 
-        #{img fmtMoney(PARAMS.info_cost) + '/task_images/Slide3.png'}
+        #{img('task_images/Slide3.png'}
 
          You may proceed to take an entry quiz, or go back to review the instructions.
       """

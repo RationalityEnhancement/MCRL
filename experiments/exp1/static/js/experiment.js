@@ -10,7 +10,7 @@ var BLOCKS, DEBUG, DEMO, N_TRIALS, PARAMS, TRIALS, condition, counterbalance, cr
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-DEBUG = true;
+DEBUG = false;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
@@ -102,7 +102,7 @@ initializeExperiment = function() {
     },
     feedback: function() {
       if (PARAMS.PR_type) {
-        return [markdown("  # Instructions\n\n  <b>You will receive feedback about your planning. This feedback will\n  help you learn how to make better decisions.</b> After each flight, if\n  you did not plan optimally, a feedback message will apear. This message\n  will tell you two things:\n\n  1. Whether you observed too few relevant values or if you observed\n     irrelevant values (values of locations that you cant fly to).\n  2. Whether you flew along the best route given your current location and\n     the information you had about the values of other locations.\n\n  In the example below, not enough relevant values were observed, and\n  as a result there is a 41 second timeout penalty. <b>The duration of\n  the timeout penalty is proportional to how poorly you planned your\n  route:</b> the more money you could have earned from observing more\n  values and/or choosing a better route, the longer the delay. <b>If\n  you perform optimally, no feedback will be shown and you can proceed\n  immediately.</b>\n\n" + (img(fmtMoney(PARAMS.info_cost) + '/task_images/Slide4.png')) + "\n")];
+        return [markdown("  # Instructions\n\n  <b>You will receive feedback about your planning. This feedback will\n  help you learn how to make better decisions.</b> After each flight, if\n  you did not plan optimally, a feedback message will apear. This message\n  will tell you two things:\n\n  1. Whether you observed too few relevant values or if you observed\n     irrelevant values (values of locations that you cant fly to).\n  2. Whether you flew along the best route given your current location and\n     the information you had about the values of other locations.\n\n  In the example below, not enough relevant values were observed, and\n  as a result there is a 15 second timeout penalty. <b>The duration of\n  the timeout penalty is proportional to how poorly you planned your\n  route:</b> the more money you could have earned from observing more\n  values and/or choosing a better route, the longer the delay. <b>If\n  you perform optimally, no feedback will be shown and you can proceed\n  immediately.</b>\n\n" + (img(fmtMoney(PARAMS.info_cost) + '/task_images/Slide4.png')) + "\n")];
       } else {
         return [];
       }
