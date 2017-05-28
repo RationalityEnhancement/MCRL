@@ -145,7 +145,7 @@ initializeExperiment = ->
           route:</b> the more money you could have earned from observing more
           values and/or choosing a better route, the longer the delay. <b>If
           you perform optimally, no feedback will be shown and you can proceed
-          immediately.</b>
+          immediately.</b> The example message here is not necessarily representative of the feedback you'll receive.
 
         #{img('task_images/Slide4.png')}
 
