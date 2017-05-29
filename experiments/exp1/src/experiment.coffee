@@ -6,11 +6,18 @@ Demonstrates the jsych-mdp plugin
 
 ###
 # coffeelint: disable=max_line_length, indentation
+DEBUG = true
 
 
+experiment_nr = 1
 
-DEBUG = false
+switch experiment_nr
+    when 1 then CONDITIONS = {delayTypes: ['constant','featureBased','fullObservation'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
+    when 2 then CONDITIONS = {delayTypes: ['featureBased','objectLevel'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
+    when 3 then   CONDITIONS = {delayTypes: ['featureBased','constant'], messageTypes: ['full','simple'],infoCosts: [1.60]}
+    else console.log "Invalid experiment_nr!" 
 
+        
 if DEBUG
   console.log """
   X X X X X X X X X X X X X X X X X

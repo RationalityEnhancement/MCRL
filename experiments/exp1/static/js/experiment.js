@@ -6,11 +6,39 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, DEBUG, DEMO, N_TRIALS, PARAMS, TRIALS, condition, counterbalance, createStartButton, delay, initializeExperiment, psiturk,
+var BLOCKS, CONDITIONS, DEBUG, DEMO, N_TRIALS, PARAMS, TRIALS, condition, counterbalance, createStartButton, delay, experiment_nr, initializeExperiment, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-DEBUG = false;
+DEBUG = true;
+
+experiment_nr = 1;
+
+switch (experiment_nr) {
+  case 1:
+    CONDITIONS = {
+      delayTypes: ['constant', 'featureBased', 'fullObservation'],
+      messageTypes: ['full'],
+      infoCosts: [0.01, 1.60, 2.80]
+    };
+    break;
+  case 2:
+    CONDITIONS = {
+      delayTypes: ['featureBased', 'objectLevel'],
+      messageTypes: ['full'],
+      infoCosts: [0.01, 1.60, 2.80]
+    };
+    break;
+  case 3:
+    CONDITIONS = {
+      delayTypes: ['featureBased', 'constant'],
+      messageTypes: ['full', 'simple'],
+      infoCosts: [1.60]
+    };
+    break;
+  default:
+    console.log("Invalid experiment_nr!");
+}
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
