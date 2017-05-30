@@ -795,7 +795,7 @@ function valueFunction(state,environment_model){
     //returns the approximate value function V_PR(state | environment model)  specified by PARAMS.PR_type. state is the argument of the value function and the value is computed with respect to the information in environment_model.
     
     switch(PARAMS.PR_type){
-        case 1: //PRs based on the full-observation policy
+        case "fullObservation": //PRs based on the full-observation policy
             var current_location=state.s;
             var step=state.step-1;
     
@@ -840,7 +840,7 @@ function valueFunction(state,environment_model){
             var V=environment_model.mu_V[current_location-1]-information_cost;
             
             break;
-        case 2: //feature-based PRs
+        case "featureBased": //feature-based PRs
             console.log('feature-based valueFunction')
             Q_hat = new Array()
             
