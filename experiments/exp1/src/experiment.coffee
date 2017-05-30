@@ -37,11 +37,11 @@ for PRType in IVs.PRTypes
     else
         messageTypes = IVs.messageTypes
                 
-        for message in messageTypes            
-            for infoCost in IVs.infoCosts                
-                conditions.PRType.push(PRType)
-                conditions.messageType.push(message)
-                conditions.infoCost.push(infoCost)
+    for message in messageTypes            
+        for infoCost in IVs.infoCosts                
+            conditions.PRType.push(PRType)
+            conditions.messageType.push(message)
+            conditions.infoCost.push(infoCost)
         
 if DEBUG
   console.log """

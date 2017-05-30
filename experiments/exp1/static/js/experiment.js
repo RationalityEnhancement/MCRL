@@ -69,15 +69,15 @@ for (i = 0, len = ref.length; i < len; i++) {
     }
   } else {
     messageTypes = IVs.messageTypes;
-    for (j = 0, len1 = messageTypes.length; j < len1; j++) {
-      message = messageTypes[j];
-      ref1 = IVs.infoCosts;
-      for (k = 0, len2 = ref1.length; k < len2; k++) {
-        infoCost = ref1[k];
-        conditions.PRType.push(PRType);
-        conditions.messageType.push(message);
-        conditions.infoCost.push(infoCost);
-      }
+  }
+  for (j = 0, len1 = messageTypes.length; j < len1; j++) {
+    message = messageTypes[j];
+    ref1 = IVs.infoCosts;
+    for (k = 0, len2 = ref1.length; k < len2; k++) {
+      infoCost = ref1[k];
+      conditions.PRType.push(PRType);
+      conditions.messageType.push(message);
+      conditions.infoCost.push(infoCost);
     }
   }
 }
