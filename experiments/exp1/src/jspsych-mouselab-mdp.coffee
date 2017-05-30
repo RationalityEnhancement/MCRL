@@ -327,8 +327,14 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                   redGreenSpan "You gathered too much information.", -1                    
               else
                   redGreenSpan "You gathered the right information.", 1
-          else
-            redGreenSpan "Poor planning!", -1
+          if PARAMS.message is 'simple'
+                redGreenSpan "Poor planning!", -1
+          if PARAMS.message is 'none'
+                if result.delay is 1
+                    "Please wait 1 second."
+                else
+                    "Please wait "+result.delay+" seconds."
+            
 
         penalty = if result.delay then "<p>#{result.delay} second penalty</p>"
         info = do ->
@@ -339,12 +345,17 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             else
               redGreenSpan 'suboptimal.', -1
           else ''
-
-        msg = """
-          <h3>#{head}</h3>
-          <b>#{penalty}</b>
-          #{info}
-        """
+        
+        if PARAMS.message is 'full' or PARAMS.message is 'simple'
+            msg = """
+            <h3>#{head}</h3>
+            <b>#{penalty}</b>
+            #{info}
+            """
+        if PARAMS.message is 'none'
+            msg = """
+            <h3>#{head}</h3>
+            """
       else
         msg = "Please wait "+result.delay+" seconds."  
 

@@ -335,19 +335,27 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           if (PARAMS.message === 'full') {
             if (result.planned_too_little) {
               if (result.planned_too_much) {
-                return redGreenSpan("You gathered the wrong information.", -1);
+                redGreenSpan("You gathered the wrong information.", -1);
               } else {
-                return redGreenSpan("You gathered too little information.", -1);
+                redGreenSpan("You gathered too little information.", -1);
               }
             } else {
               if (result.planned_too_much) {
-                return redGreenSpan("You gathered too much information.", -1);
+                redGreenSpan("You gathered too much information.", -1);
               } else {
-                return redGreenSpan("You gathered the right information.", 1);
+                redGreenSpan("You gathered the right information.", 1);
               }
             }
-          } else {
-            return redGreenSpan("Poor planning!", -1);
+          }
+          if (PARAMS.message === 'simple') {
+            redGreenSpan("Poor planning!", -1);
+          }
+          if (PARAMS.message === 'none') {
+            if (result.delay === 1) {
+              return "Please wait 1 second.";
+            } else {
+              return "Please wait " + result.delay + " seconds.";
+            }
           }
         })();
         penalty = result.delay ? "<p>" + result.delay + " second penalty</p>" : void 0;
@@ -358,7 +366,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             return '';
           }
         })();
-        msg = "<h3>" + head + "</h3>\n<b>" + penalty + "</b>\n" + info;
+        if (PARAMS.message === 'full' || PARAMS.message === 'simple') {
+          msg = "<h3>" + head + "</h3>\n<b>" + penalty + "</b>\n" + info;
+        }
+        if (PARAMS.message === 'none') {
+          msg = "<h3>" + head + "</h3>";
+        }
       } else {
         msg = "Please wait " + result.delay + " seconds.";
       }
