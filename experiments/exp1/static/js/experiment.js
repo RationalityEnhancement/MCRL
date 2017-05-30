@@ -119,6 +119,8 @@ $(window).on('load', function() {
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);
+    psiturk.recordUnstructuredData('experiment_nr', experiment_nr);
+    psiturk.recordUnstructuredData('condition_nr', condition_nr);
     if (DEBUG || DEMO) {
       return createStartButton();
     } else {
