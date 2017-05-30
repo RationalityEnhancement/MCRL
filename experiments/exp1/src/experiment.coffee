@@ -6,11 +6,43 @@ Demonstrates the jsych-mdp plugin
 
 ###
 # coffeelint: disable=max_line_length, indentation
-
-
-
 DEBUG = true
 
+experiment_nr = 1
+
+switch experiment_nr
+    when 1 then IVs = {PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,1.60,2.80]}
+    when 2 then IVs = {PRTypes: ['featureBased','objectLevel'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
+    when 3 then   IVs = {PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.60]}
+    else console.log "Invalid experiment_nr!" 
+        
+nrDelays = IVs.PRTypes.length    
+nrMessages = IVs.messageTypes.length
+nrInfoCosts = IVs.infoCosts.length
+
+
+if experiment_nr is 1
+    nrConditions = 3 * 3
+else
+    nrConditions = nrDelays * nrMessages * nrInfoCosts
+
+conditions = {'PRType':[], 'messageType':[], 'infoCost': []}
+
+for PRType in IVs.PRTypes
+    if experiment_nr is 1
+        if PRType is 'none'
+            messageTypes = ['none']
+        else
+            messageTypes = ['full']
+    else
+        messageTypes = IVs.messageTypes
+                
+    for message in messageTypes            
+        for infoCost in IVs.infoCosts                
+            conditions.PRType.push(PRType)
+            conditions.messageType.push(message)
+            conditions.infoCost.push(infoCost)
+        
 if DEBUG
   console.log """
   X X X X X X X X X X X X X X X X X
@@ -23,8 +55,8 @@ else
   # =============================== #
   # ========= NORMAL MODE ========= #
   # =============================== #
-  """
-
+  """    
+    
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
@@ -65,14 +97,19 @@ $(window).on 'load', ->
     console.log 'Loading data'
     expData = loadJson "static/json/condition_0_0.json"
     console.log 'expData', expData
-    PARAMS = expData.conditions[condition % 3]
-    PARAMS.start_time = Date(Date.now())
-    PARAMS.message = 'full'
-
+    #PARAMS = expData.conditions[condition % 3]
+    #PARAMS.start_time = Date(Date.now())
+    #PARAMS.message = 'full'
+    
+    condition_nr = condition % nrConditions
+    PARAMS={'PR_type': conditions.PRType[condition_nr], 'feedback': conditions.PRType[condition_nr] != "none", 'info_cost': conditions.infoCost[condition_nr], 'message':  conditions.messageType[condition_nr]}
+        
     # PARAMS.bonus_rate = .1
     BLOCKS = expData.blocks
     TRIALS = BLOCKS.standard
     psiturk.recordUnstructuredData 'params', PARAMS
+    psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
+    psiturk.recordUnstructuredData 'condition_nr', condition_nr
 
     if DEBUG or DEMO
       createStartButton()
@@ -125,7 +162,7 @@ initializeExperiment = ->
     debug: -> if DEBUG then "`DEBUG`" else ''
 
     feedback: ->
-      if PARAMS.PR_type
+      if PARAMS.PR_type != "none"
         [markdown """
           # Instructions
 
@@ -154,7 +191,7 @@ initializeExperiment = ->
       else []
 
     constantDelay: ->
-      if PARAMS.PR_type
+      if PARAMS.PR_type != "none"
         ""
       else
         "Note: there will be short delays after taking some flights."
@@ -274,7 +311,7 @@ initializeExperiment = ->
       "How much does it cost to observe each hidden value?"
       "How many hidden values am I allowed to observe in each round?"
       "How is your bonus determined?"
-      ] .concat (if PARAMS.PR_type then [
+      ] .concat (if PARAMS.PR_type != "none" then [
         "What does the feedback teach you?"
     ] else [])
     options: [

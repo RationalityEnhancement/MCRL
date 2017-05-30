@@ -494,6 +494,27 @@ savejson('',experiment_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/exper
 save PilotExperiment experiment
 save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties.mat', 'trial_properties')
 
+%% Object-level PRs for 2nd post-NIPS experiment
+load PilotExperiment
+load('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties.mat')
+
+addpath('~/Dropbox/PhD/Gamification/')
+
+for t=1:numel(experiment)
+    [pseudoreward_matrices{t},V{t},policy{t}]=optimalPseudoRewards(....
+        experiment(t).T,experiment(t).rewards,experiment(t).horizon,1,false,true)
+    
+    for step=1:3
+        for from=1:17
+            for to=1:17
+                pseudorewards{t}{step}{from}{to}=pseudoreward_matrices{t}(from,to,step);
+            end
+        end
+    end
+end
+
+savejson('',pseudorewards,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/ObjectLevelPRs.json')
+savejson('',pseudorewards,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/exp1/static/json/ObjectLevelPRs.json')
 
 
 %% evaluate the performance of different levels of planning
