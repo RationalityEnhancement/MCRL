@@ -29,8 +29,11 @@ else
 conditions = {'PRType':[], 'messageType':[], 'infoCost': []}
 
 for PRType in IVs.PRTypes
-    if experiment_nr is 1 and PRType is 'none'
-        messageTypes = ['none']
+    if experiment_nr is 1
+        if PRType is 'none'
+            messageTypes = ['none']
+        else
+            messageTypes = ['full']
     else
         messageTypes = IVs.messageTypes
                 

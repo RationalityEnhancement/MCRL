@@ -61,8 +61,12 @@ conditions = {
 ref = IVs.PRTypes;
 for (i = 0, len = ref.length; i < len; i++) {
   PRType = ref[i];
-  if (experiment_nr === 1 && PRType === 'none') {
-    messageTypes = ['none'];
+  if (experiment_nr === 1) {
+    if (PRType === 'none') {
+      messageTypes = ['none'];
+    } else {
+      messageTypes = ['full'];
+    }
   } else {
     messageTypes = IVs.messageTypes;
     for (j = 0, len1 = messageTypes.length; j < len1; j++) {
