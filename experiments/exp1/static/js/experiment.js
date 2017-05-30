@@ -10,7 +10,7 @@ var BLOCKS, DEBUG, DEMO, N_TRIALS, PARAMS, TRIALS, condition, counterbalance, cr
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-DEBUG = false;
+DEBUG = true;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
@@ -243,7 +243,7 @@ initializeExperiment = function() {
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [instruct_loop, main, finish];
+    experiment_timeline = [main, finish];
   } else {
     experiment_timeline = [instruct_loop, main, finish];
   }
@@ -256,7 +256,7 @@ initializeExperiment = function() {
     if (BONUS != null) {
       return BONUS;
     }
-    data = jsPsych.data.getTrialsOfType('graph');
+    data = jsPsych.data.getTrialsOfType('mouselab-mdp');
     BONUS = 0.05 * Math.max(0, (_.sample(data)).score);
     psiturk.recordUnstructuredData('final_bonus', BONUS);
     return BONUS;

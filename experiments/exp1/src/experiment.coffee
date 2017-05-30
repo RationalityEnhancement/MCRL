@@ -9,7 +9,7 @@ Demonstrates the jsych-mdp plugin
 
 
 
-DEBUG = false
+DEBUG = true
 
 if DEBUG
   console.log """
@@ -340,7 +340,7 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      instruct_loop
+      # instruct_loop
       main
       finish
     ]
@@ -372,7 +372,7 @@ initializeExperiment = ->
     if DEBUG then return 0
     if BONUS?
       return BONUS
-    data = jsPsych.data.getTrialsOfType 'graph'
+    data = jsPsych.data.getTrialsOfType 'mouselab-mdp'
     BONUS = 0.05 * Math.max 0, (_.sample data).score
     psiturk.recordUnstructuredData 'final_bonus', BONUS
     return BONUS
