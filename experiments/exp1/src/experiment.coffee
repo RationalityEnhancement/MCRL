@@ -20,7 +20,11 @@ switch experiment_nr
 nrDelays = IVs.PRTypes.length    
 nrMessages = IVs.messageTypes.length
 nrInfoCosts = IVs.infoCosts.length
-nrConditions = nrDelays * nrMessages * nrInfoCosts
+
+if experiment_nr is 1
+    nrConditions = 3 * 3
+else
+    nrConditions = nrDelays * nrMessages * nrInfoCosts
 
 conditions = {'PRType':[], 'messageType':[], 'infoCost': []}
 

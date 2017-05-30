@@ -46,7 +46,11 @@ nrMessages = IVs.messageTypes.length;
 
 nrInfoCosts = IVs.infoCosts.length;
 
-nrConditions = nrDelays * nrMessages * nrInfoCosts;
+if (experiment_nr === 1) {
+  nrConditions = 3 * 3;
+} else {
+  nrConditions = nrDelays * nrMessages * nrInfoCosts;
+}
 
 conditions = {
   'PRType': [],
