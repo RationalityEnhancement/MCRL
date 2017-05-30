@@ -308,6 +308,24 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       result.delay = Math.round(result.delay);
       feedback = result;
       console.log('feedback', result);
+      if (PARAMS.feedback) {
+        result = {
+          delay: Math.round(feedback.delay)
+        };
+      } else {
+        result = {
+          delay: (function() {
+            switch (this.nMoves) {
+              case 1:
+                return 8;
+              case 2:
+                return 0;
+              case 3:
+                return 1;
+            }
+          }).call(this)
+        };
+      }
       this.data.delays.push(result.delay);
       redGreenSpan = function(txt, val) {
         return "<span style='color: " + (redGreen(val)) + "; font-weight: bold;'>" + txt + "</span>";
