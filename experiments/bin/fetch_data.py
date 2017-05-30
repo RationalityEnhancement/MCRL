@@ -109,7 +109,8 @@ def reformat_data(version):
             wid, aid = uid.split(':')
             identifiers['worker_id'].append(wid)
             identifiers['assignment_id'].append(aid)
-            identifiers['pid'] = row['pid'] = pid_labeler(wid)
+            identifiers['pid'].append(pid_labeler(wid))
+            row['pid'] = pid_labeler(wid)
 
             bonus_row = df[df[1] == 'final_bonus']
             if len(bonus_row):
