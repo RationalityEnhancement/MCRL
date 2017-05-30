@@ -10,7 +10,7 @@ var BLOCKS, DEBUG, DEMO, N_TRIALS, PARAMS, TRIALS, condition, counterbalance, cr
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-DEBUG = true;
+DEBUG = false;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
@@ -54,6 +54,7 @@ $(window).on('load', function() {
     PARAMS = expData.conditions[condition % 3];
     PARAMS.start_time = Date(Date.now());
     PARAMS.message = 'full';
+    PARAMS.condition = condition;
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);

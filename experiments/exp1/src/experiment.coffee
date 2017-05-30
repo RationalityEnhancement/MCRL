@@ -9,7 +9,7 @@ Demonstrates the jsych-mdp plugin
 
 
 
-DEBUG = true
+DEBUG = false
 
 if DEBUG
   console.log """
@@ -68,6 +68,7 @@ $(window).on 'load', ->
     PARAMS = expData.conditions[condition % 3]
     PARAMS.start_time = Date(Date.now())
     PARAMS.message = 'full'
+    PARAMS.condition = condition
 
     # PARAMS.bonus_rate = .1
     BLOCKS = expData.blocks
