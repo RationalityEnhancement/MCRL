@@ -301,7 +301,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
           delay: Math.round feedback.delay
       else
         result =
-          delay: switch @nMoves
+          delay: switch @data.actions.length
             when 1 then 8
             when 2 then 0
             when 3 then 1
