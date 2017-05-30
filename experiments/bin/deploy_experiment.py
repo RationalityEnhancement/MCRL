@@ -117,7 +117,7 @@ if __name__ == "__main__":
         "-a", '--archive',
         default=False,
         type=bool,
-        help="Do not archive experiment/.")
+        help="Archive experiment/.")
 
     args = parser.parse_args()
     check_debug(args)

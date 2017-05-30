@@ -3,7 +3,7 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-base_path = "/home/cocosci/cocosci-fred.dreamhosters.com"
+base_path = "/home/cocosci/cocosci-mcrl.dreamhosters.com"
 INTERP = os.path.join(base_path, 'bin', 'python')
 if sys.executable != INTERP:
     os.execl(INTERP, INTERP, *sys.argv)

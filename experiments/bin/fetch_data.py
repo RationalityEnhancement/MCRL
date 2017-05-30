@@ -188,7 +188,7 @@ if __name__ == "__main__":
               "data was collected."))
     parser.add_argument(
         "-a", "--address",
-        default="http://cocosci-fred.dreamhosters.com/data",
+        default="http://cocosci-mcrl.dreamhosters.com/data",
         help="Address from which to fetch data files.")
     parser.add_argument(
         "-u", "--user",
