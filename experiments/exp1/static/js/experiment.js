@@ -6,7 +6,7 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, conditions, counterbalance, createStartButton, delay, experiment_nr, i, infoCost, initializeExperiment, j, k, len, len1, len2, message, nrConditions, nrDelays, nrInfoCosts, nrMessages, psiturk, ref, ref1, ref2,
+var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, conditions, counterbalance, createStartButton, delay, experiment_nr, i, infoCost, initializeExperiment, j, k, len, len1, len2, message, messageTypes, nrConditions, nrDelays, nrInfoCosts, nrMessages, psiturk, ref, ref1,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -18,7 +18,7 @@ switch (experiment_nr) {
   case 1:
     IVs = {
       PRTypes: ['none', 'featureBased', 'fullObservation'],
-      messageTypes: ['full'],
+      messageTypes: ['full', 'none'],
       infoCosts: [0.01, 1.60, 2.80]
     };
     break;
@@ -57,15 +57,19 @@ conditions = {
 ref = IVs.PRTypes;
 for (i = 0, len = ref.length; i < len; i++) {
   PRType = ref[i];
-  ref1 = IVs.messageTypes;
-  for (j = 0, len1 = ref1.length; j < len1; j++) {
-    message = ref1[j];
-    ref2 = IVs.infoCosts;
-    for (k = 0, len2 = ref2.length; k < len2; k++) {
-      infoCost = ref2[k];
-      conditions.PRType.push(PRType);
-      conditions.messageType.push(message);
-      conditions.infoCost.push(infoCost);
+  if (experiment_nr === 1 && PRType === 'none') {
+    messageTypes = ['none'];
+  } else {
+    messageTypes = IVs.messageTypes;
+    for (j = 0, len1 = messageTypes.length; j < len1; j++) {
+      message = messageTypes[j];
+      ref1 = IVs.infoCosts;
+      for (k = 0, len2 = ref1.length; k < len2; k++) {
+        infoCost = ref1[k];
+        conditions.PRType.push(PRType);
+        conditions.messageType.push(message);
+        conditions.infoCost.push(infoCost);
+      }
     }
   }
 }
@@ -225,11 +229,11 @@ initializeExperiment = function() {
     }
 
     QuizLoop.prototype.loop_function = function(data) {
-      var c, l, len3, ref3;
+      var c, l, len3, ref2;
       console.log('data', data);
-      ref3 = data[data.length].correct;
-      for (l = 0, len3 = ref3.length; l < len3; l++) {
-        c = ref3[l];
+      ref2 = data[data.length].correct;
+      for (l = 0, len3 = ref2.length; l < len3; l++) {
+        c = ref2[l];
         if (!c) {
           return true;
         }
@@ -281,10 +285,10 @@ initializeExperiment = function() {
   instruct_loop = new Block({
     timeline: [instructions, quiz],
     loop_function: function(data) {
-      var c, l, len3, ref3;
-      ref3 = data[1].correct;
-      for (l = 0, len3 = ref3.length; l < len3; l++) {
-        c = ref3[l];
+      var c, l, len3, ref2;
+      ref2 = data[1].correct;
+      for (l = 0, len3 = ref2.length; l < len3; l++) {
+        c = ref2[l];
         if (!c) {
           return true;
         }

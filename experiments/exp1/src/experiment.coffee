@@ -11,7 +11,7 @@ DEBUG = true
 experiment_nr = 1
 
 switch experiment_nr
-    when 1 then IVs = {PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
+    when 1 then IVs = {PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,1.60,2.80]}
     when 2 then IVs = {PRTypes: ['featureBased','objectLevel'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
     when 3 then   IVs = {PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.60]}
     else console.log "Invalid experiment_nr!" 
@@ -25,8 +25,13 @@ nrConditions = nrDelays * nrMessages * nrInfoCosts
 conditions = {'PRType':[], 'messageType':[], 'infoCost': []}
 
 for PRType in IVs.PRTypes
-        for message in IVs.messageTypes
-            for infoCost in IVs.infoCosts
+    if experiment_nr is 1 and PRType is 'none'
+        messageTypes = ['none']
+    else
+        messageTypes = IVs.messageTypes
+                
+        for message in messageTypes            
+            for infoCost in IVs.infoCosts                
                 conditions.PRType.push(PRType)
                 conditions.messageType.push(message)
                 conditions.infoCost.push(infoCost)
