@@ -298,7 +298,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     
       if PARAMS.PRType is 'none'
         result.delay = switch @data.actions.length
-            when 1 then 8
+            when 1 then 5
             when 2 then 0
             when 3 then 1
 

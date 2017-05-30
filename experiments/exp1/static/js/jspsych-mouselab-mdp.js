@@ -312,7 +312,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         result.delay = (function() {
           switch (this.data.actions.length) {
             case 1:
-              return 8;
+              return 5;
             case 2:
               return 0;
             case 3:
