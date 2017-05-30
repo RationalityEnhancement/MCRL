@@ -8,7 +8,6 @@ Demonstrates the jsych-mdp plugin
 # coffeelint: disable=max_line_length, indentation
 DEBUG = true
 
-
 experiment_nr = 1
 
 switch experiment_nr
@@ -365,7 +364,7 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      instruct_loop
+      #instruct_loop
       main
       finish
     ]

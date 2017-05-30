@@ -307,7 +307,7 @@ initializeExperiment = function() {
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [instruct_loop, main, finish];
+    experiment_timeline = [main, finish];
   } else {
     experiment_timeline = [instruct_loop, main, finish];
   }
