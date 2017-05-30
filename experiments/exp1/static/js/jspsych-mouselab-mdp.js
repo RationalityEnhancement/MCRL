@@ -116,6 +116,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         leftMessage = TRIAL_INDEX + "/" + N_TRIALS;
       }
       checkObj(this);
+      this.initial = "" + this.initial;
       this.invKeys = _.invert(this.keys);
       this.data = {
         delays: [],
@@ -215,6 +216,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.clickState = function(g, s) {
       LOG_DEBUG("clickState " + s);
+      if (this.complete || s === this.initial) {
+        return;
+      }
       registerClick(s);
       if (this.stateLabels && this.stateDisplay === 'click' && !g.label.text) {
         this.addScore(-this.stateClickCost);
@@ -308,6 +312,24 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       result.delay = Math.round(result.delay);
       feedback = result;
       console.log('feedback', result);
+      if (PARAMS.feedback) {
+        result = {
+          delay: Math.round(feedback.delay)
+        };
+      } else {
+        result = {
+          delay: (function() {
+            switch (this.data.actions.length) {
+              case 1:
+                return 8;
+              case 2:
+                return 0;
+              case 3:
+                return 1;
+            }
+          }).call(this)
+        };
+      }
       this.data.delays.push(result.delay);
       redGreenSpan = function(txt, val) {
         return "<span style='color: " + (redGreen(val)) + "; font-weight: bold;'>" + txt + "</span>";
@@ -317,19 +339,27 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           if (PARAMS.message === 'full') {
             if (result.planned_too_little) {
               if (result.planned_too_much) {
-                return redGreenSpan("You gathered the wrong information.", -1);
+                redGreenSpan("You gathered the wrong information.", -1);
               } else {
-                return redGreenSpan("You gathered too little information.", -1);
+                redGreenSpan("You gathered too little information.", -1);
               }
             } else {
               if (result.planned_too_much) {
-                return redGreenSpan("You gathered too much information.", -1);
+                redGreenSpan("You gathered too much information.", -1);
               } else {
-                return redGreenSpan("You gathered the right information.", 1);
+                redGreenSpan("You gathered the right information.", 1);
               }
             }
-          } else {
-            return redGreenSpan("Poor planning!", -1);
+          }
+          if (PARAMS.message === 'simple') {
+            redGreenSpan("Poor planning!", -1);
+          }
+          if (PARAMS.message === 'none') {
+            if (result.delay === 1) {
+              return "Please wait 1 second.";
+            } else {
+              return "Please wait " + result.delay + " seconds.";
+            }
           }
         })();
         penalty = result.delay ? "<p>" + result.delay + " second penalty</p>" : void 0;
@@ -340,7 +370,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             return '';
           }
         })();
-        msg = "<h3>" + head + "</h3>\n<b>" + penalty + "</b>\n" + info;
+        if (PARAMS.message === 'full' || PARAMS.message === 'simple') {
+          msg = "<h3>" + head + "</h3>\n<b>" + penalty + "</b>\n" + info;
+        }
+        if (PARAMS.message === 'none') {
+          msg = "<h3>" + head + "</h3>";
+        }
       } else {
         msg = "Please wait " + result.delay + " seconds.";
       }
@@ -358,7 +393,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             });
             return _this.arrive(s1);
           };
-        })(this)), result.delay * 1000);
+        })(this)), (DEBUG ? 1000 : result.delay * 1000));
       } else {
         $('#mdp-feedback').css({
           display: 'none'

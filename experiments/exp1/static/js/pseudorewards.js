@@ -78,6 +78,7 @@ function metaMDP(){
         std_payoff: 10.6,        
         object_level_MDPs: trials,
         object_level_MDP: [],
+        object_level_PRs: [],
         locations: [], //contains all the states in the meta_MDP; the initial position corresponds to 1
         state: [],
         previous_state: [],
@@ -94,6 +95,8 @@ function metaMDP(){
             
             this.object_level_MDP=this.object_level_MDPs[problem_nr]
             this.locations=getLocations(problem_nr)            
+            var temp = loadObjectLevelPRs()
+            this.object_level_PRs=temp[problem_nr]
             
             subject_value_of_1h=20; //50 dollars worth of subjective utility per hour
             nr_trials = Object.size(this.object_level_MDPs)
@@ -158,7 +161,11 @@ function metaMDP(){
 function getPR(state,action_sequence){
     //getPR returns the sum of the pseudo-rewards taking a sequence of actions in a given state. The result should be zero if all actions are optimal and negative otherwise. 
     //state: state struct
-    //action_sequence: array of action structs
+    //action_sequence: array of action structs        
+    if (PARAMS.PR_type == "objectLevel"){         
+        var object_level_PRs = getObjectLevelPR(meta_MDP.object_level_MDP.trialID, state, action_sequence)
+        return sum(object_level_PRs)
+    }
     
     meta_MDP.cost_per_click=PARAMS.info_cost    
     
@@ -361,6 +368,27 @@ function getObjectLevelPR(problem_nr,initial_state,actions){
     return PRs        
 }
 
+function bestMove(state){
+    //bestMove(s) returns the best move available in state s
+    
+    var all_PRs=meta_MDP.object_level_PRs
+    var max_OL_PR=_.max(all_PRs[state.step-1][state.s-1])
+    var best_next_state_id = _.indexOf(all_PRs[state.step-1][state.s-1],max_OL_PR)+1
+    
+    
+    
+    var available_moves = getMoves(meta_MDP.locations[state.s])
+    
+    for (m in available_moves){
+        if (available_moves[m].move.next_state == best_next_state_id){
+            var best_move = available_moves[m]
+        }
+    }
+    
+    return best_move
+            
+}
+
 function registerMove(direction){    
     //returns the delay and type of feedback message
     //adds the move to the array moves
@@ -475,6 +503,7 @@ function registerMove(direction){
         }
     }
     */
+    var best_move = bestMove(meta_MDP.state).move
     
     //update the state of the meta-MDP
     meta_MDP.state=getNextState(meta_MDP.state,clicks.concat([move]),true)    
@@ -485,7 +514,8 @@ function registerMove(direction){
     return {delay: delay,
             planned_too_little: observed_too_little,
             planned_too_much: observed_too_much,
-            information_used_correctly: information_used_correctly
+            information_used_correctly: information_used_correctly,
+            optimal_action: best_move
            }
 }
 
@@ -795,7 +825,7 @@ function valueFunction(state,environment_model){
     //returns the approximate value function V_PR(state | environment model)  specified by PARAMS.PR_type. state is the argument of the value function and the value is computed with respect to the information in environment_model.
     
     switch(PARAMS.PR_type){
-        case 1: //PRs based on the full-observation policy
+        case "fullObservation": //PRs based on the full-observation policy
             var current_location=state.s;
             var step=state.step-1;
     
@@ -840,7 +870,7 @@ function valueFunction(state,environment_model){
             var V=environment_model.mu_V[current_location-1]-information_cost;
             
             break;
-        case 2: //feature-based PRs
+        case "featureBased": //feature-based PRs
             console.log('feature-based valueFunction')
             Q_hat = new Array()
             

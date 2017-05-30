@@ -6,15 +6,85 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, DEBUG, DEMO, N_TRIALS, PARAMS, TRIALS, condition, counterbalance, createStartButton, delay, initializeExperiment, psiturk,
+var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, conditions, counterbalance, createStartButton, delay, experiment_nr, i, infoCost, initializeExperiment, j, k, len, len1, len2, message, messageTypes, nrConditions, nrDelays, nrInfoCosts, nrMessages, psiturk, ref, ref1,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-DEBUG = false;
+DEBUG = true;
+
+experiment_nr = 1;
+
+switch (experiment_nr) {
+  case 1:
+    IVs = {
+      PRTypes: ['none', 'featureBased', 'fullObservation'],
+      messageTypes: ['full', 'none'],
+      infoCosts: [0.01, 1.60, 2.80]
+    };
+    break;
+  case 2:
+    IVs = {
+      PRTypes: ['featureBased', 'objectLevel'],
+      messageTypes: ['full'],
+      infoCosts: [0.01, 1.60, 2.80]
+    };
+    break;
+  case 3:
+    IVs = {
+      PRTypes: ['none', 'featureBased'],
+      messageTypes: ['full', 'simple'],
+      infoCosts: [1.60]
+    };
+    break;
+  default:
+    console.log("Invalid experiment_nr!");
+}
+
+nrDelays = IVs.PRTypes.length;
+
+nrMessages = IVs.messageTypes.length;
+
+nrInfoCosts = IVs.infoCosts.length;
+
+if (experiment_nr === 1) {
+  nrConditions = 3 * 3;
+} else {
+  nrConditions = nrDelays * nrMessages * nrInfoCosts;
+}
+
+conditions = {
+  'PRType': [],
+  'messageType': [],
+  'infoCost': []
+};
+
+ref = IVs.PRTypes;
+for (i = 0, len = ref.length; i < len; i++) {
+  PRType = ref[i];
+  if (experiment_nr === 1) {
+    if (PRType === 'none') {
+      messageTypes = ['none'];
+    } else {
+      messageTypes = ['full'];
+    }
+  } else {
+    messageTypes = IVs.messageTypes;
+  }
+  for (j = 0, len1 = messageTypes.length; j < len1; j++) {
+    message = messageTypes[j];
+    ref1 = IVs.infoCosts;
+    for (k = 0, len2 = ref1.length; k < len2; k++) {
+      infoCost = ref1[k];
+      conditions.PRType.push(PRType);
+      conditions.messageType.push(message);
+      conditions.infoCost.push(infoCost);
+    }
+  }
+}
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 0;
+  condition = 1;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
@@ -47,17 +117,23 @@ $(window).on('load', function() {
   loadTimeout = delay(12000, slowLoad);
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
   return delay(300, function() {
-    var ERROR, expData;
+    var ERROR, condition_nr, expData;
     console.log('Loading data');
     expData = loadJson("static/json/condition_0_0.json");
     console.log('expData', expData);
-    PARAMS = expData.conditions[condition % 3];
-    PARAMS.start_time = Date(Date.now());
-    PARAMS.message = 'full';
-    PARAMS.condition = condition;
+    condition_nr = condition % nrConditions;
+    PARAMS = {
+      'PR_type': conditions.PRType[condition_nr],
+      'feedback': conditions.PRType[condition_nr] !== "none",
+      'info_cost': conditions.infoCost[condition_nr],
+      'message': conditions.messageType[condition_nr]
+    };
+    PARAMS.condition = condition_nr;
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);
+    psiturk.recordUnstructuredData('experiment_nr', experiment_nr);
+    psiturk.recordUnstructuredData('condition_nr', condition_nr);
     if (DEBUG || DEMO) {
       return createStartButton();
     } else {
@@ -114,14 +190,14 @@ initializeExperiment = function() {
       }
     },
     feedback: function() {
-      if (PARAMS.PR_type) {
+      if (PARAMS.PR_type !== "none") {
         return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight, if\nyou did not plan optimally, a feedback message will apear. This message\nwill tell you two things:\n\n1. Whether you observed too few relevant values or if you observed\n   irrelevant values (values of locations that you cant fly to).\n2. Whether you flew along the best route given your current location and\n   the information you had about the values of other locations.\n\nIn the example below, not enough relevant values were observed, and\nas a result there is a 15 second timeout penalty. <b>The duration of\nthe timeout penalty is proportional to how poorly you planned your\nroute:</b> the more money you could have earned from observing more\nvalues and/or choosing a better route, the longer the delay. <b>If\nyou perform optimally, no feedback will be shown and you can proceed\nimmediately.</b> The example message here is not necessarily representative of the feedback you'll receive.\n\n" + (img('task_images/Slide4.png')) + "\n")];
       } else {
         return [];
       }
     },
     constantDelay: function() {
-      if (PARAMS.PR_type) {
+      if (PARAMS.PR_type !== "none") {
         return "";
       } else {
         return "Note: there will be short delays after taking some flights.";
@@ -162,11 +238,11 @@ initializeExperiment = function() {
     }
 
     QuizLoop.prototype.loop_function = function(data) {
-      var c, i, len, ref;
+      var c, l, len3, ref2;
       console.log('data', data);
-      ref = data[data.length].correct;
-      for (i = 0, len = ref.length; i < len; i++) {
-        c = ref[i];
+      ref2 = data[data.length].correct;
+      for (l = 0, len3 = ref2.length; l < len3; l++) {
+        c = ref2[l];
         if (!c) {
           return true;
         }
@@ -207,7 +283,7 @@ initializeExperiment = function() {
       return markdown("# Quiz");
     },
     type: 'survey-multi-choice',
-    questions: ["True or false: The hidden values will change each time I start a new round.", "How much does it cost to observe each hidden value?", "How many hidden values am I allowed to observe in each round?", "How is your bonus determined?"].concat((PARAMS.PR_type ? ["What does the feedback teach you?"] : [])),
+    questions: ["True or false: The hidden values will change each time I start a new round.", "How much does it cost to observe each hidden value?", "How many hidden values am I allowed to observe in each round?", "How is your bonus determined?"].concat((PARAMS.PR_type !== "none" ? ["What does the feedback teach you?"] : [])),
     options: [['True', 'False'], ['$0.01', '$0.05', '$1.60', '$2.80'], ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish'], ['10% of my best score on any round', '10% of my total score on all rounds', '5% of my best score on any round', '5% of my score on a random round'], ['Whether I observed the rewards of relevant locations.', 'Whether I chose the move that was best according to the information I had.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']],
     required: [true, true, true, true, true],
     correct: ['True', fmtMoney(PARAMS.info_cost), 'As many or as few as I wish', '5% of my score on a random round', 'All of the above.'],
@@ -218,10 +294,10 @@ initializeExperiment = function() {
   instruct_loop = new Block({
     timeline: [instructions, quiz],
     loop_function: function(data) {
-      var c, i, len, ref;
-      ref = data[1].correct;
-      for (i = 0, len = ref.length; i < len; i++) {
-        c = ref[i];
+      var c, l, len3, ref2;
+      ref2 = data[1].correct;
+      for (l = 0, len3 = ref2.length; l < len3; l++) {
+        c = ref2[l];
         if (!c) {
           return true;
         }
@@ -232,7 +308,7 @@ initializeExperiment = function() {
     }
   });
   main = new MDPBlock({
-    timeline: _.shuffle(TRIALS)
+    timeline: DEBUG ? TRIALS.slice(0, 2) : _.shuffle(TRIALS)
   });
   finish = new Block({
     type: 'button-response',
@@ -251,9 +327,6 @@ initializeExperiment = function() {
   BONUS = void 0;
   calculateBonus = function() {
     var data;
-    if (DEBUG) {
-      return 0;
-    }
     if (BONUS != null) {
       return BONUS;
     }

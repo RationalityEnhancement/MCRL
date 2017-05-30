@@ -124,7 +124,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       # _.extend this, config
       checkObj this
-
+      @initial = "#{@initial}"
       @invKeys = _.invert @keys
       @data =
         delays: []
@@ -217,6 +217,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     # Called when a state is clicked on.
     clickState: (g, s) =>
       LOG_DEBUG "clickState #{s}"
+      if @complete or s is @initial
+        return
       registerClick s
       if @stateLabels and @stateDisplay is 'click' and not g.label.text
         @addScore -@stateClickCost
@@ -296,18 +298,15 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       feedback = result    
       console.log 'feedback', result
     
-      # if PARAMS.PR_type
-      #result =
-      #  delay: Math.round feedback.delay
-      # else
-      #   result =
-      #     delay: switch @nMoves
-      #       when 1 then 8
-      #       when 2 then 0
-      #       when 3 then 1
-
-      #result =
-      #  delay: 4
+      if PARAMS.feedback
+        result =
+          delay: Math.round feedback.delay
+      else
+        result =
+          delay: switch @data.actions.length
+            when 1 then 8
+            when 2 then 0
+            when 3 then 1
           
       @data.delays.push(result.delay)
             
@@ -327,8 +326,14 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                   redGreenSpan "You gathered too much information.", -1                    
               else
                   redGreenSpan "You gathered the right information.", 1
-          else
-            redGreenSpan "Poor planning!", -1
+          if PARAMS.message is 'simple'
+                redGreenSpan "Poor planning!", -1
+          if PARAMS.message is 'none'
+                if result.delay is 1
+                    "Please wait 1 second."
+                else
+                    "Please wait "+result.delay+" seconds."
+            
 
         penalty = if result.delay then "<p>#{result.delay} second penalty</p>"
         info = do ->
@@ -339,12 +344,17 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             else
               redGreenSpan 'suboptimal.', -1
           else ''
-
-        msg = """
-          <h3>#{head}</h3>
-          <b>#{penalty}</b>
-          #{info}
-        """
+        
+        if PARAMS.message is 'full' or PARAMS.message is 'simple'
+            msg = """
+            <h3>#{head}</h3>
+            <b>#{penalty}</b>
+            #{info}
+            """
+        if PARAMS.message is 'none'
+            msg = """
+            <h3>#{head}</h3>
+            """
       else
         msg = "Please wait "+result.delay+" seconds."  
 
@@ -361,7 +371,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             @freeze = false
             $('#mdp-feedback').css(display: 'none')
             @arrive s1
-          ), result.delay * 1000
+          ), (if DEBUG then 1000 else result.delay * 1000)
       else
             $('#mdp-feedback').css(display: 'none')
             @arrive s1
