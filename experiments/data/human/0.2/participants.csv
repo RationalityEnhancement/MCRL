@@ -1,0 +1,44 @@
+PR_type,bonus,completed,info_cost,message,pid,start_time,version
+2,0.30000000000000004,True,2.8,full,0,Tue May 30 2017 15:25:27 GMT-0400 (Eastern Daylight Time),0.2
+2,0.9199999999999999,True,2.8,full,1,Tue May 30 2017 14:28:06 GMT-0400 (EDT),0.2
+2,0.497,True,0.01,full,2,Tue May 30 2017 11:51:37 GMT-0700 (PDT),0.2
+2,0.0,True,2.8,full,3,Tue May 30 2017 15:49:48 GMT-0400 (Eastern Daylight Time),0.2
+2,0.1,True,1.6,full,4,Wed May 31 2017 00:02:35 GMT+0530 (India Standard Time),0.2
+2,0.2,True,0.01,full,5,Tue May 30 2017 13:58:51 GMT-0400 (Eastern Daylight Time),0.2
+2,1.693,True,0.01,full,6,Wed May 31 2017 02:30:55 GMT+0800 (Malay Peninsula Standard Time),0.2
+2,1.56,True,2.8,full,7,Tue May 30 2017 14:11:11 GMT-0400 (Eastern Daylight Time),0.2
+2,0.42000000000000004,True,1.6,full,8,Tue May 30 2017 14:34:17 GMT-0400 (Eastern Daylight Time),0.2
+2,0.42000000000000004,True,1.6,full,9,Tue May 30 2017 13:47:08 GMT-0500 (Central Daylight Time),0.2
+2,0.0,False,0.01,full,10,Tue May 30 2017 12:38:18 GMT-0600 (MDT),0.2
+2,1.6925000000000001,True,0.01,full,11,Tue May 30 2017 14:49:03 GMT-0400 (EDT),0.2
+2,0.6000000000000001,True,2.8,full,12,Tue May 30 2017 11:52:51 GMT-0700 (Pacific Daylight Time),0.2
+2,1.72,True,2.8,full,13,Tue May 30 2017 12:32:09 GMT-0600 (Mountain Standard Time),0.2
+2,0.0,False,1.6,full,14,Tue May 30 2017 14:51:35 GMT-0400 (Eastern Daylight Time),0.2
+2,0.68,True,2.8,full,15,Tue May 30 2017 12:39:57 GMT-0600 (Mountain Daylight Time),0.2
+2,2.2920000000000003,True,0.01,full,16,Tue May 30 2017 13:28:37 GMT-0500 (Central Daylight Time),0.2
+2,0.0,True,1.6,full,17,Wed May 31 2017 02:04:35 GMT+0800 (Malay Peninsula Standard Time),0.2
+2,1.6935,True,0.01,full,18,Tue May 30 2017 14:15:29 GMT-0600 (Mountain Standard Time),0.2
+2,1.1900000000000002,True,2.8,full,19,Tue May 30 2017 15:56:55 GMT-0400 (Eastern Daylight Time),0.2
+2,1.094,True,0.01,full,20,Tue May 30 2017 14:46:15 GMT-0400 (Eastern Daylight Time),0.2
+2,0.19,True,2.8,full,21,Tue May 30 2017 13:43:42 GMT-0400 (Eastern Daylight Time),0.2
+2,1.6920000000000002,True,0.01,full,22,Tue May 30 2017 21:43:32 GMT+0200 (Romance Daylight Time),0.2
+2,1.89,True,1.6,full,23,Wed May 31 2017 00:57:02 GMT+0530 (India Standard Time),0.2
+2,0.0,False,1.6,full,24,Tue May 30 2017 12:30:44 GMT-0700 (US Mountain Standard Time),0.2
+2,1.34,True,1.6,full,25,Tue May 30 2017 14:49:38 GMT-0400 (Eastern Daylight Time),0.2
+2,0.8,True,1.6,full,26,Tue May 30 2017 16:11:20 GMT-0400 (Eastern Standard Time),0.2
+2,0.66,True,2.8,full,27,Tue May 30 2017 14:43:28 GMT-0400 (Eastern Daylight Time),0.2
+2,1.04,True,1.6,full,28,Tue May 30 2017 13:41:43 GMT-0600 (Central America Standard Time),0.2
+2,1.34,True,2.8,full,29,Tue May 30 2017 14:29:43 GMT-0500 (CDT),0.2
+2,1.6800000000000002,True,2.8,full,30,Tue May 30 2017 12:32:52 GMT-0600 (Mountain Daylight Time),0.2
+2,2.0420000000000003,True,0.01,full,31,Tue May 30 2017 15:26:33 GMT-0400 (Eastern Standard Time),0.2
+2,1.54,True,1.6,full,32,Tue May 30 2017 12:13:33 GMT-0700 (PDT),0.2
+2,1.7300000000000002,True,1.6,full,33,Tue May 30 2017 14:52:41 GMT-0500 (Central Daylight Time),0.2
+2,1.05,True,2.8,full,34,Tue May 30 2017 16:05:57 GMT-0400 (Eastern Daylight Time),0.2
+2,1.3800000000000001,True,1.6,full,35,Tue May 30 2017 15:44:43 GMT-0400 (Eastern Daylight Time),0.2
+2,1.6935,True,0.01,full,36,Tue May 30 2017 14:29:04 GMT-0400 (Eastern Daylight Time),0.2
+2,2.095,True,0.01,full,37,Tue May 30 2017 21:00:45 GMT+0200 (Central Europe Daylight Time),0.2
+2,1.6960000000000002,True,0.01,full,38,Tue May 30 2017 14:50:02 GMT-0400 (Eastern Daylight Time),0.2
+2,0.0,False,1.6,full,39,Tue May 30 2017 14:22:27 GMT-0400 (Eastern Daylight Time),0.2
+2,1.6920000000000002,True,0.01,full,40,Tue May 30 2017 15:23:48 GMT-0400 (Eastern Daylight Time),0.2
+2,0.7000000000000001,True,1.6,full,41,Tue May 30 2017 14:26:46 GMT-0400 (Eastern Standard Time),0.2
+2,1.3800000000000001,True,1.6,full,42,Tue May 30 2017 14:07:02 GMT-0500 (SA Pacific Standard Time),0.2
