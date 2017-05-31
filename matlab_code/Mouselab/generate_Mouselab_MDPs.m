@@ -504,6 +504,8 @@ for t=1:numel(experiment)
     [pseudoreward_matrices{t},V{t},policy{t}]=optimalPseudoRewards(....
         experiment(t).T,experiment(t).rewards,experiment(t).horizon,1,false,true)
     
+    max_score(t)=V{t}(1,1);
+    
     for step=1:3
         for from=1:17
             for to=1:17
@@ -516,6 +518,8 @@ end
 savejson('',pseudorewards,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/ObjectLevelPRs.json')
 savejson('',pseudorewards,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/exp1/static/json/ObjectLevelPRs.json')
 
+
+csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/optimal.csv',max_score)
 
 %% evaluate the performance of different levels of planning
 %{
