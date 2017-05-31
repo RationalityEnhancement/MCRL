@@ -12,9 +12,16 @@ var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, condi
 
 DEBUG = true;
 
-experiment_nr = 1;
+experiment_nr = 0;
 
 switch (experiment_nr) {
+  case 0:
+    IVs = {
+      PRTypes: ['none', 'featureBased', 'fullObservation'],
+      messageTypes: ['full', 'none'],
+      infoCosts: [1.60]
+    };
+    break;
   case 1:
     IVs = {
       PRTypes: ['none', 'featureBased', 'fullObservation'],
@@ -46,11 +53,16 @@ nrMessages = IVs.messageTypes.length;
 
 nrInfoCosts = IVs.infoCosts.length;
 
-if (experiment_nr === 1) {
-  nrConditions = 3 * 3;
-} else {
-  nrConditions = nrDelays * nrMessages * nrInfoCosts;
-}
+nrConditions = (function() {
+  switch (experiment_nr) {
+    case 0:
+      return 3;
+    case 1:
+      return 3 * 3;
+    default:
+      return nrDelays * nrMessages * nrInfoCosts;
+  }
+})();
 
 conditions = {
   'PRType': [],
@@ -61,7 +73,7 @@ conditions = {
 ref = IVs.PRTypes;
 for (i = 0, len = ref.length; i < len; i++) {
   PRType = ref[i];
-  if (experiment_nr === 1) {
+  if (experiment_nr <= 1) {
     if (PRType === 'none') {
       messageTypes = ['none'];
     } else {
