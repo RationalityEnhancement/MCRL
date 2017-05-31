@@ -311,24 +311,33 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         "<span style='color: #{redGreen val}; font-weight: bold;'>#{txt}</span>"
       
       if PARAMS.message
-          if PARAMS.message is 'full'
-            if result.planned_too_little
-              if result.planned_too_much
-                  head = redGreenSpan "You gathered the wrong information.", -1            
-              else
-                  head = redGreenSpan "You gathered too little information.", -1            
-            else
-              if result.planned_too_much
-                  head = redGreenSpan "You gathered too much information.", -1                    
-              else
-                  head = redGreenSpan "You gathered the right information.", 1
-          if PARAMS.message is 'simple'
-                head = redGreenSpan "Poor planning!", -1
-          if PARAMS.message is 'none'
-                if result.delay is 1
-                    head = "Please wait 1 second."
+          if PARAMS.PR_type is 'objectLevel'                
+                #if the move was optimal, say so
+                if a is result.optimal_action.direction
+                    head = redGreenSpan "You chose the best possible move.", 1            
                 else
-                    head = "Please wait "+result.delay+" seconds."
+                    head = redGreenSpan "Bad move! You should have moved #{result.optimal_action.direction}.", -1            
+                
+                #if the move was sub-optimal point out the optimal move
+          else            
+              if PARAMS.message is 'full'
+                if result.planned_too_little
+                  if result.planned_too_much
+                      head = redGreenSpan "You gathered the wrong information.", -1            
+                  else
+                      head = redGreenSpan "You gathered too little information.", -1            
+                else
+                  if result.planned_too_much
+                      head = redGreenSpan "You gathered too much information.", -1                    
+                  else
+                      head = redGreenSpan "You gathered the right information.", 1
+              if PARAMS.message is 'simple'
+                    head = redGreenSpan "Poor planning!", -1
+              if PARAMS.message is 'none'
+                    if result.delay is 1
+                        head = "Please wait 1 second."
+                    else
+                        head = "Please wait "+result.delay+" seconds."
             
         penalty = if result.delay then "<p>#{result.delay} second penalty</p>"
         info = do ->
@@ -340,12 +349,18 @@ jsPsych.plugins['mouselab-mdp'] = do ->
               redGreenSpan 'suboptimal.', -1
           else ''
         
-        if PARAMS.message is 'full' or PARAMS.message is 'simple'
+        if (PARAMS.message is 'full' or PARAMS.message is 'simple') and PARAMS.PR_type != 'objectLevel'
             msg = """
             <h3>#{head}</h3>
             <b>#{penalty}</b>
             #{info}
             """
+        if PARAMS.PR_type is 'objectLevel'
+             msg = """
+             <h3>#{head}</h3>
+             <b>#{penalty}</b>
+             """
+        
         if PARAMS.message is 'none'
             msg = """
             <h3>#{head}</h3>

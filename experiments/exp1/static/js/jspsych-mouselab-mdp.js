@@ -325,29 +325,37 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         return "<span style='color: " + (redGreen(val)) + "; font-weight: bold;'>" + txt + "</span>";
       };
       if (PARAMS.message) {
-        if (PARAMS.message === 'full') {
-          if (result.planned_too_little) {
-            if (result.planned_too_much) {
-              head = redGreenSpan("You gathered the wrong information.", -1);
-            } else {
-              head = redGreenSpan("You gathered too little information.", -1);
-            }
+        if (PARAMS.PR_type === 'objectLevel') {
+          if (a === result.optimal_action.direction) {
+            head = redGreenSpan("You chose the best possible move.", 1);
           } else {
-            if (result.planned_too_much) {
-              head = redGreenSpan("You gathered too much information.", -1);
+            head = redGreenSpan("Bad move! You should have moved " + result.optimal_action.direction + ".", -1);
+          }
+        } else {
+          if (PARAMS.message === 'full') {
+            if (result.planned_too_little) {
+              if (result.planned_too_much) {
+                head = redGreenSpan("You gathered the wrong information.", -1);
+              } else {
+                head = redGreenSpan("You gathered too little information.", -1);
+              }
             } else {
-              head = redGreenSpan("You gathered the right information.", 1);
+              if (result.planned_too_much) {
+                head = redGreenSpan("You gathered too much information.", -1);
+              } else {
+                head = redGreenSpan("You gathered the right information.", 1);
+              }
             }
           }
-        }
-        if (PARAMS.message === 'simple') {
-          head = redGreenSpan("Poor planning!", -1);
-        }
-        if (PARAMS.message === 'none') {
-          if (result.delay === 1) {
-            head = "Please wait 1 second.";
-          } else {
-            head = "Please wait " + result.delay + " seconds.";
+          if (PARAMS.message === 'simple') {
+            head = redGreenSpan("Poor planning!", -1);
+          }
+          if (PARAMS.message === 'none') {
+            if (result.delay === 1) {
+              head = "Please wait 1 second.";
+            } else {
+              head = "Please wait " + result.delay + " seconds.";
+            }
           }
         }
       }
@@ -359,8 +367,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           return '';
         }
       })();
-      if (PARAMS.message === 'full' || PARAMS.message === 'simple') {
+      if ((PARAMS.message === 'full' || PARAMS.message === 'simple') && PARAMS.PR_type !== 'objectLevel') {
         msg = "<h3>" + head + "</h3>\n<b>" + penalty + "</b>\n" + info;
+      }
+      if (PARAMS.PR_type === 'objectLevel') {
+        msg = "<h3>" + head + "</h3>\n<b>" + penalty + "</b>";
       }
       if (PARAMS.message === 'none') {
         msg = "<h3>" + head + "</h3>";

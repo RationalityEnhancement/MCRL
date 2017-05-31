@@ -1,5 +1,5 @@
 [HIT Configuration]
-title = Web of Cash Sandbox
+title = Planning Experiment
 description = Science for the sake of science
 amt_keywords = psychology, experiment
 lifetime = 24
