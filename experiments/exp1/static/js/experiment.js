@@ -10,9 +10,9 @@ var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, condi
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-DEBUG = true;
+DEBUG = false;
 
-experiment_nr = 2;
+experiment_nr = 0;
 
 switch (experiment_nr) {
   case 0:
@@ -96,7 +96,7 @@ for (i = 0, len = ref.length; i < len; i++) {
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 5;
+  condition = 2;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }

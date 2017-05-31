@@ -6,9 +6,9 @@ Demonstrates the jsych-mdp plugin
 
 ###
 # coffeelint: disable=max_line_length, indentation
-DEBUG = true
+DEBUG = false
 
-experiment_nr = 2
+experiment_nr = 0
 
 switch experiment_nr
     when 0 then IVs = {PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [1.60]}
@@ -50,7 +50,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 5
+  condition = 2
 else
   console.log """
   # =============================== #
