@@ -320,7 +320,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
               if result.planned_too_much
                   head = redGreenSpan "You gathered too much information.", -1                    
               else
-                  head = redGreenSpan "You gathered the right information.", 1
+                  head = redGreenSpan "You gathered the right amount of information.", 1
           if PARAMS.message is 'simple'
                 head = redGreenSpan "Poor planning!", -1
           if PARAMS.message is 'none'
