@@ -82,6 +82,5 @@ fit.glm=glm_Q; fit.MSE=MSE; fit.R_total=R_total;
 save ../../results/BO/valueFunctionFit.mat fit
 
 %% 
-load(['../../results/BO/BO_c160n35.mat'])
+temp=load(['../../results/BO/BO_c160n35.mat'])
 
-[ER_hat,result]=evaluatePolicy(w,c,nr_episodes_evaluation)
