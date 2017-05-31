@@ -298,13 +298,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       feedback = result    
       console.log 'feedback', result
     
-      if PARAMS.feedback
-        result =
-          delay: Math.round feedback.delay
-      else
-        result =
-          delay: switch @data.actions.length
-            when 1 then 8
+      if PARAMS.PR_type is 'none'
+        result.delay = switch @data.actions.length
+            when 1 then 5
             when 2 then 0
             when 3 then 1
           
@@ -314,27 +310,25 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         "<span style='color: #{redGreen val}; font-weight: bold;'>#{txt}</span>"
       
       if PARAMS.message
-        head = do ->
           if PARAMS.message is 'full'
             if result.planned_too_little
               if result.planned_too_much
-                  redGreenSpan "You gathered the wrong information.", -1            
+                  head = redGreenSpan "You gathered the wrong information.", -1            
               else
-                  redGreenSpan "You gathered too little information.", -1            
+                  head = redGreenSpan "You gathered too little information.", -1            
             else
               if result.planned_too_much
-                  redGreenSpan "You gathered too much information.", -1                    
+                  head = redGreenSpan "You gathered too much information.", -1                    
               else
-                  redGreenSpan "You gathered the right information.", 1
+                  head = redGreenSpan "You gathered the right information.", 1
           if PARAMS.message is 'simple'
-                redGreenSpan "Poor planning!", -1
+                head = redGreenSpan "Poor planning!", -1
           if PARAMS.message is 'none'
                 if result.delay is 1
-                    "Please wait 1 second."
+                    head = "Please wait 1 second."
                 else
-                    "Please wait "+result.delay+" seconds."
+                    head = "Please wait "+result.delay+" seconds."
             
-
         penalty = if result.delay then "<p>#{result.delay} second penalty</p>"
         info = do ->
           if PARAMS.message is 'full'
@@ -355,7 +349,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             msg = """
             <h3>#{head}</h3>
             """
-      else
+      if !PARAMS.message
         msg = "Please wait "+result.delay+" seconds."  
 
       if @feedback and result.delay>=1        
