@@ -116,6 +116,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         leftMessage = TRIAL_INDEX + "/" + N_TRIALS;
       }
       checkObj(this);
+      this.initial = "" + this.initial;
       this.invKeys = _.invert(this.keys);
       this.data = {
         delays: [],
@@ -215,6 +216,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.clickState = function(g, s) {
       LOG_DEBUG("clickState " + s);
+      if (this.complete || s === this.initial) {
+        return;
+      }
       registerClick(s);
       if (this.stateLabels && this.stateDisplay === 'click' && !g.label.text) {
         this.addScore(-this.stateClickCost);
@@ -393,7 +397,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             });
             return _this.arrive(s1);
           };
-        })(this)), result.delay * 1000);
+        })(this)), (DEBUG ? 1000 : result.delay * 1000));
       } else {
         $('#mdp-feedback').css({
           display: 'none'

@@ -124,7 +124,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       # _.extend this, config
       checkObj this
-
+      @initial = "#{@initial}"
       @invKeys = _.invert @keys
       @data =
         delays: []
@@ -217,6 +217,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     # Called when a state is clicked on.
     clickState: (g, s) =>
       LOG_DEBUG "clickState #{s}"
+      if @complete or s is @initial
+        return
       registerClick s
       if @stateLabels and @stateDisplay is 'click' and not g.label.text
         @addScore -@stateClickCost
@@ -301,9 +303,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             when 1 then 5
             when 2 then 0
             when 3 then 1
-
-      #result =
-      #  delay: 4
           
       @data.delays.push(result.delay)
             
@@ -381,7 +380,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             @freeze = false
             $('#mdp-feedback').css(display: 'none')
             @arrive s1
-          ), result.delay * 1000
+          ), (if DEBUG then 1000 else result.delay * 1000)
       else
             $('#mdp-feedback').css(display: 'none')
             @arrive s1

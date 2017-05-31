@@ -96,7 +96,7 @@ for (i = 0, len = ref.length; i < len; i++) {
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 2;
+  condition = 1;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
@@ -140,6 +140,7 @@ $(window).on('load', function() {
       'info_cost': conditions.infoCost[condition_nr],
       'message': conditions.messageType[condition_nr]
     };
+    PARAMS.condition = condition_nr;
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);
@@ -319,7 +320,7 @@ initializeExperiment = function() {
     }
   });
   main = new MDPBlock({
-    timeline: _.shuffle(TRIALS)
+    timeline: DEBUG ? TRIALS.slice(0, 2) : _.shuffle(TRIALS)
   });
   finish = new Block({
     type: 'button-response',
@@ -338,9 +339,6 @@ initializeExperiment = function() {
   BONUS = void 0;
   calculateBonus = function() {
     var data;
-    if (DEBUG) {
-      return 0;
-    }
     if (BONUS != null) {
       return BONUS;
     }

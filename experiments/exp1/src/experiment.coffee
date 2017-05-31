@@ -50,7 +50,8 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 2
+  condition = 1
+  
 else
   console.log """
   # =============================== #
@@ -98,12 +99,12 @@ $(window).on 'load', ->
     console.log 'Loading data'
     expData = loadJson "static/json/condition_0_0.json"
     console.log 'expData', expData
-    #PARAMS = expData.conditions[condition % 3]
-    #PARAMS.start_time = Date(Date.now())
-    #PARAMS.message = 'full'
+
     
     condition_nr = condition % nrConditions
     PARAMS={'PR_type': conditions.PRType[condition_nr], 'feedback': conditions.PRType[condition_nr] != "none", 'info_cost': conditions.infoCost[condition_nr], 'message':  conditions.messageType[condition_nr]}
+    #PARAMS.start_time = Date(Date.now())
+    PARAMS.condition = condition_nr
         
     # PARAMS.bonus_rate = .1
     BLOCKS = expData.blocks
@@ -358,7 +359,7 @@ initializeExperiment = ->
 
 
   main = new MDPBlock
-    timeline: _.shuffle TRIALS
+    timeline: if DEBUG then TRIALS[..1] else _.shuffle TRIALS
 
 
   finish = new Block
@@ -407,7 +408,6 @@ initializeExperiment = ->
   # bonus is the score on a random trial.
   BONUS = undefined
   calculateBonus = ->
-    if DEBUG then return 0
     if BONUS?
       return BONUS
     data = jsPsych.data.getTrialsOfType 'mouselab-mdp'

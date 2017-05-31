@@ -107,7 +107,12 @@ def pval(x):
     else:
         return float('nan')
 
-
+def df2r(df, cols):
+    df = df[cols].copy()
+    for name, col in df.iteritems():
+        if col.dtype == bool:
+            df[name] = col.astype(int)
+    return df
 
 # ---------- Saving results ---------- #
 
