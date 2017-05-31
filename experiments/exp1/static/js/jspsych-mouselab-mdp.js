@@ -308,7 +308,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       result.delay = Math.round(result.delay);
       feedback = result;
       console.log('feedback', result);
-      if (PARAMS.PRType === 'none') {
+      if (PARAMS.PR_type === 'none') {
         result.delay = (function() {
           switch (this.data.actions.length) {
             case 1:

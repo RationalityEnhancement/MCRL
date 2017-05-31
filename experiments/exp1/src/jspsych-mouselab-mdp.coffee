@@ -296,7 +296,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       feedback = result    
       console.log 'feedback', result
     
-      if PARAMS.PRType is 'none'
+      if PARAMS.PR_type is 'none'
         result.delay = switch @data.actions.length
             when 1 then 5
             when 2 then 0
