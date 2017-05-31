@@ -347,7 +347,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
               if (result.planned_too_much) {
                 head = redGreenSpan("You gathered too much information.", -1);
               } else {
-                head = redGreenSpan("You gathered the right information.", 1);
+                head = redGreenSpan("You gathered the right amount of information.", 1);
+                if (result.information_used_correctly && result.delay >= 1) {
+                  head += redGreenSpan(" But you didn't prioritize the most important locations.", -1);
+                }
               }
             }
           }

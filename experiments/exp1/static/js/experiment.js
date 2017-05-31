@@ -10,7 +10,7 @@ var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, condi
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-DEBUG = false;
+DEBUG = true;
 
 experiment_nr = 0;
 
@@ -19,7 +19,7 @@ switch (experiment_nr) {
     IVs = {
       PRTypes: ['none', 'featureBased', 'fullObservation'],
       messageTypes: ['full', 'none'],
-      infoCosts: [1.60]
+      infoCosts: [0.01, 2.80]
     };
     break;
   case 1:
@@ -56,7 +56,7 @@ nrInfoCosts = IVs.infoCosts.length;
 nrConditions = (function() {
   switch (experiment_nr) {
     case 0:
-      return 3;
+      return 6;
     case 1:
       return 3 * 3;
     default:
@@ -96,7 +96,7 @@ for (i = 0, len = ref.length; i < len; i++) {
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 1;
+  condition = 5;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
