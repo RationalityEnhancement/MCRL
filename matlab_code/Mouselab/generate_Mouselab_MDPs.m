@@ -506,6 +506,13 @@ for t=1:numel(experiment)
     
     max_score(t)=V{t}(1,1);
     
+    [T_prime,R_prime]=denounceUnavailableActions(experiment(t).T,-experiment(t).rewards)
+    
+    [~,minus_V_worst{t},~]=optimalPseudoRewards(....
+        T_prime,R_prime,experiment(t).horizon,1,false,true)
+    
+    min_score(t)=-minus_V_worst{t}(1,1);
+    
     for step=1:3
         for from=1:17
             for to=1:17
@@ -520,6 +527,7 @@ savejson('',pseudorewards,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experim
 
 
 csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/optimal.csv',max_score)
+csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/worst.csv',min_score)
 
 %% evaluate the performance of different levels of planning
 %{
