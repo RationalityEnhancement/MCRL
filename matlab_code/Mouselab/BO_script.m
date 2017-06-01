@@ -134,5 +134,5 @@ for c=1:3
     end
 end
 
-csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/score_pi_star.csv','ER_hat')
-csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star.csv','avg_nr_observations')
+csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/score_pi_star.csv',ER_hat)
+csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star.csv',avg_nr_observations)
