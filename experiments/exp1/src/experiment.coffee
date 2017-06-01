@@ -6,7 +6,7 @@ Demonstrates the jsych-mdp plugin
 
 ###
 # coffeelint: disable=max_line_length, indentation
-DEBUG = true
+DEBUG = false
 
 experiment_nr = 2
 
@@ -50,15 +50,15 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 4
+  condition = 3
   
 else
   console.log """
   # =============================== #
   # ========= NORMAL MODE ========= #
   # =============================== #
-  """    
-    
+  """
+  condition = 3
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
@@ -165,31 +165,53 @@ initializeExperiment = ->
 
     feedback: ->
       if PARAMS.PR_type != "none"
-        [markdown """
-          # Instructions
+        if PARAMS.PR_type == "objectLevel"
+            [markdown """
+              # Instructions
 
-          <b>You will receive feedback about your planning. This feedback will
-          help you learn how to make better decisions.</b> After each flight, if
-          you did not plan optimally, a feedback message will apear. This message
-          will tell you two things:
+              <b>You will receive feedback about your planning. This feedback will
+              help you learn how to make better decisions.</b> After each flight, if
+              you did not make the best move, a feedback message will apear. This message
+              will tell you whether you flew along the best route given your current location, and what the best move would have been.
 
-          1. Whether you observed too few relevant values or if you observed
-             irrelevant values (values of locations that you cant fly to).
-          2. Whether you flew along the best route given your current location and
-             the information you had about the values of other locations.
+              In the example below, the best move was not taken
+              as a result there is a 15 second timeout penalty. <b>The duration of
+              the timeout penalty is proportional to how poorly you planned your
+              route:</b> the more money you could have earned from observing more
+              values and/or choosing a better route, the longer the delay. <b>If
+              you perform optimally, no feedback will be shown and you can proceed
+              immediately.</b>
 
-          In the example below, not enough relevant values were observed, and
-          as a result there is a 15 second timeout penalty. <b>The duration of
-          the timeout penalty is proportional to how poorly you planned your
-          route:</b> the more money you could have earned from observing more
-          values and/or choosing a better route, the longer the delay. <b>If
-          you perform optimally, no feedback will be shown and you can proceed
-          immediately.</b> The example message here is not necessarily representative of the feedback you'll receive.
+              #{img('task_images/Slide5.png')}
 
-          #{img('task_images/Slide4.png')}
+              """
+            ]
+        else
+            [markdown """
+              # Instructions
 
-          """
-        ]
+              <b>You will receive feedback about your planning. This feedback will
+              help you learn how to make better decisions.</b> After each flight, if
+              you did not plan optimally, a feedback message will apear. This message
+              will tell you two things:
+
+              1. Whether you observed too few relevant values or if you observed
+                 irrelevant values (values of locations that you cant fly to).
+              2. Whether you flew along the best route given your current location and
+                 the information you had about the values of other locations.
+
+              In the example below, not enough relevant values were observed, and
+              as a result there is a 15 second timeout penalty. <b>The duration of
+              the timeout penalty is proportional to how poorly you planned your
+              route:</b> the more money you could have earned from observing more
+              values and/or choosing a better route, the longer the delay. <b>If
+              you perform optimally, no feedback will be shown and you can proceed
+              immediately.</b> The example message here is not necessarily representative of the feedback you'll receive.
+
+              #{img('task_images/Slide4.png')}
+
+              """
+            ]
       else []
 
     constantDelay: ->
@@ -324,11 +346,16 @@ initializeExperiment = ->
        '10% of my total score on all rounds'
        '5% of my best score on any round'
        '5% of my score on a random round']
-      ['Whether I observed the rewards of relevant locations.'
+    ] .concat (if PARAMS.PR_type == "objectLevel" then [[
+       'Whether I chose the move that was best.'
+       'The length of the delay is based on how much more money I could have earned by planning and deciding better.'
+       'All of the above.']
+    ] else if PARAMS.PR_type != "none" then [[
+       'Whether I observed the rewards of relevant locations.'
        'Whether I chose the move that was best according to the information I had.'
        'The length of the delay is based on how much more money I could have earned by planning and deciding better.'
        'All of the above.']
-    ]
+    ] else [])
     required: [true, true, true, true, true]
     correct: [
       'True'
