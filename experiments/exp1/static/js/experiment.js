@@ -10,9 +10,9 @@ var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, condi
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-DEBUG = true;
+DEBUG = false;
 
-experiment_nr = 0;
+experiment_nr = 2;
 
 switch (experiment_nr) {
   case 0:
@@ -96,9 +96,10 @@ for (i = 0, len = ref.length; i < len; i++) {
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 5;
+  condition = 3;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
+  condition = 3;
 }
 
 if (mode === "{{ mode }}") {
@@ -203,7 +204,11 @@ initializeExperiment = function() {
     },
     feedback: function() {
       if (PARAMS.PR_type !== "none") {
-        return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight, if\nyou did not plan optimally, a feedback message will apear. This message\nwill tell you two things:\n\n1. Whether you observed too few relevant values or if you observed\n   irrelevant values (values of locations that you cant fly to).\n2. Whether you flew along the best route given your current location and\n   the information you had about the values of other locations.\n\nIn the example below, not enough relevant values were observed, and\nas a result there is a 15 second timeout penalty. <b>The duration of\nthe timeout penalty is proportional to how poorly you planned your\nroute:</b> the more money you could have earned from observing more\nvalues and/or choosing a better route, the longer the delay. <b>If\nyou perform optimally, no feedback will be shown and you can proceed\nimmediately.</b> The example message here is not necessarily representative of the feedback you'll receive.\n\n" + (img('task_images/Slide4.png')) + "\n")];
+        if (PARAMS.PR_type === "objectLevel") {
+          return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight, if\nyou did not make the best move, a feedback message will apear. This message\nwill tell you whether you flew along the best route given your current location, and what the best move would have been.\n\nIn the example below, the best move was not taken\nas a result there is a 15 second timeout penalty. <b>The duration of\nthe timeout penalty is proportional to how poorly you planned your\nroute:</b> the more money you could have earned from observing more\nvalues and/or choosing a better route, the longer the delay. <b>If\nyou perform optimally, no feedback will be shown and you can proceed\nimmediately.</b>\n\n" + (img('task_images/Slide5.png')) + "\n")];
+        } else {
+          return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight, if\nyou did not plan optimally, a feedback message will apear. This message\nwill tell you two things:\n\n1. Whether you observed too few relevant values or if you observed\n   irrelevant values (values of locations that you cant fly to).\n2. Whether you flew along the best route given your current location and\n   the information you had about the values of other locations.\n\nIn the example below, not enough relevant values were observed, and\nas a result there is a 15 second timeout penalty. <b>The duration of\nthe timeout penalty is proportional to how poorly you planned your\nroute:</b> the more money you could have earned from observing more\nvalues and/or choosing a better route, the longer the delay. <b>If\nyou perform optimally, no feedback will be shown and you can proceed\nimmediately.</b> The example message here is not necessarily representative of the feedback you'll receive.\n\n" + (img('task_images/Slide4.png')) + "\n")];
+        }
       } else {
         return [];
       }
@@ -296,7 +301,7 @@ initializeExperiment = function() {
     },
     type: 'survey-multi-choice',
     questions: ["True or false: The hidden values will change each time I start a new round.", "How much does it cost to observe each hidden value?", "How many hidden values am I allowed to observe in each round?", "How is your bonus determined?"].concat((PARAMS.PR_type !== "none" ? ["What does the feedback teach you?"] : [])),
-    options: [['True', 'False'], ['$0.01', '$0.05', '$1.60', '$2.80'], ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish'], ['10% of my best score on any round', '10% of my total score on all rounds', '5% of my best score on any round', '5% of my score on a random round'], ['Whether I observed the rewards of relevant locations.', 'Whether I chose the move that was best according to the information I had.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']],
+    options: [['True', 'False'], ['$0.01', '$0.05', '$1.60', '$2.80'], ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish'], ['10% of my best score on any round', '10% of my total score on all rounds', '5% of my best score on any round', '5% of my score on a random round']].concat((PARAMS.PR_type === "objectLevel" ? [['Whether I chose the move that was best.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']] : PARAMS.PR_type !== "none" ? [['Whether I observed the rewards of relevant locations.', 'Whether I chose the move that was best according to the information I had.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']] : [])),
     required: [true, true, true, true, true],
     correct: ['True', fmtMoney(PARAMS.info_cost), 'As many or as few as I wish', '5% of my score on a random round', 'All of the above.'],
     on_mistake: function(data) {
