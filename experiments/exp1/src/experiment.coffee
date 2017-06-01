@@ -58,7 +58,6 @@ else
   # ========= NORMAL MODE ========= #
   # =============================== #
   """
-  condition = 3
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
@@ -176,9 +175,8 @@ initializeExperiment = ->
 
               In the example below, the best move was not taken
               as a result there is a 15 second timeout penalty. <b>The duration of
-              the timeout penalty is proportional to how poorly you planned your
-              route:</b> the more money you could have earned from observing more
-              values and/or choosing a better route, the longer the delay. <b>If
+              the timeout penalty is proportional to how poor of a move you made:
+              </b> the more money you could have earned, the longer the delay. <b>If
               you perform optimally, no feedback will be shown and you can proceed
               immediately.</b>
 
@@ -348,7 +346,7 @@ initializeExperiment = ->
        '5% of my score on a random round']
     ] .concat (if PARAMS.PR_type == "objectLevel" then [[
        'Whether I chose the move that was best.'
-       'The length of the delay is based on how much more money I could have earned by planning and deciding better.'
+       'The length of the delay is based on how much more money I could have earned.'
        'All of the above.']
     ] else if PARAMS.PR_type != "none" then [[
        'Whether I observed the rewards of relevant locations.'
