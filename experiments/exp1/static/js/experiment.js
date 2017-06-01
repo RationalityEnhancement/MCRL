@@ -12,7 +12,7 @@ var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, condi
 
 DEBUG = true;
 
-experiment_nr = 0;
+experiment_nr = 2;
 
 switch (experiment_nr) {
   case 0:
@@ -96,7 +96,7 @@ for (i = 0, len = ref.length; i < len; i++) {
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 5;
+  condition = 4;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
