@@ -82,6 +82,57 @@ fit.glm=glm_Q; fit.MSE=MSE; fit.R_total=R_total;
 save ../../results/BO/valueFunctionFit.mat fit
 
 %% 
-load(['../../results/BO/BO_c160n35.mat'])
+costs=[0.01,1.60,2.80];
+nr_episodes_evaluation=1000;
+addpath('../MatlabTools/')
 
-[ER_hat,result]=evaluatePolicy(w,c,nr_episodes_evaluation)
+load PilotExperiment
+nr_trials=numel(experiment);
+
+actions_by_state{1}=[];
+actions_by_state{2}=[1];
+actions_by_state{3}=[2];
+actions_by_state{4}=[3];
+actions_by_state{5}=[4];
+actions_by_state{6}=[1,1];
+actions_by_state{7}=[2,2];
+actions_by_state{8}=[3,3];
+actions_by_state{9}=[4,4];
+actions_by_state{10}=[1,1,2];
+actions_by_state{11}=[1,1,4];
+actions_by_state{12}=[2,2,3];
+actions_by_state{13}=[2,2,4];
+actions_by_state{14}=[3,3,2];
+actions_by_state{15}=[3,3,4];
+actions_by_state{16}=[4,4,3];
+actions_by_state{17}=[4,4,1];
+for e=1:numel(experiment)
+    experiment(e).actions_by_state=actions_by_state;
+    experiment(e).hallway_states=2:9;
+    experiment(e).leafs=10:17;
+    experiment(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
+end
+
+for c=1:3
+    meta_MDP=MouselabMDPMetaMDPNIPS(false,'none',4.5,10.6,experiment,costs(c));
+    
+    temp=load(['../../results/BO/BO_c',int2str(100*costs(c)),'n35.mat']);
+    
+    policy=@(state,mdp) deterministicPolicy(state,mdp,temp.BO.w_hat);
+    
+    for t=1:nr_trials
+        [R_total,problems{t,c},states{t,c},chosen_actions{t,c},indices(t,c)]=inspectPolicyGeneral(meta_MDP,policy,...
+            nr_episodes_evaluation,experiment,t);
+        
+        ER_hat(t,c)=mean(R_total);
+    end
+end
+
+for c=1:3
+    for t=1:nr_trials
+        avg_nr_observations(t,c)=mean(indices(t,c).nr_acquisitions);
+    end
+end
+
+csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/score_pi_star.csv','ER_hat')
+csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star.csv','avg_nr_observations')

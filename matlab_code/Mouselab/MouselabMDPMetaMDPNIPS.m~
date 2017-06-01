@@ -141,14 +141,12 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
 
             state=meta_MDP.updateBelief(state,find(observed));
         end
-
-        function [state,meta_MDP]=sampleS0(meta_MDP)
-
-            state.step=1;
+        
+        function [state,meta_MDP]=initS0(meta_MDP)
+                        state.step=1;
             state.nr_steps=3;
             state.s=1;            
             
-            %sample number of outcomes and number of gambles
             state.observations=NaN(meta_MDP.nr_cells,1);
             state.S=meta_MDP.object_level_MDP.states;
             state.T=meta_MDP.object_level_MDP.T;
@@ -164,6 +162,12 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             state.decision=NaN;
             state.outcome=NaN;
 
+        end
+        
+        
+        function [state,meta_MDP]=sampleS0(meta_MDP)
+
+            [state,meta_MDP]=initS0(meta_MDP);
             
             [meta_MDP.reward_function,meta_MDP.rewards]=meta_MDP.sampleRewards();
             meta_MDP.object_level_MDP.rewards=meta_MDP.reward_function;
@@ -1400,7 +1404,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 if and(s==1,computation.is_decision_mechanism)
                     
                     if computation.decision==0
-                        [~,c.decision]=meta_MDP.decide(state,computation);
+                        [~,computation.decision]=meta_MDP.decide(state,computation);
                     end
                     
                     plan(s)=computation.decision;

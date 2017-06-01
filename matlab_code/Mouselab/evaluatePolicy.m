@@ -1,4 +1,4 @@
-function [ER_hat,result]=evaluatePolicy(w,c,nr_episodes_evaluation)
+function [ER_hat,result]=evaluatePolicy(w,c,nr_episodes_evaluation,experiment)
 
 rng('shuffle')
 
@@ -18,7 +18,9 @@ pseudoreward_type='none';
 mean_payoff=4.5;
 std_payoff=10.6;
 
-load('MouselabMDPExperiment_normalized')
+if not(exist('experiment','var'))
+    load('MouselabMDPExperiment_normalized')
+end
 
 actions_by_state{1}=[];
 actions_by_state{2}=[1];

@@ -1,5 +1,5 @@
 function [R_total,problems,states,chosen_actions,indices]=...
-    inspectPolicyGeneral(mdp,policy,nr_episodes,experiment,problem_nr)
+    inspectPolicyGeneral(mdp,policy,nr_episodes,problem)
 %simulates the acting according to policy on the environment mdp.
 %inputs:
 %  1. mdp: object of whose class implements the interface MDP
@@ -8,24 +8,19 @@ function [R_total,problems,states,chosen_actions,indices]=...
 
 %outputs:
 
-
-if exist('experiment','var')
-    mdp.object_level_MDPs=experiment;
-end
-
-[~,mdp0]=mdp.newEpisode(1);
+[~,mdp0]=mdp.newEpisode();
 actions=mdp0.actions;
 
 R_total=zeros(nr_episodes,1);
 nr_observations=0;
 for i=1:nr_episodes
-    if exist('problem_nr','var')
-        mdp.object_level_MDP = mdp.object_level_MDPs(problem_nr);
-        [s,mdp]=mdp.newEpisode(problem_nr);
+    if exist('problem','var')
+        mdp.object_level_MDP=trial;
+        mdp.rewards=trial.rewards;
+        current_state=meta_MDP.newEpisode();
     else
         [s,mdp]=mdp.newEpisode();
     end
-    
     problems(i)=mdp;
         
     t=0; %time step within episode

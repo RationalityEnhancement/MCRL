@@ -111,7 +111,13 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             meta_MDP.total_nr_clicks=meta_MDP.nr_cells;
             meta_MDP.remaining_nr_clicks=meta_MDP.total_nr_clicks;
             
-            [state,meta_MDP]=meta_MDP.sampleS0();
+            if exist('problem_nr','var')
+                %don't sample the rewards if the problem was specified
+                [state,meta_MDP]=meta_MDP.initS0(); 
+            else
+                %sample the rewards if no problem was specified
+                [state,meta_MDP]=meta_MDP.sampleS0();
+            end
             meta_MDP=meta_MDP.setActions(state);
             meta_MDP.nr_actions=numel(meta_MDP.actions);
             
@@ -141,14 +147,12 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
 
             state=meta_MDP.updateBelief(state,find(observed));
         end
-
-        function [state,meta_MDP]=sampleS0(meta_MDP)
-
+        
+        function [state,meta_MDP]=initS0(meta_MDP)
             state.step=1;
             state.nr_steps=3;
             state.s=1;            
             
-            %sample number of outcomes and number of gambles
             state.observations=NaN(meta_MDP.nr_cells,1);
             state.S=meta_MDP.object_level_MDP.states;
             state.T=meta_MDP.object_level_MDP.T;
@@ -163,16 +167,24 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             state.plan=[];
             state.decision=NaN;
             state.outcome=NaN;
-
-            
-            [meta_MDP.reward_function,meta_MDP.rewards]=meta_MDP.sampleRewards();
-            meta_MDP.object_level_MDP.rewards=meta_MDP.reward_function;
             
             meta_MDP=meta_MDP.setActions(state);
             
             %determine the expected value of starting from each cell by
             %solving the meta-level meta_MDP?
-            state=meta_MDP.updateBelief(state,1:numel(state.S));           
+            state=meta_MDP.updateBelief(state,1:numel(state.S));             
+            
+            meta_MDP.reward_function=meta_MDP.object_level_MDP.rewards;
+
+        end
+        
+        
+        function [state,meta_MDP]=sampleS0(meta_MDP)
+
+            [state,meta_MDP]=initS0(meta_MDP);
+            
+            [meta_MDP.reward_function,meta_MDP.rewards]=meta_MDP.sampleRewards();
+            meta_MDP.object_level_MDP.rewards=meta_MDP.reward_function;                      
             
         end
         
