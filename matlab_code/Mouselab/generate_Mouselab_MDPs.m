@@ -673,6 +673,39 @@ for e=1:numel(experiment)
     
 end
 
+for t=1:12, low_cost_rewards(:,t)=low_cost_condition(t).rewards(low_cost_condition(t).T>0),end
+mean(low_cost_rewards(:))
+scaling_factor.low_cost=10.6/std(low_cost_rewards(:))
+shift.low_cost=4.5 - scaling_factor.low_cost * mean(low_cost_rewards(:));
+
+for t=1:12, medium_cost_rewards(:,t)=medium_cost_condition(t).rewards(medium_cost_condition(t).T>0),end
+mean(medium_cost_rewards(:))
+std(medium_cost_rewards(:))
+scaling_factor.medium_cost=10.6/std(medium_cost_rewards(:))
+shift.medium_cost=4.5 - scaling_factor.medium_cost * mean(medium_cost_rewards(:));
+
+for t=1:12, high_cost_rewards(:,t)=high_cost_condition(t).rewards(high_cost_condition(t).T>0),end
+mean(high_cost_rewards(:))
+std(high_cost_rewards(:))
+scaling_factor.high_cost=10.6/std(high_cost_rewards(:));
+shift.high_cost=4.5 - scaling_factor.high_cost * mean(high_cost_rewards(:));
+
+for t=1:12
+    high_cost_condition(t).rewards(high_cost_condition(t).T>0)=...
+        scaling_factor.high_cost*...
+        high_cost_condition(t).rewards(high_cost_condition(t).T>0)+...
+        shift.high_cost;
+    
+    medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)=...
+        scaling_factor.medium_cost*...
+        medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)+...
+        shift.medium_cost;
+    
+    low_cost_condition(t).rewards(low_cost_condition(t).T>0)=...
+        scaling_factor.low_cost*...
+        low_cost_condition(t).rewards(low_cost_condition(t).T>0)+...
+        shift.low_cost;
+end
 
 save high_cost_condition high_cost_condition
 save medium_cost_condition medium_cost_condition
@@ -687,6 +720,7 @@ medium_cost_json=rmfield(medium_cost_condition,'states_by_path');
 savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/medium_cost.json')
 low_cost_json=rmfield(low_cost_condition,'states_by_path');
 savejson('',low_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/low_cost.json')
+
 
 %% evaluate the performance of different levels of planning
 %{
