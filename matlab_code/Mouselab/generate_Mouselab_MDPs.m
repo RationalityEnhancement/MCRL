@@ -129,8 +129,6 @@ for m=1:nr_moves
     baseline_rewards(:,:,m)=min(r_max,max(r_min,roundToMultipleOf(baseline_rewards(:,:,m),0.5)));
 end
 
-baseline_score=evaluateMDP(T,baseline_rewards,1,3);
-
 baseline_mdp.start_state=1;
 baseline_mdp.horizon=3;
 baseline_mdp.T=T;
@@ -138,6 +136,12 @@ baseline_mdp.rewards=baseline_rewards;
 baseline_mdp.states=states;
 baseline_mdp.states_by_step=states_by_step;
 baseline_mdp.states_by_path=states_by_path;
+
+save baseline_mdp baseline_mdp
+
+baseline_score=evaluateMDP(T,baseline_rewards,1,3);
+
+
 
 
 %% optimize MDP
@@ -577,17 +581,62 @@ load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/experiment_M
 all_trials=experiment; clear experiment
 properties_all_trials=trial_properties; clear trial_properties
 
+low_cost_condition=all_trials([1:9,16:18]);
+properties_low_cost_condition=properties_all_trials([1:9,16:18]);
+
+
 %create some trials where the optimal planning horizon is 2
 r_max=15; r_min=-15; optimal_planning_horizon = 2;
 
-for t=1:5
+for t=1:15
+    mean_reward=1; std_reward=2;
+    
     tic()
     [mdps_horizon2(t),score_horizon2(t),optimality_horizon2(t),properties_horizon2(t)]=...
         optimizeMouselabMDP(all_trials(t),1000,r_max-r_min,false,optimal_planning_horizon)
     toc()
 end
 
-experiment=[all_trials(1:4),mdps_horizon2([1:3,5]),all_trials(16:19)];
+for t=1:5
+    mean_reward=1; std_reward=2;
+    
+    tic()
+    [mdps_horizon2_myopic(t),score_horizon2_myopic(t),optimality_horizon2_myopic(t),properties_horizon2_myopic(t)]=...
+        optimizeMouselabMDP(all_trials(15+t),1000,r_max-r_min,true,optimal_planning_horizon)
+    toc()
+end
+
+medium_cost_condition=[mdps_horizon2(1:9),mdps_horizon2_myopic(1:3)];
+properties_medium_cost_condition=[properties_horizon2(1:9),properties_horizon2_myopic(1:3)];
+
+nr_moves=4;
+for t=1:20
+    
+    if properties_horizon0(t).score>-12
+        continue
+    end
+    
+    load baseline_mdp  
+    for m=1:nr_moves
+        basline_mdp.rewards(:,:,m)=T(:,:,m).*mvnrnd(mean_reward*ones(nr_states,nr_states),...
+            std_reward*repmat(eye(nr_states),[1,1,nr_states]),nr_states);
+        
+        basline_mdp.rewards(:,:,m)=min(r_max,max(r_min,roundToMultipleOf(baseline_rewards(:,:,m),0.5)));
+    end
+    
+    tic()
+    [mdps_horizon0(t),score_horizon0(t),optimality_horizon0(t),properties_horizon0(t)]=...
+        optimizeMouselabMDP(baseline_mdp,100,r_max-r_min,false,0);
+    properties_horizon0(t).score
+    toc()
+end
+
+scores=[properties_horizon0.score];
+suitable_mdps=find(scores>-12);
+
+high_cost_condition = mdps_horizon0(suitable_mdps(1:12));
+properties_high_cost_condition = properties_horizon0(suitable_mdps(1:12))
+
 
 actions_by_state{1}=[];
 actions_by_state{2}=[1];
@@ -607,23 +656,37 @@ actions_by_state{15}=[3,3,4];
 actions_by_state{16}=[4,4,3];
 actions_by_state{17}=[4,4,1];
 for e=1:numel(experiment)
-    experiment(e).actions_by_state=actions_by_state;
-    experiment(e).hallway_states=2:9;
-    experiment(e).leafs=10:17;
-    experiment(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
+    high_cost_condition(e).actions_by_state=actions_by_state;
+    high_cost_condition(e).hallway_states=2:9;
+    high_cost_condition(e).leafs=10:17;
+    high_cost_condition(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
+    
+    medium_cost_condition(e).actions_by_state=actions_by_state;
+    medium_cost_condition(e).hallway_states=2:9;
+    medium_cost_condition(e).leafs=10:17;
+    medium_cost_condition(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
+
+    low_cost_condition(e).actions_by_state=actions_by_state;
+    low_cost_condition(e).hallway_states=2:9;
+    low_cost_condition(e).leafs=10:17;
+    low_cost_condition(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
+    
 end
 
-for e=1:numel(experiment)
-    trial_properties(e)=evaluateMouselabMDP(experiment(e).T,...
-        experiment(e).rewards,experiment(e).start_state,experiment(e).horizon,...
-        e>15);
-end
 
-save ExperimentMixedHorizons experiment
-save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_mixed_horizons.mat', 'trial_properties')
+save high_cost_condition high_cost_condition
+save medium_cost_condition medium_cost_condition
+save low_cost_condition low_cost_condition
+save '/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_high_cost_condition.mat' properties_high_cost_condition
+save '/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_medium_cost_condition.mat' properties_medium_cost_condition
+save '/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_low_cost_condition.mat' properties_low_cost_condition
 
-experiment_json=rmfield(experiment,'states_by_path');
-savejson('',experiment_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/ExperimentMixedHorizons.json')
+high_cost_json=rmfield(high_cost_condition,'states_by_path');
+savejson('',high_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/high_cost.json')
+medium_cost_json=rmfield(medium_cost_condition,'states_by_path');
+savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/medium_cost.json')
+low_cost_json=rmfield(low_cost_condition,'states_by_path');
+savejson('',low_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/low_cost.json')
 
 %% evaluate the performance of different levels of planning
 %{

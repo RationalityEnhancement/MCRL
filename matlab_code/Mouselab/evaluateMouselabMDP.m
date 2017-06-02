@@ -126,9 +126,13 @@ properties.non_negative=properties.R_min>=0;
 %elseif or(properties.R_total(end)<0,all(properties.R_total>0))
 %    properties.score=0;
 %else
+if optimal_planning_horizon==0
+    properties.score = properties.delta_R(1);
+else
     properties.score=sum(properties.nr_suboptimal_moves(1:optimal_planning_horizon))-...
         properties.nr_suboptimal_moves(optimal_planning_horizon+1)+...
         properties.benefit_of_planning;
+end
 %end
 
 if myopic_first_move
@@ -138,9 +142,9 @@ if myopic_first_move
         properties.score=sum(properties.nr_suboptimal_moves)+properties.benefit_of_planning;        
     end
     
-    if any(abs(R(:))>9.99)
-        properties.score=0;
-    end
+    %if any(abs(R(:))>9.99)
+    %    properties.score=0;
+    %end
         
     max_score=1+5;
     properties.optimality=properties.score/max_score;
@@ -149,9 +153,9 @@ else
     properties.optimality=properties.score/max_score;
 end
 
-if not(properties.non_negative)
-    properties.score=0;
-end
+%if not(properties.non_negative)
+%    properties.score=0;
+%end
 
 
 end
