@@ -55,7 +55,7 @@ meta_MDP.object_level_MDP=meta_MDP.object_level_MDPs(1);
 %policy=@(state,mdp) contextualThompsonSampling(state,meta_MDP,glm);
 policy=@(state,mdp) deterministicPolicy(state,meta_MDP,w);
 [R_total_evaluation,problems_evaluation,states_evaluation,chosen_actions_evaluation,indices_evaluation]=...
-    inspectPolicyGeneral(meta_MDP,policy,nr_episodes_evaluation);
+    inspectPolicyGeneral(meta_MDP,policy,nr_episodes_evaluation,experiment);
 
 reward_learned_policy=[mean(R_total_evaluation),sem(R_total_evaluation)];
 nr_observations_learned_policy=[mean(indices_evaluation.nr_acquisitions),...

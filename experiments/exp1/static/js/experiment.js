@@ -6,17 +6,18 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, conditions, counterbalance, createStartButton, delay, experiment_nr, i, infoCost, initializeExperiment, j, k, len, len1, len2, message, messageTypes, nrConditions, nrDelays, nrInfoCosts, nrMessages, psiturk, ref, ref1,
+var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, conditions, counterbalance, createStartButton, delay, experiment_nr, frequency, i, infoCost, initializeExperiment, j, k, l, len, len1, len2, len3, message, messageTypes, nrConditions, nrDelays, nrInfoCosts, nrMessages, psiturk, ref, ref1, ref2,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
 DEBUG = false;
 
-experiment_nr = 2;
+experiment_nr = 4;
 
 switch (experiment_nr) {
   case 0:
     IVs = {
+      frequencyOfFB: ['after_each_move'],
       PRTypes: ['none', 'featureBased', 'fullObservation'],
       messageTypes: ['full', 'none'],
       infoCosts: [0.01, 2.80]
@@ -24,6 +25,7 @@ switch (experiment_nr) {
     break;
   case 1:
     IVs = {
+      frequencyOfFB: ['after_each_move'],
       PRTypes: ['none', 'featureBased', 'fullObservation'],
       messageTypes: ['full', 'none'],
       infoCosts: [0.01, 1.60, 2.80]
@@ -31,6 +33,7 @@ switch (experiment_nr) {
     break;
   case 2:
     IVs = {
+      frequencyOfFB: ['after_each_move'],
       PRTypes: ['featureBased', 'objectLevel'],
       messageTypes: ['full'],
       infoCosts: [0.01, 1.60, 2.80]
@@ -38,8 +41,17 @@ switch (experiment_nr) {
     break;
   case 3:
     IVs = {
+      frequencyOfFB: ['after_each_move'],
       PRTypes: ['none', 'featureBased'],
       messageTypes: ['full', 'simple'],
+      infoCosts: [1.60]
+    };
+    break;
+  case 4:
+    IVs = {
+      frequencyOfFB: ['after_each_move', 'after_each_click'],
+      PRTypes: ['featureBased'],
+      messageTypes: ['none'],
       infoCosts: [1.60]
     };
     break;
@@ -67,7 +79,8 @@ nrConditions = (function() {
 conditions = {
   'PRType': [],
   'messageType': [],
-  'infoCost': []
+  'infoCost': [],
+  'frequencyOfFB': []
 };
 
 ref = IVs.PRTypes;
@@ -87,9 +100,14 @@ for (i = 0, len = ref.length; i < len; i++) {
     ref1 = IVs.infoCosts;
     for (k = 0, len2 = ref1.length; k < len2; k++) {
       infoCost = ref1[k];
-      conditions.PRType.push(PRType);
-      conditions.messageType.push(message);
-      conditions.infoCost.push(infoCost);
+      ref2 = IVs.frequencyOfFB;
+      for (l = 0, len3 = ref2.length; l < len3; l++) {
+        frequency = ref2[l];
+        conditions.PRType.push(PRType);
+        conditions.messageType.push(message);
+        conditions.infoCost.push(infoCost);
+        conditions.frequencyOfFB.push(frequency);
+      }
     }
   }
 }
@@ -138,7 +156,8 @@ $(window).on('load', function() {
       'PR_type': conditions.PRType[condition_nr],
       'feedback': conditions.PRType[condition_nr] !== "none",
       'info_cost': conditions.infoCost[condition_nr],
-      'message': conditions.messageType[condition_nr]
+      'message': conditions.messageType[condition_nr],
+      'frequencyOfFB': conditions.frequencyOfFB[condition_nr]
     };
     PARAMS.condition = condition_nr;
     BLOCKS = expData.blocks;
@@ -254,11 +273,11 @@ initializeExperiment = function() {
     }
 
     QuizLoop.prototype.loop_function = function(data) {
-      var c, l, len3, ref2;
+      var c, len4, m, ref3;
       console.log('data', data);
-      ref2 = data[data.length].correct;
-      for (l = 0, len3 = ref2.length; l < len3; l++) {
-        c = ref2[l];
+      ref3 = data[data.length].correct;
+      for (m = 0, len4 = ref3.length; m < len4; m++) {
+        c = ref3[m];
         if (!c) {
           return true;
         }
@@ -310,10 +329,10 @@ initializeExperiment = function() {
   instruct_loop = new Block({
     timeline: [instructions, quiz],
     loop_function: function(data) {
-      var c, l, len3, ref2;
-      ref2 = data[1].correct;
-      for (l = 0, len3 = ref2.length; l < len3; l++) {
-        c = ref2[l];
+      var c, len4, m, ref3;
+      ref3 = data[1].correct;
+      for (m = 0, len4 = ref3.length; m < len4; m++) {
+        c = ref3[m];
         if (!c) {
           return true;
         }

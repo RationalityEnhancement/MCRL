@@ -23,7 +23,13 @@ for i=1:nr_episodes
         mdp.object_level_MDP = mdp.object_level_MDPs(problem_nr);
         [s,mdp]=mdp.newEpisode(problem_nr);
     else
-        [s,mdp]=mdp.newEpisode();
+        if exist('experiment','var')
+            random_problem_nr=mod(i-1,numel(experiment))+1;
+            [s,mdp]=mdp.newEpisode(random_problem_nr);
+        else
+            [~,mdp]=mdp.newEpisode();
+            [s,mdp]=mdp.sampleS0();
+        end
     end
     
     problems(i)=mdp;

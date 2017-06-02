@@ -1,4 +1,4 @@
-function policySearchMouselabMDP(c)
+function policySearchMouselabMDP(c,experiment,name)
 
 username = getenv('USER');
 Falk_local=strcmp(username,'Falk');
@@ -17,12 +17,19 @@ addpath(toolbox_dir)
 addpath(genpath(GPO_dir))
 
 %% Direct Policy Search
-nr_episodes=1000;
-ER_hat=@(w) evaluatePolicy([w(:);1],c,nr_episodes);
-d=2;
 
-x_input_domain = [-1 1; -1 1];
-nb_iter=35;
+if exist('experiment','var')
+    nr_episodes=numel(experiment);
+    ER_hat=@(w) evaluatePolicy([w(:);1],c,nr_episodes,experiment);
+else
+    nr_episodes=1000;
+    ER_hat=@(w) evaluatePolicy([w(:);1],c,nr_episodes);
+end
+
+d=3;
+
+x_input_domain = [-1 1; -1 1; -5 1];
+nb_iter=100;
 result_display=true; result_save=true; plot_func=false; plot_point=false;
 
 cd(GPO_dir)
@@ -35,5 +42,11 @@ BO.ER=fx;
 BO.cost=c;
 BO.nb_iter=nb_iter;
 BO.nr_episodes=nr_episodes;
-save([root_dir,'results/BO/BO_c',int2str(100*c),'n',int2str(nb_iter),'.mat'],'BO')
+
+if exist('name','var')
+    save([root_dir,'results/BO/BO_c',int2str(100*c),'n',int2str(nb_iter),name,'.mat'],'BO')
+else
+    save([root_dir,'results/BO/BO_c',int2str(100*c),'n',int2str(nb_iter),'.mat'],'BO')
+end
+
 end

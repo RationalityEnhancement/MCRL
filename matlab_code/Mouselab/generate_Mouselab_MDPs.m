@@ -529,6 +529,99 @@ savejson('',pseudorewards,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experim
 csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/optimal.csv',max_score)
 csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/worst.csv',min_score)
 
+%% Create experiment for which the optimal strategy makes about 4 observations for certain time costs
+
+load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/trial_properties_March1.mat')
+load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/experiment_March1.mat')
+
+all_trials=experiment; clear experiment
+properties_all_trials=trial_properties; clear trial_properties
+
+selected_10trials=[1:5,16:20];
+experiment=all_trials(selected_10trials);
+trial_properties=properties_all_trials(selected_10trials);
+experiment_json=rmfield(experiment,'states_by_path');
+savejson('',experiment_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/ExperimentHalfMyopic.json')
+
+
+actions_by_state{1}=[];
+actions_by_state{2}=[1];
+actions_by_state{3}=[2];
+actions_by_state{4}=[3];
+actions_by_state{5}=[4];
+actions_by_state{6}=[1,1];
+actions_by_state{7}=[2,2];
+actions_by_state{8}=[3,3];
+actions_by_state{9}=[4,4];
+actions_by_state{10}=[1,1,2];
+actions_by_state{11}=[1,1,4];
+actions_by_state{12}=[2,2,3];
+actions_by_state{13}=[2,2,4];
+actions_by_state{14}=[3,3,2];
+actions_by_state{15}=[3,3,4];
+actions_by_state{16}=[4,4,3];
+actions_by_state{17}=[4,4,1];
+for e=1:numel(experiment)
+    experiment(e).actions_by_state=actions_by_state;
+    experiment(e).hallway_states=2:9;
+    experiment(e).leafs=10:17;
+    experiment(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
+end
+save ExperimentHalfMyopic experiment
+save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_half_myopic.mat', 'trial_properties')
+
+%% Create an experiment where 2-step planning is optimal on half of the problems and 3-step planning is optimal for the other half
+load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/trial_properties_March1.mat')
+load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/experiment_March1.mat')
+
+all_trials=experiment; clear experiment
+properties_all_trials=trial_properties; clear trial_properties
+
+%create some trials where the optimal planning horizon is 2
+r_max=15; r_min=-15; optimal_planning_horizon = 2;
+
+for t=1:5
+    tic()
+    [mdps_horizon2(t),score_horizon2(t),optimality_horizon2(t),properties_horizon2(t)]=...
+        optimizeMouselabMDP(all_trials(t),1000,r_max-r_min,false,optimal_planning_horizon)
+    toc()
+end
+
+experiment=[all_trials(1:4),mdps_horizon2([1:3,5]),all_trials(16:19)]
+
+actions_by_state{1}=[];
+actions_by_state{2}=[1];
+actions_by_state{3}=[2];
+actions_by_state{4}=[3];
+actions_by_state{5}=[4];
+actions_by_state{6}=[1,1];
+actions_by_state{7}=[2,2];
+actions_by_state{8}=[3,3];
+actions_by_state{9}=[4,4];
+actions_by_state{10}=[1,1,2];
+actions_by_state{11}=[1,1,4];
+actions_by_state{12}=[2,2,3];
+actions_by_state{13}=[2,2,4];
+actions_by_state{14}=[3,3,2];
+actions_by_state{15}=[3,3,4];
+actions_by_state{16}=[4,4,3];
+actions_by_state{17}=[4,4,1];
+for e=1:numel(experiment)
+    experiment(e).actions_by_state=actions_by_state;
+    experiment(e).hallway_states=2:9;
+    experiment(e).leafs=10:17;
+    experiment(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
+end
+
+for e=1:numel(experiment)
+    trial_properties(e)=evaluateMouselabMDP(experiment(e).T,...
+        experiment(e).rewards,experiment(e).start_state,experiment(e).horizon,...
+        e>15);
+end
+
+save ExperimentMixedHorizons experiment
+save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_mixed_horizons.mat', 'trial_properties')
+
 %% evaluate the performance of different levels of planning
 %{
 clear

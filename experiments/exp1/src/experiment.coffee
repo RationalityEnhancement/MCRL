@@ -8,13 +8,14 @@ Demonstrates the jsych-mdp plugin
 # coffeelint: disable=max_line_length, indentation
 DEBUG = false
 
-experiment_nr = 2
+experiment_nr = 4
 
 switch experiment_nr
-    when 0 then IVs = {PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}
-    when 1 then IVs = {PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,1.60,2.80]}
-    when 2 then IVs = {PRTypes: ['featureBased','objectLevel'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
-    when 3 then   IVs = {PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.60]}
+    when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}
+    when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,1.60,2.80]}
+    when 2 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','objectLevel'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
+    when 3 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.60]}
+    when 4 then IVs = {frequencyOfFB : ['after_each_move','after_each_click'], PRTypes: ['featureBased'], messageTypes: ['none'],infoCosts: [1.60]}      
     else console.log "Invalid experiment_nr!" 
         
 nrDelays = IVs.PRTypes.length    
@@ -27,7 +28,7 @@ nrConditions = switch experiment_nr
     when 1 then 3 * 3
     else nrDelays * nrMessages * nrInfoCosts
 
-conditions = {'PRType':[], 'messageType':[], 'infoCost': []}
+conditions = {'PRType':[], 'messageType':[], 'infoCost': [], 'frequencyOfFB': []}
 
 for PRType in IVs.PRTypes
     if experiment_nr <= 1
@@ -39,10 +40,12 @@ for PRType in IVs.PRTypes
         messageTypes = IVs.messageTypes
                 
     for message in messageTypes            
-        for infoCost in IVs.infoCosts                
-            conditions.PRType.push(PRType)
-            conditions.messageType.push(message)
-            conditions.infoCost.push(infoCost)
+        for infoCost in IVs.infoCosts      
+            for frequency in IVs.frequencyOfFB
+                conditions.PRType.push(PRType)
+                conditions.messageType.push(message)
+                conditions.infoCost.push(infoCost)
+                conditions.frequencyOfFB.push(frequency)
         
 if DEBUG
   console.log """
@@ -101,9 +104,10 @@ $(window).on 'load', ->
 
     
     condition_nr = condition % nrConditions
-    PARAMS={'PR_type': conditions.PRType[condition_nr], 'feedback': conditions.PRType[condition_nr] != "none", 'info_cost': conditions.infoCost[condition_nr], 'message':  conditions.messageType[condition_nr]}
+    PARAMS={'PR_type': conditions.PRType[condition_nr], 'feedback': conditions.PRType[condition_nr] != "none", 'info_cost': conditions.infoCost[condition_nr], 'message':  conditions.messageType[condition_nr], 'frequencyOfFB': conditions.frequencyOfFB[condition_nr]}
     #PARAMS.start_time = Date(Date.now())
     PARAMS.condition = condition_nr
+    
         
     # PARAMS.bonus_rate = .1
     BLOCKS = expData.blocks

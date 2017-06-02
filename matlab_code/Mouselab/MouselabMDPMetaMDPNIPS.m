@@ -20,7 +20,7 @@ classdef MouselabMDPMetaMDPNIPS < MDP
         object_level_MDPs;
         object_level_MDP;
         episode=0;
-        action_features=1:3;%7:16;
+        action_features=1:4;%7:16;
         feature_names;
         next_states;
         p_next_states;
@@ -101,8 +101,6 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             meta_MDP.p_payoff_values=discreteNormalPMF(meta_MDP.payoff_values,...
                 meta_MDP.mean_payoff,meta_MDP.std_payoff);
             
-            %meta_MDP.payoff_matrix=meta_MDP.samplePayoffMatrix();
-            %meta_MDP.outcome_probabilities=meta_MDP.sampleOutcomeProbabilities();
             if not(exist('problem_nr','var'))
                 problem_nr=1+mod(meta_MDP.episode-1,numel(meta_MDP.object_level_MDPs));
             end
@@ -891,7 +889,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 uncertainty_reduction; sigma_R;p_best_action;sigma_best_action;...
                 underplanning;complete_planning;cost];
             %}
-            action_features=[VPI; VOC; ER_act];
+            action_features=[VPI; VOC; meta_MDP.cost_per_click; ER_act];
         end
         
         function VPI=computeVPI(meta_MDP,state,c)
