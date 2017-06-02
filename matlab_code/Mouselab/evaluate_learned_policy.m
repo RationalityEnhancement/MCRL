@@ -130,7 +130,7 @@ load ExperimentMixedHorizons
 nr_trials=numel(experiment);
 nr_episodes_evaluation=1;
 [
-costs=[0.01,0.25,0.50,0.75,1,1.2,1.4:0.1:1.8,2,2.5,3.0]%[0.01,0.25,0.50,0.75,1:0.1:1.4,1.60,2.80];
+costs=[0.01,0.25,0.50,0.75,1,1.2,1.4:0.1:1.8,2,2.5,3.0];%[0.01,0.25,0.50,0.75,1:0.1:1.4,1.60,2.80];
 for c=1:length(costs)
     cost=costs(c);
     try

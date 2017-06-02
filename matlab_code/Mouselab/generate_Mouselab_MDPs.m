@@ -587,7 +587,7 @@ for t=1:5
     toc()
 end
 
-experiment=[all_trials(1:4),mdps_horizon2([1:3,5]),all_trials(16:19)]
+experiment=[all_trials(1:4),mdps_horizon2([1:3,5]),all_trials(16:19)];
 
 actions_by_state{1}=[];
 actions_by_state{2}=[1];
@@ -621,6 +621,9 @@ end
 
 save ExperimentMixedHorizons experiment
 save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_mixed_horizons.mat', 'trial_properties')
+
+experiment_json=rmfield(experiment,'states_by_path');
+savejson('',experiment_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/ExperimentMixedHorizons.json')
 
 %% evaluate the performance of different levels of planning
 %{
