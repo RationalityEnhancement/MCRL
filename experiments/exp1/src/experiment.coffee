@@ -38,7 +38,7 @@ $(window).on 'load', ->
 
   delay 300, ->
     console.log 'Loading data'
-    expData = loadJson "static/json/condition_0_0.json"
+    expData = loadJson "static/json/"+ COST_LEVEL + '_cost.json' 
     console.log 'expData', expData
 
     
