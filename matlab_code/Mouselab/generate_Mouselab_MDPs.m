@@ -617,6 +617,8 @@ for t=1:20
     end
     
     load baseline_mdp  
+    baseline_mdp.actions=1:4;
+    baseline_mdp.nextState=medium_cost_condition(1).nextState;
     for m=1:nr_moves
         basline_mdp.rewards(:,:,m)=T(:,:,m).*mvnrnd(mean_reward*ones(nr_states,nr_states),...
             std_reward*repmat(eye(nr_states),[1,1,nr_states]),nr_states);
@@ -635,7 +637,7 @@ scores=[properties_horizon0.score];
 suitable_mdps=find(scores>-12);
 
 high_cost_condition = mdps_horizon0(suitable_mdps(1:12));
-properties_high_cost_condition = properties_horizon0(suitable_mdps(1:12))
+properties_high_cost_condition = properties_horizon0(suitable_mdps(1:12));
 
 
 actions_by_state{1}=[];
@@ -655,12 +657,13 @@ actions_by_state{14}=[3,3,2];
 actions_by_state{15}=[3,3,4];
 actions_by_state{16}=[4,4,3];
 actions_by_state{17}=[4,4,1];
-for e=1:numel(experiment)
+for e=1:numel(high_cost_condition)
     high_cost_condition(e).actions_by_state=actions_by_state;
     high_cost_condition(e).hallway_states=2:9;
     high_cost_condition(e).leafs=10:17;
     high_cost_condition(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
-    
+end
+for e=1:numel(medium_cost_condition)
     medium_cost_condition(e).actions_by_state=actions_by_state;
     medium_cost_condition(e).hallway_states=2:9;
     medium_cost_condition(e).leafs=10:17;
@@ -691,20 +694,22 @@ scaling_factor.high_cost=10.6/std(high_cost_rewards(:));
 shift.high_cost=4.5 - scaling_factor.high_cost * mean(high_cost_rewards(:));
 
 for t=1:12
-    high_cost_condition(t).rewards(high_cost_condition(t).T>0)=...
+    high_cost_condition(t).rewards(high_cost_condition(t).T>0)=round(...
         scaling_factor.high_cost*...
         high_cost_condition(t).rewards(high_cost_condition(t).T>0)+...
-        shift.high_cost;
-    
-    medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)=...
+        shift.high_cost);
+end
+for t=1:12
+    medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)=round(...
         scaling_factor.medium_cost*...
         medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)+...
-        shift.medium_cost;
-    
-    low_cost_condition(t).rewards(low_cost_condition(t).T>0)=...
+        shift.medium_cost);
+end
+for t=1:12
+    low_cost_condition(t).rewards(low_cost_condition(t).T>0)=round(...
         scaling_factor.low_cost*...
         low_cost_condition(t).rewards(low_cost_condition(t).T>0)+...
-        shift.low_cost;
+        shift.low_cost);
 end
 
 save high_cost_condition high_cost_condition

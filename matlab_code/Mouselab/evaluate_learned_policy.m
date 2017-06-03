@@ -122,15 +122,45 @@ saveas(fig,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/results/RelativeScoreP
 
 %% 
 clear
-root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/'
-name='mixedHorizons'%'learnedOnTestDistributionWithCost';
+
+root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/';
 nb_iter=[100,50];
 
-load ExperimentMixedHorizons
+%condition='lowCost';
+condition='mediumCost';
+%condition='highCost';
+
+if strcmp(condition,'lowCost')
+    root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/'
+    name='low_cost';%'learnedOnTestDistributionWithCost';
+    nb_iter=[100,50];
+    load low_cost_condition
+    costs=[0.01];
+    experiment = low_cost_condition;
+end
+
+if strcmp(condition,'mediumCost')
+    
+    name='medium_cost';%'learnedOnTestDistributionWithCost';
+    load medium_cost_condition
+    costs=[0.25,0.50,0.75,1];
+    experiment = medium_cost_condition;
+end
+
+if strcmp(condition,'highCost')
+    
+    name='high_cost';%'learnedOnTestDistributionWithCost';
+    load high_cost_condition
+    costs=[1.50,2,2.50,3];
+    experiment = high_cost_condition;
+end
+
+
+
 nr_trials=numel(experiment);
 nr_episodes_evaluation=1;
-[
-costs=[0.01,0.25,0.50,0.75,1,1.2,1.4:0.1:1.8,2,2.5,3.0];%[0.01,0.25,0.50,0.75,1:0.1:1.4,1.60,2.80];
+
+%costs=[0.01,0.25,0.50,0.75,1,1.2,1.4:0.1:1.8,2,2.5,3.0];%[0.01,0.25,0.50,0.75,1:0.1:1.4,1.60,2.80];
 for c=1:length(costs)
     cost=costs(c);
     try

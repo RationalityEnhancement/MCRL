@@ -12,7 +12,7 @@ experiment_nr = 4
 
 switch experiment_nr
     when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}
-    when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,1.60,2.80]}
+    when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,2.50]}
     when 2 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','objectLevel'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
     when 3 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.60]}
     when 4 then IVs = {frequencyOfFB : ['after_each_move','after_each_click'], PRTypes: ['featureBased'], messageTypes: ['none'],infoCosts: [1.60]}      
