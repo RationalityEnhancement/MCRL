@@ -617,6 +617,8 @@ for t=1:20
     end
     
     load baseline_mdp  
+    baseline_mdp.actions=1:4;
+    baseline_mdp.nextState=medium_cost_condition(1).nextState;
     for m=1:nr_moves
         basline_mdp.rewards(:,:,m)=T(:,:,m).*mvnrnd(mean_reward*ones(nr_states,nr_states),...
             std_reward*repmat(eye(nr_states),[1,1,nr_states]),nr_states);
@@ -635,7 +637,7 @@ scores=[properties_horizon0.score];
 suitable_mdps=find(scores>-12);
 
 high_cost_condition = mdps_horizon0(suitable_mdps(1:12));
-properties_high_cost_condition = properties_horizon0(suitable_mdps(1:12))
+properties_high_cost_condition = properties_horizon0(suitable_mdps(1:12));
 
 
 actions_by_state{1}=[];
@@ -655,12 +657,13 @@ actions_by_state{14}=[3,3,2];
 actions_by_state{15}=[3,3,4];
 actions_by_state{16}=[4,4,3];
 actions_by_state{17}=[4,4,1];
-for e=1:numel(experiment)
+for e=1:numel(high_cost_condition)
     high_cost_condition(e).actions_by_state=actions_by_state;
     high_cost_condition(e).hallway_states=2:9;
     high_cost_condition(e).leafs=10:17;
     high_cost_condition(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
-    
+end
+for e=1:numel(medium_cost_condition)
     medium_cost_condition(e).actions_by_state=actions_by_state;
     medium_cost_condition(e).hallway_states=2:9;
     medium_cost_condition(e).leafs=10:17;
@@ -671,6 +674,83 @@ for e=1:numel(experiment)
     low_cost_condition(e).leafs=10:17;
     low_cost_condition(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
     
+end
+
+for t=1:12, low_cost_rewards(:,t)=low_cost_condition(t).rewards(low_cost_condition(t).T>0),end
+mean(low_cost_rewards(:))
+scaling_factor.low_cost=10.6/std(low_cost_rewards(:))
+shift.low_cost=4.5 - scaling_factor.low_cost * mean(low_cost_rewards(:));
+
+for t=1:12, medium_cost_rewards(:,t)=medium_cost_condition(t).rewards(medium_cost_condition(t).T>0),end
+mean(medium_cost_rewards(:))
+std(medium_cost_rewards(:))
+scaling_factor.medium_cost=10.6/std(medium_cost_rewards(:))
+shift.medium_cost=4.5 - scaling_factor.medium_cost * mean(medium_cost_rewards(:));
+
+for t=1:12, high_cost_rewards(:,t)=high_cost_condition(t).rewards(high_cost_condition(t).T>0),end
+mean(high_cost_rewards(:))
+std(high_cost_rewards(:))
+scaling_factor.high_cost=10.6/std(high_cost_rewards(:));
+shift.high_cost=4.5 - scaling_factor.high_cost * mean(high_cost_rewards(:));
+
+for t=1:12
+    high_cost_condition(t).rewards(high_cost_condition(t).T>0)=round(...
+        scaling_factor.high_cost*...
+        high_cost_condition(t).rewards(high_cost_condition(t).T>0)+...
+        shift.high_cost);
+end
+for t=1:12
+    medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)=round(...
+        scaling_factor.medium_cost*...
+        medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)+...
+        shift.medium_cost);
+end
+for t=1:12
+    low_cost_condition(t).rewards(low_cost_condition(t).T>0)=round(...
+        scaling_factor.low_cost*...
+        low_cost_condition(t).rewards(low_cost_condition(t).T>0)+...
+        shift.low_cost);
+end
+
+
+%add rewards to states
+conditions={'low_cost_condition','medium_cost_condition','high_cost_condition'};
+
+for c=1:numel(conditions)
+    
+    condition=conditions{c};
+    
+    eval(['experiment=',condition,';'])
+    
+    for e=1:numel(experiment)
+
+        states=experiment(e).states;
+        nr_states=numel(states);
+        
+        experiment(e).actions=1:4;
+        
+        for s=1:nr_states
+            
+            state=states(s);
+            
+            from=state.nr;
+            
+            for a=1:numel(state.actions)
+                to=experiment(e).states(s).actions(a).state;
+                action=experiment(e).states(s).actions(a).nr;
+                experiment(e).states(s).actions(a).reward=...
+                    experiment(e).rewards(from,to,action);
+                
+                experiment(e).states(to).reward=experiment(e).rewards(from,to,action);
+                
+                experiment(e).states(s).actions(a).done=...
+                    experiment(e).states(to).is_terminal_state;
+            end
+            
+        end
+    end
+    
+    eval([condition,'=experiment;'])
 end
 
 
@@ -684,9 +764,10 @@ save '/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_prope
 high_cost_json=rmfield(high_cost_condition,'states_by_path');
 savejson('',high_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/high_cost.json')
 medium_cost_json=rmfield(medium_cost_condition,'states_by_path');
-savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/medium_cost.json')
+savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/med_cost.json')
 low_cost_json=rmfield(low_cost_condition,'states_by_path');
 savejson('',low_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/low_cost.json')
+
 
 %% evaluate the performance of different levels of planning
 %{
