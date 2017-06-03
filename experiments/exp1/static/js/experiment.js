@@ -87,9 +87,9 @@ initializeExperiment = function() {
     switch (PARAMS.info_cost) {
       case 0.01:
         return 'low';
-      case 1.60:
+      case 1.00:
         return 'med';
-      case 2.80:
+      case 2.50:
         return 'high';
       default:
         throw new Error('bad info_cost');

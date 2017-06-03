@@ -5,7 +5,7 @@ DEBUG = true;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 0;
+  condition = 1;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
@@ -16,11 +16,7 @@ if (mode === "{{ mode }}") {
   counterbalance = 0;
 }
 
-experiment_nr = 4;
-
-condition = parseInt(condition);
-
-console.log('condition', condition);
+experiment_nr = 0.6;
 
 switch (experiment_nr) {
   case 0:
@@ -29,6 +25,14 @@ switch (experiment_nr) {
       PRTypes: ['none', 'featureBased', 'fullObservation'],
       messageTypes: ['full', 'none'],
       infoCosts: [0.01, 2.80]
+    };
+    break;
+  case 0.6:
+    IVs = {
+      frequencyOfFB: ['after_each_move'],
+      PRTypes: ['featureBased'],
+      messageTypes: ['full'],
+      infoCosts: [0.01, 1.00, 2.50]
     };
     break;
   case 1:
@@ -77,6 +81,8 @@ nrConditions = (function() {
   switch (experiment_nr) {
     case 0:
       return 6;
+    case 0.6:
+      return 3;
     case 1:
       return 3 * 3;
     default:
@@ -135,9 +141,9 @@ COST_LEVEL = (function() {
   switch (PARAMS.info_cost) {
     case 0.01:
       return 'low';
-    case 1.60:
+    case 1.00:
       return 'med';
-    case 2.80:
+    case 2.50:
       return 'high';
     default:
       throw new Error('bad info_cost');

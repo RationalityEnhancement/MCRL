@@ -897,7 +897,7 @@ function predictQValue(state,computation){
         case 1.0:
             feature_weights = {VPI: 1.8799, VOC1: 0.7847, ER: 1.0272, cost: 4.8512}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
-        case 2.5
+        case 2.5:
             feature_weights = {VPI: -1.9486, VOC1: 1.3329, ER: 0.8670, cost: -1.3246};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
