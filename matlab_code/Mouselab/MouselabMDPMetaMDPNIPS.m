@@ -865,6 +865,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 %nr_cells_uninspected=sum(isnan(state.observations(:)));
                 
                 VPI=0;
+                cost = meta_MDP.cost_per_click;
             else
                 %{
                 expected_regret=0;
@@ -880,6 +881,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 %}
                 VPI=meta_MDP.computeVPI(state,c);                
                 [VOC,meta_MDP]=meta_MDP.myopicVOC(state,c);
+                cost=0;
             end
             
             ER_act=meta_MDP.expectedRewardOfActing(state,c);
@@ -889,7 +891,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 uncertainty_reduction; sigma_R;p_best_action;sigma_best_action;...
                 underplanning;complete_planning;cost];
             %}
-            action_features=[VPI; VOC; meta_MDP.cost_per_click; ER_act];
+            action_features=[VPI; VOC; cost; ER_act];
         end
         
         function VPI=computeVPI(meta_MDP,state,c)

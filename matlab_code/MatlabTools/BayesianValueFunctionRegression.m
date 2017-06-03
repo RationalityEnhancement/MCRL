@@ -103,7 +103,7 @@ for i=1:nr_episodes
     predicted_returns=F*glm_Q.mu_n;
     MSE(i)=norm(predicted_returns-returns)^2/nr_actions_in_episode;
     
-    glm_Q=glm_Q.update(F,returns);
+    glm_Q=glm_Q.update(F(1,:),returns(1));
     
     if mod(i,250)==0
         disp(['Completed episode ',int2str(i),', dw=',num2str(norm(glm_Q.mu_n(:)-w_old(:))),', w_old: ',mat2str(roundsd(w_old(:),4)),'',...

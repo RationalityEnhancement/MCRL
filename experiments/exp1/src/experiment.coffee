@@ -281,7 +281,7 @@ initializeExperiment = ->
     ] else [])
     options: [
       ['True', 'False']
-      ['$0.01', '$0.05', '$1.60', '$2.80']
+      ['$0.01', '$0.05', '$1.00', '$2.50']
       ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish']
       ['10% of my best score on any round'
        '10% of my total score on all rounds'

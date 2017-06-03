@@ -1,4 +1,4 @@
-DEBUG = true
+DEBUG = false
 
 if DEBUG
   console.log """
@@ -64,11 +64,11 @@ for PRType in IVs.PRTypes
         
 
 PARAMS =
-  PR_type: conditions.PRType[condition]
-  feedback: conditions.PRType[condition] != "none"
-  info_cost: conditions.infoCost[condition]
-  message:  conditions.messageType[condition]
-  frequencyOfFB: conditions.frequencyOfFB[condition]
+  PR_type: conditions.PRType[condition % nrConditions]
+  feedback: conditions.PRType[condition % nrConditions] != "none"
+  info_cost: conditions.infoCost[condition % nrConditions]
+  message:  conditions.messageType[condition % nrConditions]
+  frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]
   condition: condition
 
 console.log 'PARAMS', PARAMS

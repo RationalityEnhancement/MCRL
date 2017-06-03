@@ -891,14 +891,14 @@ function predictQValue(state,computation){
     var feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {VPI: 3.0540, VOC1: 0.6884, ER: 1.0237, cost: 4.0224};
+            feature_weights = {VPI: 2.7287, VOC1: 0.3350, ER: 1.0665, cost: -0.2817};
             //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.0:
-            feature_weights = {VPI: 1.8799, VOC1: 0.7847, ER: 1.0272, cost: 4.8512}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
+            feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.5:
-            feature_weights = {VPI: -1.9486, VOC1: 1.3329, ER: 0.8670, cost: -1.3246};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
+            feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
     console.log('weights', feature_weights)
@@ -919,17 +919,17 @@ function predictQValue(state,computation){
 function predictQValueOfSequence(state,computations){
     //predictQValue(s,c) returns the Q-value our feature-based approximation predicts for performing computation c in state s.
     
-    feature_weights = null;
+    var feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {VPI: 3.0540, VOC1: 0.6884, ER: 1.0237, cost: 4.0224};
+            feature_weights = {VPI: 2.7287, VOC1: 0.3350, ER: 1.0665, cost: -0.2817};
             //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.0:
-            feature_weights = {VPI: 1.8799, VOC1: 0.7847, ER: 1.0272, cost: 4.8512}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
+            feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.5:
-            feature_weights = {VPI: -1.9486, VOC1: 1.3329, ER: 0.8670, cost: -1.3246};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
+            feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
     console.log('weights', feature_weights)

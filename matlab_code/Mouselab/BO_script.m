@@ -34,15 +34,15 @@ pseudoreward_type='none';
 mean_payoff=4.5;
 std_payoff=10.6;
 
-conditions={'lowCost','mediumCost','highCost'};
+conditions={'mediumCost','highCost','lowCost'};
 
-for c=3:numel(conditions)
+for c=1:numel(conditions)
     
     condition=conditions{c};
     
     if strcmp(condition,'highCost')
-        load high_cost_condition
-        experiment = high_cost_condition;
+        %load high_cost_condition
+        %experiment = high_cost_condition;
         cost = 2.50;
         
         temp=load(['../../results/BO/BO_c250n50high_cost.mat']);
@@ -51,8 +51,8 @@ for c=3:numel(conditions)
     end
     
     if strcmp(condition,'mediumCost')
-        load medium_cost_condition
-        experiment = medium_cost_condition;
+        %load medium_cost_condition
+        %experiment = medium_cost_condition;
         cost = 1.00;
         
         temp=load(['../../results/BO/BO_c100n100medium_cost.mat']);
@@ -60,12 +60,38 @@ for c=3:numel(conditions)
     end
     
     if strcmp(condition,'lowCost')
-        load low_cost_condition
-        experiment = low_cost_condition;
+        %load low_cost_condition
+        %experiment = low_cost_condition;
         cost=0.01;
         
         temp=load(['../../results/BO/BO_c1n100low_cost.mat']);
         w_policy=temp.BO.w_hat;
+    end
+    
+    load ControlExperiment
+    experiment = control_experiment;
+    actions_by_state{1}=[];
+    actions_by_state{2}=[1];
+    actions_by_state{3}=[2];
+    actions_by_state{4}=[3];
+    actions_by_state{5}=[4];
+    actions_by_state{6}=[1,1];
+    actions_by_state{7}=[2,2];
+    actions_by_state{8}=[3,3];
+    actions_by_state{9}=[4,4];
+    actions_by_state{10}=[1,1,2];
+    actions_by_state{11}=[1,1,4];
+    actions_by_state{12}=[2,2,3];
+    actions_by_state{13}=[2,2,4];
+    actions_by_state{14}=[3,3,2];
+    actions_by_state{15}=[3,3,4];
+    actions_by_state{16}=[4,4,3];
+    actions_by_state{17}=[4,4,1];
+    for e=1:numel(experiment)
+        experiment(e).actions_by_state=actions_by_state;
+        experiment(e).hallway_states=2:9;
+        experiment(e).leafs=10:17;
+        experiment(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
     end
     
     training_data1=load('~/Dropbox/PhD/Metacognitive RL/mcrl-experiment/1E_state-action_pairs/stateActions_0.mat');
@@ -75,7 +101,7 @@ for c=3:numel(conditions)
     training_data.trialNr=[training_data1.trialNr,training_data2.trialNr];
     training_data.state_actions=[training_data1.state_actions,training_data2.state_actions];
     training_data.rewardSeen=[training_data1.rewardSeen,training_data2.rewardSeen];
-    training_data.trials=experiment;
+    training_data.trials=experiment;    
     
     %costs=[0.01,1.60,2.80];
     %w_observe_everything=[1;1;1];
