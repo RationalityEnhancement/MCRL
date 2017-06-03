@@ -617,7 +617,8 @@ for t=1:20
     end
     
     load baseline_mdp  
-    baseline_m
+    baseline_mdp.actions=1:4;
+    baseline_mdp.nextState=medium_cost_condition(1).nextState;
     for m=1:nr_moves
         basline_mdp.rewards(:,:,m)=T(:,:,m).*mvnrnd(mean_reward*ones(nr_states,nr_states),...
             std_reward*repmat(eye(nr_states),[1,1,nr_states]),nr_states);
@@ -636,7 +637,72 @@ scores=[properties_horizon0.score];
 suitable_mdps=find(scores>-12);
 
 high_cost_condition = mdps_horizon0(suitable_mdps(1:12));
-properties_high_cost_condition = properties_horizon0(suitable_mdps(1:12))
+properties_high_cost_condition = properties_horizon0(suitable_mdps(1:12));
+
+
+start_state=struct('nr',1,'path',[],'available_actions',...
+    1:nr_possible_moves_by_step(1),'is_terminal_state',false,...
+    'is_initial_state',true,'location',[0,0],'actions',action_struct);
+states_by_step{1}=[start_state]; %each state can be identified by the sequence of moves that led to it
+state_nr=1;
+states=[states_by_step{1}(:)];
+for step=2:(nr_steps+1)
+    states_by_step{step}=[];
+    for s=1:numel(states_by_step{step-1})
+        
+        previous_state=states_by_step{step-1}(s);
+        
+        for m=1:nr_possible_moves_by_step(step-1)
+            state_nr=state_nr+1;
+            move=previous_state.available_actions(m);
+            path=[previous_state.path;move];
+            
+            clear actions_struct
+            
+            if numel(path)==1
+                available_actions=path(1);
+            elseif numel(path)==2
+                if ismember(path(end),[left,right])
+                    available_actions=[up,down];
+                elseif ismember(path(end),[up,down])
+                    available_actions=[left,right];
+                end
+            elseif numel(path)==3
+                available_actions=[];
+                actions_struct=struct([]);
+            end           
+            
+            x=sum(path==right)-sum(path==left);
+            y=sum(path==up)-sum(path==down);
+            location_by_state(s,:)=[x,y];            
+            
+            for a=1:numel(available_actions)
+                action=available_actions(a);
+                
+                switch action
+                    case 1
+                        direction='right';
+                    case 2
+                        direction='up';
+                    case 3
+                        direction='left';
+                    case 4
+                        direction='down';
+                end
+                
+                actions_struct(a)=struct('direction',direction,...
+                    'nr',action,'state',0,'reward',NaN,'done',false);
+            end
+                                    
+            state=struct('nr',state_nr,'path',path,'available_actions',...
+                available_actions,'is_terminal_state',step==nr_steps,...
+                'is_initial_state',false,'location',[x,y],'actions',actions_struct);
+            states_by_step{step}=[states_by_step{step}(:);state];
+        end
+    end
+    states=[states(:);states_by_step{step}(:)];
+end
+
 
 
 actions_by_state{1}=[];
@@ -656,12 +722,14 @@ actions_by_state{14}=[3,3,2];
 actions_by_state{15}=[3,3,4];
 actions_by_state{16}=[4,4,3];
 actions_by_state{17}=[4,4,1];
-for e=1:numel(experiment)
+for e=1:numel(high_cost_condition)
     high_cost_condition(e).actions_by_state=actions_by_state;
     high_cost_condition(e).hallway_states=2:9;
     high_cost_condition(e).leafs=10:17;
     high_cost_condition(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
-    
+    high_cost_condition(e).states(1).reward=0;
+end
+for e=1:numel(medium_cost_condition)
     medium_cost_condition(e).actions_by_state=actions_by_state;
     medium_cost_condition(e).hallway_states=2:9;
     medium_cost_condition(e).leafs=10:17;
@@ -692,21 +760,65 @@ scaling_factor.high_cost=10.6/std(high_cost_rewards(:));
 shift.high_cost=4.5 - scaling_factor.high_cost * mean(high_cost_rewards(:));
 
 for t=1:12
-    high_cost_condition(t).rewards(high_cost_condition(t).T>0)=...
+    high_cost_condition(t).rewards(high_cost_condition(t).T>0)=round(...
         scaling_factor.high_cost*...
         high_cost_condition(t).rewards(high_cost_condition(t).T>0)+...
-        shift.high_cost;
-    
-    medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)=...
+        shift.high_cost);
+end
+for t=1:12
+    medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)=round(...
         scaling_factor.medium_cost*...
         medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)+...
-        shift.medium_cost;
-    
-    low_cost_condition(t).rewards(low_cost_condition(t).T>0)=...
+        shift.medium_cost);
+end
+for t=1:12
+    low_cost_condition(t).rewards(low_cost_condition(t).T>0)=round(...
         scaling_factor.low_cost*...
         low_cost_condition(t).rewards(low_cost_condition(t).T>0)+...
-        shift.low_cost;
+        shift.low_cost);
 end
+
+
+%add rewards to states
+conditions={'low_cost_condition','medium_cost_condition','high_cost_condition'};
+
+for c=1:numel(conditions)
+    
+    condition=conditions{c};
+    
+    eval(['experiment=',condition,';'])
+    
+    for e=1:numel(experiment)
+
+        states=experiment(e).states;
+        nr_states=numel(states);
+        
+        experiment(e).actions=1:4;
+        
+        for s=1:nr_states
+            
+            state=states(s);
+            
+            from=state.nr;
+            
+            for a=1:numel(state.actions)
+                to=experiment(e).states(s).actions(a).state;
+                action=experiment(e).states(s).actions(a).nr;
+                experiment(e).states(s).actions(a).reward=...
+                    experiment(e).rewards(from,to,action);
+                
+                experiment(e).states(to).reward=experiment(e).rewards(from,to,action);
+                
+                experiment(e).states(s).actions(a).done=...
+                    experiment(e).states(to).is_terminal_state;
+            end
+            
+        end
+    end
+    
+    eval([condition,'=experiment;'])
+end
+
 
 save high_cost_condition high_cost_condition
 save medium_cost_condition medium_cost_condition
@@ -716,9 +828,9 @@ save '/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_prope
 save '/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_low_cost_condition.mat' properties_low_cost_condition
 
 high_cost_json=rmfield(high_cost_condition,'states_by_path');
-savejson('',high_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/high_cost.json')
+savejson('',high_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/high_cost.json')
 medium_cost_json=rmfield(medium_cost_condition,'states_by_path');
-savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/medium_cost.json')
+savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/med_cost.json')
 low_cost_json=rmfield(low_cost_condition,'states_by_path');
 savejson('',low_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/low_cost.json')
 

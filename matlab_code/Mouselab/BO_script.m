@@ -36,7 +36,7 @@ std_payoff=10.6;
 
 conditions={'lowCost','mediumCost','highCost'};
 
-for c=1:numel(conditions)
+for c=3:numel(conditions)
     
     condition=conditions{c};
     
@@ -100,4 +100,4 @@ for c=1:numel(conditions)
 end
 %end
 fit.glm=glm_Q; fit.MSE=MSE; fit.R_total=R_total;
-save ../../results/BO/valueFunctionFit.mat fit
+save ../../results/BO/valueFunctionFitConditionSpecific.mat fit

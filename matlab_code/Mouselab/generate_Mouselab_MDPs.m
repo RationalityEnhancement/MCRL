@@ -640,6 +640,71 @@ high_cost_condition = mdps_horizon0(suitable_mdps(1:12));
 properties_high_cost_condition = properties_horizon0(suitable_mdps(1:12));
 
 
+start_state=struct('nr',1,'path',[],'available_actions',...
+    1:nr_possible_moves_by_step(1),'is_terminal_state',false,...
+    'is_initial_state',true,'location',[0,0],'actions',action_struct);
+states_by_step{1}=[start_state]; %each state can be identified by the sequence of moves that led to it
+state_nr=1;
+states=[states_by_step{1}(:)];
+for step=2:(nr_steps+1)
+    states_by_step{step}=[];
+    for s=1:numel(states_by_step{step-1})
+        
+        previous_state=states_by_step{step-1}(s);
+        
+        for m=1:nr_possible_moves_by_step(step-1)
+            state_nr=state_nr+1;
+            move=previous_state.available_actions(m);
+            path=[previous_state.path;move];
+            
+            clear actions_struct
+            
+            if numel(path)==1
+                available_actions=path(1);
+            elseif numel(path)==2
+                if ismember(path(end),[left,right])
+                    available_actions=[up,down];
+                elseif ismember(path(end),[up,down])
+                    available_actions=[left,right];
+                end
+            elseif numel(path)==3
+                available_actions=[];
+                actions_struct=struct([]);
+            end           
+            
+            x=sum(path==right)-sum(path==left);
+            y=sum(path==up)-sum(path==down);
+            location_by_state(s,:)=[x,y];            
+            
+            for a=1:numel(available_actions)
+                action=available_actions(a);
+                
+                switch action
+                    case 1
+                        direction='right';
+                    case 2
+                        direction='up';
+                    case 3
+                        direction='left';
+                    case 4
+                        direction='down';
+                end
+                
+                actions_struct(a)=struct('direction',direction,...
+                    'nr',action,'state',0,'reward',NaN,'done',false);
+            end
+                                    
+            state=struct('nr',state_nr,'path',path,'available_actions',...
+                available_actions,'is_terminal_state',step==nr_steps,...
+                'is_initial_state',false,'location',[x,y],'actions',actions_struct);
+            states_by_step{step}=[states_by_step{step}(:);state];
+        end
+    end
+    states=[states(:);states_by_step{step}(:)];
+end
+
+
+
 actions_by_state{1}=[];
 actions_by_state{2}=[1];
 actions_by_state{3}=[2];
@@ -662,6 +727,7 @@ for e=1:numel(high_cost_condition)
     high_cost_condition(e).hallway_states=2:9;
     high_cost_condition(e).leafs=10:17;
     high_cost_condition(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
+    high_cost_condition(e).states(1).reward=0;
 end
 for e=1:numel(medium_cost_condition)
     medium_cost_condition(e).actions_by_state=actions_by_state;
@@ -762,11 +828,11 @@ save '/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_prope
 save '/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_low_cost_condition.mat' properties_low_cost_condition
 
 high_cost_json=rmfield(high_cost_condition,'states_by_path');
-savejson('',high_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/high_cost.json')
+savejson('',high_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/high_cost.json')
 medium_cost_json=rmfield(medium_cost_condition,'states_by_path');
-savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/med_cost.json')
+savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/med_cost.json')
 low_cost_json=rmfield(low_cost_condition,'states_by_path');
-savejson('',low_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/low_cost.json')
+savejson('',low_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/low_cost.json')
 
 
 %% evaluate the performance of different levels of planning

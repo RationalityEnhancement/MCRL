@@ -70,7 +70,7 @@ def mat_to_standard():
 
 
     # exp = int(sys.argv[1])
-    for cost in ('low', 'med', 'high')[:-1]:
+    for cost in ('low', 'med', 'high'):#[:-1]:
         infile = 'data/stimuli/{}_cost.json'.format(cost)
         outfile = 'exp1/static/json/{}_cost.json'.format(cost)
         pseudofile = 'exp1/static/json/pseudo_{}_cost.json'.format(cost)
