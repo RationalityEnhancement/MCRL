@@ -6,148 +6,17 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, COST_LEVEL, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, conditions, counterbalance, createStartButton, delay, experiment_nr, frequency, i, infoCost, initializeExperiment, j, k, l, len, len1, len2, len3, message, messageTypes, nrConditions, nrDelays, nrInfoCosts, nrMessages, psiturk, ref, ref1, ref2,
+var BLOCKS, N_TRIALS, TRIALS, createStartButton, delay, initializeExperiment, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
-
-DEBUG = true;
-
-experiment_nr = 0.6;
-
-condition = parseInt(condition);
-
-switch (experiment_nr) {
-  case 0:
-    IVs = {
-      frequencyOfFB: ['after_each_move'],
-      PRTypes: ['none', 'featureBased', 'fullObservation'],
-      messageTypes: ['full', 'none'],
-      infoCosts: [0.01, 2.80]
-    };
-    break;
-  case 0.6:
-    IVs = {
-      frequencyOfFB: ['after_each_move'],
-      PRTypes: ['featureBased'],
-      messageTypes: ['full'],
-      infoCosts: [0.01, 1.00, 2.50]
-    };
-    break;
-  case 1:
-    IVs = {
-      frequencyOfFB: ['after_each_move'],
-      PRTypes: ['none', 'featureBased', 'fullObservation'],
-      messageTypes: ['full', 'none'],
-      infoCosts: [0.01, 1.00, 2.50]
-    };
-    break;
-  case 2:
-    IVs = {
-      frequencyOfFB: ['after_each_move'],
-      PRTypes: ['featureBased', 'objectLevel'],
-      messageTypes: ['full'],
-      infoCosts: [0.01, 1.60, 2.80]
-    };
-    break;
-  case 3:
-    IVs = {
-      frequencyOfFB: ['after_each_move'],
-      PRTypes: ['none', 'featureBased'],
-      messageTypes: ['full', 'simple'],
-      infoCosts: [1.60]
-    };
-    break;
-  case 4:
-    IVs = {
-      frequencyOfFB: ['after_each_move', 'after_each_click'],
-      PRTypes: ['featureBased'],
-      messageTypes: ['none'],
-      infoCosts: [1.60]
-    };
-    break;
-  default:
-    console.log("Invalid experiment_nr!");
-}
-
-nrDelays = IVs.PRTypes.length;
-
-nrMessages = IVs.messageTypes.length;
-
-nrInfoCosts = IVs.infoCosts.length;
-
-nrConditions = (function() {
-  switch (experiment_nr) {
-    case 0:
-      return 6;
-    case 0.6:
-      return 3;
-    case 1:
-      return 3 * 3;
-    default:
-      return nrDelays * nrMessages * nrInfoCosts;
-  }
-})();
-
-conditions = {
-  'PRType': [],
-  'messageType': [],
-  'infoCost': [],
-  'frequencyOfFB': []
-};
-
-ref = IVs.PRTypes;
-for (i = 0, len = ref.length; i < len; i++) {
-  PRType = ref[i];
-  if (experiment_nr <= 1) {
-    if (PRType === 'none') {
-      messageTypes = ['none'];
-    } else {
-      messageTypes = ['full'];
-    }
-  } else {
-    messageTypes = IVs.messageTypes;
-  }
-  for (j = 0, len1 = messageTypes.length; j < len1; j++) {
-    message = messageTypes[j];
-    ref1 = IVs.infoCosts;
-    for (k = 0, len2 = ref1.length; k < len2; k++) {
-      infoCost = ref1[k];
-      ref2 = IVs.frequencyOfFB;
-      for (l = 0, len3 = ref2.length; l < len3; l++) {
-        frequency = ref2[l];
-        conditions.PRType.push(PRType);
-        conditions.messageType.push(message);
-        conditions.infoCost.push(infoCost);
-        conditions.frequencyOfFB.push(frequency);
-      }
-    }
-  }
-}
-
-if (DEBUG) {
-  console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 0;
-} else {
-  console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
-}
-
-if (mode === "{{ mode }}") {
-  DEMO = true;
-  condition = 1;
-  counterbalance = 0;
-}
 
 psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
 
 BLOCKS = void 0;
 
-PARAMS = void 0;
-
 TRIALS = void 0;
 
 N_TRIALS = void 0;
-
-COST_LEVEL = void 0;
 
 delay = function(time, func) {
   return setTimeout(func, time);
@@ -161,36 +30,24 @@ $(window).on('load', function() {
   loadTimeout = delay(12000, slowLoad);
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
   return delay(300, function() {
-    var ERROR, expData;
+    var ERROR, PARAMS, condition_nr, expData;
     console.log('Loading data');
-    PARAMS = {
-      PR_type: conditions.PRType[condition],
-      feedback: conditions.PRType[condition] !== "none",
-      info_cost: conditions.infoCost[condition],
-      message: conditions.messageType[condition],
-      frequencyOfFB: conditions.frequencyOfFB[condition],
-      condition: condition
-    };
-    console.log('PARAMS', PARAMS);
-    COST_LEVEL = (function() {
-      switch (PARAMS.info_cost) {
-        case 0.01:
-          return 'low';
-        case 1.60:
-          return 'med';
-        case 2.80:
-          return 'high';
-        default:
-          throw new Error('bad info_cost');
-      }
-    })();
-    expData = loadJson("static/json/" + COST_LEVEL + "_cost.json");
+    expData = loadJson("static/json/condition_0_0.json");
     console.log('expData', expData);
+    condition_nr = condition % nrConditions;
+    PARAMS = {
+      'PR_type': conditions.PRType[condition_nr],
+      'feedback': conditions.PRType[condition_nr] !== "none",
+      'info_cost': conditions.infoCost[condition_nr],
+      'message': conditions.messageType[condition_nr],
+      'frequencyOfFB': conditions.frequencyOfFB[condition_nr]
+    };
+    PARAMS.condition = condition_nr;
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);
     psiturk.recordUnstructuredData('experiment_nr', experiment_nr);
-    psiturk.recordUnstructuredData('condition', condition);
+    psiturk.recordUnstructuredData('condition_nr', condition_nr);
     if (DEBUG || DEMO) {
       return createStartButton();
     } else {
@@ -223,9 +80,21 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var BONUS, Block, MDPBlock, QuizLoop, TextBlock, calculateBonus, debug_slide, experiment_timeline, finish, instruct_loop, instructions, main, prompt_resubmit, quiz, reprompt, save_data, text;
+  var BONUS, Block, MDPBlock, QuizLoop, TextBlock, calculateBonus, costLevel, debug_slide, experiment_timeline, finish, instruct_loop, instructions, main, prompt_resubmit, quiz, reprompt, save_data, text;
   console.log('INITIALIZE EXPERIMENT');
   N_TRIALS = BLOCKS.standard.length;
+  costLevel = (function() {
+    switch (PARAMS.info_cost) {
+      case 0.01:
+        return 'low';
+      case 1.60:
+        return 'med';
+      case 2.80:
+        return 'high';
+      default:
+        throw new Error('bad info_cost');
+    }
+  })();
   text = {
     debug: function() {
       if (DEBUG) {
@@ -287,11 +156,11 @@ initializeExperiment = function() {
     }
 
     QuizLoop.prototype.loop_function = function(data) {
-      var c, len4, m, ref3;
+      var c, i, len, ref;
       console.log('data', data);
-      ref3 = data[data.length].correct;
-      for (m = 0, len4 = ref3.length; m < len4; m++) {
-        c = ref3[m];
+      ref = data[data.length].correct;
+      for (i = 0, len = ref.length; i < len; i++) {
+        c = ref[i];
         if (!c) {
           return true;
         }
@@ -324,7 +193,7 @@ initializeExperiment = function() {
   });
   instructions = new Block({
     type: "instructions",
-    pages: [markdown("# Instructions " + (text.debug()) + "\n\nIn this game, you are in charge of flying an aircraft. As shown below,\nyou will begin in the central location. The arrows show which actions\nare available in each location. Note that once you have made a move you\ncannot go back; you can only move forward along the arrows. There are\neight possible final destinations labelled 1-8 in the image below. On\nyour way there, you will visit two intermediate locations. <b>Every\nlocation you visit will add or subtract money to your account</b>, and\nyour task is to earn as much money as possible. <b>To find out how much\nmoney you earn or lose in a location, you have to click on it.</b> You\ncan uncover the value of as many or as few locations as you wish.\n\n" + (img('task_images/Slide1.png')) + "\n\nTo navigate the airplane, use the arrows (the example above is non-interactive).\nYou can uncover the value of a location at any time. Click \"Next\" to proceed."), markdown("# Instructions\n\nYou will play the game for " + N_TRIALS + " rounds. The value of every location will\nchange from each round to the next. At the begining of each round, the\nvalue of every location will be hidden, and you will only discover the\nvalue of the locations you click on. The example below shows the value\nof every location, just to give you an example of values you could see\nif you clicked on every location. <b>Every time you click a circle to\nobserve its value, you pay a fee of " + (fmtMoney(PARAMS.info_cost)) + ".</b>\n\n" + (img('task_images/Slide2_' + COST_LEVEL + '.png')) + "\n\nEach time you move to a\nlocation, your profit will be adjusted. If you move to a location with\na hidden value, your profit will still be adjusted according to the\nvalue of that location. " + (text.constantDelay()))].concat((text.feedback()).concat([markdown("# Instructions\n\nThere are two more important things to understand:\n1. You must spend at least 45 seconds on each round. A countdown timer\n   will show you how much more time you must spend on the round. You\n   won’t be able to proceed to the next round before the countdown has\n   finished, but you can take as much time as you like afterwards.\n2. </b>You will earn <u>real money</u> for your flights.</b> Specifically,\n   one of the " + N_TRIALS + " rounds will be chosen at random and you will receive 5%\n   of your earnings in that round as a bonus payment.\n\n" + (img('task_images/Slide3.png')) + "\n\n You may proceed to take an entry quiz, or go back to review the instructions.")])),
+    pages: [markdown("# Instructions " + (text.debug()) + "\n\nIn this game, you are in charge of flying an aircraft. As shown below,\nyou will begin in the central location. The arrows show which actions\nare available in each location. Note that once you have made a move you\ncannot go back; you can only move forward along the arrows. There are\neight possible final destinations labelled 1-8 in the image below. On\nyour way there, you will visit two intermediate locations. <b>Every\nlocation you visit will add or subtract money to your account</b>, and\nyour task is to earn as much money as possible. <b>To find out how much\nmoney you earn or lose in a location, you have to click on it.</b> You\ncan uncover the value of as many or as few locations as you wish.\n\n" + (img('task_images/Slide1.png')) + "\n\nTo navigate the airplane, use the arrows (the example above is non-interactive).\nYou can uncover the value of a location at any time. Click \"Next\" to proceed."), markdown("# Instructions\n\nYou will play the game for " + N_TRIALS + " rounds. The value of every location will\nchange from each round to the next. At the begining of each round, the\nvalue of every location will be hidden, and you will only discover the\nvalue of the locations you click on. The example below shows the value\nof every location, just to give you an example of values you could see\nif you clicked on every location. <b>Every time you click a circle to\nobserve its value, you pay a fee of " + (fmtMoney(PARAMS.info_cost)) + ".</b>\n\n" + (img('task_images/Slide2_' + costLevel + '.png')) + "\n\nEach time you move to a\nlocation, your profit will be adjusted. If you move to a location with\na hidden value, your profit will still be adjusted according to the\nvalue of that location. " + (text.constantDelay()))].concat((text.feedback()).concat([markdown("# Instructions\n\nThere are two more important things to understand:\n1. You must spend at least 45 seconds on each round. A countdown timer\n   will show you how much more time you must spend on the round. You\n   won’t be able to proceed to the next round before the countdown has\n   finished, but you can take as much time as you like afterwards.\n2. </b>You will earn <u>real money</u> for your flights.</b> Specifically,\n   one of the " + N_TRIALS + " rounds will be chosen at random and you will receive 5%\n   of your earnings in that round as a bonus payment.\n\n" + (img('task_images/Slide3.png')) + "\n\n You may proceed to take an entry quiz, or go back to review the instructions.")])),
     show_clickable_nav: true
   });
   quiz = new Block({
@@ -343,10 +212,10 @@ initializeExperiment = function() {
   instruct_loop = new Block({
     timeline: [instructions, quiz],
     loop_function: function(data) {
-      var c, len4, m, ref3;
-      ref3 = data[1].correct;
-      for (m = 0, len4 = ref3.length; m < len4; m++) {
-        c = ref3[m];
+      var c, i, len, ref;
+      ref = data[1].correct;
+      for (i = 0, len = ref.length; i < len; i++) {
+        c = ref[i];
         if (!c) {
           return true;
         }
