@@ -791,9 +791,12 @@ for c=1:numel(conditions)
     for e=1:numel(experiment)
 
         states=experiment(e).states;
+                        
         nr_states=numel(states);
         
         experiment(e).actions=1:4;
+        
+        experiment(e).states_by_step=cell(4,1);
         
         for s=1:nr_states
             
@@ -813,7 +816,17 @@ for c=1:numel(conditions)
                     experiment(e).states(to).is_terminal_state;
             end
             
+            if s==1
+                experiment(e).states_by_step{1}=experiment(e).states(s);
+            elseif s<=5
+                experiment(e).states_by_step{2}=[experiment(e).states_by_step{2}(:);experiment(e).states(s)];
+            elseif s<=9
+                experiment(e).states_by_step{3}=[experiment(e).states_by_step{3}(:);experiment(e).states(s)];
+            else
+                experiment(e).states_by_step{4}=[experiment(e).states_by_step{4}(:);experiment(e).states(s)];
+            end
         end
+        
     end
     
     eval([condition,'=experiment;'])

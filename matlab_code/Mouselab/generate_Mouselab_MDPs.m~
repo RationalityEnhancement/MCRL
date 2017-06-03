@@ -574,7 +574,7 @@ end
 save ExperimentHalfMyopic experiment
 save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_half_myopic.mat', 'trial_properties')
 
-%% Create an experiment where 2-step planning is optimal on half of the problems and 3-step planning is optimal for the other half
+%% 
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/trial_properties_March1.mat')
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/experiment_March1.mat')
 
@@ -791,6 +791,7 @@ for c=1:numel(conditions)
     for e=1:numel(experiment)
 
         states=experiment(e).states;
+                        
         nr_states=numel(states);
         
         experiment(e).actions=1:4;
@@ -813,8 +814,18 @@ for c=1:numel(conditions)
                     experiment(e).states(to).is_terminal_state;
             end
             
+            if s==1
+                experiment(e).states_by_step{1}=experiment(e).states(s);
+            elseif s<=
+            
         end
+        
+
+        
     end
+    
+    
+    
     
     eval([condition,'=experiment;'])
 end
@@ -832,7 +843,7 @@ savejson('',high_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experi
 medium_cost_json=rmfield(medium_cost_condition,'states_by_path');
 savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/med_cost.json')
 low_cost_json=rmfield(low_cost_condition,'states_by_path');
-savejson('',low_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/low_cost.json')
+savejson('',low_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/low_cost.json')
 
 
 %% evaluate the performance of different levels of planning
