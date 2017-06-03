@@ -12,7 +12,7 @@ var BLOCKS, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, condi
 
 DEBUG = false;
 
-experiment_nr = 4;
+experiment_nr = 0.6;
 
 switch (experiment_nr) {
   case 0:
@@ -23,12 +23,20 @@ switch (experiment_nr) {
       infoCosts: [0.01, 2.80]
     };
     break;
+  case 0.6:
+    IVs = {
+      frequencyOfFB: ['after_each_move'],
+      PRTypes: ['featureBased'],
+      messageTypes: ['full'],
+      infoCosts: [0.01, 1.00, 2.50]
+    };
+    break;
   case 1:
     IVs = {
       frequencyOfFB: ['after_each_move'],
       PRTypes: ['none', 'featureBased', 'fullObservation'],
       messageTypes: ['full', 'none'],
-      infoCosts: [0.01, 1.60, 2.80]
+      infoCosts: [0.01, 1.00, 2.50]
     };
     break;
   case 2:
@@ -69,6 +77,8 @@ nrConditions = (function() {
   switch (experiment_nr) {
     case 0:
       return 6;
+    case 0.6:
+      return 3;
     case 1:
       return 3 * 3;
     default:
