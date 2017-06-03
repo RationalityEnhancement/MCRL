@@ -6,15 +6,14 @@ Demonstrates the jsych-mdp plugin
 
 ###
 # coffeelint: disable=max_line_length, indentation
-DEBUG = false
-
+DEBUG = true
 experiment_nr = 4
-
+condition = parseInt(condition)
 switch experiment_nr
     when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}
     when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,1.60,2.80]}
     when 2 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','objectLevel'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
-    when 3 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.60]}
+    when 3 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.60]}
     when 4 then IVs = {frequencyOfFB : ['after_each_move','after_each_click'], PRTypes: ['featureBased'], messageTypes: ['none'],infoCosts: [1.60]}      
     else console.log "Invalid experiment_nr!" 
         
@@ -53,7 +52,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 3
+  condition = 0
   
 else
   console.log """
@@ -75,6 +74,8 @@ BLOCKS = undefined
 PARAMS = undefined
 TRIALS = undefined
 N_TRIALS = undefined
+COST_LEVEL = undefined
+
 # because the order of arguments of setTimeout is awful.
 delay = (time, func) -> setTimeout func, time
 
@@ -97,16 +98,28 @@ $(window).on 'load', ->
   ]
 
 
-  delay 300, ->
+  delay 300, ->    
+    #PARAMS.start_time = Date(Date.now())
     console.log 'Loading data'
-    expData = loadJson "static/json/condition_0_0.json"
+    PARAMS =
+      PR_type: conditions.PRType[condition]
+      feedback: conditions.PRType[condition] != "none"
+      info_cost: conditions.infoCost[condition]
+      message:  conditions.messageType[condition]
+      frequencyOfFB: conditions.frequencyOfFB[condition]
+      condition: condition
+
+    console.log 'PARAMS', PARAMS
+    COST_LEVEL =
+      switch PARAMS.info_cost
+        when 0.01 then 'low'
+        when 1.60 then 'med'
+        when 2.80 then 'high'
+        else throw new Error('bad info_cost')
+
+    expData = loadJson "static/json/#{COST_LEVEL}_cost.json"
     console.log 'expData', expData
 
-    
-    condition_nr = condition % nrConditions
-    PARAMS={'PR_type': conditions.PRType[condition_nr], 'feedback': conditions.PRType[condition_nr] != "none", 'info_cost': conditions.infoCost[condition_nr], 'message':  conditions.messageType[condition_nr], 'frequencyOfFB': conditions.frequencyOfFB[condition_nr]}
-    #PARAMS.start_time = Date(Date.now())
-    PARAMS.condition = condition_nr
     
         
     # PARAMS.bonus_rate = .1
@@ -114,7 +127,7 @@ $(window).on 'load', ->
     TRIALS = BLOCKS.standard
     psiturk.recordUnstructuredData 'params', PARAMS
     psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
-    psiturk.recordUnstructuredData 'condition_nr', condition_nr
+    psiturk.recordUnstructuredData 'condition', condition
 
     if DEBUG or DEMO
       createStartButton()
@@ -143,15 +156,7 @@ createStartButton = ->
 
 initializeExperiment = ->
   console.log 'INITIALIZE EXPERIMENT'
-
   N_TRIALS = BLOCKS.standard.length
-
-  costLevel =
-    switch PARAMS.info_cost
-      when 0.01 then 'low'
-      when 1.60 then 'med'
-      when 2.80 then 'high'
-      else throw new Error('bad info_cost')
 
 
   #  ======================== #
@@ -297,7 +302,7 @@ initializeExperiment = ->
         if you clicked on every location. <b>Every time you click a circle to
         observe its value, you pay a fee of #{fmtMoney PARAMS.info_cost}.</b>
 
-        #{img('task_images/Slide2_' + costLevel + '.png')}
+        #{img('task_images/Slide2_' + COST_LEVEL + '.png')}
 
         Each time you move to a
         location, your profit will be adjusted. If you move to a location with

@@ -696,10 +696,11 @@ function getLocations(problem_nr){
     }
     return locations
 }
-
+console.log('RUN PR')
 function getTrials(){
     //var experiment = loadJson("static/json/condition_0_0.json");
     //var trials=experiment.trials;
+
     var trials = loadJson("static/json/trials.json");
     console.log('TRIALS', trials)
     
@@ -714,7 +715,7 @@ function getTrials(){
 }
 
 function loadObjectLevelPRs(){
-    PR_json = loadJson("static/json/ObjectLevelPRs.json")
+    PR_json = loadJson('static/json/pseudo_' + COST_LEVEL + '_cost.json' )
     object_level_PRs=PR_json
     /*
     object_level_PRs=new Array()
