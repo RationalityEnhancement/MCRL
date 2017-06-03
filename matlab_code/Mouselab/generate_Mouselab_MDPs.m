@@ -712,6 +712,48 @@ for t=1:12
         shift.low_cost);
 end
 
+
+%add rewards to states
+conditions={'low_cost_condition','medium_cost_condition','high_cost_condition'};
+
+for c=1:numel(conditions)
+    
+    condition=conditions{c};
+    
+    eval(['experiment=',condition,';'])
+    
+    for e=1:numel(experiment)
+
+        states=experiment(e).states;
+        nr_states=numel(states);
+        
+        experiment(e).actions=1:4;
+        
+        for s=1:nr_states
+            
+            state=states(s);
+            
+            from=state.nr;
+            
+            for a=1:numel(state.actions)
+                to=experiment(e).states(s).actions(a).state;
+                action=experiment(e).states(s).actions(a).nr;
+                experiment(e).states(s).actions(a).reward=...
+                    experiment(e).rewards(from,to,action);
+                
+                experiment(e).states(to).reward=experiment(e).rewards(from,to,action);
+                
+                experiment(e).states(s).actions(a).done=...
+                    experiment(e).states(to).is_terminal_state;
+            end
+            
+        end
+    end
+    
+    eval([condition,'=experiment;'])
+end
+
+
 save high_cost_condition high_cost_condition
 save medium_cost_condition medium_cost_condition
 save low_cost_condition low_cost_condition
@@ -722,7 +764,7 @@ save '/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_prope
 high_cost_json=rmfield(high_cost_condition,'states_by_path');
 savejson('',high_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/high_cost.json')
 medium_cost_json=rmfield(medium_cost_condition,'states_by_path');
-savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/medium_cost.json')
+savejson('',medium_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/med_cost.json')
 low_cost_json=rmfield(low_cost_condition,'states_by_path');
 savejson('',low_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/low_cost.json')
 
