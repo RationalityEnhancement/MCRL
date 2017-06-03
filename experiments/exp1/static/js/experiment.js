@@ -6,142 +6,17 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, COST_LEVEL, DEBUG, DEMO, IVs, N_TRIALS, PARAMS, PRType, TRIALS, condition, conditions, counterbalance, createStartButton, delay, experiment_nr, frequency, i, infoCost, initializeExperiment, j, k, l, len, len1, len2, len3, message, messageTypes, nrConditions, nrDelays, nrInfoCosts, nrMessages, psiturk, ref, ref1, ref2,
+var BLOCKS, N_TRIALS, TRIALS, createStartButton, initializeExperiment, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
-
-DEBUG = true;
-
-experiment_nr = 4;
-
-condition = parseInt(condition);
-
-switch (experiment_nr) {
-  case 0:
-    IVs = {
-      frequencyOfFB: ['after_each_move'],
-      PRTypes: ['none', 'featureBased', 'fullObservation'],
-      messageTypes: ['full', 'none'],
-      infoCosts: [0.01, 2.80]
-    };
-    break;
-  case 1:
-    IVs = {
-      frequencyOfFB: ['after_each_move'],
-      PRTypes: ['none', 'featureBased', 'fullObservation'],
-      messageTypes: ['full', 'none'],
-      infoCosts: [0.01, 1.60, 2.80]
-    };
-    break;
-  case 2:
-    IVs = {
-      frequencyOfFB: ['after_each_move'],
-      PRTypes: ['featureBased', 'objectLevel'],
-      messageTypes: ['full'],
-      infoCosts: [0.01, 1.60, 2.80]
-    };
-    break;
-  case 3:
-    IVs = {
-      frequencyOfFB: ['after_each_move'],
-      PRTypes: ['none', 'featureBased'],
-      messageTypes: ['full', 'simple'],
-      infoCosts: [1.60]
-    };
-    break;
-  case 4:
-    IVs = {
-      frequencyOfFB: ['after_each_move', 'after_each_click'],
-      PRTypes: ['featureBased'],
-      messageTypes: ['none'],
-      infoCosts: [1.60]
-    };
-    break;
-  default:
-    console.log("Invalid experiment_nr!");
-}
-
-nrDelays = IVs.PRTypes.length;
-
-nrMessages = IVs.messageTypes.length;
-
-nrInfoCosts = IVs.infoCosts.length;
-
-nrConditions = (function() {
-  switch (experiment_nr) {
-    case 0:
-      return 6;
-    case 1:
-      return 3 * 3;
-    default:
-      return nrDelays * nrMessages * nrInfoCosts;
-  }
-})();
-
-conditions = {
-  'PRType': [],
-  'messageType': [],
-  'infoCost': [],
-  'frequencyOfFB': []
-};
-
-ref = IVs.PRTypes;
-for (i = 0, len = ref.length; i < len; i++) {
-  PRType = ref[i];
-  if (experiment_nr <= 1) {
-    if (PRType === 'none') {
-      messageTypes = ['none'];
-    } else {
-      messageTypes = ['full'];
-    }
-  } else {
-    messageTypes = IVs.messageTypes;
-  }
-  for (j = 0, len1 = messageTypes.length; j < len1; j++) {
-    message = messageTypes[j];
-    ref1 = IVs.infoCosts;
-    for (k = 0, len2 = ref1.length; k < len2; k++) {
-      infoCost = ref1[k];
-      ref2 = IVs.frequencyOfFB;
-      for (l = 0, len3 = ref2.length; l < len3; l++) {
-        frequency = ref2[l];
-        conditions.PRType.push(PRType);
-        conditions.messageType.push(message);
-        conditions.infoCost.push(infoCost);
-        conditions.frequencyOfFB.push(frequency);
-      }
-    }
-  }
-}
-
-if (DEBUG) {
-  console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 0;
-} else {
-  console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
-}
-
-if (mode === "{{ mode }}") {
-  DEMO = true;
-  condition = 1;
-  counterbalance = 0;
-}
 
 psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
 
 BLOCKS = void 0;
 
-PARAMS = void 0;
-
 TRIALS = void 0;
 
 N_TRIALS = void 0;
-
-COST_LEVEL = void 0;
-
-delay = function(time, func) {
-  return setTimeout(func, time);
-};
 
 $(window).on('load', function() {
   var loadTimeout, slowLoad;
@@ -152,28 +27,7 @@ $(window).on('load', function() {
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
   return delay(300, function() {
     var ERROR, expData;
-    console.log('Loading data');
-    PARAMS = {
-      PR_type: conditions.PRType[condition],
-      feedback: conditions.PRType[condition] !== "none",
-      info_cost: conditions.infoCost[condition],
-      message: conditions.messageType[condition],
-      frequencyOfFB: conditions.frequencyOfFB[condition],
-      condition: condition
-    };
-    console.log('PARAMS', PARAMS);
-    COST_LEVEL = (function() {
-      switch (PARAMS.info_cost) {
-        case 0.01:
-          return 'low';
-        case 1.60:
-          return 'med';
-        case 2.80:
-          return 'high';
-        default:
-          throw new Error('bad info_cost');
-      }
-    })();
+    PARAMS.start_time = Date(Date.now());
     expData = loadJson("static/json/" + COST_LEVEL + "_cost.json");
     console.log('expData', expData);
     BLOCKS = expData.blocks;
@@ -277,11 +131,11 @@ initializeExperiment = function() {
     }
 
     QuizLoop.prototype.loop_function = function(data) {
-      var c, len4, m, ref3;
+      var c, i, len, ref;
       console.log('data', data);
-      ref3 = data[data.length].correct;
-      for (m = 0, len4 = ref3.length; m < len4; m++) {
-        c = ref3[m];
+      ref = data[data.length].correct;
+      for (i = 0, len = ref.length; i < len; i++) {
+        c = ref[i];
         if (!c) {
           return true;
         }
@@ -333,10 +187,10 @@ initializeExperiment = function() {
   instruct_loop = new Block({
     timeline: [instructions, quiz],
     loop_function: function(data) {
-      var c, len4, m, ref3;
-      ref3 = data[1].correct;
-      for (m = 0, len4 = ref3.length; m < len4; m++) {
-        c = ref3[m];
+      var c, i, len, ref;
+      ref = data[1].correct;
+      for (i = 0, len = ref.length; i < len; i++) {
+        c = ref[i];
         if (!c) {
           return true;
         }

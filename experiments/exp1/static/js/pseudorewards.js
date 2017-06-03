@@ -696,12 +696,11 @@ function getLocations(problem_nr){
     }
     return locations
 }
-console.log('RUN PR')
+
 function getTrials(){
     //var experiment = loadJson("static/json/condition_0_0.json");
     //var trials=experiment.trials;
-
-    var trials = loadJson("static/json/trials.json");
+    var trials = loadJson('static/json/pseudo_' + COST_LEVEL + '_cost.json' )
     console.log('TRIALS', trials)
     
     //TODO: Move this information into the JSON file. Otherwise this code won't generalize to other layouts.
@@ -715,7 +714,7 @@ function getTrials(){
 }
 
 function loadObjectLevelPRs(){
-    PR_json = loadJson('static/json/pseudo_' + COST_LEVEL + '_cost.json' )
+    PR_json = loadJson("static/json/ObjectLevelPRs.json")
     object_level_PRs=PR_json
     /*
     object_level_PRs=new Array()

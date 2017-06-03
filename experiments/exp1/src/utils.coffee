@@ -15,6 +15,8 @@ reformatTrial = (old) ->
 
   return trial
 
+# because the order of arguments of setTimeout is awful.
+delay = (time, func) -> setTimeout func, time
 
 loadJson = (file) ->
   result = $.ajax
