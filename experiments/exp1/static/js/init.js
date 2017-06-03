@@ -30,8 +30,8 @@ switch (experiment_nr) {
   case 0.6:
     IVs = {
       frequencyOfFB: ['after_each_move'],
-      PRTypes: ['featureBased'],
-      messageTypes: ['full'],
+      PRTypes: ['featureBased', 'none'],
+      messageTypes: ['full', 'none'],
       infoCosts: [0.01, 1.00, 2.50]
     };
     break;
@@ -82,7 +82,7 @@ nrConditions = (function() {
     case 0:
       return 6;
     case 0.6:
-      return 3;
+      return 6;
     case 1:
       return 3 * 3;
     default:
