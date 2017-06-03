@@ -25,7 +25,7 @@ experiment_nr = 0.6
 
 switch experiment_nr
     when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
-    when 0.6 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased'], messageTypes: ['full'],infoCosts: [0.01,1.00,2.50]}
+    when 0.6 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','none'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,2.50]}
     when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,2.50]}
     when 2 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','objectLevel'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
     when 3 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.60]}
@@ -39,7 +39,7 @@ nrInfoCosts = IVs.infoCosts.length
 
 nrConditions = switch experiment_nr
     when 0 then 6
-    when 0.6 then 3
+    when 0.6 then 6
     when 1 then 3 * 3
     else nrDelays * nrMessages * nrInfoCosts
 

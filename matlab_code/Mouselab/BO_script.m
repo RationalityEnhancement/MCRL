@@ -125,5 +125,5 @@ for c=1:numel(conditions)
     [glm_Q(c),MSE(:,c),R_total(:,c)]=BayesianValueFunctionRegression(meta_MDP,feature_extractor,nr_episodes,glm_policy,training_data)
 end
 %end
-fit.glm=glm_Q; fit.MSE=MSE; fit.R_total=R_total;
+fit.glm=glm_Q; fit.MSE=MSE; fit.R_total=R_total; fit.conditions=conditions;
 save ../../results/BO/valueFunctionFitConditionSpecific.mat fit
