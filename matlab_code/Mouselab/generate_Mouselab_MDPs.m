@@ -574,7 +574,7 @@ end
 save ExperimentHalfMyopic experiment
 save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_half_myopic.mat', 'trial_properties')
 
-%% Create an experiment where 2-step planning is optimal on half of the problems and 3-step planning is optimal for the other half
+%% 
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/trial_properties_March1.mat')
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/experiment_March1.mat')
 
