@@ -1,11 +1,12 @@
 DEBUG = true
+
 if DEBUG
   console.log """
   X X X X X X X X X X X X X X X X X
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 0
+  condition = 1
   
 else
   console.log """
@@ -20,14 +21,14 @@ if mode is "{{ mode }}"
   counterbalance = 0
 
 
-experiment_nr = 4
-condition = parseInt(condition)
-console.log 'condition', condition
+experiment_nr = 0.6
+
 switch experiment_nr
-    when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}
+    when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
+    when 0.6 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased'], messageTypes: ['full'],infoCosts: [0.01,1.00,2.50]}
     when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,2.50]}
     when 2 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','objectLevel'], messageTypes: ['full'],infoCosts: [0.01,1.60,2.80]}
-    when 3 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.60]}
+    when 3 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.60]}
     when 4 then IVs = {frequencyOfFB : ['after_each_move','after_each_click'], PRTypes: ['featureBased'], messageTypes: ['none'],infoCosts: [1.60]}      
     else console.log "Invalid experiment_nr!" 
         
@@ -38,6 +39,7 @@ nrInfoCosts = IVs.infoCosts.length
 
 nrConditions = switch experiment_nr
     when 0 then 6
+    when 0.6 then 3
     when 1 then 3 * 3
     else nrDelays * nrMessages * nrInfoCosts
 
@@ -59,6 +61,7 @@ for PRType in IVs.PRTypes
                 conditions.messageType.push(message)
                 conditions.infoCost.push(infoCost)
                 conditions.frequencyOfFB.push(frequency)
+        
 
 PARAMS =
   PR_type: conditions.PRType[condition]

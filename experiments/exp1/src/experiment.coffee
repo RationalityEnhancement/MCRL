@@ -7,12 +7,15 @@ Demonstrates the jsych-mdp plugin
 ###
 # coffeelint: disable=max_line_length, indentation
 
+
+# Globals.
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 BLOCKS = undefined
 TRIALS = undefined
 N_TRIALS = undefined
-
+# because the order of arguments of setTimeout is awful.
+delay = (time, func) -> setTimeout func, time
 
 # $(window).resize -> checkWindowSize 920, 720, $('#jspsych-target')
 # $(window).resize()
@@ -33,16 +36,24 @@ $(window).on 'load', ->
   ]
 
 
-  delay 300, ->    
-    PARAMS.start_time = Date(Date.now())
-    expData = loadJson "static/json/#{COST_LEVEL}_cost.json"
-    console.log 'expData', expData    
+  delay 300, ->
+    console.log 'Loading data'
+    expData = loadJson "static/json/condition_0_0.json"
+    console.log 'expData', expData
+
+    
+    condition_nr = condition % nrConditions
+    PARAMS={'PR_type': conditions.PRType[condition_nr], 'feedback': conditions.PRType[condition_nr] != "none", 'info_cost': conditions.infoCost[condition_nr], 'message':  conditions.messageType[condition_nr], 'frequencyOfFB': conditions.frequencyOfFB[condition_nr]}
+    #PARAMS.start_time = Date(Date.now())
+    PARAMS.condition = condition_nr
+    
+        
     # PARAMS.bonus_rate = .1
     BLOCKS = expData.blocks
     TRIALS = BLOCKS.standard
     psiturk.recordUnstructuredData 'params', PARAMS
     psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
-    psiturk.recordUnstructuredData 'condition', condition
+    psiturk.recordUnstructuredData 'condition_nr', condition_nr
 
     if DEBUG or DEMO
       createStartButton()
@@ -71,7 +82,15 @@ createStartButton = ->
 
 initializeExperiment = ->
   console.log 'INITIALIZE EXPERIMENT'
+
   N_TRIALS = BLOCKS.standard.length
+
+  costLevel =
+    switch PARAMS.info_cost
+      when 0.01 then 'low'
+      when 1.60 then 'med'
+      when 2.80 then 'high'
+      else throw new Error('bad info_cost')
 
 
   #  ======================== #
@@ -217,7 +236,7 @@ initializeExperiment = ->
         if you clicked on every location. <b>Every time you click a circle to
         observe its value, you pay a fee of #{fmtMoney PARAMS.info_cost}.</b>
 
-        #{img('task_images/Slide2_' + COST_LEVEL + '.png')}
+        #{img('task_images/Slide2_' + costLevel + '.png')}
 
         Each time you move to a
         location, your profit will be adjusted. If you move to a location with
