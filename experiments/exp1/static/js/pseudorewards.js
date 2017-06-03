@@ -888,7 +888,7 @@ function valueFunction(state,environment_model){
 function predictQValue(state,computation){
     //predictQValue(s,c) returns the Q-value our feature-based approximation predicts for performing computation c in state s.
     
-    feature_weights = null;
+    var feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
             feature_weights = {VPI: 3.0540, VOC1: 0.6884, ER: 1.0237, cost: 4.0224};
@@ -922,14 +922,14 @@ function predictQValueOfSequence(state,computations){
     feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {VPI: 2.9950, VOC1: -0.4458, ER: 1.0156, cost: 2.8368};
+            feature_weights = {VPI: 3.0540, VOC1: 0.6884, ER: 1.0237, cost: 4.0224};
             //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
-        case 1.00:
-            feature_weights = {VPI: 0.8455, VOC1: 0.3778, ER: 1.0050, cost: -2.2508}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
+        case 1.0:
+            feature_weights = {VPI: 1.8799, VOC1: 0.7847, ER: 1.0272, cost: 4.8512}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
-        case 2.50:
-            feature_weights = {VPI: -0.8684, VOC1: 0.9016, ER: 0.8992, cost: -0.4534};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
+        case 2.5:
+            feature_weights = {VPI: -1.9486, VOC1: 1.3329, ER: 0.8670, cost: -1.3246};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
     console.log('weights', feature_weights)
