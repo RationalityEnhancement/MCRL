@@ -102,7 +102,10 @@ for i = unique(pid)'
     data(s).n_click = n_click(idx);
     data(s).clicks = clicks(idx);
     data(s).click_times = click_times(idx);
-    data(s).path = path(idx);
+    cur_path = path(idx);
+    for j = 1:length(cur_path)
+        data(s).path{j} = str2num(cur_path{j});
+    end
     data(s).action_times = action_times(idx);
     data(s).clicks1 = clicks1(idx);
     data(s).clicks2 = clicks2(idx);
