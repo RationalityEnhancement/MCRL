@@ -888,7 +888,7 @@ for c=1:numel(conditions)
     end
     
     savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/ObjectLevelPRs_',conditions{c},'.json'])
-    savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/exp1/static/json/ObjectLevelPRs_',condition,'.json'])
+    savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/exp1/static/json/ObjectLevelPRs_',conditions{c},'.json'])
                
 end
 
