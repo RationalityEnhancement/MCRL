@@ -93,6 +93,7 @@ for i = unique(pid)'
     data(s).info_cost = info_cost(idx);
     data(s).info_cost1 = data(s).info_cost(1);
     data(s).PR_type = PR_type(idx);
+    data(s).PR_type1 = data(s).PR_type{1};
     data(s).message = message(idx);
     data(s).trial_index = trial_index(idx);
     data(s).trial_i = trial_i(idx);

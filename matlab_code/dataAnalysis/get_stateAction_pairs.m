@@ -5,6 +5,9 @@ if ~exist(savedir,'dir')
 end
 
 nr_trials = length(unique(trial_i));
+PR_types = unique(PR_type);
+for p = 1:length(unique(PR_type))
+    PR_str = PR_types{p};
 for x = unique(info_cost)'
     if x == min(unique(info_cost))
         cost_str = 'low';
@@ -14,7 +17,11 @@ for x = unique(info_cost)'
         cost_str = 'medium';
     end
     load(['trial_properties_',cost_str,'_cost_condition'])
-    idx = [data.info_cost1] == x;
+    idx1 = [data.info_cost1] == x;
+    for i = 1:length(data)
+        idx2(i) = strcmp(data(i).PR_type1,PR_str);
+    end
+    idx = idx1 & idx2;
     dat = data(idx);
     state_actions = [];
     trialID = [];
@@ -44,5 +51,6 @@ for x = unique(info_cost)'
             state_actions = [state_actions,new_sa,100+dat(i).path{t}(4)];
         end
     end
-    save([savedir,'/stateActions_',cost_str],'state_actions','trialID','rewardSeen','trialNr')
+    save([savedir,'/stateActions_',cost_str,'_',PR_str],'state_actions','trialID','rewardSeen','trialNr')
+end
 end
