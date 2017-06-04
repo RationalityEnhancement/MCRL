@@ -32,7 +32,7 @@ $(window).on('load', function() {
   return delay(300, function() {
     var ERROR, PARAMS, condition_nr, expData;
     console.log('Loading data');
-    expData = loadJson("static/json/" + COST_LEVEL + '_cost.json');
+    expData = loadJson("static/json/" + COST_LEVEL + "_cost.json");
     console.log('expData', expData);
     condition_nr = condition % nrConditions;
     PARAMS = {

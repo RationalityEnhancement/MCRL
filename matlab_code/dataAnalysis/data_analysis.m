@@ -1,3 +1,5 @@
+import_data
+
 trial_numbers = unique(trial_index(2:end))
 nr_trials = max(trial_numbers)
 
@@ -27,22 +29,35 @@ for ic=1:length(info_costs)
 end
 
 
+rel_score_pi_star=csvread('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/rel_score_pi_star.csv');
+optimal_nr_clicks=csvread('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star.csv');
+
 for ic=1:length(info_costs)
     fig1=figure(1)
     subplot(1,3,ic)
-    errorbar(avg_rel_score_by_trial(:,:,ic),sem_rel_score_by_trial(:,:,ic),'LineWidth',3)
+    errorbar(avg_rel_score_by_trial(:,:,ic),sem_rel_score_by_trial(:,:,ic),'LineWidth',3), hold on
+    plot([1,12],rel_score_pi_star(ic)*[1,1],'.-','LineWidth',3)
+    xlim([0.5,13])
+    legend('no FB','FB','optimal','Location','SouthEast')
     title(['$',num2str(info_costs(ic)),'/click'],'FontSize',18)
     ylabel('Relative Performance','FontSize',16)
     xlabel('Trial Number','FontSize',16)
     
     fig2=figure(2)
     subplot(1,3,ic)
-    errorbar(avg_nr_clicks_by_trial(:,:,ic),sem_nr_clicks_by_trial(:,:,ic),'LineWidth',3)
+    errorbar(avg_nr_clicks_by_trial(:,:,ic),sem_nr_clicks_by_trial(:,:,ic),'LineWidth',3),hold on
+    plot([1,12],optimal_nr_clicks(ic)*[1,1],'.-','LineWidth',3)
     title(['$',num2str(info_costs(ic)),'/click'],'FontSize',18)
+    xlim([0.50,13])
     ylabel('Avg. Nr. Clicks','FontSize',16)
     xlabel('Trial Number','FontSize',16)
+    legend('no FB', 'FB','optimal','Location','SouthEast')
     
 end
+
+figure(1),tightfig
+figure(2),tightfig
+
 saveas(fig1,'relativePerformance.fig')
 saveas(fig1,'relativePerformance.png')
 saveas(fig2,'nrClicks.fig')

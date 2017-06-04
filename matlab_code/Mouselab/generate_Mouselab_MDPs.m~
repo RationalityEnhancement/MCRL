@@ -880,7 +880,7 @@ for c=1:numel(condition_names)
         trial_properties(t).reward_by_state=rewards;
     end
     
-    path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/';
+    path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data';
     save([path,'trial_properties_',condition_names{c},'.mat'], 'trial_properties')
 end
 

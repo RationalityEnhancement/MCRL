@@ -8,13 +8,10 @@ low_costs=[0.01]; %[0.01,2.80]
 medium_costs=[1];%[0.25,0.50,0.75,1];
 high_costs=[2.50];%[1.50,2,2.50,3];
 
-costs=[0.01,1,2.50];
 conditions={low_cost_condition,medium_cost_condition,high_cost_condition};
 names={'low_cost','medium_cost','high_cost'};
 
-parfor c=1:numel(conditions)
-    policySearchMouselabMDP(costs(c),conditions{c},names{c})
-end
+p
 
 
 parfor c=1:numel(low_costs)
@@ -54,7 +51,7 @@ for c=1:numel(conditions)
         %experiment = high_cost_condition;
         cost = 2.50;
         
-        temp=load(['../../results/BO/BO_c250n100high_cost.mat']);
+        temp=load(['../../results/BO/BO_c250n50high_cost.mat']);
         w_policy=temp.BO.w_hat;
         
     end

@@ -127,7 +127,7 @@ addpath('..')
 addpath('../MatlabTools/')
 
 root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/';
-nb_iter=[100];
+        nb_iter=[100,50];
 
 conditions={'lowCost','mediumCost','highCost'};
 
