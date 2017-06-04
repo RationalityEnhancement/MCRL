@@ -313,16 +313,29 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       feedback = result;
       console.log('feedback', result);
       if (PARAMS.PR_type === 'none') {
-        result.delay = (function() {
-          switch (this.data.actions.length) {
-            case 1:
-              return 5;
-            case 2:
-              return 0;
-            case 3:
-              return 1;
-          }
-        }).call(this);
+        if (PARAMS.info_cost === 2.50) {
+          result.delay = (function() {
+            switch (this.data.actions.length) {
+              case 1:
+                return 10;
+              case 2:
+                return 1;
+              case 3:
+                return 2;
+            }
+          }).call(this);
+        } else {
+          result.delay = (function() {
+            switch (this.data.actions.length) {
+              case 1:
+                return 4;
+              case 2:
+                return 0;
+              case 3:
+                return 1;
+            }
+          }).call(this);
+        }
       }
       this.data.delays.push(result.delay);
       redGreenSpan = function(txt, val) {

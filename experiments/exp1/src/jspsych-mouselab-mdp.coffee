@@ -299,11 +299,18 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       console.log 'feedback', result
     
       if PARAMS.PR_type is 'none'
-        result.delay = switch @data.actions.length
-            when 1 then 5
-            when 2 then 0
-            when 3 then 1
-          
+        if PARAMS.info_cost == 2.50    
+            result.delay = switch @data.actions.length
+                when 1 then 10
+                when 2 then 1
+                when 3 then 2
+        else
+            result.delay = switch @data.actions.length
+                when 1 then 4
+                when 2 then 0
+                when 3 then 1
+
+            
       @data.delays.push(result.delay)
             
       redGreenSpan = (txt, val) ->

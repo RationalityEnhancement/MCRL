@@ -16,7 +16,7 @@ if (mode === "{{ mode }}") {
   counterbalance = 0;
 }
 
-experiment_nr = 0.6;
+experiment_nr = 0.9;
 
 switch (experiment_nr) {
   case 0:
@@ -32,6 +32,14 @@ switch (experiment_nr) {
       frequencyOfFB: ['after_each_move'],
       PRTypes: ['featureBased', 'none'],
       messageTypes: ['full', 'none'],
+      infoCosts: [0.01, 1.00, 2.50]
+    };
+    break;
+  case 0.9:
+    IVs = {
+      frequencyOfFB: ['after_each_move'],
+      PRTypes: ['featureBased', 'none', 'object_level'],
+      messageTypes: ['full'],
       infoCosts: [0.01, 1.00, 2.50]
     };
     break;
