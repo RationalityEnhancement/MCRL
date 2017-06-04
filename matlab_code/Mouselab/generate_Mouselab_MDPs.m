@@ -869,14 +869,14 @@ for c=1:numel(conditions)
         [pseudoreward_matrices{t},V{t},policy{t}]=optimalPseudoRewards(....
             experiment(t).T,experiment(t).rewards,experiment(t).horizon,1,false,true)
         
-        max_score(t)=V{t}(1,1);
+        max_score(t,c)=V{t}(1,1);
         
         [T_prime,R_prime]=denounceUnavailableActions(experiment(t).T,-experiment(t).rewards)
         
         [~,minus_V_worst{t},~]=optimalPseudoRewards(....
             T_prime,R_prime,experiment(t).horizon,1,false,true)
         
-        min_score(t)=-minus_V_worst{t}(1,1);
+        min_score(t,c)=-minus_V_worst{t}(1,1);
         
         for step=1:3
             for from=1:17
@@ -889,11 +889,12 @@ for c=1:numel(conditions)
     
     savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/ObjectLevelPRs_',conditions{c},'.json'])
     savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/exp1/static/json/ObjectLevelPRs_',condition,'.json'])
-    
-    csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/optimal_',condition_names{c},'.csv'],max_score)
-    csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/worst_',condition_names{c},'.csv'],min_score)
-        
+               
 end
+
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/optimal.csv'],max_score)
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/worst.csv'],min_score)
+
 
 %% evaluate the performance of different levels of planning
 %{
