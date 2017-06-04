@@ -15,7 +15,7 @@ if strcmp(getenv('USER'),'paulkrueger')
 else
     filename = '~/Dropbox/PhD/Metacognitive RL/';
 end
-filename = [filename,'experiments/data/human/0.6/trials_matlab.csv'];
+filename = [filename,'experiments/data/human/0.6/trials.csv'];
 delimiter = ',';
 startRow = 2;
 
@@ -32,7 +32,7 @@ startRow = 2;
 %	column10: double (%f)
 %   column11: double (%f)
 % For more information, see the TEXTSCAN documentation.
-formatSpec = '%f%f%f%f%f%f%f%f%f%f%f%[^\n\r]';
+formatSpec = '%f%f%f%q%q%f%f%q%f%f%f%q%q%q%q%[^\n\r]';
 
 %% Open the text file.
 fileID = fopen(filename,'r');
@@ -53,18 +53,55 @@ fclose(fileID);
 % script.
 
 %% Allocate imported array to column variable names
-VarName1 = dataArray{:, 1};
+index = dataArray{:, 1};
 pid = dataArray{:, 2};
 info_cost = dataArray{:, 3};
 PR_type = dataArray{:, 4};
 message = dataArray{:, 5};
 trial_index = dataArray{:, 6};
 trial_i = dataArray{:, 7};
-score = dataArray{:, 8};
-relative_score = dataArray{:, 9};
-n_click = dataArray{:, 10};
-early_click = dataArray{:, 11};
+delays = dataArray{:, 8};
+score = dataArray{:, 9};
+relative_score = dataArray{:, 10};
+n_click = dataArray{:, 11};
+clicks = dataArray{:, 12};
+click_times = dataArray{:, 13};
+path = dataArray{:, 14};
+action_times = dataArray{:, 15};
 
 
 %% Clear temporary variables
 clearvars filename delimiter startRow formatSpec fileID dataArray ans;
+
+%% get clicks before 1st, 2nd, and 3rd moves
+for i = 1:length(index)
+    cur_clicks = str2num(clicks{i});
+    cur_click_times = str2num(click_times{i});
+    cur_path = str2num(path{i});
+    cur_action_times = str2num(action_times{i});
+    for j = 1:length(cur_action_times)
+        idx = cur_click_times < cur_action_times(j);
+        eval(['clicks',num2str(j),'{i}=cur_clicks(idx);'])
+    end
+end
+
+%%
+s = 0;
+for i = unique(pid)'
+    s = s + 1;
+    idx = pid == i;
+    data(s).info_cost = info_cost(idx);
+    data(s).PR_type = PR_type(idx);
+    data(s).message = message(idx);
+    data(s).trial_index = trial_index(idx);
+    data(s).trial_i = trial_i(idx);
+    data(s).delays = delays(idx);
+    data(s).score = score(idx);
+    data(s).relative_score = relative_score(idx);
+    data(s).n_click = n_click(idx);
+    data(s).clicks = clicks(idx);
+    data(s).click_times = click_times(idx);
+    data(s).path = path(idx);
+    data(s).action_times = action_times(idx);
+    data(s).clicks1 = clicks1(idx);
+end
