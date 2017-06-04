@@ -848,6 +848,54 @@ low_cost_json=rmfield(low_cost_condition,'states_by_path');
 savejson('',low_cost_json,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/low_cost.json')
 
 
+%% Compute Object-level PRs for experiment with separate MDPs for each condition
+
+load low_cost_condition
+load medium_cost_condition
+load high_cost_condition
+
+addpath('~/Dropbox/PhD/Gamification/')
+
+conditions={'low_cost_condition','medium_cost_condition','high_cost_condition'};
+
+condition_names={'low_cost','med_cost','high_cost'}
+
+for c=1:numel(conditions)
+    eval(['load ',conditions{c}])
+    eval(['experiment=',conditions{c}])
+
+    for t=1:numel(experiment)
+        
+        [pseudoreward_matrices{t},V{t},policy{t}]=optimalPseudoRewards(....
+            experiment(t).T,experiment(t).rewards,experiment(t).horizon,1,false,true)
+        
+        max_score(t,c)=V{t}(1,1);
+        
+        [T_prime,R_prime]=denounceUnavailableActions(experiment(t).T,-experiment(t).rewards)
+        
+        [~,minus_V_worst{t},~]=optimalPseudoRewards(....
+            T_prime,R_prime,experiment(t).horizon,1,false,true)
+        
+        min_score(t,c)=-minus_V_worst{t}(1,1);
+        
+        for step=1:3
+            for from=1:17
+                for to=1:17
+                    pseudorewards{t}{step}{from}{to}=pseudoreward_matrices{t}(from,to,step);
+                end
+            end
+        end
+    end
+    
+    savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/ObjectLevelPRs_',conditions{c},'.json'])
+    savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/exp1/static/json/ObjectLevelPRs_',condition,'.json'])
+               
+end
+
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/optimal.csv'],max_score)
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/worst.csv'],min_score)
+
+
 %% evaluate the performance of different levels of planning
 %{
 clear
