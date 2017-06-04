@@ -858,7 +858,7 @@ addpath('~/Dropbox/PhD/Gamification/')
 
 conditions={'low_cost_condition','medium_cost_condition','high_cost_condition'};
 
-condition_names={'low_cost','med_cost','high_cost'}
+condition_names={'low','med','high'}
 
 for c=1:numel(conditions)
     eval(['load ',conditions{c}])
@@ -887,8 +887,8 @@ for c=1:numel(conditions)
         end
     end
     
-    savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/ObjectLevelPRs_',conditions{c},'.json'])
-    savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/exp1/static/json/ObjectLevelPRs_',conditions{c},'.json'])
+    savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/ObjectLevelPRs_',condition_names{c},'.json'])
+    savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/exp1/static/json/ObjectLevelPRs_',condition_names{c},'.json'])
                
 end
 

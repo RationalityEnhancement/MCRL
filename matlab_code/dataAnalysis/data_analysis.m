@@ -48,3 +48,17 @@ saveas(fig1,'relativePerformance.png')
 saveas(fig2,'nrClicks.fig')
 saveas(fig2,'nrClicks.png')
 
+X=[trial_index(info_cost==0.01),PR_type(info_cost==0.01)];
+y=relative_score(info_cost==0.01);
+model_low_cost = fitnlm(X,y,'y ~ (1-b1+b5*x2)*sigmoid(b2+x1*(b3+b4*x2))',[0.01;0.01;0.25;0.2;0.1])
+
+X=[trial_index(info_cost==1),PR_type(info_cost==1)];
+y=relative_score(info_cost==1);
+model_medium_cost = fitnlm(X,y,'y ~ (1-b1+b5*x2)*sigmoid(b2+x1*(b3+b4*x2))',[0.01;0.01;0.25;0.2;0.1])
+
+X=[trial_index(info_cost==2.5),PR_type(info_cost==2.5)];
+y=relative_score(info_cost==2.5);
+model_high_cost = fitnlm(X,y,'y ~ (1-b1+b5*x2)*sigmoid(b2+x1*(b3+b4*x2))',[0.01;0.01;0.25;0.2;0.1])
+BIC_nonlinear=model_high_cost.ModelCriterion.BIC
+linear_model_high_cost=fitnlm(X,y,'y ~ (b1+b3*x2)*x1+b2+b4*x2',[0.1;0.5;0.1;0.1])
+BIC_linear=linear_model_high_cost.ModelCriterion.BIC

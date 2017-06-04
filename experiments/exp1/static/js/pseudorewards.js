@@ -714,7 +714,7 @@ function getTrials(){
 }
 
 function loadObjectLevelPRs(){
-    PR_json = loadJson("static/json/ObjectLevelPRs.json")
+    PR_json = loadJson("static/json/ObjectLevelPRs_"+COST_LEVEL+".json")
     object_level_PRs=PR_json
     /*
     object_level_PRs=new Array()
