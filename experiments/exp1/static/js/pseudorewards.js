@@ -1360,9 +1360,7 @@ function myopicVOCMaxKnown(mu_prior,a,known_alternative){
 
 function computeVPI(state,metalevel_action){
 //returns the value of perfect information (Equation 5 in the NIPS paper)
-//This function's input-output behavior should agree with the method computeVPI of MouselabMDPMetaMDPNIPS.m
-
-return 0    
+//This function's input-output behavior should agree with the method computeVPI of MouselabMDPMetaMDPNIPS.m    
     
 if (metalevel_action.is_move)
     return 0
