@@ -96,7 +96,7 @@ for i = unique(pid)'
     data(s).PR_type1 = data(s).PR_type{1};
     data(s).message = message(idx);
     data(s).trial_index = trial_index(idx);
-    data(s).trial_i = trial_i(idx);
+    data(s).trialID = trial_i(idx);
     data(s).delays = delays(idx);
     data(s).score = score(idx);
     data(s).relative_score = relative_score(idx);
@@ -111,4 +111,9 @@ for i = unique(pid)'
     data(s).clicks1 = clicks1(idx);
     data(s).clicks2 = clicks2(idx);
     data(s).clicks3 = clicks3(idx);
+    
+    for j = 1:nr_trials
+        data(s).click_locations_before_first_move{data(s).trialID(j)+1} = data(s).clicks1{j};
+        data(s).click_locations{data(s).trialID(j)+1} = data(s).clicks{j};
+    end
 end
