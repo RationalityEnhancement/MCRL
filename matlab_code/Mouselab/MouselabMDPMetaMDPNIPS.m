@@ -920,7 +920,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 [VOC,meta_MDP]=meta_MDP.myopicVOC(state,c);
                 cost=meta_MDP.cost_per_click;
                 
-                alternative_VPIs=computeAlternativeVPIs(meta_MDP,state,c);
+                %alternative_VPIs=computeAlternativeVPIs(meta_MDP,state,c);
                 max_info_gain=state.mu_V(state.s)-max(state.mu_Q(state.s,:));
             end
             
@@ -931,7 +931,8 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 uncertainty_reduction; sigma_R;p_best_action;sigma_best_action;...
                 underplanning;complete_planning;cost];
             %}
-            action_features=[max_info_gain; VPI; VOC+cost; cost; ER_act; alternative_VPIs; 1];
+            %action_features=[max_info_gain; VPI; VOC+cost; cost; ER_act; alternative_VPIs; 1];
+            action_features=[max_info_gain; VPI; VOC+cost; cost; ER_act; 1];
         end
 
         

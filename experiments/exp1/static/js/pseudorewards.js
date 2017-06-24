@@ -981,16 +981,16 @@ function predictQValue(state,computation){
     var feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {allActionsVPI: 1.3892, VPI: -0.3042, VOC1: 0.0301, cost: -0.1175, ER: 0.7855, otherVPIs: [0.3230, -0.6466, -0.5869], offset: 7.2457}
+            feature_weights = {allActionsVPI: 0.9721, VPI: -0.0087, VOC1: 0.1939, cost: -0.1039, ER: 0.7537, offset: 8.9318} //otherVPIs: [0.3230, -0.6466, -0.5869]
             //feature_weights = {VPI: 2.7287, VOC1: 0.3350, ER: 1.0665, cost: -0.2817};
             //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.0:
-            feature_weights = {allActionsVPI: 1.8015, VPI: -0.4280, VOC1: 0.6313, cost: -2.2924, ER: 0.9626, otherVPIs: [-0.3154, -0.4761, -0.5306], offset: 4.8470}
+            feature_weights = {allActionsVPI: 1.3801, VPI: 0.0085, VOC1: 0.2077, cost: -2.5259, ER: 0.9861, offset: 4.3665} //otherVPIs: [-0.3154, -0.4761, -0.5306]
             //feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.5:
-            feature_weights = {allActionsVPI: -0.6113, VPI: 0.2772, VOC1: 0.2596, cost: -0.9051, ER: 0.9220, otherVPIs: [-0.4179, 0.5560, 1.4445], offset: -0.0136}
+            feature_weights = {allActionsVPI: -0.1674, VPI: -0.0204, VOC1: 0.2622, cost: -1.2668, ER: 0.9135, offset: 0.2249} //otherVPIs: [-0.4179, 0.5560, 1.4445]
             //feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
@@ -1005,31 +1005,29 @@ function predictQValue(state,computation){
     var ER = computeExpectedRewardOfActing(state,computation)
     var cost = computation.is_click*meta_MDP.cost_per_click
     var allActionsVPI = VPIaboutAllActions(state,computation)
-    var otherVPIs = VPIotherActions(state,computation)
+    //var otherVPIs = VPIotherActions(state,computation)
     
-    var Q_hat= feature_weights.VPI*VPI+feature_weights.VOC1*VOC1 + feature_weights.ER*ER+feature_weights.cost*cost + dotp(feature_weights.otherVPIs,otherVPIs) + feature_weights.allActionsVPI*allActionsVPI +feature_weights.offset
+    var Q_hat= feature_weights.VPI*VPI+feature_weights.VOC1*VOC1 + feature_weights.ER*ER+feature_weights.cost*cost  + feature_weights.allActionsVPI*allActionsVPI +feature_weights.offset ////+ dotp(feature_weights.otherVPIs,otherVPIs)
     return Q_hat
 }
 
 function predictQValueOfSequence(state,computations){
     //predictQValue(s,c) returns the Q-value our feature-based approximation predicts for performing computation c in state s.
     
-    var feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {allActionsVPI: 1.3892, VPI: -0.3042, VOC1: 0.0301, cost: -0.1175, ER: 0.7855, otherVPIs: [0.3230, -0.6466, -0.5869], offset: 7.2457}
+            feature_weights = {allActionsVPI: 0.9721, VPI: -0.0087, VOC1: 0.1939, cost: -0.1039, ER: 0.7537, offset: 8.9318} //otherVPIs: [0.3230, -0.6466, -0.5869]
             //feature_weights = {VPI: 2.7287, VOC1: 0.3350, ER: 1.0665, cost: -0.2817};
             //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.0:
-            feature_weights = {allActionsVPI: 1.8015, VPI: -0.4280, VOC1: 0.6313, cost: -2.2924, ER: 0.9626, otherVPIs: [-0.3154, -0.4761, -0.5306], offset: 4.8470}
+            feature_weights = {allActionsVPI: 1.3801, VPI: 0.0085, VOC1: 0.2077, cost: -2.5259, ER: 0.9861, offset: 4.3665} //otherVPIs: [-0.3154, -0.4761, -0.5306]
             //feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.5:
-            feature_weights = {allActionsVPI: -0.6113, VPI: 0.2772, VOC1: 0.2596, cost: -0.9051, ER: 0.9220, otherVPIs: [-0.4179, 0.5560, 1.4445], offset: -0.0136}
+            feature_weights = {allActionsVPI: -0.1674, VPI: -0.0204, VOC1: 0.2622, cost: -1.2668, ER: 0.9135, offset: 0.2249} //otherVPIs: [-0.4179, 0.5560, 1.4445]
             //feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
-
     console.log('weights', feature_weights)
 
     }
@@ -1039,30 +1037,32 @@ function predictQValueOfSequence(state,computations){
     var VOC1s = new Array()
     var costs = new Array()
     var allActionsVPI = new Array()
-    var otherActionsVPI = new Array()
+    //var otherActionsVPI = new Array()
     
     
     current_state=deepCopy(state)
     for (c in computations){
         VPIs.push(computeVPI(current_state,computations[c]))
         allActionsVPI.push(VPIaboutAllActions(current_state,computations[c]))
-        otherActionsVPI.push(VPIotherActions(current_state,computations[c]))
+        //otherActionsVPI.push(VPIotherActions(current_state,computations[c]))
         VOC1s.push(computeMyopicVOC(current_state,computations[c]))
         costs.push(computations[c].is_click*meta_MDP.cost_per_click)
         
         current_state = getNextState(current_state,computations[c])
     }
     var ER= computeExpectedRewardOfActing(state,computations[0])
+    /*
     var sumOtherActionsVPIs = [0,0,0]
     for (c in otherActionsVPI){
         for (a in otherActionsVPI[c]){
             sumOtherActionsVPIs[a]+=otherActionsVPI[c][a]
         }
     }
+    */
     
     
     //2. predict the Q-value of the sequence
-    Q_seq = feature_weights.allActionsVPI*sum(allActionsVPI)+  feature_weights.VPI*sum(VPIs)+feature_weights.VOC1*sum(VOC1s) + feature_weights.ER*ER+feature_weights.cost*sum(costs)+dotp(feature_weights.otherVPIs,sumOtherActionsVPIs)+feature_weights.offset
+    Q_seq = feature_weights.allActionsVPI*sum(allActionsVPI)+  feature_weights.VPI*sum(VPIs)+feature_weights.VOC1*sum(VOC1s) + feature_weights.ER*ER+feature_weights.cost*sum(costs)+feature_weights.offset//+dotp(feature_weights.otherVPIs,sumOtherActionsVPIs)
     
     return Q_seq
         
@@ -1362,6 +1362,8 @@ function computeVPI(state,metalevel_action){
 //returns the value of perfect information (Equation 5 in the NIPS paper)
 //This function's input-output behavior should agree with the method computeVPI of MouselabMDPMetaMDPNIPS.m
 
+return 0    
+    
 if (metalevel_action.is_move)
     return 0
     
