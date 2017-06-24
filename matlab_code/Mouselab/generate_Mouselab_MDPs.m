@@ -1002,4 +1002,4 @@ for e=1:numel(experiment)
         experiment(e).start_state,experiment(e).horizon,false)    
 end
 %}
-%save trial_properties trial_properties
+%save trial_properties trial_propertiesload('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_low_featureBased.mat')
