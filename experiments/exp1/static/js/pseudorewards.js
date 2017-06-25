@@ -1038,8 +1038,7 @@ function predictQValueOfSequence(state,computations){
     var costs = new Array()
     var allActionsVPI = new Array()
     //var otherActionsVPI = new Array()
-    
-    
+        
     current_state=deepCopy(state)
     for (c in computations){
         VPIs.push(computeVPI(current_state,computations[c]))

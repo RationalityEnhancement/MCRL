@@ -15,7 +15,7 @@ if (mode === "{{ mode }}") {
   counterbalance = 0;
 }
 
-experiment_nr = 0.9;
+experiment_nr = 1;
 
 switch (experiment_nr) {
   case 0:
@@ -45,7 +45,7 @@ switch (experiment_nr) {
   case 1:
     IVs = {
       frequencyOfFB: ['after_each_move'],
-      PRTypes: ['none', 'featureBased', 'fullObservation'],
+      PRTypes: ['none', 'featureBased', 'objectLevel'],
       messageTypes: ['full', 'none'],
       infoCosts: [0.01, 1.00, 2.50]
     };
@@ -53,25 +53,17 @@ switch (experiment_nr) {
   case 2:
     IVs = {
       frequencyOfFB: ['after_each_move'],
-      PRTypes: ['featureBased', 'objectLevel'],
-      messageTypes: ['full'],
-      infoCosts: [0.01, 1.60, 2.80]
+      PRTypes: ['none', 'featureBased'],
+      messageTypes: ['full', 'simple'],
+      infoCosts: [1.00]
     };
     break;
   case 3:
     IVs = {
-      frequencyOfFB: ['after_each_move'],
-      PRTypes: ['none', 'featureBased'],
-      messageTypes: ['full', 'simple'],
-      infoCosts: [1.60]
-    };
-    break;
-  case 4:
-    IVs = {
       frequencyOfFB: ['after_each_move', 'after_each_click'],
       PRTypes: ['featureBased'],
       messageTypes: ['none'],
-      infoCosts: [1.60]
+      infoCosts: [1.00]
     };
     break;
   default:
@@ -89,6 +81,8 @@ nrConditions = (function() {
     case 0:
       return 6;
     case 0.6:
+      return 6;
+    case 0.9:
       return 6;
     case 1:
       return 3 * 3;
