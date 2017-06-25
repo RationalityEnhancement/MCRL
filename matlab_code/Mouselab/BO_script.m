@@ -10,7 +10,7 @@ high_costs=[2.50];%[1.50,2,2.50,3];
 
 costs=[0.01,1,2.50];
 conditions={low_cost_condition,medium_cost_condition,high_cost_condition};
-names={'low_cost','medium_cost','high_cost'};
+names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallActions'};
 
 parfor c=1:numel(conditions)
     policySearchMouselabMDP(costs(c),conditions{c},names{c})
@@ -59,7 +59,7 @@ for c=1:numel(conditions)
         %experiment = high_cost_condition;
         cost = 2.50;
         
-        temp=load(['../../results/BO/BO_c250n100high_cost.mat']);
+        temp=load(['../../results/BO/BO_c250n100high_cost_VPIallActions.mat']);
         w_policy=temp.BO.w_hat;
         
         training_data1=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_none.mat');
@@ -74,7 +74,7 @@ for c=1:numel(conditions)
         %experiment = medium_cost_condition;
         cost = 1.00;
         
-        temp=load(['../../results/BO/BO_c100n100medium_cost.mat']);
+        temp=load(['../../results/BO/BO_c100n100medium_cost_VPIallActions.mat']);
         w_policy=temp.BO.w_hat;
         
         training_data1=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_medium_none.mat');
@@ -90,7 +90,7 @@ for c=1:numel(conditions)
         %experiment = low_cost_condition;
         cost=0.01;
         
-        temp=load(['../../results/BO/BO_c1n100low_cost.mat']);
+        temp=load(['../../results/BO/BO_c1n100low_cost_VPIallActions.mat']);
         w_policy=temp.BO.w_hat;
         
         training_data1=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_low_none.mat')
@@ -116,7 +116,7 @@ for c=1:numel(conditions)
     nr_episodes=numel(training_data.trialNr);
     %parfor c=1:numel(costs)
     
-    glm_policy=BayesianGLM(4,1e-6);
+    glm_policy=BayesianGLM(numel(w_policy),1e-6);
     glm_policy.mu_n=w_policy;
     glm_policy.mu_0=w_policy;
     

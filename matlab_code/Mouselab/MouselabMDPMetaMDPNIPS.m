@@ -866,6 +866,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 
                 VPI=0;
                 cost = 0;
+                VPI_all_actions=0;
             else
                 %{
                 expected_regret=0;
@@ -879,9 +880,10 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 complete_planning=0;
                 cost=meta_MDP.cost_per_click;
                 %}
-                VPI=meta_MDP.computeVPI(state,c);                
+                VPI=meta_MDP.computeVPI(state,c);
                 [VOC,meta_MDP]=meta_MDP.myopicVOC(state,c);
                 cost=meta_MDP.cost_per_click;
+                VPI_all_actions=state.mu_V(state.s)-max(state.mu_Q(state.s,:));
             end
             
             ER_act=meta_MDP.expectedRewardOfActing(state,c);
@@ -891,7 +893,9 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 uncertainty_reduction; sigma_R;p_best_action;sigma_best_action;...
                 underplanning;complete_planning;cost];
             %}
-            action_features=[VPI; VOC; cost; ER_act];
+            %action_features=[VPI; VOC; cost; ER_act];
+            
+            action_features=[VPI_all_actions; VPI; VOC; cost];
         end
 
         function action_features=QFeatures(meta_MDP,state,c)

@@ -173,10 +173,10 @@ for c=1:length(conditions)
     %for c=1:length(costs)
     %    cost=costs(c);
     try
-        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(1)),name,'.mat']
+        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(1)),name,'.mat'] %_VPIallActions
         temp=load(path_to_file)
     catch
-        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(2)),name,'.mat']
+        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(2)),name,'.mat'] %_VPIallActions
         temp=load(path_to_file)
     end
     
@@ -194,7 +194,7 @@ for c=1:length(conditions)
         
         nr_observations(t,c)=mean(indices(t,c).nr_acquisitions);
     end
-    ER_policy_by_cost(c)=mean(R_total)    
+    %ER_policy_by_cost(c)=mean(R_total)    
     rel_ER_by_cost(c)=mean( (R_total(:)-min_score(:,c))./(max_score(:,c)-min_score(:,c)));
     
 end
