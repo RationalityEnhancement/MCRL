@@ -173,10 +173,10 @@ for c=1:length(conditions)
     %for c=1:length(costs)
     %    cost=costs(c);
     try
-        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(1)),name,'.mat'] %_VPIallActions
+        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(1)),name,'_VPIallActions.mat'] %_VPIallActions
         temp=load(path_to_file)
     catch
-        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(2)),name,'.mat'] %_VPIallActions
+        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(2)),name,'_VPIallActions.mat'] %_VPIallActions
         temp=load(path_to_file)
     end
     
@@ -188,14 +188,16 @@ for c=1:length(conditions)
     learned_policy=@(state,mdp) deterministicPolicy(state,mdp,policy_weights_by_cost(:,c));
     
     for t=1:nr_trials
-        [R_total(t),problems{t,c},states{t,c},chosen_actions{t,c},indices(t,c)]=...
+        [result.R_total(t,c),result.problems{t,c},result.states{t,c},result.chosen_actions{t,c},indices(t,c)]=...
             inspectPolicyGeneral(meta_MDP,learned_policy,...
             nr_episodes_evaluation,experiment,t);
+        
+        result.time_cost(t,c)=cost;
         
         nr_observations(t,c)=mean(indices(t,c).nr_acquisitions);
     end
     %ER_policy_by_cost(c)=mean(R_total)    
-    rel_ER_by_cost(c)=mean( (R_total(:)-min_score(:,c))./(max_score(:,c)-min_score(:,c)));
+    rel_ER_by_cost(c)=mean( (result.R_total(:,c)-min_score(:,c))./(max_score(:,c)-min_score(:,c)));
     
 end
 
@@ -204,3 +206,5 @@ nr_observations_by_cost=mean(nr_observations)
 csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/score_pi_star.csv',ER_policy_by_cost)
 csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/rel_score_pi_star.csv',rel_ER_by_cost)
 csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star.csv',nr_observations_by_cost)
+
+save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/results/behavior_of_learned_policy.mat','result') 
