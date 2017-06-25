@@ -1001,7 +1001,7 @@ function predictQValue(state,computation){
     meta_MDP.cost_per_click = PARAMS.info_cost
     
     var VPI = computeVPI(state,computation)
-    var VOC1 = computeMyopicVOC(state,computation)
+    var VOC1 = computeMyopicVOCNetCost(state,computation)
     var ER = computeExpectedRewardOfActing(state,computation)
     var cost = computation.is_click*meta_MDP.cost_per_click
     var allActionsVPI = VPIaboutAllActions(state,computation)
@@ -1045,7 +1045,7 @@ function predictQValueOfSequence(state,computations){
         VPIs.push(computeVPI(current_state,computations[c]))
         allActionsVPI.push(VPIaboutAllActions(current_state,computations[c]))
         //otherActionsVPI.push(VPIotherActions(current_state,computations[c]))
-        VOC1s.push(computeMyopicVOC(current_state,computations[c]))
+        VOC1s.push(computeMyopicVOCNetCost(current_state,computations[c]))
         costs.push(computations[c].is_click*meta_MDP.cost_per_click)
         
         current_state = getNextState(current_state,computations[c])
@@ -1179,6 +1179,10 @@ function computeExpectedRewardOfActingOld(state){
     }
 }
 */
+
+function computeMyopicVOCNetCost(state,c){
+    return computeMyopicVOC(state,c)+meta_MDP.cost_per_click
+}
 
 function computeMyopicVOC(state,c){
     //Computes the myoptic VOC (VOC1, Equation 4 in the NIPS paper) in a highly efficient manner. VOC1 is -cost(c) if the computation cannot improve the decision. VOC1 is positive if the expected improvement in decision quality from a single computation is higher than the cost of computation and negative else. The output should be identical to the outputs of the method myopicVOC of MouselabMDPMetaMDPNIPS in Matlab.

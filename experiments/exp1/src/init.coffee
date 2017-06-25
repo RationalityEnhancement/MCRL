@@ -41,6 +41,7 @@ nrInfoCosts = IVs.infoCosts.length
 nrConditions = switch experiment_nr
     when 0 then 6
     when 0.6 then 6
+    when 0.9 then 6
     when 1 then 3 * 3
     else nrDelays * nrMessages * nrInfoCosts
 
