@@ -647,25 +647,14 @@ end
 
 scores=[properties_horizon0.score];
 [sorted_scores,sorted_indices]=sort(scores,'descend');
-selected_trials=sorted_indices(1:nr_trials);
-
-high_cost_condition = mdps_horizon0(selected_trials);
-properties_high_cost_condition = properties_horizon0(selected_trials);
+selected_trials=sorted_indices(1:16);
 
 
-nr_steps=3;
-nr_possible_moves_by_step=[4,1,2,0];
+suitable_mdps=find(scores>-12);
 
-right=1; up=2; left=3; down=4;
-directions={'right','up','left','down'};
+high_cost_condition = mdps_horizon0(suitable_mdps(1:12));
+properties_high_cost_condition = properties_horizon0(suitable_mdps(1:12));
 
-for a=1:nr_possible_moves_by_step(1)
-    action_struct(a).nr=a;
-    action_struct(a).direction=directions{a};
-    action_struct(a).state=a+1;
-    action_struct(a).reward=NaN;
-    action_struct(a).done=false;
-end
 
 start_state=struct('nr',1,'path',[],'available_actions',...
     1:nr_possible_moves_by_step(1),'is_terminal_state',false,...
@@ -673,7 +662,6 @@ start_state=struct('nr',1,'path',[],'available_actions',...
 states_by_step{1}=[start_state]; %each state can be identified by the sequence of moves that led to it
 state_nr=1;
 states=[states_by_step{1}(:)];
-
 for step=2:(nr_steps+1)
     states_by_step{step}=[];
     for s=1:numel(states_by_step{step-1})
@@ -732,6 +720,7 @@ for step=2:(nr_steps+1)
 end
 
 
+
 actions_by_state{1}=[];
 actions_by_state{2}=[1];
 actions_by_state{3}=[2];
@@ -769,36 +758,36 @@ for e=1:numel(medium_cost_condition)
     
 end
 
-for t=1:nr_trials, low_cost_rewards(:,t)=low_cost_condition(t).rewards(low_cost_condition(t).T>0),end
+for t=1:12, low_cost_rewards(:,t)=low_cost_condition(t).rewards(low_cost_condition(t).T>0),end
 mean(low_cost_rewards(:))
 scaling_factor.low_cost=10.6/std(low_cost_rewards(:))
 shift.low_cost=4.5 - scaling_factor.low_cost * mean(low_cost_rewards(:));
 
-for t=1:nr_trials, medium_cost_rewards(:,t)=medium_cost_condition(t).rewards(medium_cost_condition(t).T>0),end
+for t=1:12, medium_cost_rewards(:,t)=medium_cost_condition(t).rewards(medium_cost_condition(t).T>0),end
 mean(medium_cost_rewards(:))
 std(medium_cost_rewards(:))
 scaling_factor.medium_cost=10.6/std(medium_cost_rewards(:))
 shift.medium_cost=4.5 - scaling_factor.medium_cost * mean(medium_cost_rewards(:));
 
-for t=1:nr_trials, high_cost_rewards(:,t)=high_cost_condition(t).rewards(high_cost_condition(t).T>0),end
+for t=1:12, high_cost_rewards(:,t)=high_cost_condition(t).rewards(high_cost_condition(t).T>0),end
 mean(high_cost_rewards(:))
 std(high_cost_rewards(:))
 scaling_factor.high_cost=10.6/std(high_cost_rewards(:));
 shift.high_cost=4.5 - scaling_factor.high_cost * mean(high_cost_rewards(:));
 
-for t=1:nr_trials
+for t=1:12
     high_cost_condition(t).rewards(high_cost_condition(t).T>0)=round(...
         scaling_factor.high_cost*...
         high_cost_condition(t).rewards(high_cost_condition(t).T>0)+...
         shift.high_cost);
 end
-for t=1:nr_trials
+for t=1:12
     medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)=round(...
         scaling_factor.medium_cost*...
         medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)+...
         shift.medium_cost);
 end
-for t=1:nr_trials
+for t=1:12
     low_cost_condition(t).rewards(low_cost_condition(t).T>0)=round(...
         scaling_factor.low_cost*...
         low_cost_condition(t).rewards(low_cost_condition(t).T>0)+...
