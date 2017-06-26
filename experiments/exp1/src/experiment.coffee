@@ -327,7 +327,7 @@ initializeExperiment = ->
 
 
   main = new MDPBlock
-    timeline: if DEBUG then TRIALS[..1] else _.shuffle TRIALS
+    timeline: if DEBUG then TRIALS else _.shuffle TRIALS
 
 
   finish = new Block
