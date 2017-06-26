@@ -1,4 +1,4 @@
-DEBUG = false
+DEBUG = true
 
 if DEBUG
   console.log """
@@ -71,6 +71,11 @@ PARAMS =
   message:  conditions.messageType[condition % nrConditions]
   frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]
   condition: condition
+
+if DEBUG
+  PARAMS.message = 'full'
+  PARAMS.info_cost = 1.00
+  PARAMS.PR_type = 'featureBased'
 
 console.log 'PARAMS', PARAMS
 COST_LEVEL =

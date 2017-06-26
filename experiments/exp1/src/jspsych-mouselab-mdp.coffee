@@ -115,10 +115,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         rightMessage='Score: <span id=mouselab-score/>'
         lowerMessage=KEY_DESCRIPTION
 
-        @minTime=(if DEBUG then 5 else 45)
+        @minTime=(if DEBUG then 55 else 45)
         @feedback=true
       } = config
 
+      if DEBUG
+        @stateClickCost = 0.05
       if not leftMessage?
         leftMessage = "#{TRIAL_INDEX}/#{N_TRIALS}"
 

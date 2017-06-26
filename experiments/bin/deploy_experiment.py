@@ -76,9 +76,9 @@ def archive(args):
 
 
 def check_debug(args):
-    with open('{}/static/js/experiment.js'.format(args.path)) as f:
+    with open('{}/static/js/init.js'.format(args.path)) as f:
         if 'DEBUG = true' in f.read():
-            ok = input('DEBUG flag is set in experiment.js. Continue? y/[n]  ').startswith('y')
+            ok = input('DEBUG flag is set in init.js. Continue? y/[n]  ').startswith('y')
             if not ok:
                 print('Exiting.')
                 exit(1)
