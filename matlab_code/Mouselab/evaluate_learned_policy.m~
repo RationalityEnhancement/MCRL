@@ -214,6 +214,4 @@ save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/results/behavior_of_learned_
 save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/selected_computations.mat','selected_computations')
 
 json_string=savejson('',selected_computations)
-fid=fopen('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/selected_computations.json','w')
-fwrite(fid,json_string)
-fclose(fid)
+fid=fopen('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/selected_computations.json')
