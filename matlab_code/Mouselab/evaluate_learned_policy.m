@@ -195,6 +195,9 @@ for c=1:length(conditions)
         result.time_cost(t,c)=cost;
         
         nr_observations(t,c)=mean(indices(t,c).nr_acquisitions);
+        
+        selected_computations{t,c}=result.chosen_actions{t,c};
+        
     end
     %ER_policy_by_cost(c)=mean(R_total)    
     rel_ER_by_cost(c)=mean( (result.R_total(:,c)-min_score(:,c))./(max_score(:,c)-min_score(:,c)));
@@ -208,3 +211,4 @@ csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli
 csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star.csv',nr_observations_by_cost)
 
 save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/results/behavior_of_learned_policy.mat','result') 
+save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/selected_computations.mat','selected_computations')
