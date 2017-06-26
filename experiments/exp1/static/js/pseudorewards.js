@@ -657,6 +657,10 @@ function getClicks(state){
     
     for (o in state.observations){
         
+        if (parseInt(o)==0){
+            continue
+        }
+        
         if (isNaN(state.observations[o]) || state.observations[o]==null){
             
             click={
@@ -885,20 +889,109 @@ function valueFunction(state,environment_model){
     }
     return V
 }
+
+function VPIaboutAllActions(state,computation){
+    //computes the value of having perfect information about all available moves
+    
+    if (computation.is_move){
+        return 0;
+    }
+    else{        
+        max_mu = _.max(state.mu_Q[state.s-1])
+        E_max  = EVOfMaxOfGaussians(state.mu_Q[state.s-1],state.sigma_Q[state.s-1])
+    
+        return E_max[0] - max_mu
+    }
+}
+
+function VPIotherActions(state,c){
+    
+    if (c.is_move){
+        return [0,0,0]
+    }
+    
+    var corresponding_action= meta_MDP.locations[c.cell].path[state.step-1]
+    var VPIs = [0,0,0]
+    var available_actions=getMoves(meta_MDP.locations[state.s])
+    
+    var i=0;
+    for (var a=0; a<available_actions.length; a++){
+        
+        if (corresponding_action == available_actions[a].move.action_nr){
+            continue
+        }
+        
+        if (available_actions[a].move.next_state != c.cell){
+            VPIs[i++]=getVPI(state,available_actions[a].move.action_nr)
+        }
+    }
+    
+    VPIs = VPIs.sort(function(a,b) {return b-a})    
+    
+    return VPIs
+}
+
+function getVPI(state,act){
+//returns the value of perfect information about action act    
+    
+//sort mu_Q values in descending order
+mu_sorted = state.mu_Q[state.s-1].slice(0).sort(function(a, b){return b - a})
+max_val = mu_sorted[0]
+if (mu_sorted.length>=2){
+    secondbest_val=mu_sorted[1]
+}
+else{
+    secondbest_val=-Infinity
+}
+
+locations=getLocations(0);
+
+mu_c=state.mu_Q[state.s-1][act-1]
+sigma_c = state.sigma_Q[state.s-1][act-1]
+
+appears_best = mu_c==max_val
+
+if (appears_best){
+    //information is valuable if it reveals that action c is suboptimal
+    ub=secondbest_val;
+    lb=mu_c-3*sigma_c;
+    
+    VPI = (secondbest_val-mu_c)*(normCDF(ub,mu_c,sigma_c)-normCDF(lb,mu_c,sigma_c))+sigma_c**2*(normPDF(ub,mu_c,sigma_c)-normPDF(lb,mu_c,sigma_c));    
+}
+else{
+    //information is valuable if it reveals that action is optimal
+    ub=mu_c+3*sigma_c;
+    lb=max_val;
+    
+    if (ub>lb){
+        VPI = (mu_c-max_val)*(normCDF(ub,mu_c,sigma_c)-normCDF(lb,mu_c,sigma_c))-sigma_c**2*(normPDF(ub,mu_c,sigma_c)-normPDF(lb,mu_c,sigma_c));
+    }
+    else{
+        VPI=0;
+    }
+}
+
+return VPI
+        
+}
+
 function predictQValue(state,computation){
     //predictQValue(s,c) returns the Q-value our feature-based approximation predicts for performing computation c in state s.
     
     var feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {VPI: 2.7287, VOC1: 0.3350, ER: 1.0665, cost: -0.2817};
+            feature_weights = {allActionsVPI: 1.0154, VPI: 0.0440, VOC1: 0.1147, cost: -0.0920, ER: 0.7746, offset: 8.2285} //otherVPIs: [0.3230, -0.6466, -0.5869]
+            //feature_weights = {VPI: 2.7287, VOC1: 0.3350, ER: 1.0665, cost: -0.2817};
             //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.0:
-            feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
+            feature_weights = {allActionsVPI: 1.2895, VPI: 0.0858, VOC1: 0.4536, cost: -2.6655, ER: 0.9791, offset: 4.8433} //otherVPIs: [-0.3154, -0.4761, -0.5306]
+            //feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.5:
-            feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
+            feature_weights = {allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
+            //feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
     console.log('weights', feature_weights)
@@ -908,50 +1001,67 @@ function predictQValue(state,computation){
     meta_MDP.cost_per_click = PARAMS.info_cost
     
     var VPI = computeVPI(state,computation)
-    var VOC1 = computeMyopicVOC(state,computation)
+    var VOC1 = computeMyopicVOCNetCost(state,computation)
     var ER = computeExpectedRewardOfActing(state,computation)
     var cost = computation.is_click*meta_MDP.cost_per_click
+    var allActionsVPI = VPIaboutAllActions(state,computation)
+    //var otherVPIs = VPIotherActions(state,computation)
     
-    var Q_hat= feature_weights.VPI*VPI+feature_weights.VOC1*VOC1 + feature_weights.ER*ER+feature_weights.cost*cost
+    var Q_hat= feature_weights.VPI*VPI+feature_weights.VOC1*VOC1 + feature_weights.ER*ER+feature_weights.cost*cost  + feature_weights.allActionsVPI*allActionsVPI +feature_weights.offset ////+ dotp(feature_weights.otherVPIs,otherVPIs)
     return Q_hat
 }
 
 function predictQValueOfSequence(state,computations){
     //predictQValue(s,c) returns the Q-value our feature-based approximation predicts for performing computation c in state s.
     
-    var feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {VPI: 2.7287, VOC1: 0.3350, ER: 1.0665, cost: -0.2817};
+            feature_weights = {allActionsVPI: 1.0154, VPI: 0.0440, VOC1: 0.1147, cost: -0.0920, ER: 0.7746, offset: 8.2285} //otherVPIs: [0.3230, -0.6466, -0.5869]
+            //feature_weights = {VPI: 2.7287, VOC1: 0.3350, ER: 1.0665, cost: -0.2817};
             //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.0:
-            feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
+            feature_weights = {allActionsVPI: 1.2895, VPI: 0.0858, VOC1: 0.4536, cost: -2.6655, ER: 0.9791, offset: 4.8433} //otherVPIs: [-0.3154, -0.4761, -0.5306]
+            //feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.5:
-            feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
+            feature_weights = {allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
+            //feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
-
-    console.log('weights', feature_weights)
-
+                        
     }
+    console.log('weights', feature_weights)
     
     //1. Compute the sum of the VPIs and VOC1 values of the individual computations and the sum of the costs
-    VPIs = new Array()
-    VOC1s = new Array()
-    costs = new Array()
+    var VPIs = new Array()
+    var VOC1s = new Array()
+    var costs = new Array()
+    var allActionsVPI = new Array()
+    //var otherActionsVPI = new Array()
+        
     current_state=deepCopy(state)
     for (c in computations){
         VPIs.push(computeVPI(current_state,computations[c]))
-        VOC1s.push(computeMyopicVOC(current_state,computations[c]))
+        allActionsVPI.push(VPIaboutAllActions(current_state,computations[c]))
+        //otherActionsVPI.push(VPIotherActions(current_state,computations[c]))
+        VOC1s.push(computeMyopicVOCNetCost(current_state,computations[c]))
         costs.push(computations[c].is_click*meta_MDP.cost_per_click)
         
         current_state = getNextState(current_state,computations[c])
     }
-    ER= computeExpectedRewardOfActing(state,computations[0])
+    var ER= computeExpectedRewardOfActing(state,computations[0])
+    /*
+    var sumOtherActionsVPIs = [0,0,0]
+    for (c in otherActionsVPI){
+        for (a in otherActionsVPI[c]){
+            sumOtherActionsVPIs[a]+=otherActionsVPI[c][a]
+        }
+    }
+    */
+    
     
     //2. predict the Q-value of the sequence
-    Q_seq = feature_weights.VPI*sum(VPIs)+feature_weights.VOC1*sum(VOC1s) + feature_weights.ER*ER+feature_weights.cost*sum(costs)
+    Q_seq = feature_weights.allActionsVPI*sum(allActionsVPI)+  feature_weights.VPI*sum(VPIs)+feature_weights.VOC1*sum(VOC1s) + feature_weights.ER*ER+feature_weights.cost*sum(costs)+feature_weights.offset//+dotp(feature_weights.otherVPIs,sumOtherActionsVPIs)
     
     return Q_seq
         
@@ -1068,6 +1178,10 @@ function computeExpectedRewardOfActingOld(state){
     }
 }
 */
+
+function computeMyopicVOCNetCost(state,c){
+    return computeMyopicVOC(state,c)+meta_MDP.cost_per_click
+}
 
 function computeMyopicVOC(state,c){
     //Computes the myoptic VOC (VOC1, Equation 4 in the NIPS paper) in a highly efficient manner. VOC1 is -cost(c) if the computation cannot improve the decision. VOC1 is positive if the expected improvement in decision quality from a single computation is higher than the cost of computation and negative else. The output should be identical to the outputs of the method myopicVOC of MouselabMDPMetaMDPNIPS in Matlab.
@@ -1249,8 +1363,8 @@ function myopicVOCMaxKnown(mu_prior,a,known_alternative){
 
 function computeVPI(state,metalevel_action){
 //returns the value of perfect information (Equation 5 in the NIPS paper)
-//This function's input-output behavior should agree with the method computeVPI of MouselabMDPMetaMDPNIPS.m
-
+//This function's input-output behavior should agree with the method computeVPI of MouselabMDPMetaMDPNIPS.m    
+    
 if (metalevel_action.is_move)
     return 0
     
@@ -1623,4 +1737,12 @@ function reshapeArray(input_list,size_vector){
     }               
     
     return transpose(A)
+}
+
+function dotp(x,y) {
+    function dotp_sum(a,b) { return a + b; }
+    function dotp_times(a,i) { return x[i] * y[i]; }
+    if (x.length != y.length)
+        throw "can't find dot product: arrays have different lengths";
+    return x.map(dotp_times).reduce(dotp_sum,0);
 }

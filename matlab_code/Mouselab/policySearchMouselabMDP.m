@@ -26,16 +26,16 @@ else
     ER_hat=@(w) evaluatePolicy([w(:);1],c,nr_episodes);
 end
 
-d=3;
+d=4;
 
-x_input_domain = [-1 1; -1 1; -5 1];
+x_input_domain = [-1 2; -1 1; -1 1; -5 1];
 nb_iter=100;
 result_display=true; result_save=true; plot_func=false; plot_point=false;
 
 cd(GPO_dir)
 [x, fx, X_sample, F_sample, result] = ...
     IMGPO_default_run_stochastic_objective(ER_hat, d, x_input_domain, nb_iter, ...
-    result_display, result_save, plot_func, plot_point)
+    result_display, result_save, plot_func, plot_point);
 
 BO.w_hat=[x(:);1];
 BO.ER=fx;
