@@ -1,7 +1,3 @@
-var QValues = new Array()
-var QValueSelectedComputation = new Array()
-var correspondingComputations = new Array()
-
 // Warn if overriding existing method
 if(Array.prototype.equals)
     console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
