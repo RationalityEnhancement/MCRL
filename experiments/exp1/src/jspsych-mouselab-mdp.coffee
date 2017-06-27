@@ -104,7 +104,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @edgeDisplay='always'  # one of 'never', 'hover', 'click', 'always'
         @edgeClickCost=0  # subtracted from score every time an edge is clicked
         @trial_i=null
-        @demonstrate=true
+        #@demonstrate=true
+        @demonstrate=false
 
         @stateRewards=null
         
