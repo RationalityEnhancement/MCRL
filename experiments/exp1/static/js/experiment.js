@@ -6,11 +6,15 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, N_TRIALS, TRIALS, createStartButton, delay, initializeExperiment, psiturk,
+var BLOCKS, N_TRIALS, TRIALS, createStartButton, delay, initializeExperiment, isIE, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
 psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
+
+isIE = false || !!document.documentMode;
+
+isIE = false;
 
 BLOCKS = void 0;
 
@@ -22,10 +26,15 @@ delay = function(time, func) {
   return setTimeout(func, time);
 };
 
+if (isIE) {
+  $('#jspsych-target').hide();
+  $('#IE_error').show();
+}
+
 $(window).on('load', function() {
   var loadTimeout, slowLoad;
   slowLoad = function() {
-    return document.getElementById("failLoad").style.display = "block";
+    return $('#failLoad').show();
   };
   loadTimeout = delay(12000, slowLoad);
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
@@ -247,7 +256,7 @@ initializeExperiment = function() {
   if (DEBUG) {
     experiment_timeline = [train, finish];
   } else {
-    experiment_timeline = [instruct_loop, train, test, finish];
+    experiment_timeline = [instruct_loop, train, finish];
   }
   BONUS = void 0;
   calculateBonus = function() {

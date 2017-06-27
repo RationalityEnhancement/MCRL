@@ -12,6 +12,7 @@ Demonstrates the jsych-mdp plugin
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 isIE = false || !!document.documentMode
+isIE = false
 
 BLOCKS = undefined
 TRIALS = undefined
@@ -23,12 +24,14 @@ delay = (time, func) -> setTimeout func, time
 # $(window).resize()
 
 if isIE
-  document.getElementById("IE_error").style.display = "block"
+  $('#jspsych-target').hide()
+  $('#IE_error').show()
+  # document.getElementById("IE_error").style.display = "block"
 
 # $(document).ready ->
 $(window).on 'load', ->
   # Load data and test connection to server.
-  slowLoad = -> document.getElementById("failLoad").style.display = "block"
+  slowLoad = -> $('#failLoad').show()
   loadTimeout = delay 12000, slowLoad
 
   psiturk.preloadImages [
@@ -373,7 +376,7 @@ initializeExperiment = ->
     experiment_timeline = [
       instruct_loop
       train
-      test
+      # test
       finish
     ]
 

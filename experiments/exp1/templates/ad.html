@@ -74,6 +74,12 @@ See comments throughout for hints
 
            <p>This HIT takes about 20 minutes. You will play an airplane flight simulation game for 12 rounds. You will decide where to fly your plane in order to maximize earnings. This pays $1.00 plus a performance bonus of up to $5.00.</p>
 
+            <div id='using_ie' style="display:none;" class="alert alert-danger">
+              <strong>This HIT will not run on Internet Explorer.</strong>
+              <br>
+              Please use another browser or do not accept this HIT.
+            </div>
+              
                <p>The requirements are:</p>
 
                <ul>
@@ -124,7 +130,14 @@ See comments throughout for hints
                  <b>Warning</b>: Please disable pop-up blockers before continuing.
              </div>
 
-             <button type="button" class="btn btn-primary btn-lg" onClick="openwindow();">
+
+             <div id='using_ie' style="display:none;" class="alert alert-danger">
+               <strong>This HIT will not run on Internet Explorer.</strong>
+               <br>
+               Please use another browser.
+             </div>
+
+             <button id='begin-button' type="button" class="btn btn-primary btn-lg" onClick="openwindow();">
                  Begin Experiment
              </button>
 
@@ -136,4 +149,12 @@ See comments throughout for hints
 </div>
 
 </body>
+<script>
+  var using_ie = !!document.documentMode
+  if (using_ie) {
+    document.getElementById("using_ie").style.display = "block"
+    document.getElementById("begin-button").style.display = "none"
+  }
+  
+</script>
 </html>
