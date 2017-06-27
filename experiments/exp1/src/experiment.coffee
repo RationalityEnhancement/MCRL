@@ -127,6 +127,17 @@ initializeExperiment = ->
 
               """
             ]
+        else if PARAMS.PR_type == "demonstration"
+            [markdown """
+              # Instructions
+
+              <b>You will receive guidance about how to plan. This guidance will
+              help you learn how to make better decisions.</b> The first #{N_TRIALS/2} rounds
+              will demonstrate what optimal planning and flight paths look like. After these trainging trials,
+              in the remaining #{N_TRIALS/2} you will make your own choices.
+
+              """
+            ]
         else
             [markdown """
               # Instructions
@@ -276,7 +287,7 @@ initializeExperiment = ->
       "How much does it cost to observe each hidden value?"
       "How many hidden values am I allowed to observe in each round?"
       "How is your bonus determined?"
-      ] .concat (if PARAMS.PR_type != "none" then [
+      ] .concat (if PARAMS.PR_type != "none" & PARAMS.PR_type != "demonstration" then [
         "What does the feedback teach you?"
     ] else [])
     options: [
