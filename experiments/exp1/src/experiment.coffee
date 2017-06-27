@@ -43,9 +43,14 @@ $(window).on 'load', ->
 
     
     condition_nr = condition % nrConditions
-    PARAMS={'PR_type': conditions.PRType[condition_nr], 'feedback': conditions.PRType[condition_nr] != "none", 'info_cost': conditions.infoCost[condition_nr], 'message':  conditions.messageType[condition_nr], 'frequencyOfFB': conditions.frequencyOfFB[condition_nr]}
-    #PARAMS.start_time = Date(Date.now())
-    PARAMS.condition = condition_nr
+    PARAMS=
+      PR_type: conditions.PRType[condition_nr]
+      feedback: conditions.PRType[condition_nr] != "none"
+      info_cost: conditions.infoCost[condition_nr]
+      message:  conditions.messageType[condition_nr]
+      frequencyOfFB: conditions.frequencyOfFB[condition_nr]
+      condition: condition_nr
+      start_time: new Date
     
         
     # PARAMS.bonus_rate = .1
@@ -327,12 +332,15 @@ initializeExperiment = ->
 
 
   train = new MDPBlock
-    timeline: _.shuffle TRIALS[...8]
+    timeline: _.shuffle TRIALS[...2]
   
-  test = new MDPBlock
+  test = new Block
+
+  MDPBlock
+    feedback: false
     timeline: _.shuffle TRIALS[8...]
 
-
+  console.log 'THIS IS A TEST'
 
   finish = new Block
     type: 'button-response'
@@ -353,7 +361,7 @@ initializeExperiment = ->
     experiment_timeline = [
       # instruct_loop
       train
-      test
+      # test
       finish
     ]
   else

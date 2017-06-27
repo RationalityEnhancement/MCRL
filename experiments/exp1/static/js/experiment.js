@@ -36,13 +36,14 @@ $(window).on('load', function() {
     console.log('expData', expData);
     condition_nr = condition % nrConditions;
     PARAMS = {
-      'PR_type': conditions.PRType[condition_nr],
-      'feedback': conditions.PRType[condition_nr] !== "none",
-      'info_cost': conditions.infoCost[condition_nr],
-      'message': conditions.messageType[condition_nr],
-      'frequencyOfFB': conditions.frequencyOfFB[condition_nr]
+      PR_type: conditions.PRType[condition_nr],
+      feedback: conditions.PRType[condition_nr] !== "none",
+      info_cost: conditions.infoCost[condition_nr],
+      message: conditions.messageType[condition_nr],
+      frequencyOfFB: conditions.frequencyOfFB[condition_nr],
+      condition: condition_nr,
+      start_time: new Date
     };
-    PARAMS.condition = condition_nr;
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);
@@ -226,11 +227,14 @@ initializeExperiment = function() {
     }
   });
   train = new MDPBlock({
-    timeline: _.shuffle(TRIALS.slice(0, 8))
+    timeline: _.shuffle(TRIALS.slice(0, 2))
   });
-  test = new MDPBlock({
+  test = new Block;
+  MDPBlock({
+    feedback: false,
     timeline: _.shuffle(TRIALS.slice(8))
   });
+  console.log('THIS IS A TEST');
   finish = new Block({
     type: 'button-response',
     stimulus: function() {
@@ -241,7 +245,7 @@ initializeExperiment = function() {
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [train, test, finish];
+    experiment_timeline = [train, finish];
   } else {
     experiment_timeline = [instruct_loop, train, test, finish];
   }
