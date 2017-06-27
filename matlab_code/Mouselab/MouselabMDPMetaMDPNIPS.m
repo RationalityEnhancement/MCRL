@@ -627,7 +627,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                     for v=1:meta_MDP.nr_possible_payoffs
                         next_states(v).observations(next_state.s)=...
                             meta_MDP.payoff_values(v);
-                        next_states(v)=meta_MDP.updateBelief(next_states(v));
+                        next_states(v)=meta_MDP.updateBelief(next_states(v),next_state.s);
                         next_states(v).step=state.step+1;
                     end
                     p_next_states=meta_MDP.p_payoff_values;                    
@@ -866,6 +866,47 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 
                 VPI=0;
                 cost = 0;
+                VPI_all_actions=0;
+            else
+                %{
+                expected_regret=0;
+                [regret_reduction,meta_MDP]=expectedRegretReduction(meta_MDP,state,c);
+                
+                [uncertainty_reduction,meta_MDP]=meta_MDP.expectedUncertaintyReduction(state,c);
+                sigma_R=0;
+                p_best_action=0;
+                sigma_best_action=0;
+                underplanning=0;
+                complete_planning=0;
+                cost=meta_MDP.cost_per_click;
+                %}
+                VPI=meta_MDP.computeVPI(state,c);
+                [VOC,meta_MDP]=meta_MDP.myopicVOC(state,c);
+                cost=meta_MDP.cost_per_click;
+                VPI_all_actions=state.mu_V(state.s)-max(state.mu_Q(state.s,:));
+            end
+            
+            ER_act=meta_MDP.expectedRewardOfActing(state,c);
+            
+            %{
+            action_features=[expected_regret;regret_reduction;VOC;...
+                uncertainty_reduction; sigma_R;p_best_action;sigma_best_action;...
+                underplanning;complete_planning;cost];
+            %}
+            %action_features=[VPI; VOC; cost; ER_act];
+            
+            action_features=[VPI_all_actions; VPI; VOC; cost];
+        end
+
+        function action_features=QFeatures(meta_MDP,state,c)
+                        
+            if c.is_decision_mechanism
+                
+                VOC=0;                
+                VPI=0;
+                alternative_VPIs=[0;0;0];
+                cost = 0;
+                max_info_gain=0;
             else
                 %{
                 expected_regret=0;
@@ -882,6 +923,9 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 VPI=meta_MDP.computeVPI(state,c);                
                 [VOC,meta_MDP]=meta_MDP.myopicVOC(state,c);
                 cost=meta_MDP.cost_per_click;
+                
+                %alternative_VPIs=computeAlternativeVPIs(meta_MDP,state,c);
+                max_info_gain=state.mu_V(state.s)-max(state.mu_Q(state.s,:));
             end
             
             ER_act=meta_MDP.expectedRewardOfActing(state,c);
@@ -891,7 +935,24 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 uncertainty_reduction; sigma_R;p_best_action;sigma_best_action;...
                 underplanning;complete_planning;cost];
             %}
-            action_features=[VPI; VOC; cost; ER_act];
+            %action_features=[max_info_gain; VPI; VOC+cost; cost; ER_act; alternative_VPIs; 1];
+            action_features=[max_info_gain; VPI; VOC+cost; cost; ER_act; 1];
+        end
+
+        
+        function VPIs=computeAlternativeVPIs(meta_MDP,state,c)
+            
+            corresponding_action=meta_MDP.getCorrespondingAction(state,c);
+            available_actions=state.getAvailableActions(state.s);
+            other_actions = setdiff(available_actions,corresponding_action);
+            
+            VPIs=zeros(numel(meta_MDP.object_level_MDP.actions)-1,1);
+            
+            for a=1:numel(other_actions)
+                VPIs(a)=valueOfPerfectInformation(state.mu_Q(state.s,:),state.sigma_Q(state.s,:),other_actions(a));
+            end
+            
+            VPIs= sort(VPIs,'descend');
         end
         
         function VPI=computeVPI(meta_MDP,state,c)
@@ -1411,7 +1472,9 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 
                 if and(s==1,computation.is_decision_mechanism)
                     
-                    if computation.decision==0
+                    if isempty(computation.decision)
+                        [~,computation.decision]=meta_MDP.decide(state,computation);
+                    elseif computation.decision==0
                         [~,computation.decision]=meta_MDP.decide(state,computation);
                     end
                     
@@ -1443,7 +1506,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             %find the relevant entries
             
             if index==0
-                trial_ID=data.trialID(1);
+                trial_ID=data.trialID(1)+1;
                 trial=data.trials(trial_ID);
                 meta_MDP.object_level_MDP=trial;
                 meta_MDP.rewards=trial.rewards;

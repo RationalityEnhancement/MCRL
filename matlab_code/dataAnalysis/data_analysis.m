@@ -1,4 +1,5 @@
-import_data
+%import_data: MCRL/experiments/data/0.6/trials_matlab.csv
+
 
 trial_numbers = unique(trial_index(2:end))
 nr_trials = max(trial_numbers)
@@ -37,21 +38,24 @@ for ic=1:length(info_costs)
     subplot(1,3,ic)
     errorbar(avg_rel_score_by_trial(:,:,ic),sem_rel_score_by_trial(:,:,ic),'LineWidth',3), hold on
     plot([1,12],rel_score_pi_star(ic)*[1,1],'.-','LineWidth',3)
+    set(gca,'FontSize',20)
     xlim([0.5,13])
     legend('no FB','FB','optimal','Location','SouthEast')
-    title(['$',num2str(info_costs(ic)),'/click'],'FontSize',18)
-    ylabel('Relative Performance','FontSize',16)
-    xlabel('Trial Number','FontSize',16)
+    title(['$',num2str(info_costs(ic)),'/click'],'FontSize',32)
+    ylabel('Relative Performance','FontSize',24)
+    xlabel('Trial Number','FontSize',24)
     
     fig2=figure(2)
     subplot(1,3,ic)
     errorbar(avg_nr_clicks_by_trial(:,:,ic),sem_nr_clicks_by_trial(:,:,ic),'LineWidth',3),hold on
-    plot([1,12],optimal_nr_clicks(ic)*[1,1],'.-','LineWidth',3)
-    title(['$',num2str(info_costs(ic)),'/click'],'FontSize',18)
+    set(gca,'FontSize',20)
+    %plot([1,12],optimal_nr_clicks(ic)*[1,1],'.-','LineWidth',3)
+    title(['$',num2str(info_costs(ic)),'/click'],'FontSize',32)
     xlim([0.50,13])
-    ylabel('Avg. Nr. Clicks','FontSize',16)
-    xlabel('Trial Number','FontSize',16)
-    legend('no FB', 'FB','optimal','Location','SouthEast')
+    ylabel('Avg. Nr. Clicks','FontSize',24)
+    xlabel('Trial Number','FontSize',24)
+    %legend('no FB', 'FB','optimal','Location','SouthEast')
+    legend('no FB', 'FB','Location','SouthEast')
     
 end
 

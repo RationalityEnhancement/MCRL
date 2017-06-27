@@ -69,6 +69,9 @@ result.nr_observations=nr_observations_learned_policy;
 result.returns=R_total_evaluation;
 result.cost_per_click=c;
 result.glm=glm;
+result.problems=problems_evaluation;
+result.states=states_evaluation;
+result.selected_computations=chosen_actions_evaluation;
 
 ER_hat=reward_learned_policy(1);
 

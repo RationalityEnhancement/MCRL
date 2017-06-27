@@ -1,4 +1,5 @@
-function [glm_Q,MSE,R_total]=BayesianValueFunctionRegression(mdp,feature_extractor,nr_episodes,glm_policy,training_data)
+function [glm_Q,MSE,R_total,F_history,r_history,s_history,c_history]=...
+    BayesianValueFunctionRegression(mdp,feature_extractor,nr_episodes,glm_policy,training_data)
 %Bayesian regression is used to estimate the value function of the policy
 %defined by Thompson sampling with the supplied GLM.
 %inputs:
@@ -18,9 +19,11 @@ mdp.object_level_MDP=mdp.object_level_MDPs(1);
 [s0,mdp0]=mdp.newEpisode();
 actions=mdp0.actions;
 
-mu=zeros(size(feature_extractor(s0,actions(1),mdp)));
+temp_action=actions(1); temp_action.move=1;
+mu=zeros(size(feature_extractor(s0,temp_action,mdp)));
 nr_features=length(mu);
-glm_Q=BayesianGLM(nr_features,0.1);
+glm0=BayesianGLM(nr_features,0.1);
+glm_Q=glm0;
 
 w_old(:,1)=mu;
 
@@ -28,11 +31,12 @@ avg_MSE=zeros(nr_episodes,1);
 
 R_total=zeros(nr_episodes,1);
 
-
 nr_observations=0;
 
 nr_training_examples=length(training_data.state_actions);
 training_data_order=shuffle(1:nr_training_examples);
+
+F_history=[]; r_history=[]; s_history=[]; c_history=[];
 
 for i=1:nr_episodes
     rewards=zeros(0,1);
@@ -40,21 +44,28 @@ for i=1:nr_episodes
     
    %[s,mdp]=mdp.randomStart();
    %Get the state in which the i-th action was taken
-   [s,mdp]=mdp.getStateFromActionSequence(training_data,training_data_order(i)-1);
-   
+   [start_state,mdp]=mdp.getStateFromActionSequence(training_data,training_data_order(i)-1);
+   s=start_state;
    if s.step>s.nr_steps
        continue;
    end
    
     t=0; %time step within episode
 
+    p_human_action=0.5;
     while not(mdp.isTerminalState(s))
         t=t+1;
                 
         %1. Choose first action according to what the participant did and
         %choose subsequent actions according to the policy to be evaluated        
         if t==1
-            action_id=training_data.state_actions(training_data_order(i));
+            
+            if rand()<p_human_action            
+                action_id=training_data.state_actions(training_data_order(i));
+            else
+                action_id=drawSample([100+s.getAvailableActions(s.s),2:17]);
+            end
+            
             
             is_click=action_id<100;
             
@@ -73,9 +84,15 @@ for i=1:nr_episodes
             
         else
             action=contextualThompsonSampling(s,mdp,glm_policy);
+            if action.is_decision_mechanism
+                action.move=argmax(s.mu_Q(s.s,:));
+            end
         end
         
         features=feature_extractor(s,action,mdp)';
+        if any(isnan(features))
+            throw(MException('isnan','NaN value in feature'))
+        end
         F=[F;features];
         
         %2. Observe outcome
@@ -103,14 +120,24 @@ for i=1:nr_episodes
     predicted_returns=F*glm_Q.mu_n;
     MSE(i)=norm(predicted_returns-returns)^2/nr_actions_in_episode;
     
-    glm_Q=glm_Q.update(F(1,:),returns(1));
-    
+    %glm_Q=glm_Q.update(F(1,:),returns(1));
+    %glm_Q=glm_Q.update(F,returns);
+
+    F_history=[F_history;F(1,:)];
+    r_history=[r_history;returns(1)];
+    s_history=[s_history;start_state];
+    c_history=[c_history;action_id];
+        
     if mod(i,250)==0
+        glm_Q=glm0.update(F_history,r_history);
         disp(['Completed episode ',int2str(i),', dw=',num2str(norm(glm_Q.mu_n(:)-w_old(:))),', w_old: ',mat2str(roundsd(w_old(:),4)),'',...
             ', w_new=',mat2str(roundsd(glm_Q.mu_n(:),4))])
         w_old=glm_Q.mu_n(:);
     end
     %disp(['MSE=',num2str(avg_MSE(i)),', |mu_n|=',num2str(norm(glm.mu_n)),', return: ',num2str(R_total(i))])
 end
+
+figure()
+plot(F_history(:,1),r_history(:),'o')
 
 end

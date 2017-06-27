@@ -6,7 +6,7 @@ Fred Callaway
 
 https://github.com/fredcallaway/Mouselab-MDP
  */
-var mdp,
+var OPTIMAL, mdp,
   slice = [].slice,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -14,8 +14,11 @@ var mdp,
 
 mdp = void 0;
 
+OPTIMAL = void 0;
+
 jsPsych.plugins['mouselab-mdp'] = (function() {
   var Arrow, Edge, KEYS, KEY_DESCRIPTION, LOG_DEBUG, LOG_INFO, MouselabMDP, NULL, PRINT, SIZE, State, TRIAL_INDEX, Text, angle, checkObj, dist, plugin, polarMove, redGreen, round;
+  OPTIMAL = (loadJson('static/json/optimal_policy.json'))[COST_LEVEL];
   PRINT = function() {
     var args;
     args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
@@ -67,12 +70,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     return (Math.round(x * 100)) / 100;
   };
   checkObj = function(obj, keys) {
-    var i, k, len;
+    var j, k, len;
     if (keys == null) {
       keys = Object.keys(obj);
     }
-    for (i = 0, len = keys.length; i < len; i++) {
-      k = keys[i];
+    for (j = 0, len = keys.length; j < len; j++) {
+      k = keys[j];
       if (obj[k] === void 0) {
         console.log('Bad Object: ', obj);
         throw new Error(k + " is undefined");
@@ -110,8 +113,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.mouseoverState = bind(this.mouseoverState, this);
       this.clickState = bind(this.clickState, this);
       this.handleKey = bind(this.handleKey, this);
-      var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage;
-      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.initial = config.initial, this.stateLabels = (ref = config.stateLabels) != null ? ref : null, this.stateDisplay = (ref1 = config.stateDisplay) != null ? ref1 : 'never', this.stateClickCost = (ref2 = config.stateClickCost) != null ? ref2 : PARAMS.info_cost, this.edgeLabels = (ref3 = config.edgeLabels) != null ? ref3 : 'reward', this.edgeDisplay = (ref4 = config.edgeDisplay) != null ? ref4 : 'always', this.edgeClickCost = (ref5 = config.edgeClickCost) != null ? ref5 : 0, this.trial_i = (ref6 = config.trial_i) != null ? ref6 : null, this.stateRewards = (ref7 = config.stateRewards) != null ? ref7 : null, this.keys = (ref8 = config.keys) != null ? ref8 : KEYS, this.trialIndex = (ref9 = config.trialIndex) != null ? ref9 : TRIAL_INDEX, this.playerImage = (ref10 = config.playerImage) != null ? ref10 : 'static/images/plane.png', SIZE = (ref11 = config.SIZE) != null ? ref11 : 120, leftMessage = (ref12 = config.leftMessage) != null ? ref12 : null, centerMessage = (ref13 = config.centerMessage) != null ? ref13 : '&nbsp;', rightMessage = (ref14 = config.rightMessage) != null ? ref14 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref15 = config.lowerMessage) != null ? ref15 : KEY_DESCRIPTION, this.minTime = (ref16 = config.minTime) != null ? ref16 : (DEBUG ? 5 : 45), this.feedback = (ref17 = config.feedback) != null ? ref17 : true;
+      this.runDemo = bind(this.runDemo, this);
+      var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage, timeMsg;
+      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.initial = config.initial, this.stateLabels = (ref = config.stateLabels) != null ? ref : null, this.stateDisplay = (ref1 = config.stateDisplay) != null ? ref1 : 'never', this.stateClickCost = (ref2 = config.stateClickCost) != null ? ref2 : PARAMS.info_cost, this.edgeLabels = (ref3 = config.edgeLabels) != null ? ref3 : 'reward', this.edgeDisplay = (ref4 = config.edgeDisplay) != null ? ref4 : 'always', this.edgeClickCost = (ref5 = config.edgeClickCost) != null ? ref5 : 0, this.trial_i = (ref6 = config.trial_i) != null ? ref6 : null, this.demonstrate = (ref7 = config.demonstrate) != null ? ref7 : true, this.stateRewards = (ref8 = config.stateRewards) != null ? ref8 : null, this.keys = (ref9 = config.keys) != null ? ref9 : KEYS, this.trialIndex = (ref10 = config.trialIndex) != null ? ref10 : TRIAL_INDEX, this.playerImage = (ref11 = config.playerImage) != null ? ref11 : 'static/images/plane.png', SIZE = (ref12 = config.SIZE) != null ? ref12 : 120, leftMessage = (ref13 = config.leftMessage) != null ? ref13 : null, centerMessage = (ref14 = config.centerMessage) != null ? ref14 : '&nbsp;', rightMessage = (ref15 = config.rightMessage) != null ? ref15 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref16 = config.lowerMessage) != null ? ref16 : KEY_DESCRIPTION, this.minTime = (ref17 = config.minTime) != null ? ref17 : (DEBUG ? 55 : 45), this.feedback = (ref18 = config.feedback) != null ? ref18 : true;
+      if (DEBUG) {
+        this.stateClickCost = 0.05;
+      }
       if (leftMessage == null) {
         leftMessage = TRIAL_INDEX + "/" + N_TRIALS;
       }
@@ -165,10 +172,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         "class": 'mouselab-header',
         html: leftMessage
       }).appendTo(this.display);
+      timeMsg = this.demonstrate ? '&nbsp;' : 'Time: <span id=mdp-time/>';
       this.centerMessage = $('<div>', {
         id: 'mouselab-msg-center',
         "class": 'mouselab-header',
-        html: 'Time: <span id=mdp-time/>'
+        html: timeMsg
       }).appendTo(this.display);
       this.rightMessage = $('<div>', {
         id: 'mouselab-msg-right',
@@ -191,6 +199,34 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       $('#jspsych-target').append("<div id=\"mdp-feedback\" class=\"modal\">\n  <div id=\"mdp-feedback-content\" class=\"modal-content\">\n    <h3>Default</h3>\n  </div>\n</div>");
     }
 
+    MouselabMDP.prototype.runDemo = function() {
+      var ID, act, actions, i;
+      this.feedback = false;
+      this.timeLeft = 1;
+      actions = OPTIMAL[this.trial_i];
+      i = 0;
+      act = (function(_this) {
+        return function() {
+          var a, s;
+          console.log("act " + i);
+          a = actions[i];
+          if (a.is_click) {
+            console.log("click " + a.state, _this.states[a.state]);
+            _this.clickState(_this.states[a.state], a.state);
+          } else {
+            s = _.last(_this.data.path);
+            console.log("move " + a.move, s);
+            _this.handleKey(s, a.move);
+          }
+          i += 1;
+          if (i === actions.length) {
+            return window.clearInterval(ID);
+          }
+        };
+      })(this);
+      return ID = window.setInterval(act, 1000);
+    };
+
     MouselabMDP.prototype.handleKey = function(s0, a) {
       var r, ref, s1, s1g;
       LOG_DEBUG('handleKey', s0, a);
@@ -208,7 +244,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         onComplete: (function(_this) {
           return function() {
             _this.addScore(r);
-            return _this.displayFeedback(a, s1);
+            if (_this.feedback) {
+              return _this.displayFeedback(a, s1);
+            } else {
+              return _this.arrive(s1);
+            }
           };
         })(this)
       });
@@ -428,11 +468,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.data.path.push(s);
       if (this.graph[s]) {
         keys = (function() {
-          var i, len, ref, results;
+          var j, len, ref, results;
           ref = Object.keys(this.graph[s]);
           results = [];
-          for (i = 0, len = ref.length; i < len; i++) {
-            a = ref[i];
+          for (j = 0, len = ref.length; j < len; j++) {
+            a = ref[j];
             results.push(this.keys[a]);
           }
           return results;
@@ -478,7 +518,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           _this.initPlayer(img);
           _this.canvas.renderAll();
           _this.initTime = Date.now();
-          return _this.arrive(_this.initial);
+          _this.arrive(_this.initial);
+          if (_this.demonstrate) {
+            return _this.runDemo();
+          }
         };
       })(this)));
     };

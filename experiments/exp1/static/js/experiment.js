@@ -226,7 +226,7 @@ initializeExperiment = function() {
     }
   });
   main = new MDPBlock({
-    timeline: DEBUG ? TRIALS.slice(0, 2) : _.shuffle(TRIALS)
+    timeline: DEBUG ? TRIALS : _.shuffle(TRIALS)
   });
   finish = new Block({
     type: 'button-response',

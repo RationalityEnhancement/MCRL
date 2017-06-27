@@ -574,15 +574,22 @@ end
 save ExperimentHalfMyopic experiment
 save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_properties_half_myopic.mat', 'trial_properties')
 
-%% 
+%% Create an experiment with trial types that favor different types of strategies in line with the time cost
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/trial_properties_March1.mat')
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/experiment_March1.mat')
+
+nr_trials=16;
 
 all_trials=experiment; clear experiment
 properties_all_trials=trial_properties; clear trial_properties
 
-low_cost_condition=all_trials([1:9,16:18]);
-properties_low_cost_condition=properties_all_trials([1:9,16:18]);
+nr_moves=4;
+fraction_myopic=1/nr_moves;
+fraction_nonmyopic=1-fraction_myopic;
+
+selected_trials_low_cost=[1:(fraction_nonmyopic*nr_trials),15+(1:(fraction_myopic*nr_trials))];
+low_cost_condition=all_trials(selected_trials_low_cost);
+properties_low_cost_condition=properties_all_trials(selected_trials_low_cost);
 
 
 %create some trials where the optimal planning horizon is 2
@@ -606,39 +613,59 @@ for t=1:5
     toc()
 end
 
-medium_cost_condition=[mdps_horizon2(1:9),mdps_horizon2_myopic(1:3)];
-properties_medium_cost_condition=[properties_horizon2(1:9),properties_horizon2_myopic(1:3)];
+medium_cost_condition=[mdps_horizon2(1:(fraction_nonmyopic*nr_trials)),...
+    mdps_horizon2_myopic(1:(fraction_myopic*nr_trials))];
+properties_medium_cost_condition=[properties_horizon2(1:(fraction_nonmyopic*nr_trials)),...
+    properties_horizon2_myopic(1:(fraction_myopic*nr_trials))];
 
 nr_moves=4;
 for t=1:20
     
-    if properties_horizon0(t).score>-12
-        continue
-    end
-    
-    load baseline_mdp  
-    baseline_mdp.actions=1:4;
-    baseline_mdp.nextState=medium_cost_condition(1).nextState;
-    for m=1:nr_moves
-        basline_mdp.rewards(:,:,m)=T(:,:,m).*mvnrnd(mean_reward*ones(nr_states,nr_states),...
-            std_reward*repmat(eye(nr_states),[1,1,nr_states]),nr_states);
+    score=-inf;
+    %if properties_horizon0(t).score>-12
+    %    continue
+    %end
+    while score<-12
+        load baseline_mdp
+        nr_states = numel(baseline_mdp.states);
+        baseline_mdp.actions=1:4;
+        baseline_mdp.nextState=medium_cost_condition(1).nextState;
+        for m=1:nr_moves
+            basline_mdp.rewards(:,:,m)=baseline_mdp.T(:,:,m).*mvnrnd(mean_reward*ones(nr_states,nr_states),...
+                std_reward*repmat(eye(nr_states),[1,1,nr_states]),nr_states);
+            
+            basline_mdp.rewards(:,:,m)=min(r_max,max(r_min,roundToMultipleOf(baseline_mdp.rewards(:,:,m),0.5)));
+        end
         
-        basline_mdp.rewards(:,:,m)=min(r_max,max(r_min,roundToMultipleOf(baseline_rewards(:,:,m),0.5)));
+        tic()
+        [mdps_horizon0(t),score_horizon0(t),optimality_horizon0(t),properties_horizon0(t)]=...
+            optimizeMouselabMDP(baseline_mdp,100,r_max-r_min,false,0);
+        score=properties_horizon0(t).score
+        toc()
     end
-    
-    tic()
-    [mdps_horizon0(t),score_horizon0(t),optimality_horizon0(t),properties_horizon0(t)]=...
-        optimizeMouselabMDP(baseline_mdp,100,r_max-r_min,false,0);
-    properties_horizon0(t).score
-    toc()
 end
 
 scores=[properties_horizon0.score];
-suitable_mdps=find(scores>-12);
+[sorted_scores,sorted_indices]=sort(scores,'descend');
+selected_trials=sorted_indices(1:nr_trials);
 
-high_cost_condition = mdps_horizon0(suitable_mdps(1:12));
-properties_high_cost_condition = properties_horizon0(suitable_mdps(1:12));
+high_cost_condition = mdps_horizon0(selected_trials);
+properties_high_cost_condition = properties_horizon0(selected_trials);
 
+
+nr_steps=3;
+nr_possible_moves_by_step=[4,1,2,0];
+
+right=1; up=2; left=3; down=4;
+directions={'right','up','left','down'};
+
+for a=1:nr_possible_moves_by_step(1)
+    action_struct(a).nr=a;
+    action_struct(a).direction=directions{a};
+    action_struct(a).state=a+1;
+    action_struct(a).reward=NaN;
+    action_struct(a).done=false;
+end
 
 start_state=struct('nr',1,'path',[],'available_actions',...
     1:nr_possible_moves_by_step(1),'is_terminal_state',false,...
@@ -646,6 +673,7 @@ start_state=struct('nr',1,'path',[],'available_actions',...
 states_by_step{1}=[start_state]; %each state can be identified by the sequence of moves that led to it
 state_nr=1;
 states=[states_by_step{1}(:)];
+
 for step=2:(nr_steps+1)
     states_by_step{step}=[];
     for s=1:numel(states_by_step{step-1})
@@ -704,7 +732,6 @@ for step=2:(nr_steps+1)
 end
 
 
-
 actions_by_state{1}=[];
 actions_by_state{2}=[1];
 actions_by_state{3}=[2];
@@ -742,36 +769,36 @@ for e=1:numel(medium_cost_condition)
     
 end
 
-for t=1:12, low_cost_rewards(:,t)=low_cost_condition(t).rewards(low_cost_condition(t).T>0),end
+for t=1:nr_trials, low_cost_rewards(:,t)=low_cost_condition(t).rewards(low_cost_condition(t).T>0),end
 mean(low_cost_rewards(:))
 scaling_factor.low_cost=10.6/std(low_cost_rewards(:))
 shift.low_cost=4.5 - scaling_factor.low_cost * mean(low_cost_rewards(:));
 
-for t=1:12, medium_cost_rewards(:,t)=medium_cost_condition(t).rewards(medium_cost_condition(t).T>0),end
+for t=1:nr_trials, medium_cost_rewards(:,t)=medium_cost_condition(t).rewards(medium_cost_condition(t).T>0),end
 mean(medium_cost_rewards(:))
 std(medium_cost_rewards(:))
 scaling_factor.medium_cost=10.6/std(medium_cost_rewards(:))
 shift.medium_cost=4.5 - scaling_factor.medium_cost * mean(medium_cost_rewards(:));
 
-for t=1:12, high_cost_rewards(:,t)=high_cost_condition(t).rewards(high_cost_condition(t).T>0),end
+for t=1:nr_trials, high_cost_rewards(:,t)=high_cost_condition(t).rewards(high_cost_condition(t).T>0),end
 mean(high_cost_rewards(:))
 std(high_cost_rewards(:))
 scaling_factor.high_cost=10.6/std(high_cost_rewards(:));
 shift.high_cost=4.5 - scaling_factor.high_cost * mean(high_cost_rewards(:));
 
-for t=1:12
+for t=1:nr_trials
     high_cost_condition(t).rewards(high_cost_condition(t).T>0)=round(...
         scaling_factor.high_cost*...
         high_cost_condition(t).rewards(high_cost_condition(t).T>0)+...
         shift.high_cost);
 end
-for t=1:12
+for t=1:nr_trials
     medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)=round(...
         scaling_factor.medium_cost*...
         medium_cost_condition(t).rewards(medium_cost_condition(t).T>0)+...
         shift.medium_cost);
 end
-for t=1:12
+for t=1:nr_trials
     low_cost_condition(t).rewards(low_cost_condition(t).T>0)=round(...
         scaling_factor.low_cost*...
         low_cost_condition(t).rewards(low_cost_condition(t).T>0)+...
@@ -1002,4 +1029,4 @@ for e=1:numel(experiment)
         experiment(e).start_state,experiment(e).horizon,false)    
 end
 %}
-%save trial_properties trial_properties
+%save trial_properties trial_propertiesload('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_low_featureBased.mat')

@@ -7,9 +7,11 @@ https://github.com/fredcallaway/Mouselab-MDP
 
 # coffeelint: disable=max_line_length
 mdp = undefined
-
+OPTIMAL = undefined
 
 jsPsych.plugins['mouselab-mdp'] = do ->
+
+  OPTIMAL = (loadJson 'static/json/optimal_policy.json')[COST_LEVEL]
 
   PRINT = (args...) -> console.log args...
   NULL = (args...) -> null
@@ -102,6 +104,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @edgeDisplay='always'  # one of 'never', 'hover', 'click', 'always'
         @edgeClickCost=0  # subtracted from score every time an edge is clicked
         @trial_i=null
+        @demonstrate=true
 
         @stateRewards=null
         
@@ -115,10 +118,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         rightMessage='Score: <span id=mouselab-score/>'
         lowerMessage=KEY_DESCRIPTION
 
-        @minTime=(if DEBUG then 5 else 45)
+        @minTime=(if DEBUG then 55 else 45)
         @feedback=true
       } = config
 
+      if DEBUG
+        @stateClickCost = 0.05
       if not leftMessage?
         leftMessage = "#{TRIAL_INDEX}/#{N_TRIALS}"
 
@@ -161,10 +166,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       #   id: 'mouselab-msg-center'
       #   class: 'mouselab-header'
       #   html: centerMessage).appendTo @display
+      timeMsg = if @demonstrate then '&nbsp;' else 'Time: <span id=mdp-time/>'
       @centerMessage = $('<div>',
         id: 'mouselab-msg-center'
         class: 'mouselab-header'
-        html: 'Time: <span id=mdp-time/>').appendTo @display
+        html: timeMsg).appendTo @display
 
       @rightMessage = $('<div>',
         id: 'mouselab-msg-right',
@@ -194,6 +200,27 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       """
 
 
+    runDemo: () =>
+      @feedback = false
+      @timeLeft = 1
+
+      actions = OPTIMAL[@trial_i]
+      i = 0
+      act = () =>
+        console.log "act #{i}"
+        a = actions[i]
+        if a.is_click
+          console.log "click #{a.state}", @states[a.state]
+          @clickState @states[a.state], a.state
+        else
+          s = _.last @data.path
+          console.log "move #{a.move}", s
+          @handleKey s, a.move
+        i += 1
+        if i is actions.length
+          window.clearInterval ID
+
+      ID = window.setInterval act, 1000
     # ---------- Responding to user input ---------- #
 
     # Called when a valid action is initiated via a key press.
@@ -211,7 +238,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
           onChange: @canvas.renderAll.bind(@canvas)
           onComplete: =>
             @addScore r
-            @displayFeedback a, s1
+            if @feedback
+              @displayFeedback a, s1
+            else
+              @arrive s1
             # @arrive s1
 
     # Called when a state is clicked on.
@@ -446,6 +476,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         do @canvas.renderAll
         @initTime = Date.now()
         @arrive @initial
+        if @demonstrate
+          do @runDemo
       )
 
     # Draw object on the canvas.
