@@ -904,7 +904,7 @@ function VPIaboutAllActions(state,computation){
         max_mu = _.max(state.mu_Q[state.s-1])
         E_max  = state.mu_V[state.s-1]//EVOfMaxOfGaussians(state.mu_Q[state.s-1],state.sigma_Q[state.s-1])
     
-        return E_max[0] - max_mu
+        return E_max - max_mu //E_max[0] - max_mu
     }
 }
 
