@@ -326,8 +326,12 @@ initializeExperiment = ->
   #   t.pseudo = t.stim.pseudo
 
 
-  main = new MDPBlock
-    timeline: if DEBUG then TRIALS else _.shuffle TRIALS
+  train = new MDPBlock
+    timeline: _.shuffle TRIALS[...8]
+  
+  test = new MDPBlock
+    timeline: _.shuffle TRIALS[8...]
+
 
 
   finish = new Block
@@ -348,13 +352,15 @@ initializeExperiment = ->
   if DEBUG
     experiment_timeline = [
       # instruct_loop
-      main
+      train
+      test
       finish
     ]
   else
     experiment_timeline = [
       instruct_loop
-      main
+      train
+      test
       finish
     ]
 

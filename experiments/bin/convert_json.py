@@ -23,6 +23,29 @@ def standard_to_pseudo(trials):
     return list(map(parse_trial, trials))
 
 
+def write_optimal():
+    with open('results/selected_computations.json') as f:
+        trials = json.load(f)
+
+    out = defaultdict(list)
+    costs = 'low med high'.split()
+    moves = 'right up left down'.split()
+
+    def parse(actions):
+        for a in actions:
+            yield {'is_click': a['is_computation'],
+                   'state': a['state'],
+                   'move': moves[a['move'] -1]}
+
+    for t, trial in enumerate(trials):
+        for c, (actions, ) in zip(costs, trial):
+            out[c].append(list(parse(actions)))
+
+    outfile = 'experiments/exp1/static/json/optimal_policy.json'
+    with open(outfile, 'w+') as f:
+        print('writing', outfile)
+        json.dump(out, f)
+
 
 def mat_to_standard():
 
@@ -70,6 +93,7 @@ def mat_to_standard():
 
 
     # exp = int(sys.argv[1])
+    write_optimal()
     for cost in ('low', 'med', 'high'):#[:-1]:
         infile = 'data/stimuli/{}_cost.json'.format(cost)
         outfile = 'exp1/static/json/{}_cost.json'.format(cost)

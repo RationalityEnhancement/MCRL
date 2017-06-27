@@ -80,7 +80,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var BONUS, Block, MDPBlock, QuizLoop, TextBlock, calculateBonus, costLevel, debug_slide, experiment_timeline, finish, instruct_loop, instructions, main, prompt_resubmit, quiz, reprompt, save_data, text;
+  var BONUS, Block, MDPBlock, QuizLoop, TextBlock, calculateBonus, costLevel, debug_slide, experiment_timeline, finish, instruct_loop, instructions, prompt_resubmit, quiz, reprompt, save_data, test, text, train;
   console.log('INITIALIZE EXPERIMENT');
   N_TRIALS = BLOCKS.standard.length;
   costLevel = (function() {
@@ -225,8 +225,11 @@ initializeExperiment = function() {
       return false;
     }
   });
-  main = new MDPBlock({
-    timeline: DEBUG ? TRIALS : _.shuffle(TRIALS)
+  train = new MDPBlock({
+    timeline: _.shuffle(TRIALS.slice(0, 8))
+  });
+  test = new MDPBlock({
+    timeline: _.shuffle(TRIALS.slice(8))
   });
   finish = new Block({
     type: 'button-response',
@@ -238,9 +241,9 @@ initializeExperiment = function() {
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [main, finish];
+    experiment_timeline = [train, test, finish];
   } else {
-    experiment_timeline = [instruct_loop, main, finish];
+    experiment_timeline = [instruct_loop, train, test, finish];
   }
   BONUS = void 0;
   calculateBonus = function() {
