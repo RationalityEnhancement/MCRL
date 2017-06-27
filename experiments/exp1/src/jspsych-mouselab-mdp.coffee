@@ -104,7 +104,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @edgeDisplay='always'  # one of 'never', 'hover', 'click', 'always'
         @edgeClickCost=0  # subtracted from score every time an edge is clicked
         @trial_i=null
-        @demonstrate=true
+        @demonstrate=false
 
         @stateRewards=null
         
@@ -118,12 +118,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         rightMessage='Score: <span id=mouselab-score/>'
         lowerMessage=KEY_DESCRIPTION
 
-        @minTime=(if DEBUG then 55 else 45)
+        @minTime=(if DEBUG then 5 else 45)
         @feedback=true
       } = config
 
-      if DEBUG
-        @stateClickCost = 0.05
       if not leftMessage?
         leftMessage = "#{TRIAL_INDEX}/#{N_TRIALS}"
 
@@ -325,7 +323,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     displayFeedback: (a, s1) =>
       result = registerMove a
       result.delay = Math.round result.delay  
-      feedback = result    
       console.log 'feedback', result
     
       if PARAMS.PR_type is 'none'
