@@ -9,7 +9,7 @@ contact_email_on_error = fredcallaway@berkeley.edu
 ad_group = psychology
 psiturk_keywords = psychology
 organization_name = UC Berkeley
-browser_exclude_rule = mobile, tablet
+browser_exclude_rule = mobile, tablet, MSIE
 
 [Database Parameters]
 database_url = sqlite:///participants.db
