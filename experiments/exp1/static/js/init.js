@@ -138,7 +138,7 @@ PARAMS = {
 
 if (DEBUG) {
   PARAMS.message = 'full';
-  PARAMS.info_cost = 1.00;
+  PARAMS.info_cost = 2.50;
   PARAMS.PR_type = 'featureBased';
 }
 

@@ -6,11 +6,15 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, N_TRIALS, TRIALS, createStartButton, delay, initializeExperiment, psiturk,
+var BLOCKS, N_TRIALS, TRIALS, createStartButton, delay, initializeExperiment, isIE, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
 psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
+
+isIE = false || !!document.documentMode;
+
+isIE = false;
 
 BLOCKS = void 0;
 
@@ -22,10 +26,15 @@ delay = function(time, func) {
   return setTimeout(func, time);
 };
 
+if (isIE) {
+  $('#jspsych-target').hide();
+  $('#IE_error').show();
+}
+
 $(window).on('load', function() {
   var loadTimeout, slowLoad;
   slowLoad = function() {
-    return document.getElementById("failLoad").style.display = "block";
+    return $('#failLoad').show();
   };
   loadTimeout = delay(12000, slowLoad);
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
@@ -36,13 +45,14 @@ $(window).on('load', function() {
     console.log('expData', expData);
     condition_nr = condition % nrConditions;
     PARAMS = {
-      'PR_type': conditions.PRType[condition_nr],
-      'feedback': conditions.PRType[condition_nr] !== "none",
-      'info_cost': conditions.infoCost[condition_nr],
-      'message': conditions.messageType[condition_nr],
-      'frequencyOfFB': conditions.frequencyOfFB[condition_nr]
+      PR_type: conditions.PRType[condition_nr],
+      feedback: conditions.PRType[condition_nr] !== "none",
+      info_cost: conditions.infoCost[condition_nr],
+      message: conditions.messageType[condition_nr],
+      frequencyOfFB: conditions.frequencyOfFB[condition_nr],
+      condition: condition_nr,
+      start_time: new Date
     };
-    PARAMS.condition = condition_nr;
     BLOCKS = expData.blocks;
     TRIALS = BLOCKS.standard;
     psiturk.recordUnstructuredData('params', PARAMS);
@@ -226,11 +236,14 @@ initializeExperiment = function() {
     }
   });
   train = new MDPBlock({
-    timeline: _.shuffle(TRIALS.slice(0, 8))
+    timeline: _.shuffle(TRIALS.slice(0, 2))
   });
-  test = new MDPBlock({
+  test = new Block;
+  MDPBlock({
+    feedback: false,
     timeline: _.shuffle(TRIALS.slice(8))
   });
+  console.log('THIS IS A TEST');
   finish = new Block({
     type: 'button-response',
     stimulus: function() {
@@ -241,9 +254,9 @@ initializeExperiment = function() {
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [train, test, finish];
+    experiment_timeline = [train, finish];
   } else {
-    experiment_timeline = [instruct_loop, train, test, finish];
+    experiment_timeline = [instruct_loop, train, finish];
   }
   BONUS = void 0;
   calculateBonus = function() {
