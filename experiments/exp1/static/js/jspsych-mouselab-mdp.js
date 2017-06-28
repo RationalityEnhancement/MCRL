@@ -349,34 +349,23 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       result.delay = Math.round(result.delay);
       console.log('feedback', result);
       if (PARAMS.PR_type === 'none') {
-        if (PARAMS.info_cost === 2.50) {
-          result.delay = (function() {
-            switch (this.data.actions.length) {
-              case 1:
-                return 10;
-              case 2:
-                return 1;
-              case 3:
-                return 2;
-            }
-          }).call(this);
-        } else {
-          result.delay = (function() {
-            switch (this.data.actions.length) {
-              case 1:
-                return 4;
-              case 2:
-                return 0;
-              case 3:
-                return 1;
-            }
-          }).call(this);
-        }
+        console.log('HELLO THERE');
+        result.delay = (function() {
+          switch (PARAMS.info_cost) {
+            case 0.01:
+              return [null, 4, 0, 1][this.data.actions.length];
+            case 1.00:
+              return [null, 3, 0, 1][this.data.actions.length];
+            case 2.50:
+              return [null, 15, 0, 3][this.data.actions.length];
+          }
+        }).call(this);
       }
       this.data.delays.push(result.delay);
       redGreenSpan = function(txt, val) {
         return "<span style='color: " + (redGreen(val)) + "; font-weight: bold;'>" + txt + "</span>";
       };
+      console.log('HELLO', PARAMS);
       if (PARAMS.message) {
         if (PARAMS.PR_type === 'objectLevel') {
           if (a === result.optimal_action.direction) {
@@ -449,7 +438,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             });
             return _this.arrive(s1);
           };
-        })(this)), (DEBUG ? 1000 : result.delay * 1000));
+        })(this)), (DEBUG ? 3000 : result.delay * 1000));
       } else {
         $('#mdp-feedback').css({
           display: 'none'

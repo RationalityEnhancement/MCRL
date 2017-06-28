@@ -326,23 +326,18 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       console.log 'feedback', result
     
       if PARAMS.PR_type is 'none'
-        if PARAMS.info_cost == 2.50    
-            result.delay = switch @data.actions.length
-                when 1 then 10
-                when 2 then 1
-                when 3 then 2
-        else
-            result.delay = switch @data.actions.length
-                when 1 then 4
-                when 2 then 0
-                when 3 then 1
-
+        console.log 'HELLO THERE'
+        result.delay = switch PARAMS.info_cost
+          when 0.01 then [null, 4, 0, 1][@data.actions.length]
+          when 1.00 then [null, 3, 0, 1][@data.actions.length]
+          when 2.50 then [null, 15, 0, 3][@data.actions.length]
             
       @data.delays.push(result.delay)
             
       redGreenSpan = (txt, val) ->
         "<span style='color: #{redGreen val}; font-weight: bold;'>#{txt}</span>"
       
+      console.log 'HELLO', PARAMS
       if PARAMS.message
           if PARAMS.PR_type is 'objectLevel'                
                 #if the move was optimal, say so
@@ -418,7 +413,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             @freeze = false
             $('#mdp-feedback').css(display: 'none')
             @arrive s1
-          ), (if DEBUG then 1000 else result.delay * 1000)
+          ), (if DEBUG then 3000 else result.delay * 1000)
       else
             $('#mdp-feedback').css(display: 'none')
             @arrive s1
