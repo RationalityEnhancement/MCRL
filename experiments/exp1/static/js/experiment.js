@@ -14,8 +14,6 @@ psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
 
 isIE = false || !!document.documentMode;
 
-isIE = false;
-
 BLOCKS = void 0;
 
 TRIALS = void 0;
@@ -90,7 +88,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var BONUS, Block, MDPBlock, QuizLoop, TextBlock, calculateBonus, costLevel, debug_slide, experiment_timeline, finish, instruct_loop, instructions, prompt_resubmit, quiz, reprompt, save_data, test, text, train;
+  var BONUS, Block, MDPBlock, QuizLoop, TextBlock, calculateBonus, costLevel, debug_slide, experiment_timeline, finish, instruct_loop, instructions, prompt_resubmit, quiz, reprompt, save_data, text, train;
   console.log('INITIALIZE EXPERIMENT');
   N_TRIALS = BLOCKS.standard.length;
   costLevel = (function() {
@@ -117,6 +115,8 @@ initializeExperiment = function() {
       if (PARAMS.PR_type !== "none") {
         if (PARAMS.PR_type === "objectLevel") {
           return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight, if\nyou did not make the best move, a feedback message will apear. This message\nwill tell you whether you flew along the best route given your current location, and what the best move would have been.\n\nIn the example below, the best move was not taken\nas a result there is a 15 second timeout penalty. <b>The duration of\nthe timeout penalty is proportional to how poor of a move you made:\n</b> the more money you could have earned, the longer the delay. <b>If\nyou perform optimally, no feedback will be shown and you can proceed\nimmediately.</b>\n\n" + (img('task_images/Slide5.png')) + "\n")];
+        } else if (PARAMS.PR_type === "demonstration") {
+          return [markdown("# Instructions\n\n<b>You will receive guidance about how to plan. This guidance will\nhelp you learn how to make better decisions.</b> The first " + (N_TRIALS / 2) + " rounds\nwill demonstrate what optimal planning and flight paths look like. After these trainging trials,\nin the remaining " + (N_TRIALS / 2) + " you will make your own choices.\n")];
         } else {
           return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight, if\nyou did not plan optimally, a feedback message will apear. This message\nwill tell you two things:\n\n1. Whether you observed too few relevant values or if you observed\n   irrelevant values (values of locations that you cant fly to).\n2. Whether you flew along the best route given your current location and\n   the information you had about the values of other locations.\n\nIn the example below, not enough relevant values were observed, and\nas a result there is a 15 second timeout penalty. <b>The duration of\nthe timeout penalty is proportional to how poorly you planned your\nroute:</b> the more money you could have earned from observing more\nvalues and/or choosing a better route, the longer the delay. <b>If\nyou perform optimally, no feedback will be shown and you can proceed\nimmediately.</b> The example message here is not necessarily representative of the feedback you'll receive.\n\n" + (img('task_images/Slide4.png')) + "\n")];
         }
@@ -211,7 +211,7 @@ initializeExperiment = function() {
       return markdown("# Quiz");
     },
     type: 'survey-multi-choice',
-    questions: ["True or false: The hidden values will change each time I start a new round.", "How much does it cost to observe each hidden value?", "How many hidden values am I allowed to observe in each round?", "How is your bonus determined?"].concat((PARAMS.PR_type !== "none" ? ["What does the feedback teach you?"] : [])),
+    questions: ["True or false: The hidden values will change each time I start a new round.", "How much does it cost to observe each hidden value?", "How many hidden values am I allowed to observe in each round?", "How is your bonus determined?"].concat((PARAMS.PR_type !== "none" & PARAMS.PR_type !== "demonstration" ? ["What does the feedback teach you?"] : [])),
     options: [['True', 'False'], ['$0.01', '$0.05', '$1.00', '$2.50'], ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish'], ['10% of my best score on any round', '10% of my total score on all rounds', '5% of my best score on any round', '5% of my score on a random round']].concat((PARAMS.PR_type === "objectLevel" ? [['Whether I chose the move that was best.', 'The length of the delay is based on how much more money I could have earned.', 'All of the above.']] : PARAMS.PR_type !== "none" ? [['Whether I observed the rewards of relevant locations.', 'Whether I chose the move that was best according to the information I had.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']] : [])),
     required: [true, true, true, true, true],
     correct: ['True', fmtMoney(PARAMS.info_cost), 'As many or as few as I wish', '5% of my score on a random round', 'All of the above.'],
@@ -236,14 +236,8 @@ initializeExperiment = function() {
     }
   });
   train = new MDPBlock({
-    timeline: _.shuffle(TRIALS.slice(0, 2))
+    timeline: _.shuffle(TRIALS)
   });
-  test = new Block;
-  MDPBlock({
-    feedback: false,
-    timeline: _.shuffle(TRIALS.slice(8))
-  });
-  console.log('THIS IS A TEST');
   finish = new Block({
     type: 'button-response',
     stimulus: function() {

@@ -350,15 +350,9 @@ initializeExperiment = ->
 
 
   train = new MDPBlock
-    timeline: _.shuffle TRIALS[...2]
+    timeline: _.shuffle TRIALS
   
-  test = new Block
-
-  MDPBlock
-    feedback: false
-    timeline: _.shuffle TRIALS[8...]
-
-  console.log 'THIS IS A TEST'
+  # test = new Block
 
   finish = new Block
     type: 'button-response'
