@@ -127,6 +127,9 @@ initializeExperiment = ->
               help you learn how to make better decisions.</b> After each flight, if
               you did not make the best move, a feedback message will apear. This message
               will tell you whether you flew along the best route given your current location, and what the best move would have been.
+              
+              This feedback will be presented after each of the first #{N_TRIALS/2} rounds; during the second half of the experiment,
+              no feedback will be presented.
 
               In the example below, the best move was not taken
               as a result there is a 15 second timeout penalty. <b>The duration of
@@ -163,6 +166,9 @@ initializeExperiment = ->
                  irrelevant values (values of locations that you cant fly to).
               2. Whether you flew along the best route given your current location and
                  the information you had about the values of other locations.
+
+              This feedback will be presented after each of the first #{N_TRIALS/2} rounds; during the second half of the experiment,
+              no feedback will be presented.
 
               In the example below, not enough relevant values were observed, and
               as a result there is a 15 second timeout penalty. <b>The duration of
