@@ -12,7 +12,6 @@ Demonstrates the jsych-mdp plugin
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 isIE = false || !!document.documentMode
-isIE = false
 
 BLOCKS = undefined
 TRIALS = undefined
