@@ -1,0 +1,16 @@
+
+experiments:
+  1A:
+    directory: exp1
+    conditions: PR_type x info_cost
+    versions:  # both git tag and psiturk code
+      1A.0:
+        hits:
+          - hit_id: 3W5PY7V3UP7B6ZSOFJY4UUGC79NJYI
+            date: 28/06/17
+            num: 4
+          - hit_id: 3UUSLRKAUL3FOTWVIEMTEJ12YQH7DR
+            date: 28/06/17
+            num: 266
+
+

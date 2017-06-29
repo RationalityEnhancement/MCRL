@@ -5,6 +5,7 @@ DEBUG = false;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
+  condition = 0;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
@@ -135,12 +136,6 @@ PARAMS = {
   frequencyOfFB: conditions.frequencyOfFB[condition % nrConditions],
   condition: condition
 };
-
-if (DEBUG) {
-  PARAMS.message = 'full';
-  PARAMS.info_cost = 2.50;
-  PARAMS.PR_type = 'featureBased';
-}
 
 console.log('PARAMS', PARAMS);
 
