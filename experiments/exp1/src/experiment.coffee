@@ -170,10 +170,9 @@ initializeExperiment = ->
               This feedback will be presented after each of the first #{N_TRIALS/2} rounds; during the second half of the experiment,
               no feedback will be presented.
 
-              In the example below, not enough relevant values were observed, and
-              as a result there is a 15 second timeout penalty. <b>The duration of
-              the timeout penalty is proportional to how poorly you planned your
-              route:</b> the more money you could have earned from observing more
+              In the example below, there is a 15 second timeout penalty. If you observed too few relevant values, the message would say, "You should have gathered more information!"; if you observed too many values, it would say "You should have gathered less information!".
+              <b>The duration of the timeout penalty is proportional to how poorly you planned your
+              route:</b> the more money you could have earned from observing more/less
               values and/or choosing a better route, the longer the delay. <b>If
               you perform optimally, no feedback will be shown and you can proceed
               immediately.</b> The example message here is not necessarily representative of the feedback you'll receive.
