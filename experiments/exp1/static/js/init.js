@@ -16,7 +16,7 @@ if (mode === "{{ mode }}") {
   counterbalance = 0;
 }
 
-experiment_nr = 1;
+experiment_nr = 2;
 
 switch (experiment_nr) {
   case 0:
