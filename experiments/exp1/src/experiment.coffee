@@ -103,6 +103,11 @@ initializeExperiment = ->
       when 1.00 then 'med'
       when 2.50 then 'high'
       else throw new Error('bad info_cost')
+            
+msgType = 
+    switch PARAMS.message
+    when 'full' then '_noMsg'
+    else ''
 
 
   #  ======================== #
@@ -177,7 +182,7 @@ initializeExperiment = ->
               you perform optimally, no feedback will be shown and you can proceed
               immediately.</b> The example message here is not necessarily representative of the feedback you'll receive.
 
-              #{img('task_images/Slide4.png')}
+              #{img('task_images/Slide4' + msgType + '.png')}
 
               """
             ]
