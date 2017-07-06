@@ -7,3 +7,4 @@ experiments/*/.psiturk_history
 experiments/*/participants.db
 experiments/*/server.log
 experiments/.ipynb_checkpoints/
+.ipynb_checkpoints/

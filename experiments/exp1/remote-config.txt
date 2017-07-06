@@ -1,6 +1,6 @@
 [HIT Configuration]
 title = Flight Planning
-description = This HIT takes about 20 minutes. You will play an airplane flight simulation game for 12 rounds. You will decide where to fly your plane in order to maximize earnings. This pays $1.00 plus a performance bonus of up to $5.00.
+description = <# PAYMENT #> <# DESCRIPTION #>
 amt_keywords = psychology, experiment
 lifetime = 24
 us_only = true
