@@ -321,6 +321,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @data.queries[queryType][targetType].time.push Date.now() - @initTime
 
     displayFeedback: (a, s1) =>
+      if not @feedback
+        $('#mdp-feedback').css(display: 'none')
+        @arrive s1
+
       result = registerMove a
       result.delay = Math.round result.delay  
       console.log 'feedback', result
@@ -415,8 +419,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             @arrive s1
           ), (if DEBUG then 3000 else result.delay * 1000)
       else
-            $('#mdp-feedback').css(display: 'none')
-            @arrive s1
+        $('#mdp-feedback').css(display: 'none')
+        @arrive s1
 
 
 

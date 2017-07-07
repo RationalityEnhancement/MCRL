@@ -345,6 +345,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
       var head, info, msg, penalty, redGreenSpan, result;
+      if (!this.feedback) {
+        $('#mdp-feedback').css({
+          display: 'none'
+        });
+        this.arrive(s1);
+      }
       result = registerMove(a);
       result.delay = Math.round(result.delay);
       console.log('feedback', result);

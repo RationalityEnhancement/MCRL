@@ -12,9 +12,11 @@ Demonstrates the jsych-mdp plugin
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 isIE = false || !!document.documentMode
-
-BLOCKS = undefined
-TRIALS = undefined
+console.log 'FOOBAR'
+TEST_TRIALS = undefined
+TRAIN_TRIALS = undefined
+N_TEST = undefined
+N_TRAIN = undefined
 N_TRIALS = undefined
 # because the order of arguments of setTimeout is awful.
 delay = (time, func) -> setTimeout func, time
@@ -61,8 +63,12 @@ $(window).on 'load', ->
     
         
     # PARAMS.bonus_rate = .1
-    BLOCKS = expData.blocks
-    TRIALS = BLOCKS.standard
+    trials = expData.blocks.standard
+    TRAIN_TRIALS = trials[4...6]
+    TEST_TRIALS = trials[6...8]
+    N_TRAIN = TRAIN_TRIALS.length
+    N_TEST = TEST_TRIALS.length
+    N_TRIALS = N_TRAIN + N_TEST
     psiturk.recordUnstructuredData 'params', PARAMS
     psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
     psiturk.recordUnstructuredData 'condition_nr', condition_nr
@@ -94,17 +100,8 @@ createStartButton = ->
 
 initializeExperiment = ->
   console.log 'INITIALIZE EXPERIMENT'
-
-  N_TRIALS = BLOCKS.standard.length
-
-  costLevel =
-    switch PARAMS.info_cost
-      when 0.01 then 'low'
-      when 1.00 then 'med'
-      when 2.50 then 'high'
-      else throw new Error('bad info_cost')
             
-msgType = 
+  msgType = 
     switch PARAMS.message
       when 'full' then '_noMsg'
       else ''
@@ -128,20 +125,23 @@ msgType =
             [markdown """
               # Instructions
 
-              <b>You will receive feedback about your planning. This feedback will
-              help you learn how to make better decisions.</b> After each flight, if
-              you did not make the best move, a feedback message will apear. This message
-              will tell you whether you flew along the best route given your current location, and what the best move would have been.
+              <b>You will receive feedback about your planning. This feedback
+              will help you learn how to make better decisions.</b> After each
+              flight, if you did not make the best move, a feedback message
+              will apear. This message will tell you whether you flew along
+              the best route given your current location, and what the best
+              move would have been.
               
-              This feedback will be presented after each of the first #{N_TRIALS/2} rounds; during the second half of the experiment,
+              This feedback will be presented after each of the first
+              #{N_TRAIN} rounds; during the final #{N_TEST} rounds,
               no feedback will be presented.
 
-              In the example below, the best move was not taken
-              as a result there is a 15 second timeout penalty. <b>The duration of
-              the timeout penalty is proportional to how poor of a move you made:
-              </b> the more money you could have earned, the longer the delay. <b>If
-              you perform optimally, no feedback will be shown and you can proceed
-              immediately.</b>
+              In the example below, the best move was not taken. As a result,
+              there is a 15 second timeout penalty. <b>The duration of the
+              timeout penalty is proportional to how poor of a move you made:
+              </b> the more money you could have earned, the longer the delay.
+              <b>If you perform optimally, no feedback will be shown and you
+              can proceed immediately.</b>
 
               #{img('task_images/Slide5.png')}
 
@@ -151,11 +151,11 @@ msgType =
             [markdown """
               # Instructions
 
-              <b>You will receive guidance about how to plan. This guidance will
-              help you learn how to make better decisions.</b> The first #{N_TRIALS/2} rounds
-              will demonstrate what optimal planning and flight paths look like. After these trainging trials,
-              in the remaining #{N_TRIALS/2} you will make your own choices.
-
+              <b>You will receive guidance about how to plan. This guidance
+              will help you learn how to make better decisions.</b> The first
+              #{N_TRAIN} rounds will demonstrate what optimal planning and
+              flight paths look like. In the remaining #{N_TEST} rounds, you
+              will make your own choices.
               """
             ]
         else
@@ -168,22 +168,27 @@ msgType =
               will tell you two things:
 
               1. Whether you observed too few relevant values or if you observed
-                 irrelevant values (values of locations that you cant fly to).
+                 irrelevant values (values of locations that you can't fly to).
               2. Whether you flew along the best route given your current location and
                  the information you had about the values of other locations.
 
-              This feedback will be presented after each of the first #{N_TRIALS/2} rounds; during the second half of the experiment,
+              This feedback will be presented after each of the first
+              #{N_TRAIN} rounds; during the final #{N_TEST} rounds,
               no feedback will be presented.
 
-              In the example below, there is a 15 second timeout penalty. If you observed too few relevant values, the message would say, "You should have gathered more information!"; if you observed too many values, it would say "You should have gathered less information!".
-              <b>The duration of the timeout penalty is proportional to how poorly you planned your
-              route:</b> the more money you could have earned from observing more/less
-              values and/or choosing a better route, the longer the delay. <b>If
-              you perform optimally, no feedback will be shown and you can proceed
-              immediately.</b> The example message here is not necessarily representative of the feedback you'll receive.
+              In the example below, there is a 15 second timeout penalty. If
+              you observed too few relevant values, the message would say,
+              "You should have gathered more information!"; if you observed
+              too many values, it would say "You should have gathered less
+              information!". <b>The duration of the timeout penalty is
+              proportional to how poorly you planned your route:</b> the more
+              money you could have earned from observing more/less values
+              and/or choosing a better route, the longer the delay. <b>If you
+              perform optimally, no feedback will be shown and you can proceed
+              immediately.</b> The example message here is not necessarily
+              representative of the feedback you'll receive.
 
               #{img('task_images/Slide4' + msgType + '.png')}
-
               """
             ]
       else []
@@ -193,8 +198,6 @@ msgType =
         ""
       else
         "Note: there will be short delays after taking some flights."
-
-
 
   # ================================= #
   # ========= BLOCK CLASSES ========= #
@@ -233,7 +236,7 @@ msgType =
     type: 'html'
     url: 'test.html'
 
-
+  console.log 'debug_slide', debug_slide
 
   instructions = new Block
     type: "instructions"
@@ -261,15 +264,16 @@ msgType =
       markdown """
         # Instructions
 
-        You will play the game for #{N_TRIALS} rounds. The value of every location will
-        change from each round to the next. At the begining of each round, the
-        value of every location will be hidden, and you will only discover the
-        value of the locations you click on. The example below shows the value
-        of every location, just to give you an example of values you could see
-        if you clicked on every location. <b>Every time you click a circle to
-        observe its value, you pay a fee of #{fmtMoney PARAMS.info_cost}.</b>
+        You will play the game for #{N_TRIALS} rounds. The value of
+        every location will change from each round to the next. At the
+        begining of each round, the value of every location will be hidden,
+        and you will only discover the value of the locations you click on.
+        The example below shows the value of every location, just to give you
+        an example of values you could see if you clicked on every location.
+        <b>Every time you click a circle to observe its value, you pay a fee
+        of #{fmtMoney PARAMS.info_cost}.</b>
 
-        #{img('task_images/Slide2_' + costLevel + '.png')}
+        #{img('task_images/Slide2_' + COST_LEVEL + '.png')}
 
         Each time you move to a
         location, your profit will be adjusted. If you move to a location with
@@ -287,9 +291,10 @@ msgType =
            will show you how much more time you must spend on the round. You
            won’t be able to proceed to the next round before the countdown has
            finished, but you can take as much time as you like afterwards.
-        2. </b>You will earn <u>real money</u> for your flights.</b> Specifically,
-           one of the #{N_TRIALS} rounds will be chosen at random and you will receive 5%
-           of your earnings in that round as a bonus payment.
+        2. </b>You will earn <u>real money</u> for your flights.</b>
+           Specifically, one of the #{N_TRIALS} rounds will be chosen
+           at random and you will receive 5% of your earnings in that round as
+           a bonus payment.
 
         #{img('task_images/Slide3.png')}
 
@@ -297,7 +302,6 @@ msgType =
       """
     ]
     show_clickable_nav: true
-
 
   quiz = new Block
     preamble: -> markdown """
@@ -360,9 +364,11 @@ msgType =
 
 
   train = new MDPBlock
-    timeline: _.shuffle TRIALS
+    timeline: _.shuffle TRAIN_TRIALS
   
-  # test = new Block
+  test = new MDPBlock
+    feedback: false
+    timeline: _.shuffle TEST_TRIALS
 
   finish = new Block
     type: 'button-response'
@@ -381,16 +387,16 @@ msgType =
 
   if DEBUG
     experiment_timeline = [
-      # instruct_loop
+      instruct_loop
       train
-      # test
+      test
       finish
     ]
   else
     experiment_timeline = [
       instruct_loop
       train
-      # test
+      test
       finish
     ]
 
