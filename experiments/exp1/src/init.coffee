@@ -7,7 +7,7 @@ if DEBUG
   X X X X X X X X X X X X X X X X X
   """
   console.log 'FOOBAR'
-  condition = 3
+  condition = 0
   
 else
   console.log """
@@ -18,7 +18,7 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 1
+  condition = 0
   # counterbalance = 0
 
 

@@ -6,14 +6,14 @@ DEBUG = false;
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
   console.log('FOOBAR');
-  condition = 3;
+  condition = 0;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
 
 if (mode === "{{ mode }}") {
   DEMO = true;
-  condition = 1;
+  condition = 0;
 }
 
 experiment_nr = 2;
