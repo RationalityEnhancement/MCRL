@@ -1,6 +1,7 @@
-
 experiments:
+  
   1A:
+    info: Basic effects.
     directory: exp1
     conditions: PR_type x info_cost
     versions:  # both git tag and psiturk code
@@ -13,4 +14,16 @@ experiments:
             date: 28/06/17
             num: 266
 
-
+  1B:
+    conditions: Message Type x FB vs. no FB at c=1
+  
+  1C:
+    conditions: Demonstration vs. optimal FB at c=1
+  
+  2:
+    info: Retention over time.
+    conditions: FB x [0, 6, 24 hour delay]
+  
+  3:
+    info: Near transfer.
+    conditions: FB x [same, larger, non-tree]
