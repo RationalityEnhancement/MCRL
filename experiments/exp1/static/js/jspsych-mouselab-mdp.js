@@ -399,7 +399,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             }
           }
           if (PARAMS.message === 'simple') {
-            head = redGreenSpan("Poor planning!", -1);
+            head = '';
           }
           if (PARAMS.message === 'none') {
             if (result.delay === 1) {
@@ -413,7 +413,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       if (PARAMS.PR_type === "none") {
         penalty = result.delay ? "<p>Please wait " + result.delay + " seconds.</p>" : void 0;
       } else {
-        penalty = result.delay ? "<p>" + result.delay + " second penalty</p>" : void 0;
+        penalty = result.delay ? redGreenSpan("<p>" + result.delay + " second penalty!</p>", -1) : void 0;
       }
       info = (function() {
         if (PARAMS.message === 'full') {
@@ -423,10 +423,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         }
       })();
       if ((PARAMS.message === 'full' || PARAMS.message === 'simple') && PARAMS.PR_type !== 'objectLevel') {
-        msg = "<b>" + penalty + "</b>            \n<h3>" + head + "</h3>            \n" + info;
+        msg = "<h3>" + head + "</h3>            \n<b>" + penalty + "</b>                        \n" + info;
       }
       if (PARAMS.PR_type === 'objectLevel') {
-        msg = "<b>" + penalty + "</b> \n<h3>" + head + "</h3>             ";
+        msg = "<h3>" + head + "</h3>             \n<b>" + penalty + "</b> ";
       }
       if (PARAMS.message === 'none') {
         msg = "<h3>" + head + "</h3>";

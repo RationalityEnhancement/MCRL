@@ -6,7 +6,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 0
+  #condition = 0
   
 else
   console.log """
