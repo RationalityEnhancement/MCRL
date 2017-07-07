@@ -75,8 +75,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # connect to turk
-    aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
-    aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
+    try:
+        aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
+        aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
+    except:
+        print('You must have AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY '
+              'in your environment (e.g. defined in ~/.bash_profile')
+        exit(1)
+
     conn = MTurkConnection(aws_access_key_id, aws_secret_access_key)
 
     while True:
