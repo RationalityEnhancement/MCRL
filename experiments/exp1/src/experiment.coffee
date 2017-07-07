@@ -103,7 +103,8 @@ initializeExperiment = ->
             
   msgType = 
     switch PARAMS.message
-      when 'full' then '_noMsg'
+      when 'none' then '_noMsg'
+      when 'simple' then '_simpleMsg'
       else ''
 
 
@@ -158,6 +159,30 @@ initializeExperiment = ->
               will make your own choices.
               """
             ]
+        else if PARAMS.message == "simple"
+            [markdown """
+              # Instructions
+
+              <b>You will receive feedback about your planning. This feedback will
+              help you learn how to make better decisions.</b> After each flight, if
+              you did not plan optimally, a feedback message will apear. This message
+              will tell you if you planned poorly.
+
+              This feedback will be presented after each of the first
+              #{N_TRAIN} rounds; during the final #{N_TEST} rounds,
+              no feedback will be presented.
+
+              In the example below, there is a 15 second timeout penalty.<b>The duration of the timeout penalty is
+              proportional to how poorly you planned your route:</b> the more
+              money you could have earned from observing more/less values
+              and/or choosing a better route, the longer the delay. <b>If you
+              perform optimally, no feedback will be shown and you can proceed
+              immediately.</b> The example message here is not necessarily
+              representative of the feedback you'll receive.
+
+              #{img('task_images/Slide4_simpleMsg.png')}
+              """
+            ]
         else
             [markdown """
               # Instructions
@@ -189,6 +214,35 @@ initializeExperiment = ->
               representative of the feedback you'll receive.
 
               #{img('task_images/Slide4' + msgType + '.png')}
+              """
+            ]
+      else if PARAMS.message == "full"
+            [markdown """
+              # Instructions
+
+              <b>You will receive feedback about your planning. This feedback will
+              help you learn how to make better decisions.</b> After each flight, if
+              you did not plan optimally, a feedback message will apear. This message
+              will tell you two things:
+
+              1. Whether you observed too few relevant values or if you observed
+                 irrelevant values (values of locations that you can't fly to).
+              2. Whether you flew along the best route given your current location and
+                 the information you had about the values of other locations.
+
+              This feedback will be presented after each of the first
+              #{N_TRAIN} rounds; during the final #{N_TEST} rounds,
+              no feedback will be presented.
+
+              In the example below, if
+              you observed too few relevant values, the message would say,
+              "You should have gathered more information!"; if you observed
+              too many values, it would say "You should have gathered less
+              information!". <b>If you
+              perform optimally, no feedback will be shown.</b> The example message here is not necessarily
+              representative of the feedback you'll receive.
+
+              #{img('task_images/Slide4_noPR.png')}
               """
             ]
       else []
