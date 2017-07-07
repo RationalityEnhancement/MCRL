@@ -106,8 +106,8 @@ initializeExperiment = ->
             
 msgType = 
     switch PARAMS.message
-    when 'full' then '_noMsg'
-    else ''
+      when 'full' then '_noMsg'
+      else ''
 
 
   #  ======================== #
