@@ -7,8 +7,9 @@ low_data = data([data.info_cost1] == low_cost);
 med_data = data([data.info_cost1] == med_cost);
 high_data = data([data.info_cost1] == high_cost);
 
-dat = med_data;
-trial_properties = trial_properties_med;
+%% Change the dataset you're working with here
+dat = high_data;
+trial_properties = trial_properties_high;
 %% Click inner 4, then any of best
 target = [2, 3, 4, 5];
 relevant_trials = 0;
@@ -43,9 +44,33 @@ for k=1:length(dat)
     end
 end
 
-percentage_of_fifth_click = (relevant_trials/(length(dat) * nr_trials) * 100);
+percentage_of_fifth_click = (relevant_trials/(length(dat) * nr_trials)) * 100;
 
 clearvars k all_trials t cur_trial clicks match node_index fifth_click
 
+%% Trying out an entire "arm" in first 4 clicks
+upper = [3, 7, 12, 13];
+right = [2, 6, 10, 11];
+bottom = [5, 9, 16, 17];
+left = [4, 8, 14, 15];
 
+relevant_trials = 0;
 
+for k=1:length(dat)
+    all_trials = dat(k).clicks1;
+    for t = 1:nr_trials
+        if length(all_trials{1, t}) < 4 
+            continue
+        end
+        clicks = all_trials{1, t}(1:4);
+        up_match = all(ismember(clicks, upper));
+        r_match = all(ismember(clicks, right));
+        bottom_match = all(ismember(clicks, bottom));
+        l_match = all(ismember(clicks, left));
+        if up_match || r_match || bottom_match || l_match
+            relevant_trials = relevant_trials + 1;
+        end
+    end
+end
+
+arm_percentage = (relevant_trials/(length(dat) * nr_trials)) * 100;
