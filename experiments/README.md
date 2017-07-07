@@ -28,7 +28,7 @@ Once this window is open, any changes you make to the javascript will take effec
 
 In this directory, run
 ```
-bin/deploy_experiment.py
+make deploy
 ```
 
 This will upload all your experiment files to the webserver. If you see an error about the file `tmp/restart.txt` not existing, make sure there is a directory called `tmp` existing on the server:
