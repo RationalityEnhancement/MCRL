@@ -12,7 +12,6 @@ Demonstrates the jsych-mdp plugin
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 isIE = false || !!document.documentMode
-console.log 'FOOBAR'
 TEST_TRIALS = undefined
 TRAIN_TRIALS = undefined
 N_TEST = undefined
@@ -64,8 +63,8 @@ $(window).on 'load', ->
         
     # PARAMS.bonus_rate = .1
     trials = expData.blocks.standard
-    TRAIN_TRIALS = trials[4...6]
-    TEST_TRIALS = trials[6...8]
+    TRAIN_TRIALS = trials[...6]
+    TEST_TRIALS = trials[6...]
     N_TRAIN = TRAIN_TRIALS.length
     N_TEST = TEST_TRIALS.length
     N_TRIALS = N_TRAIN + N_TEST
@@ -287,7 +286,6 @@ initializeExperiment = ->
     type: 'html'
     url: 'test.html'
 
-  console.log 'debug_slide', debug_slide
 
   instructions = new Block
     type: "instructions"
@@ -417,10 +415,26 @@ initializeExperiment = ->
   train = new MDPBlock
     timeline: _.shuffle TRAIN_TRIALS
   
-  test = new MDPBlock
-    feedback: false
-    timeline: _.shuffle TEST_TRIALS
+  test = new Block
+    timeline: do ->
+      tl = []
+      if PARAMS.feedback
+        tl.push new TextBlock
+          text: markdown """
+            # No more feedback
 
+            You are now entering a block without feedback. There will be no
+            messages and no delays regardless of what you do, but your
+            performance still affects your bonus.
+
+            Press **space** to continue.
+          """
+      tl.push new MDPBlock
+        feedback: false
+        timeline: _.shuffle TEST_TRIALS
+      return tl
+
+  console.log 'test', test
   finish = new Block
     type: 'button-response'
     stimulus: -> markdown """
@@ -438,8 +452,8 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      instruct_loop
-      train
+      # instruct_loop
+      # train
       test
       finish
     ]
