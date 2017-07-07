@@ -410,7 +410,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           }
         }
       }
-      penalty = result.delay ? "<p>" + result.delay + " second penalty</p>" : void 0;
+      if (PARAMS.PR_type === "none") {
+        penalty = result.delay ? "<p>Please wait " + result.delay + " seconds.</p>" : void 0;
+      } else {
+        penalty = result.delay ? "<p>" + result.delay + " second penalty</p>" : void 0;
+      }
       info = (function() {
         if (PARAMS.message === 'full') {
           return "Given the information you collected, your decision was " + (result.information_used_correctly ? redGreenSpan('optimal.', 1) : redGreenSpan('suboptimal.', -1));
@@ -419,10 +423,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         }
       })();
       if ((PARAMS.message === 'full' || PARAMS.message === 'simple') && PARAMS.PR_type !== 'objectLevel') {
-        msg = "<h3>" + head + "</h3>\n<b>" + penalty + "</b>\n" + info;
+        msg = "<b>" + penalty + "</b>            \n<h3>" + head + "</h3>            \n" + info;
       }
       if (PARAMS.PR_type === 'objectLevel') {
-        msg = "<h3>" + head + "</h3>\n<b>" + penalty + "</b>";
+        msg = "<b>" + penalty + "</b> \n<h3>" + head + "</h3>             ";
       }
       if (PARAMS.message === 'none') {
         msg = "<h3>" + head + "</h3>";

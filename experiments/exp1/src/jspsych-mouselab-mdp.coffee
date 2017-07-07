@@ -374,8 +374,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                         head = "Please wait 1 second."
                     else
                         head = "Please wait "+result.delay+" seconds."
-            
-        penalty = if result.delay then "<p>#{result.delay} second penalty</p>"
+        
+        if PARAMS.PR_type is "none"
+            penalty = if result.delay then "<p>Please wait #{result.delay} seconds.</p>"
+        else
+            penalty = if result.delay then "<p>#{result.delay} second penalty</p>"
+        
         info = do ->
           if PARAMS.message is 'full'
             "Given the information you collected, your decision was " + \
@@ -387,14 +391,14 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         
         if (PARAMS.message is 'full' or PARAMS.message is 'simple') and PARAMS.PR_type != 'objectLevel'
             msg = """
-            <h3>#{head}</h3>
-            <b>#{penalty}</b>
+            <b>#{penalty}</b>            
+            <h3>#{head}</h3>            
             #{info}
             """
         if PARAMS.PR_type is 'objectLevel'
              msg = """
-             <h3>#{head}</h3>
-             <b>#{penalty}</b>
+            <b>#{penalty}</b> 
+            <h3>#{head}</h3>             
              """
         
         if PARAMS.message is 'none'
