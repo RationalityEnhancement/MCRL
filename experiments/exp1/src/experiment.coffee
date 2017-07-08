@@ -432,11 +432,21 @@ initializeExperiment = ->
             performance still affects your bonus.
 
             Press **space** to continue.
-          """
+            """
+      if PARAMS.PR_type is "demonstration"
+        tl.push new TextBlock
+          text: markdown """
+            # Your turn
+            This was the last demonstration from your teacher. Now it is your turn to decide which locations to inspect and where to fly to.
+            """        
+                
       tl.push new MDPBlock
         feedback: false
         timeline: _.shuffle TEST_TRIALS
       return tl
+    
+      
+        
 
   console.log 'test', test
   finish = new Block
@@ -456,8 +466,8 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      # instruct_loop
-      # train
+      instruct_loop
+      train
       test
       finish
     ]

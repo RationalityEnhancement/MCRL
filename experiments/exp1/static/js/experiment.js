@@ -263,6 +263,11 @@ initializeExperiment = function() {
           text: markdown("# No more feedback\n\nYou are now entering a block without feedback. There will be no\nmessages and no delays regardless of what you do, but your\nperformance still affects your bonus.\n\nPress **space** to continue.")
         }));
       }
+      if (PARAMS.PR_type === "demonstration") {
+        tl.push(new TextBlock({
+          text: markdown("# Your turn\nThis was the last demonstration from your teacher. Now it is your turn to decide which locations to inspect and where to fly to.")
+        }));
+      }
       tl.push(new MDPBlock({
         feedback: false,
         timeline: _.shuffle(TEST_TRIALS)
@@ -281,7 +286,7 @@ initializeExperiment = function() {
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [test, finish];
+    experiment_timeline = [instruct_loop, train, test, finish];
   } else {
     experiment_timeline = [instruct_loop, train, test, finish];
   }

@@ -67,7 +67,7 @@ for PRType in IVs.PRTypes
 
 PARAMS =
   PR_type: conditions.PRType[condition % nrConditions]
-  feedback: conditions.PRType[condition % nrConditions] != "none"
+  feedback: conditions.PRType[condition % nrConditions] != "none" and conditions.PRType[condition % nrConditions] != "demonstration"
   info_cost: conditions.infoCost[condition % nrConditions]
   message:  conditions.messageType[condition % nrConditions]
   frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]
