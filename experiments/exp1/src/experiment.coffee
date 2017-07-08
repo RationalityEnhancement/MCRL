@@ -411,13 +411,9 @@ initializeExperiment = ->
   #   _.extend t, t.stim.env
   #   t.pseudo = t.stim.pseudo
 
-  if PARAMS.PR_type is "demonstration"   
-    train = new MDPBlock
-        demonstrate: true
-        timeline: _.shuffle TRAIN_TRIALS        
-  else        
-    train = new MDPBlock
-        timeline: _.shuffle TRAIN_TRIALS
+  train = new MDPBlock
+    demonstrate: PARAMS.PR_type is "demonstration"   
+    timeline: _.shuffle TRAIN_TRIALS
   
   test = new Block
     timeline: do ->
@@ -437,7 +433,9 @@ initializeExperiment = ->
         tl.push new TextBlock
           text: markdown """
             # Your turn
-            This was the last demonstration from your teacher. Now it is your turn to decide which locations to inspect and where to fly to.
+            
+            This was the last demonstration from your teacher. Now it is your
+            turn to decide which locations to inspect and where to fly to.
 
             Press **space** to continue.
             """        
@@ -468,7 +466,7 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      instruct_loop
+      # instruct_loop
       train
       test
       finish
