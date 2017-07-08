@@ -1,4 +1,4 @@
-DEBUG = false
+DEBUG = true
 
 if DEBUG
   console.log """
@@ -6,7 +6,8 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 0
+  console.log 'FOOBAR'
+  condition = 2
   
 else
   console.log """
@@ -17,11 +18,11 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 1
-  counterbalance = 0
+  condition = 0
+  # counterbalance = 0
 
 
-experiment_nr = 1
+experiment_nr = 3
 
 switch experiment_nr
     when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
@@ -29,7 +30,7 @@ switch experiment_nr
     when 0.9 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','none','object_level'], messageTypes: ['full'],infoCosts: [0.01,1.00,2.50]}    
     when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,2.50]}
     when 2 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.00]}
-    when 3 then IVs = {frequencyOfFB : ['after_each_move','after_each_click'], PRTypes: ['featureBased'], messageTypes: ['none'],infoCosts: [1.00]}      
+    when 3 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','demonstration'], messageTypes: ['full'],infoCosts: [1.00]}      
     else console.log "Invalid experiment_nr!" 
         
 nrDelays = IVs.PRTypes.length    
@@ -66,7 +67,7 @@ for PRType in IVs.PRTypes
 
 PARAMS =
   PR_type: conditions.PRType[condition % nrConditions]
-  feedback: conditions.PRType[condition % nrConditions] != "none"
+  feedback: conditions.PRType[condition % nrConditions] != "none" and conditions.PRType[condition % nrConditions] != "demonstration"
   info_cost: conditions.infoCost[condition % nrConditions]
   message:  conditions.messageType[condition % nrConditions]
   frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]

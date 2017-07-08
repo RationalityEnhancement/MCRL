@@ -321,6 +321,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @data.queries[queryType][targetType].time.push Date.now() - @initTime
 
     displayFeedback: (a, s1) =>
+      if not @feedback
+        $('#mdp-feedback').css(display: 'none')
+        @arrive s1
+
       result = registerMove a
       result.delay = Math.round result.delay  
       console.log 'feedback', result
@@ -364,14 +368,22 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                         head += redGreenSpan " But you didn't prioritize the most important locations.", -1
                         
               if PARAMS.message is 'simple'
-                    head = redGreenSpan "Poor planning!", -1
+                    head =''
+                    #if result.PR_type is 'none'
+                    #    head = ''
+                    #else
+                    #    head = redGreenSpan "Poor planning!", -1                    
               if PARAMS.message is 'none'
                     if result.delay is 1
                         head = "Please wait 1 second."
                     else
                         head = "Please wait "+result.delay+" seconds."
-            
-        penalty = if result.delay then "<p>#{result.delay} second penalty</p>"
+        
+        if PARAMS.PR_type is "none"
+            penalty = if result.delay then "<p>Please wait #{result.delay} seconds.</p>"
+        else
+            penalty = if result.delay then redGreenSpan "<p>#{result.delay} second penalty!</p>", -1
+        
         info = do ->
           if PARAMS.message is 'full'
             "Given the information you collected, your decision was " + \
@@ -383,14 +395,14 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         
         if (PARAMS.message is 'full' or PARAMS.message is 'simple') and PARAMS.PR_type != 'objectLevel'
             msg = """
-            <h3>#{head}</h3>
-            <b>#{penalty}</b>
+            <h3>#{head}</h3>            
+            <b>#{penalty}</b>                        
             #{info}
             """
         if PARAMS.PR_type is 'objectLevel'
              msg = """
-             <h3>#{head}</h3>
-             <b>#{penalty}</b>
+            <h3>#{head}</h3>             
+            <b>#{penalty}</b> 
              """
         
         if PARAMS.message is 'none'
@@ -415,8 +427,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             @arrive s1
           ), (if DEBUG then 3000 else result.delay * 1000)
       else
-            $('#mdp-feedback').css(display: 'none')
-            @arrive s1
+        $('#mdp-feedback').css(display: 'none')
+        @arrive s1
 
 
 

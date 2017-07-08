@@ -1,7 +1,7 @@
 all:
 	bin/make_stimuli.py
 	bin/convert_json.py
-deploy:
+deploy: exp1
 	bin/templater.py
 	bin/deploy_experiment.py deploy
 clean:

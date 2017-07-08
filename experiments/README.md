@@ -26,9 +26,12 @@ Once this window is open, any changes you make to the javascript will take effec
 
 # Deploying the experiment
 
-In this directory, run
+**Before deploying the experiment, make sure you have correctly set `experiment_code_version` and `num_conds` in remote-config.txt.**
+
+When you're sure the experiment is ready to deploy and all parameters in remote-config.txt are current, run
+
 ```
-bin/deploy_experiment.py
+make deploy
 ```
 
 This will upload all your experiment files to the webserver. If you see an error about the file `tmp/restart.txt` not existing, make sure there is a directory called `tmp` existing on the server:

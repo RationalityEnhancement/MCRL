@@ -6,7 +6,7 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var BLOCKS, BONUS, Block, MDPBlock, N_TRIALS, QuizLoop, TRIALS, TextBlock, calculateBonus, createStartButton, debug_slide, delay, experiment_timeline, finish, initializeExperiment, instruct_loop, instructions, isIE, msgType, prompt_resubmit, psiturk, quiz, reprompt, save_data, text, train,
+var N_TEST, N_TRAIN, N_TRIALS, TEST_TRIALS, TRAIN_TRIALS, createStartButton, delay, initializeExperiment, isIE, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -14,9 +14,13 @@ psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
 
 isIE = false || !!document.documentMode;
 
-BLOCKS = void 0;
+TEST_TRIALS = void 0;
 
-TRIALS = void 0;
+TRAIN_TRIALS = void 0;
+
+N_TEST = void 0;
+
+N_TRAIN = void 0;
 
 N_TRIALS = void 0;
 
@@ -37,7 +41,7 @@ $(window).on('load', function() {
   loadTimeout = delay(12000, slowLoad);
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
   return delay(300, function() {
-    var ERROR, PARAMS, condition_nr, expData;
+    var ERROR, PARAMS, condition_nr, expData, trials;
     console.log('Loading data');
     expData = loadJson("static/json/" + COST_LEVEL + "_cost.json");
     console.log('expData', expData);
@@ -51,8 +55,12 @@ $(window).on('load', function() {
       condition: condition_nr,
       start_time: new Date
     };
-    BLOCKS = expData.blocks;
-    TRIALS = BLOCKS.standard;
+    trials = expData.blocks.standard;
+    TRAIN_TRIALS = trials.slice(0, 6);
+    TEST_TRIALS = trials.slice(6);
+    N_TRAIN = TRAIN_TRIALS.length;
+    N_TEST = TEST_TRIALS.length;
+    N_TRIALS = N_TRAIN + N_TEST;
     psiturk.recordUnstructuredData('params', PARAMS);
     psiturk.recordUnstructuredData('experiment_nr', experiment_nr);
     psiturk.recordUnstructuredData('condition_nr', condition_nr);
@@ -88,245 +96,248 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var costLevel;
+  var BONUS, Block, MDPBlock, QuizLoop, TextBlock, calculateBonus, debug_slide, experiment_timeline, finish, instruct_loop, instructions, msgType, prompt_resubmit, quiz, reprompt, save_data, test, text, train;
   console.log('INITIALIZE EXPERIMENT');
-  N_TRIALS = BLOCKS.standard.length;
-  return costLevel = (function() {
-    switch (PARAMS.info_cost) {
-      case 0.01:
-        return 'low';
-      case 1.00:
-        return 'med';
-      case 2.50:
-        return 'high';
+  msgType = (function() {
+    switch (PARAMS.message) {
+      case 'none':
+        return '_noMsg';
+      case 'simple':
+        return '_simpleMsg';
       default:
-        throw new Error('bad info_cost');
+        return '';
     }
   })();
-};
-
-msgType = (function() {
-  switch (PARAMS.message) {
-    case 'full':
-      return '_noMsg';
-    default:
-      return '';
-  }
-})();
-
-text = {
-  debug: function() {
-    if (DEBUG) {
-      return "`DEBUG`";
-    } else {
-      return '';
-    }
-  },
-  feedback: function() {
-    if (PARAMS.PR_type !== "none") {
-      if (PARAMS.PR_type === "objectLevel") {
-        return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight, if\nyou did not make the best move, a feedback message will apear. This message\nwill tell you whether you flew along the best route given your current location, and what the best move would have been.\n\nThis feedback will be presented after each of the first " + (N_TRIALS / 2) + " rounds; during the second half of the experiment,\nno feedback will be presented.\n\nIn the example below, the best move was not taken\nas a result there is a 15 second timeout penalty. <b>The duration of\nthe timeout penalty is proportional to how poor of a move you made:\n</b> the more money you could have earned, the longer the delay. <b>If\nyou perform optimally, no feedback will be shown and you can proceed\nimmediately.</b>\n\n" + (img('task_images/Slide5.png')) + "\n")];
-      } else if (PARAMS.PR_type === "demonstration") {
-        return [markdown("# Instructions\n\n<b>You will receive guidance about how to plan. This guidance will\nhelp you learn how to make better decisions.</b> The first " + (N_TRIALS / 2) + " rounds\nwill demonstrate what optimal planning and flight paths look like. After these trainging trials,\nin the remaining " + (N_TRIALS / 2) + " you will make your own choices.\n")];
+  text = {
+    debug: function() {
+      if (DEBUG) {
+        return "`DEBUG`";
       } else {
-        return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight, if\nyou did not plan optimally, a feedback message will apear. This message\nwill tell you two things:\n\n1. Whether you observed too few relevant values or if you observed\n   irrelevant values (values of locations that you cant fly to).\n2. Whether you flew along the best route given your current location and\n   the information you had about the values of other locations.\n\nThis feedback will be presented after each of the first " + (N_TRIALS / 2) + " rounds; during the second half of the experiment,\nno feedback will be presented.\n\nIn the example below, there is a 15 second timeout penalty. If you observed too few relevant values, the message would say, \"You should have gathered more information!\"; if you observed too many values, it would say \"You should have gathered less information!\".\n<b>The duration of the timeout penalty is proportional to how poorly you planned your\nroute:</b> the more money you could have earned from observing more/less\nvalues and/or choosing a better route, the longer the delay. <b>If\nyou perform optimally, no feedback will be shown and you can proceed\nimmediately.</b> The example message here is not necessarily representative of the feedback you'll receive.\n\n" + (img('task_images/Slide4' + msgType + '.png')) + "\n")];
+        return '';
       }
-    } else {
-      return [];
-    }
-  },
-  constantDelay: function() {
-    if (PARAMS.PR_type !== "none") {
-      return "";
-    } else {
-      return "Note: there will be short delays after taking some flights.";
-    }
-  }
-};
-
-Block = (function() {
-  function Block(config) {
-    _.extend(this, config);
-    this._block = this;
-    if (this._init != null) {
-      this._init();
-    }
-  }
-
-  return Block;
-
-})();
-
-TextBlock = (function(superClass) {
-  extend(TextBlock, superClass);
-
-  function TextBlock() {
-    return TextBlock.__super__.constructor.apply(this, arguments);
-  }
-
-  TextBlock.prototype.type = 'text';
-
-  TextBlock.prototype.cont_key = ['space'];
-
-  return TextBlock;
-
-})(Block);
-
-QuizLoop = (function(superClass) {
-  extend(QuizLoop, superClass);
-
-  function QuizLoop() {
-    return QuizLoop.__super__.constructor.apply(this, arguments);
-  }
-
-  QuizLoop.prototype.loop_function = function(data) {
-    var c, i, len, ref;
-    console.log('data', data);
-    ref = data[data.length].correct;
-    for (i = 0, len = ref.length; i < len; i++) {
-      c = ref[i];
-      if (!c) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  return QuizLoop;
-
-})(Block);
-
-MDPBlock = (function(superClass) {
-  extend(MDPBlock, superClass);
-
-  function MDPBlock() {
-    return MDPBlock.__super__.constructor.apply(this, arguments);
-  }
-
-  MDPBlock.prototype.type = 'mouselab-mdp';
-
-  MDPBlock.prototype._init = function() {
-    return this.trialCount = 0;
-  };
-
-  return MDPBlock;
-
-})(Block);
-
-debug_slide = new Block({
-  type: 'html',
-  url: 'test.html'
-});
-
-instructions = new Block({
-  type: "instructions",
-  pages: [markdown("# Instructions " + (text.debug()) + "\n\nIn this game, you are in charge of flying an aircraft. As shown below,\nyou will begin in the central location. The arrows show which actions\nare available in each location. Note that once you have made a move you\ncannot go back; you can only move forward along the arrows. There are\neight possible final destinations labelled 1-8 in the image below. On\nyour way there, you will visit two intermediate locations. <b>Every\nlocation you visit will add or subtract money to your account</b>, and\nyour task is to earn as much money as possible. <b>To find out how much\nmoney you earn or lose in a location, you have to click on it.</b> You\ncan uncover the value of as many or as few locations as you wish.\n\n" + (img('task_images/Slide1.png')) + "\n\nTo navigate the airplane, use the arrows (the example above is non-interactive).\nYou can uncover the value of a location at any time. Click \"Next\" to proceed."), markdown("# Instructions\n\nYou will play the game for " + N_TRIALS + " rounds. The value of every location will\nchange from each round to the next. At the begining of each round, the\nvalue of every location will be hidden, and you will only discover the\nvalue of the locations you click on. The example below shows the value\nof every location, just to give you an example of values you could see\nif you clicked on every location. <b>Every time you click a circle to\nobserve its value, you pay a fee of " + (fmtMoney(PARAMS.info_cost)) + ".</b>\n\n" + (img('task_images/Slide2_' + costLevel + '.png')) + "\n\nEach time you move to a\nlocation, your profit will be adjusted. If you move to a location with\na hidden value, your profit will still be adjusted according to the\nvalue of that location. " + (text.constantDelay()))].concat((text.feedback()).concat([markdown("# Instructions\n\nThere are two more important things to understand:\n1. You must spend at least 45 seconds on each round. A countdown timer\n   will show you how much more time you must spend on the round. You\n   won’t be able to proceed to the next round before the countdown has\n   finished, but you can take as much time as you like afterwards.\n2. </b>You will earn <u>real money</u> for your flights.</b> Specifically,\n   one of the " + N_TRIALS + " rounds will be chosen at random and you will receive 5%\n   of your earnings in that round as a bonus payment.\n\n" + (img('task_images/Slide3.png')) + "\n\n You may proceed to take an entry quiz, or go back to review the instructions.")])),
-  show_clickable_nav: true
-});
-
-quiz = new Block({
-  preamble: function() {
-    return markdown("# Quiz");
-  },
-  type: 'survey-multi-choice',
-  questions: ["True or false: The hidden values will change each time I start a new round.", "How much does it cost to observe each hidden value?", "How many hidden values am I allowed to observe in each round?", "How is your bonus determined?"].concat((PARAMS.PR_type !== "none" & PARAMS.PR_type !== "demonstration" ? ["What does the feedback teach you?"] : [])),
-  options: [['True', 'False'], ['$0.01', '$0.05', '$1.00', '$2.50'], ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish'], ['10% of my best score on any round', '10% of my total score on all rounds', '5% of my best score on any round', '5% of my score on a random round']].concat((PARAMS.PR_type === "objectLevel" ? [['Whether I chose the move that was best.', 'The length of the delay is based on how much more money I could have earned.', 'All of the above.']] : PARAMS.PR_type !== "none" ? [['Whether I observed the rewards of relevant locations.', 'Whether I chose the move that was best according to the information I had.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']] : [])),
-  required: [true, true, true, true, true],
-  correct: ['True', fmtMoney(PARAMS.info_cost), 'As many or as few as I wish', '5% of my score on a random round', 'All of the above.'],
-  on_mistake: function(data) {
-    return alert("You got at least one question wrong. We'll send you back to the\ninstructions and then you can try again.");
-  }
-});
-
-instruct_loop = new Block({
-  timeline: [instructions, quiz],
-  loop_function: function(data) {
-    var c, i, len, ref;
-    ref = data[1].correct;
-    for (i = 0, len = ref.length; i < len; i++) {
-      c = ref[i];
-      if (!c) {
-        return true;
-      }
-    }
-    psiturk.finishInstructions();
-    psiturk.saveData();
-    return false;
-  }
-});
-
-train = new MDPBlock({
-  timeline: _.shuffle(TRIALS)
-});
-
-finish = new Block({
-  type: 'button-response',
-  stimulus: function() {
-    return markdown("# You've completed the HIT\n\nThanks again for participating. We hope you had fun!\n\nBased on your performance, you will be\nawarded a bonus of **$" + (calculateBonus().toFixed(2)) + "**.");
-  },
-  is_html: true,
-  choices: ['Submit hit'],
-  button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
-});
-
-if (DEBUG) {
-  experiment_timeline = [train, finish];
-} else {
-  experiment_timeline = [instruct_loop, train, finish];
-}
-
-BONUS = void 0;
-
-calculateBonus = function() {
-  var data;
-  if (BONUS != null) {
-    return BONUS;
-  }
-  data = jsPsych.data.getTrialsOfType('mouselab-mdp');
-  BONUS = 0.05 * Math.max(0, (_.sample(data)).score);
-  psiturk.recordUnstructuredData('final_bonus', BONUS);
-  return BONUS;
-};
-
-reprompt = null;
-
-save_data = function() {
-  return psiturk.saveData({
-    success: function() {
-      console.log('Data saved to psiturk server.');
-      if (reprompt != null) {
-        window.clearInterval(reprompt);
-      }
-      return psiturk.computeBonus('compute_bonus', psiturk.completeHIT);
     },
-    error: function() {
-      return prompt_resubmit;
+    feedback: function() {
+      if (PARAMS.PR_type !== "none") {
+        if (PARAMS.PR_type === "objectLevel") {
+          return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback\nwill help you learn how to make better decisions.</b> After each\nflight, if you did not make the best move, a feedback message\nwill apear. This message will tell you whether you flew along\nthe best route given your current location, and what the best\nmove would have been.\n\nThis feedback will be presented after each of the first\n" + N_TRAIN + " rounds; during the final " + N_TEST + " rounds,\nno feedback will be presented.\n\nIn the example below, the best move was not taken. As a result,\nthere is a 15 second timeout penalty.<b> The duration of the\ntimeout penalty is proportional to how poor of a move you made:\n</b> the more money you could have earned, the longer the delay.\n<b> If you perform optimally, no feedback will be shown and you\ncan proceed immediately.</b>\n\n" + (img('task_images/Slide5.png')) + "\n")];
+        } else if (PARAMS.PR_type === "demonstration") {
+          return [markdown("# Instructions\n\n<b>You will receive guidance about how to plan. This guidance\nwill help you learn how to make better decisions.</b> The first\n" + N_TRAIN + " rounds will demonstrate what optimal planning and\nflight paths look like. In the remaining " + N_TEST + " rounds, you\nwill make your own choices.")];
+        } else if (PARAMS.message === "simple") {
+          return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight, if\nyou did not plan optimally, a feedback message will apear.\n\nIn the example below, there is a 15 second timeout penalty. <b>The duration of the timeout penalty is\nproportional to how poorly you planned your route:</b> the more\nmoney you could have earned from observing more/less values\nand/or choosing a better route, the longer the delay. <b>If you\nperform optimally, no feedback will be shown and you can proceed\nimmediately.</b> The example message here is not necessarily\nrepresentative of the feedback you'll receive.\n\nThis feedback will be presented after each of the first\n" + N_TRAIN + " rounds; during the final " + N_TEST + " rounds,\nno feedback will be presented.\n\n" + (img('task_images/Slide4_simpleMsg.png')))];
+        } else {
+          return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight, if\nyou did not plan optimally, a feedback message will apear. This message\nwill tell you two things:\n\n1. Whether you observed too few relevant values or if you observed\n   irrelevant values (values of locations that you can't fly to).\n2. Whether you flew along the best route given your current location and\n   the information you had about the values of other locations.\n\nThis feedback will be presented after each of the first\n" + N_TRAIN + " rounds; during the final " + N_TEST + " rounds,\nno feedback will be presented.\n\nIn the example below, there is a 15 second timeout penalty. If\nyou observed too few relevant values, the message would say,\n\"You should have gathered more information!\"; if you observed\ntoo many values, it would say \"You should have gathered less\ninformation!\". <b>The duration of the timeout penalty is\nproportional to how poorly you planned your route:</b> the more\nmoney you could have earned from observing more/less values\nand/or choosing a better route, the longer the delay. <b>If you\nperform optimally, no feedback will be shown and you can proceed\nimmediately.</b> The example message here is not necessarily\nrepresentative of the feedback you'll receive.\n\n" + (img('task_images/Slide4' + msgType + '.png')))];
+        }
+      } else if (PARAMS.message === "full") {
+        return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback will\nhelp you learn how to make better decisions.</b> After each flight a feedback message will apear. This message\nwill tell you two things:\n\n1. Whether you observed too few relevant values or if you observed\n   irrelevant values (values of locations that you can't fly to).\n2. Whether you flew along the best route given your current location and\n   the information you had about the values of other locations.\n\nThis feedback will be presented after each of the first\n" + N_TRAIN + " rounds; during the final " + N_TEST + " rounds,\nno feedback will be presented.\n\nIn the example below, if\nyou observed too few relevant values, the message would say,\n\"You should have gathered more information!\"; if you observed\ntoo many values, it would say \"You should have gathered less\ninformation!\". The example message here is not necessarily\nrepresentative of the feedback you'll receive.\n\n" + (img('task_images/Slide4_noPR.png')))];
+      } else {
+        return [];
+      }
+    },
+    constantDelay: function() {
+      if (PARAMS.PR_type !== "none") {
+        return "";
+      } else {
+        return "Note: there will be short delays after taking some flights.";
+      }
+    }
+  };
+  Block = (function() {
+    function Block(config) {
+      _.extend(this, config);
+      this._block = this;
+      if (this._init != null) {
+        this._init();
+      }
+    }
+
+    return Block;
+
+  })();
+  TextBlock = (function(superClass) {
+    extend(TextBlock, superClass);
+
+    function TextBlock() {
+      return TextBlock.__super__.constructor.apply(this, arguments);
+    }
+
+    TextBlock.prototype.type = 'text';
+
+    TextBlock.prototype.cont_key = ['space'];
+
+    return TextBlock;
+
+  })(Block);
+  QuizLoop = (function(superClass) {
+    extend(QuizLoop, superClass);
+
+    function QuizLoop() {
+      return QuizLoop.__super__.constructor.apply(this, arguments);
+    }
+
+    QuizLoop.prototype.loop_function = function(data) {
+      var c, i, len, ref;
+      console.log('data', data);
+      ref = data[data.length].correct;
+      for (i = 0, len = ref.length; i < len; i++) {
+        c = ref[i];
+        if (!c) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    return QuizLoop;
+
+  })(Block);
+  MDPBlock = (function(superClass) {
+    extend(MDPBlock, superClass);
+
+    function MDPBlock() {
+      return MDPBlock.__super__.constructor.apply(this, arguments);
+    }
+
+    MDPBlock.prototype.type = 'mouselab-mdp';
+
+    MDPBlock.prototype._init = function() {
+      return this.trialCount = 0;
+    };
+
+    return MDPBlock;
+
+  })(Block);
+  debug_slide = new Block({
+    type: 'html',
+    url: 'test.html'
+  });
+  instructions = new Block({
+    type: "instructions",
+    pages: [markdown("# Instructions " + (text.debug()) + "\n\nIn this game, you are in charge of flying an aircraft. As shown below,\nyou will begin in the central location. The arrows show which actions\nare available in each location. Note that once you have made a move you\ncannot go back; you can only move forward along the arrows. There are\neight possible final destinations labelled 1-8 in the image below. On\nyour way there, you will visit two intermediate locations. <b>Every\nlocation you visit will add or subtract money to your account</b>, and\nyour task is to earn as much money as possible. <b>To find out how much\nmoney you earn or lose in a location, you have to click on it.</b> You\ncan uncover the value of as many or as few locations as you wish.\n\n" + (img('task_images/Slide1.png')) + "\n\nTo navigate the airplane, use the arrows (the example above is non-interactive).\nYou can uncover the value of a location at any time. Click \"Next\" to proceed."), markdown("# Instructions\n\nYou will play the game for " + N_TRIALS + " rounds. The value of\nevery location will change from each round to the next. At the\nbegining of each round, the value of every location will be hidden,\nand you will only discover the value of the locations you click on.\nThe example below shows the value of every location, just to give you\nan example of values you could see if you clicked on every location.\n<b>Every time you click a circle to observe its value, you pay a fee\nof " + (fmtMoney(PARAMS.info_cost)) + ".</b>\n\n" + (img('task_images/Slide2_' + COST_LEVEL + '.png')) + "\n\nEach time you move to a\nlocation, your profit will be adjusted. If you move to a location with\na hidden value, your profit will still be adjusted according to the\nvalue of that location. " + (text.constantDelay()))].concat((text.feedback()).concat([markdown("# Instructions\n\nThere are two more important things to understand:\n1. You must spend at least 45 seconds on each round. A countdown timer\n   will show you how much more time you must spend on the round. You\n   won’t be able to proceed to the next round before the countdown has\n   finished, but you can take as much time as you like afterwards.\n2. </b>You will earn <u>real money</u> for your flights.</b>\n   Specifically, one of the " + N_TRIALS + " rounds will be chosen\n   at random and you will receive 5% of your earnings in that round as\n   a bonus payment.\n\n" + (img('task_images/Slide3.png')) + "\n\n You may proceed to take an entry quiz, or go back to review the instructions.")])),
+    show_clickable_nav: true
+  });
+  quiz = new Block({
+    preamble: function() {
+      return markdown("# Quiz");
+    },
+    type: 'survey-multi-choice',
+    questions: ["True or false: The hidden values will change each time I start a new round.", "How much does it cost to observe each hidden value?", "How many hidden values am I allowed to observe in each round?", "How is your bonus determined?"].concat((PARAMS.PR_type !== "none" & PARAMS.PR_type !== "demonstration" ? ["What does the feedback teach you?"] : [])),
+    options: [['True', 'False'], ['$0.01', '$0.05', '$1.00', '$2.50'], ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish'], ['10% of my best score on any round', '10% of my total score on all rounds', '5% of my best score on any round', '5% of my score on a random round']].concat((PARAMS.PR_type === "objectLevel" ? [['Whether I chose the move that was best.', 'The length of the delay is based on how much more money I could have earned.', 'All of the above.']] : PARAMS.PR_type !== "none" ? [['Whether I observed the rewards of relevant locations.', 'Whether I chose the move that was best according to the information I had.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']] : [])),
+    required: [true, true, true, true, true],
+    correct: ['True', fmtMoney(PARAMS.info_cost), 'As many or as few as I wish', '5% of my score on a random round', 'All of the above.'],
+    on_mistake: function(data) {
+      return alert("You got at least one question wrong. We'll send you back to the\ninstructions and then you can try again.");
     }
   });
-};
-
-prompt_resubmit = function() {
-  $('#jspsych-target').html("<h1>Oops!</h1>\n<p>\nSomething went wrong submitting your HIT.\nThis might happen if you lose your internet connection.\nPress the button to resubmit.\n</p>\n<button id=\"resubmit\">Resubmit</button>");
-  return $('#resubmit').click(function() {
-    $('#jspsych-target').html('Trying to resubmit...');
-    reprompt = window.setTimeout(prompt_resubmit, 10000);
-    return save_data();
-  });
-};
-
-jsPsych.init({
-  display_element: $('#jspsych-target'),
-  timeline: experiment_timeline,
-  on_finish: function() {
-    if (DEBUG) {
-      return jsPsych.data.displayData();
-    } else {
-      psiturk.recordUnstructuredData('final_bonus', calculateBonus());
-      return save_data();
+  instruct_loop = new Block({
+    timeline: [instructions, quiz],
+    loop_function: function(data) {
+      var c, i, len, ref;
+      ref = data[1].correct;
+      for (i = 0, len = ref.length; i < len; i++) {
+        c = ref[i];
+        if (!c) {
+          return true;
+        }
+      }
+      psiturk.finishInstructions();
+      psiturk.saveData();
+      return false;
     }
-  },
-  on_data_update: function(data) {
-    console.log('data', data);
-    return psiturk.recordTrialData(data);
+  });
+  if (PARAMS.PR_type === "demonstration") {
+    train = new MDPBlock({
+      demonstrate: true,
+      timeline: _.shuffle(TRAIN_TRIALS)
+    });
+  } else {
+    train = new MDPBlock({
+      timeline: _.shuffle(TRAIN_TRIALS)
+    });
   }
-});
+  test = new Block({
+    timeline: (function() {
+      var tl;
+      tl = [];
+      if (PARAMS.feedback) {
+        tl.push(new TextBlock({
+          text: markdown("# No more feedback\n\nYou are now entering a block without feedback. There will be no\nmessages and no delays regardless of what you do, but your\nperformance still affects your bonus.\n\nPress **space** to continue.")
+        }));
+      }
+      if (PARAMS.PR_type === "demonstration") {
+        tl.push(new TextBlock({
+          text: markdown("# Your turn\nThis was the last demonstration from your teacher. Now it is your turn to decide which locations to inspect and where to fly to.")
+        }));
+      }
+      tl.push(new MDPBlock({
+        feedback: false,
+        timeline: _.shuffle(TEST_TRIALS)
+      }));
+      return tl;
+    })()
+  });
+  console.log('test', test);
+  finish = new Block({
+    type: 'button-response',
+    stimulus: function() {
+      return markdown("# You've completed the HIT\n\nThanks again for participating. We hope you had fun!\n\nBased on your performance, you will be\nawarded a bonus of **$" + (calculateBonus().toFixed(2)) + "**.");
+    },
+    is_html: true,
+    choices: ['Submit hit'],
+    button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
+  });
+  if (DEBUG) {
+    experiment_timeline = [instruct_loop, train, test, finish];
+  } else {
+    experiment_timeline = [instruct_loop, train, test, finish];
+  }
+  BONUS = void 0;
+  calculateBonus = function() {
+    var data;
+    if (BONUS != null) {
+      return BONUS;
+    }
+    data = jsPsych.data.getTrialsOfType('mouselab-mdp');
+    BONUS = 0.05 * Math.max(0, (_.sample(data)).score);
+    psiturk.recordUnstructuredData('final_bonus', BONUS);
+    return BONUS;
+  };
+  reprompt = null;
+  save_data = function() {
+    return psiturk.saveData({
+      success: function() {
+        console.log('Data saved to psiturk server.');
+        if (reprompt != null) {
+          window.clearInterval(reprompt);
+        }
+        return psiturk.computeBonus('compute_bonus', psiturk.completeHIT);
+      },
+      error: function() {
+        return prompt_resubmit;
+      }
+    });
+  };
+  prompt_resubmit = function() {
+    $('#jspsych-target').html("<h1>Oops!</h1>\n<p>\nSomething went wrong submitting your HIT.\nThis might happen if you lose your internet connection.\nPress the button to resubmit.\n</p>\n<button id=\"resubmit\">Resubmit</button>");
+    return $('#resubmit').click(function() {
+      $('#jspsych-target').html('Trying to resubmit...');
+      reprompt = window.setTimeout(prompt_resubmit, 10000);
+      return save_data();
+    });
+  };
+  return jsPsych.init({
+    display_element: $('#jspsych-target'),
+    timeline: experiment_timeline,
+    on_finish: function() {
+      if (DEBUG) {
+        return jsPsych.data.displayData();
+      } else {
+        psiturk.recordUnstructuredData('final_bonus', calculateBonus());
+        return save_data();
+      }
+    },
+    on_data_update: function(data) {
+      console.log('data', data);
+      return psiturk.recordTrialData(data);
+    }
+  });
+};

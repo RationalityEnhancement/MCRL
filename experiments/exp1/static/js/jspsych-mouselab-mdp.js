@@ -345,6 +345,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
       var head, info, msg, penalty, redGreenSpan, result;
+      if (!this.feedback) {
+        $('#mdp-feedback').css({
+          display: 'none'
+        });
+        this.arrive(s1);
+      }
       result = registerMove(a);
       result.delay = Math.round(result.delay);
       console.log('feedback', result);
@@ -393,7 +399,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             }
           }
           if (PARAMS.message === 'simple') {
-            head = redGreenSpan("Poor planning!", -1);
+            head = '';
           }
           if (PARAMS.message === 'none') {
             if (result.delay === 1) {
@@ -404,7 +410,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           }
         }
       }
-      penalty = result.delay ? "<p>" + result.delay + " second penalty</p>" : void 0;
+      if (PARAMS.PR_type === "none") {
+        penalty = result.delay ? "<p>Please wait " + result.delay + " seconds.</p>" : void 0;
+      } else {
+        penalty = result.delay ? redGreenSpan("<p>" + result.delay + " second penalty!</p>", -1) : void 0;
+      }
       info = (function() {
         if (PARAMS.message === 'full') {
           return "Given the information you collected, your decision was " + (result.information_used_correctly ? redGreenSpan('optimal.', 1) : redGreenSpan('suboptimal.', -1));
@@ -413,10 +423,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         }
       })();
       if ((PARAMS.message === 'full' || PARAMS.message === 'simple') && PARAMS.PR_type !== 'objectLevel') {
-        msg = "<h3>" + head + "</h3>\n<b>" + penalty + "</b>\n" + info;
+        msg = "<h3>" + head + "</h3>            \n<b>" + penalty + "</b>                        \n" + info;
       }
       if (PARAMS.PR_type === 'objectLevel') {
-        msg = "<h3>" + head + "</h3>\n<b>" + penalty + "</b>";
+        msg = "<h3>" + head + "</h3>             \n<b>" + penalty + "</b> ";
       }
       if (PARAMS.message === 'none') {
         msg = "<h3>" + head + "</h3>";

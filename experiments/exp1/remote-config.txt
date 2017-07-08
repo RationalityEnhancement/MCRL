@@ -26,8 +26,12 @@ login_pw = cocotastic90
 threads = 4
 
 [Task Parameters]
-experiment_code_version = 1A.0
-num_conds = 9
+experiment_code_version = 1B.0
+<<<<<<< HEAD
+num_conds = 4
+=======
+num_conds = 6
+>>>>>>> cca2f939335af50054700cca32f3597dee02f696
 num_counters = 1
 
 [Shell Parameters]
