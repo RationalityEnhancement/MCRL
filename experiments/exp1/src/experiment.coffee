@@ -438,6 +438,8 @@ initializeExperiment = ->
           text: markdown """
             # Your turn
             This was the last demonstration from your teacher. Now it is your turn to decide which locations to inspect and where to fly to.
+
+            Press **space** to continue.
             """        
                 
       tl.push new MDPBlock
