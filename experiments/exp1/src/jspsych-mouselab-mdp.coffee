@@ -205,14 +205,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       actions = OPTIMAL[@trial_i]
       i = 0
       act = () =>
-        console.log "act #{i}"
         a = actions[i]
         if a.is_click
-          console.log "click #{a.state}", @states[a.state]
           @clickState @states[a.state], a.state
         else
           s = _.last @data.path
-          console.log "move #{a.move}", s
           @handleKey s, a.move
         i += 1
         if i is actions.length
@@ -451,16 +448,17 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         return
 
       # Start key listener.
-      @keyListener = jsPsych.pluginAPI.getKeyboardResponse
-        valid_responses: keys
-        rt_method: 'date'
-        persist: false
-        allow_held_key: false
-        callback_function: (info) =>
-          action = @invKeys[info.key]
-          LOG_DEBUG 'key', info.key
-          @data.rt.push info.rt
-          @handleKey s, action
+      if not @demonstrate
+        @keyListener = jsPsych.pluginAPI.getKeyboardResponse
+          valid_responses: keys
+          rt_method: 'date'
+          persist: false
+          allow_held_key: false
+          callback_function: (info) =>
+            action = @invKeys[info.key]
+            LOG_DEBUG 'key', info.key
+            @data.rt.push info.rt
+            @handleKey s, action
 
     addScore: (v) =>
       @data.score = round (@data.score + v)
@@ -592,9 +590,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @left = @circle.left
       @top = @circle.top
 
-      @on('mousedown', -> mdp.clickState this, @name)
-      @on('mouseover', -> mdp.mouseoverState this, @name)
-      @on('mouseout', -> mdp.mouseoutState this, @name)
+      if not mdp.demonstrate
+        @on('mousedown', -> mdp.clickState this, @name)
+        @on('mouseover', -> mdp.mouseoverState this, @name)
+        @on('mouseout', -> mdp.mouseoutState this, @name)
       super [@circle, @label]
       @setLabel conf.label
 

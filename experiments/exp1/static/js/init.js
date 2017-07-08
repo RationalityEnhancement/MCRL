@@ -6,17 +6,17 @@ DEBUG = true;
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
   console.log('FOOBAR');
-  condition = 0;
+  condition = 2;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
 
 if (mode === "{{ mode }}") {
   DEMO = true;
-  condition = 1;
+  condition = 2;
 }
 
-experiment_nr = 2;
+experiment_nr = 3;
 
 switch (experiment_nr) {
   case 0:
@@ -61,9 +61,9 @@ switch (experiment_nr) {
     break;
   case 3:
     IVs = {
-      frequencyOfFB: ['after_each_move', 'after_each_click'],
-      PRTypes: ['featureBased'],
-      messageTypes: ['none'],
+      frequencyOfFB: ['after_each_move'],
+      PRTypes: ['none', 'featureBased', 'demonstration'],
+      messageTypes: ['full'],
       infoCosts: [1.00]
     };
     break;
@@ -130,7 +130,7 @@ for (i = 0, len = ref.length; i < len; i++) {
 
 PARAMS = {
   PR_type: conditions.PRType[condition % nrConditions],
-  feedback: conditions.PRType[condition % nrConditions] !== "none",
+  feedback: conditions.PRType[condition % nrConditions] !== "none" && conditions.PRType[condition % nrConditions] !== "demonstration",
   info_cost: conditions.infoCost[condition % nrConditions],
   message: conditions.messageType[condition % nrConditions],
   frequencyOfFB: conditions.frequencyOfFB[condition % nrConditions],

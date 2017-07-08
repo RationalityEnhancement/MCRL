@@ -205,14 +205,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       act = (function(_this) {
         return function() {
           var a, s;
-          console.log("act " + i);
           a = actions[i];
           if (a.is_click) {
-            console.log("click " + a.state, _this.states[a.state]);
             _this.clickState(_this.states[a.state], a.state);
           } else {
             s = _.last(_this.data.path);
-            console.log("move " + a.move, s);
             _this.handleKey(s, a.move);
           }
           i += 1;
@@ -480,21 +477,23 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         this.checkFinished();
         return;
       }
-      return this.keyListener = jsPsych.pluginAPI.getKeyboardResponse({
-        valid_responses: keys,
-        rt_method: 'date',
-        persist: false,
-        allow_held_key: false,
-        callback_function: (function(_this) {
-          return function(info) {
-            var action;
-            action = _this.invKeys[info.key];
-            LOG_DEBUG('key', info.key);
-            _this.data.rt.push(info.rt);
-            return _this.handleKey(s, action);
-          };
-        })(this)
-      });
+      if (!this.demonstrate) {
+        return this.keyListener = jsPsych.pluginAPI.getKeyboardResponse({
+          valid_responses: keys,
+          rt_method: 'date',
+          persist: false,
+          allow_held_key: false,
+          callback_function: (function(_this) {
+            return function(info) {
+              var action;
+              action = _this.invKeys[info.key];
+              LOG_DEBUG('key', info.key);
+              _this.data.rt.push(info.rt);
+              return _this.handleKey(s, action);
+            };
+          })(this)
+        });
+      }
     };
 
     MouselabMDP.prototype.addScore = function(v) {
@@ -662,15 +661,17 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.radius = this.circle.radius;
       this.left = this.circle.left;
       this.top = this.circle.top;
-      this.on('mousedown', function() {
-        return mdp.clickState(this, this.name);
-      });
-      this.on('mouseover', function() {
-        return mdp.mouseoverState(this, this.name);
-      });
-      this.on('mouseout', function() {
-        return mdp.mouseoutState(this, this.name);
-      });
+      if (!mdp.demonstrate) {
+        this.on('mousedown', function() {
+          return mdp.clickState(this, this.name);
+        });
+        this.on('mouseover', function() {
+          return mdp.mouseoverState(this, this.name);
+        });
+        this.on('mouseout', function() {
+          return mdp.mouseoutState(this, this.name);
+        });
+      }
       State.__super__.constructor.call(this, [this.circle, this.label]);
       this.setLabel(conf.label);
     }
