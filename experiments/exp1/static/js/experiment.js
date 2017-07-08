@@ -244,9 +244,16 @@ initializeExperiment = function() {
       return false;
     }
   });
-  train = new MDPBlock({
-    timeline: _.shuffle(TRAIN_TRIALS)
-  });
+  if (PARAMS.PR_type === "demonstration") {
+    train = new MDPBlock({
+      demonstrate: true,
+      timeline: _.shuffle(TRAIN_TRIALS)
+    });
+  } else {
+    train = new MDPBlock({
+      timeline: _.shuffle(TRAIN_TRIALS)
+    });
+  }
   test = new Block({
     timeline: (function() {
       var tl;

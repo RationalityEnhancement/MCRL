@@ -411,9 +411,13 @@ initializeExperiment = ->
   #   _.extend t, t.stim.env
   #   t.pseudo = t.stim.pseudo
 
-
-  train = new MDPBlock
-    timeline: _.shuffle TRAIN_TRIALS
+  if PARAMS.PR_type is "demonstration"   
+    train = new MDPBlock
+        demonstrate: true
+        timeline: _.shuffle TRAIN_TRIALS        
+  else        
+    train = new MDPBlock
+        timeline: _.shuffle TRAIN_TRIALS
   
   test = new Block
     timeline: do ->

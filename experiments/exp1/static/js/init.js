@@ -16,7 +16,7 @@ if (mode === "{{ mode }}") {
   condition = 0;
 }
 
-experiment_nr = 2;
+experiment_nr = 3;
 
 switch (experiment_nr) {
   case 0:
@@ -61,9 +61,9 @@ switch (experiment_nr) {
     break;
   case 3:
     IVs = {
-      frequencyOfFB: ['after_each_move', 'after_each_click'],
-      PRTypes: ['featureBased'],
-      messageTypes: ['none'],
+      frequencyOfFB: ['after_each_move'],
+      PRTypes: ['none', 'featureBased', 'demonstration'],
+      messageTypes: ['full'],
       infoCosts: [1.00]
     };
     break;
