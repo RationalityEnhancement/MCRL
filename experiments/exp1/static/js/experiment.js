@@ -6,7 +6,7 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var N_TEST, N_TRAIN, N_TRIALS, TEST_TRIALS, TRAIN_TRIALS, createStartButton, delay, initializeExperiment, isIE, psiturk,
+var N_TEST, N_TRAIN, N_TRIALS, SCORE, TEST_TRIALS, TRAIN_TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -23,6 +23,10 @@ N_TEST = void 0;
 N_TRAIN = void 0;
 
 N_TRIALS = void 0;
+
+SCORE = 0;
+
+calculateBonus = void 0;
 
 delay = function(time, func) {
   return setTimeout(func, time);
@@ -41,20 +45,11 @@ $(window).on('load', function() {
   loadTimeout = delay(12000, slowLoad);
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
   return delay(300, function() {
-    var ERROR, PARAMS, condition_nr, expData, trials;
+    var ERROR, condition_nr, expData, trials;
     console.log('Loading data');
     expData = loadJson("static/json/" + COST_LEVEL + "_cost.json");
     console.log('expData', expData);
     condition_nr = condition % nrConditions;
-    PARAMS = {
-      PR_type: conditions.PRType[condition_nr],
-      feedback: conditions.PRType[condition_nr] !== "none",
-      info_cost: conditions.infoCost[condition_nr],
-      message: conditions.messageType[condition_nr],
-      frequencyOfFB: conditions.frequencyOfFB[condition_nr],
-      condition: condition_nr,
-      start_time: new Date
-    };
     trials = expData.blocks.standard;
     TRAIN_TRIALS = trials.slice(0, 6);
     TEST_TRIALS = trials.slice(6);
@@ -96,7 +91,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var BONUS, Block, MDPBlock, QuizLoop, TextBlock, calculateBonus, debug_slide, experiment_timeline, finish, instruct_loop, instructions, msgType, prompt_resubmit, quiz, reprompt, save_data, test, text, train;
+  var Block, MDPBlock, QuizLoop, TextBlock, debug_slide, experiment_timeline, finish, instruct_loop, instructions, msgType, prompt_resubmit, quiz, reprompt, save_data, test, text, train;
   console.log('INITIALIZE EXPERIMENT');
   msgType = (function() {
     switch (PARAMS.message) {
@@ -284,16 +279,17 @@ initializeExperiment = function() {
   } else {
     experiment_timeline = [instruct_loop, train, test, finish];
   }
-  BONUS = void 0;
-  calculateBonus = function() {
-    var data;
-    if (BONUS != null) {
-      return BONUS;
+  calculateBonus = function(final) {
+    var bonus, data;
+    if (final == null) {
+      final = false;
     }
+    console.log('calculateBonus');
+    console.log(SCORE);
     data = jsPsych.data.getTrialsOfType('mouselab-mdp');
-    BONUS = 0.05 * Math.max(0, (_.sample(data)).score);
-    psiturk.recordUnstructuredData('final_bonus', BONUS);
-    return BONUS;
+    bonus = (Math.max(0, SCORE)) * PARAMS.bonus_rate;
+    bonus = (Math.round(bonus * 100)) / 100;
+    return bonus;
   };
   reprompt = null;
   save_data = function() {

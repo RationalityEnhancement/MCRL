@@ -33,7 +33,10 @@ check = (name, val) ->
   val
 
 mean = (xs) ->
-  (xs.reduce ((acc, x) -> acc+x)) / xs.length
+  (sum xs) / xs.length
+
+sum = (xs) ->
+  xs.reduce ((acc, x) -> acc+x)
 
 checkObj = (obj, keys) ->
   if not keys?

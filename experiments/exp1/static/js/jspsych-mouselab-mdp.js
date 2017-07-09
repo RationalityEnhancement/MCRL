@@ -17,7 +17,7 @@ mdp = void 0;
 OPTIMAL = void 0;
 
 jsPsych.plugins['mouselab-mdp'] = (function() {
-  var Arrow, Edge, KEYS, KEY_DESCRIPTION, LOG_DEBUG, LOG_INFO, MouselabMDP, NULL, PRINT, SIZE, State, TRIAL_INDEX, Text, angle, checkObj, dist, plugin, polarMove, redGreen, round;
+  var Arrow, Edge, KEYS, LOG_DEBUG, LOG_INFO, MouselabMDP, NULL, PRINT, SIZE, State, TRIAL_INDEX, Text, angle, checkObj, dist, plugin, polarMove, redGreen, round;
   OPTIMAL = (loadJson('static/json/optimal_policy.json'))[COST_LEVEL];
   PRINT = function() {
     var args;
@@ -89,7 +89,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     right: 'rightarrow',
     left: 'leftarrow'
   }, jsPsych.pluginAPI.convertKeyCharacterToKeyCode);
-  KEY_DESCRIPTION = "Navigate with the arrow keys.";
   MouselabMDP = (function() {
     function MouselabMDP(config) {
       this.checkFinished = bind(this.checkFinished, this);
@@ -115,9 +114,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.handleKey = bind(this.handleKey, this);
       this.runDemo = bind(this.runDemo, this);
       var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage, timeMsg;
-      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.initial = config.initial, this.stateLabels = (ref = config.stateLabels) != null ? ref : null, this.stateDisplay = (ref1 = config.stateDisplay) != null ? ref1 : 'never', this.stateClickCost = (ref2 = config.stateClickCost) != null ? ref2 : PARAMS.info_cost, this.edgeLabels = (ref3 = config.edgeLabels) != null ? ref3 : 'reward', this.edgeDisplay = (ref4 = config.edgeDisplay) != null ? ref4 : 'always', this.edgeClickCost = (ref5 = config.edgeClickCost) != null ? ref5 : 0, this.trial_i = (ref6 = config.trial_i) != null ? ref6 : null, this.demonstrate = (ref7 = config.demonstrate) != null ? ref7 : false, this.stateRewards = (ref8 = config.stateRewards) != null ? ref8 : null, this.keys = (ref9 = config.keys) != null ? ref9 : KEYS, this.trialIndex = (ref10 = config.trialIndex) != null ? ref10 : TRIAL_INDEX, this.playerImage = (ref11 = config.playerImage) != null ? ref11 : 'static/images/plane.png', SIZE = (ref12 = config.SIZE) != null ? ref12 : 120, leftMessage = (ref13 = config.leftMessage) != null ? ref13 : null, centerMessage = (ref14 = config.centerMessage) != null ? ref14 : '&nbsp;', rightMessage = (ref15 = config.rightMessage) != null ? ref15 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref16 = config.lowerMessage) != null ? ref16 : KEY_DESCRIPTION, this.minTime = (ref17 = config.minTime) != null ? ref17 : (DEBUG ? 5 : 45), this.feedback = (ref18 = config.feedback) != null ? ref18 : true;
+      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.initial = config.initial, this.stateLabels = (ref = config.stateLabels) != null ? ref : null, this.stateDisplay = (ref1 = config.stateDisplay) != null ? ref1 : 'never', this.stateClickCost = (ref2 = config.stateClickCost) != null ? ref2 : PARAMS.info_cost, this.edgeLabels = (ref3 = config.edgeLabels) != null ? ref3 : 'reward', this.edgeDisplay = (ref4 = config.edgeDisplay) != null ? ref4 : 'always', this.edgeClickCost = (ref5 = config.edgeClickCost) != null ? ref5 : 0, this.trial_i = (ref6 = config.trial_i) != null ? ref6 : null, this.demonstrate = (ref7 = config.demonstrate) != null ? ref7 : false, this.stateRewards = (ref8 = config.stateRewards) != null ? ref8 : null, this.keys = (ref9 = config.keys) != null ? ref9 : KEYS, this.trialIndex = (ref10 = config.trialIndex) != null ? ref10 : TRIAL_INDEX, this.playerImage = (ref11 = config.playerImage) != null ? ref11 : 'static/images/plane.png', SIZE = (ref12 = config.SIZE) != null ? ref12 : 120, leftMessage = (ref13 = config.leftMessage) != null ? ref13 : null, centerMessage = (ref14 = config.centerMessage) != null ? ref14 : '&nbsp;', rightMessage = (ref15 = config.rightMessage) != null ? ref15 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref16 = config.lowerMessage) != null ? ref16 : "Navigate with the arrow keys.", this.minTime = (ref17 = config.minTime) != null ? ref17 : (DEBUG ? 5 : 45), this.feedback = (ref18 = config.feedback) != null ? ref18 : true;
       if (leftMessage == null) {
-        leftMessage = TRIAL_INDEX + "/" + N_TRIALS;
+        leftMessage = "Round: " + TRIAL_INDEX + "/" + N_TRIALS;
+      }
+      if (this.demonstrate) {
+        lowerMessage = "This is a demonstration of optimal planning.";
       }
       checkObj(this);
       this.initial = "" + this.initial;
@@ -352,7 +354,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       result.delay = Math.round(result.delay);
       console.log('feedback', result);
       if (PARAMS.PR_type === 'none') {
-        console.log('HELLO THERE');
         result.delay = (function() {
           switch (PARAMS.info_cost) {
             case 0.01:
@@ -368,7 +369,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       redGreenSpan = function(txt, val) {
         return "<span style='color: " + (redGreen(val)) + "; font-weight: bold;'>" + txt + "</span>";
       };
-      console.log('HELLO', PARAMS);
       if (PARAMS.message) {
         if (PARAMS.PR_type === 'objectLevel') {
           if (a === result.optimal_action.direction) {
@@ -445,7 +445,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             });
             return _this.arrive(s1);
           };
-        })(this)), (DEBUG ? 3000 : result.delay * 1000));
+        })(this)), (DEBUG ? 1000 : result.delay * 1000));
       } else {
         $('#mdp-feedback').css({
           display: 'none'
@@ -607,7 +607,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.endTrial = function() {
-      this.lowerMessage.html("<b>Press any key to continue.</br>");
+      SCORE += this.data.score;
+      this.lowerMessage.html("So far, you've earned a bonus of $" + (calculateBonus()) + "\n<br>\n<b>Press any key to continue.</b><e");
       return this.keyListener = jsPsych.pluginAPI.getKeyboardResponse({
         valid_responses: [],
         rt_method: 'date',

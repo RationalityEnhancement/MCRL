@@ -17,6 +17,9 @@ TRAIN_TRIALS = undefined
 N_TEST = undefined
 N_TRAIN = undefined
 N_TRIALS = undefined
+SCORE = 0
+calculateBonus = undefined
+
 # because the order of arguments of setTimeout is awful.
 delay = (time, func) -> setTimeout func, time
 
@@ -51,17 +54,16 @@ $(window).on 'load', ->
 
     
     condition_nr = condition % nrConditions
-    PARAMS=
-      PR_type: conditions.PRType[condition_nr]
-      feedback: conditions.PRType[condition_nr] != "none"
-      info_cost: conditions.infoCost[condition_nr]
-      message:  conditions.messageType[condition_nr]
-      frequencyOfFB: conditions.frequencyOfFB[condition_nr]
-      condition: condition_nr
-      start_time: new Date
+    # PARAMS=
+    #   PR_type: conditions.PRType[condition_nr]
+    #   feedback: conditions.PRType[condition_nr] != "none"
+    #   info_cost: conditions.infoCost[condition_nr]
+    #   message:  conditions.messageType[condition_nr]
+    #   frequencyOfFB: conditions.frequencyOfFB[condition_nr]
+    #   condition: condition_nr
+    #   start_time: new Date
     
         
-    # PARAMS.bonus_rate = .1
     trials = expData.blocks.standard
     TRAIN_TRIALS = trials[...6]
     TEST_TRIALS = trials[6...]
@@ -484,25 +486,25 @@ initializeExperiment = ->
   # ========= START AND END THE EXPERIMENT ========= #
   # ================================================ #
 
+  calculateBonus = (final=false) ->
+    console.log 'calculateBonus'
+    console.log SCORE
+    data = jsPsych.data.getTrialsOfType 'mouselab-mdp'
+    # score = sum (_.pluck data, 'score')
+    # console.log 'score', score
+    bonus = (Math.max 0, SCORE) * PARAMS.bonus_rate
+    bonus = (Math.round (bonus * 100)) / 100  # round to nearest cent
+    return bonus
+
+  # # bonus is the score on a random trial.
+  # BONUS = undefined
   # calculateBonus = ->
   #   if BONUS?
   #     return BONUS
   #   data = jsPsych.data.getTrialsOfType 'mouselab-mdp'
-  #   bonus = mean (_.pluck data, 'score')
-  #   bonus = (Math.round (bonus * 100)) / 100
-  #   BONUS =  (Math.max 0, bonus) * PARAMS.bonus_rate
+  #   BONUS = 0.05 * Math.max 0, (_.sample data).score
   #   psiturk.recordUnstructuredData 'final_bonus', BONUS
   #   return BONUS
-
-  # bonus is the score on a random trial.
-  BONUS = undefined
-  calculateBonus = ->
-    if BONUS?
-      return BONUS
-    data = jsPsych.data.getTrialsOfType 'mouselab-mdp'
-    BONUS = 0.05 * Math.max 0, (_.sample data).score
-    psiturk.recordUnstructuredData 'final_bonus', BONUS
-    return BONUS
   
 
   reprompt = null
