@@ -613,7 +613,7 @@ properties_horizon2=properties_horizon2(indices);
 optimality_horizon2=optimality_horizon2(indices);
 score_horizon2=score_horizon2(indices);
 
-for t=1:(10*nr_myopic_trials)
+for t=1:(4*nr_myopic_trials)
     mean_reward=1; std_reward=2;
     
     tic()
@@ -627,12 +627,14 @@ properties_horizon2_myopic=properties_horizon2_myopic(indices);
 optimality_horizon2_myopic=optimality_horizon2_myopic(indices);
 score_horizon2_myopic=score_horizon2_myopic(indices);
 
+
+
 medium_cost_condition=[mdps_horizon2(1:(fraction_nonmyopic*nr_trials)),...
     mdps_horizon2_myopic(1:(fraction_myopic*nr_trials))];
 properties_medium_cost_condition=[properties_horizon2(1:(fraction_nonmyopic*nr_trials)),...
     properties_horizon2_myopic(1:(fraction_myopic*nr_trials))];
 
-for t=1:30
+for t=1:20
     
     score=-inf;
     %if properties_horizon0(t).score>-12
@@ -784,19 +786,19 @@ end
 
 for t=1:nr_trials, low_cost_rewards(:,t)=low_cost_condition(t).rewards(low_cost_condition(t).T>0),end
 mean(low_cost_rewards(:))
-scaling_factor.low_cost=10.6/(2*(16/12))/std(low_cost_rewards(:))
+scaling_factor.low_cost=10.6/std(low_cost_rewards(:))
 shift.low_cost=4.5 - scaling_factor.low_cost * mean(low_cost_rewards(:));
 
 for t=1:nr_trials, medium_cost_rewards(:,t)=medium_cost_condition(t).rewards(medium_cost_condition(t).T>0),end
 mean(medium_cost_rewards(:))
 std(medium_cost_rewards(:))
-scaling_factor.medium_cost=10.6/(2*(16/12))/std(medium_cost_rewards(:))
+scaling_factor.medium_cost=10.6/std(medium_cost_rewards(:))
 shift.medium_cost=4.5 - scaling_factor.medium_cost * mean(medium_cost_rewards(:));
 
 for t=1:nr_trials, high_cost_rewards(:,t)=high_cost_condition(t).rewards(high_cost_condition(t).T>0),end
 mean(high_cost_rewards(:))
 std(high_cost_rewards(:))
-scaling_factor.high_cost=10.6/(2*(16/12))/std(high_cost_rewards(:));
+scaling_factor.high_cost=10.6/std(high_cost_rewards(:));
 shift.high_cost=4.5 - scaling_factor.high_cost * mean(high_cost_rewards(:));
 
 for t=1:nr_trials
