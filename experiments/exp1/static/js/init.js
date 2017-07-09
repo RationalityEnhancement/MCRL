@@ -134,7 +134,7 @@ PARAMS = {
   message: conditions.messageType[condition % nrConditions],
   frequencyOfFB: conditions.frequencyOfFB[condition % nrConditions],
   condition: condition,
-  bonus_rate: 0.005
+  bonus_rate: 0.01
 };
 
 console.log('PARAMS', PARAMS);

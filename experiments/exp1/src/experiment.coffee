@@ -154,10 +154,10 @@ initializeExperiment = ->
               # Instructions
 
               <b>You will receive guidance about how to plan. This guidance
-              will help you learn how to make better decisions.</b> The first
-              #{N_TRAIN} rounds will demonstrate what optimal planning and
-              flight paths look like. In the remaining #{N_TEST} rounds, you
-              will make your own choices.
+              will help you learn how to make better decisions.</b> In the
+              first #{N_TRAIN} rounds, an expert will demonstrate what optimal
+              planning and flight paths look like. In the remaining #{N_TEST}
+              rounds, you will make your own choices.
               """
             ]
         else if PARAMS.message == "simple"
@@ -343,9 +343,8 @@ initializeExperiment = ->
            won’t be able to proceed to the next round before the countdown has
            finished, but you can take as much time as you like afterwards.
         2. </b>You will earn <u>real money</u> for your flights.</b>
-           Specifically, one of the #{N_TRIALS} rounds will be chosen
-           at random and you will receive 5% of your earnings in that round as
-           a bonus payment.
+           Specifically, you will receive 1% of your total profit over all
+           #{N_TRIAL} rounds.
 
         #{img('task_images/Slide3.png')}
 
@@ -371,10 +370,10 @@ initializeExperiment = ->
       ['True', 'False']
       ['$0.01', '$0.05', '$1.00', '$2.50']
       ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish']
-      ['10% of my best score on any round'
-       '10% of my total score on all rounds'
-       '5% of my best score on any round'
-       '5% of my score on a random round']
+      ['1% of my best score on any round'
+       '1% of my total score on all rounds'
+       '10% of my best score on any round'
+       '10% of my score on a random round']
     ] .concat (if PARAMS.PR_type == "objectLevel" then [[
        'Whether I chose the move that was best.'
        'The length of the delay is based on how much more money I could have earned.'
@@ -390,7 +389,7 @@ initializeExperiment = ->
       'True'
       fmtMoney PARAMS.info_cost
       'As many or as few as I wish'
-      '5% of my score on a random round'
+      '1% of my total score on all rounds'
       'All of the above.'
     ]
     on_mistake: (data) ->
