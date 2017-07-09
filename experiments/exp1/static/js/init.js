@@ -6,7 +6,6 @@ DEBUG = true;
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
   console.log('FOOBAR');
-  condition = 2;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
@@ -134,7 +133,8 @@ PARAMS = {
   info_cost: conditions.infoCost[condition % nrConditions],
   message: conditions.messageType[condition % nrConditions],
   frequencyOfFB: conditions.frequencyOfFB[condition % nrConditions],
-  condition: condition
+  condition: condition,
+  bonus_rate: 0.005
 };
 
 console.log('PARAMS', PARAMS);

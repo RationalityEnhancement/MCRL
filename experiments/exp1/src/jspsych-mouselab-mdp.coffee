@@ -79,10 +79,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     right: 'rightarrow',
     left: 'leftarrow',
     jsPsych.pluginAPI.convertKeyCharacterToKeyCode
-  
-  KEY_DESCRIPTION = """
-  Navigate with the arrow keys.
-  """
 
 
 # =============================== #
@@ -116,14 +112,17 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         leftMessage=null
         centerMessage='&nbsp;'
         rightMessage='Score: <span id=mouselab-score/>'
-        lowerMessage=KEY_DESCRIPTION
+        lowerMessage="Navigate with the arrow keys."
 
         @minTime=(if DEBUG then 5 else 45)
         @feedback=true
       } = config
 
       if not leftMessage?
-        leftMessage = "#{TRIAL_INDEX}/#{N_TRIALS}"
+        leftMessage = "Round: #{TRIAL_INDEX}/#{N_TRIALS}"
+
+      if @demonstrate
+        lowerMessage = "This is a demonstration of optimal planning."
 
       # _.extend this, config
       checkObj this
@@ -327,7 +326,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       console.log 'feedback', result
     
       if PARAMS.PR_type is 'none'
-        console.log 'HELLO THERE'
         result.delay = switch PARAMS.info_cost
           when 0.01 then [null, 4, 0, 1][@data.actions.length]
           when 1.00 then [null, 3, 0, 1][@data.actions.length]
@@ -338,7 +336,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       redGreenSpan = (txt, val) ->
         "<span style='color: #{redGreen val}; font-weight: bold;'>#{txt}</span>"
       
-      console.log 'HELLO', PARAMS
       if PARAMS.message
           if PARAMS.PR_type is 'objectLevel'                
                 #if the move was optimal, say so
@@ -422,7 +419,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             @freeze = false
             $('#mdp-feedback').css(display: 'none')
             @arrive s1
-          ), (if DEBUG then 3000 else result.delay * 1000)
+          ), (if DEBUG then 1000 else result.delay * 1000)
       else
         $('#mdp-feedback').css(display: 'none')
         @arrive s1
@@ -544,7 +541,15 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Creates a button allowing user to move to the next trial.
     endTrial: =>
-      @lowerMessage.html """<b>Press any key to continue.</br>"""
+      if @demonstrate
+        @lowerMessage.html "<b>Press any key to continue.</b>"
+      else
+        SCORE += @data.score
+        @lowerMessage.html """
+          So far, you've earned a bonus of $#{calculateBonus()}
+          <br>
+          <b>Press any key to continue.</b><e
+        """
       @keyListener = jsPsych.pluginAPI.getKeyboardResponse
         valid_responses: []
         rt_method: 'date'

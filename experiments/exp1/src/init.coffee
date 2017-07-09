@@ -7,7 +7,7 @@ if DEBUG
   X X X X X X X X X X X X X X X X X
   """
   console.log 'FOOBAR'
-  condition = 2
+  # condition = 2
   
 else
   console.log """
@@ -72,6 +72,7 @@ PARAMS =
   message:  conditions.messageType[condition % nrConditions]
   frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]
   condition: condition
+  bonus_rate: 0.005
 
 # if DEBUG
   # PARAMS.message = 'full'
