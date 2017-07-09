@@ -541,15 +541,15 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Creates a button allowing user to move to the next trial.
     endTrial: =>
-      if @demonstrate
-        @lowerMessage.html "<b>Press any key to continue.</b>"
-      else
-        SCORE += @data.score
-        @lowerMessage.html """
-          So far, you've earned a bonus of $#{calculateBonus()}
-          <br>
-          <b>Press any key to continue.</b><e
-        """
+      # if @demonstrate
+        # @lowerMessage.html "<b>Press any key to continue.</b>"
+      # else
+      SCORE += @data.score
+      @lowerMessage.html """
+        So far, you've earned a bonus of $#{calculateBonus()}
+        <br>
+        <b>Press any key to continue.</b><e
+      """
       @keyListener = jsPsych.pluginAPI.getKeyboardResponse
         valid_responses: []
         rt_method: 'date'
