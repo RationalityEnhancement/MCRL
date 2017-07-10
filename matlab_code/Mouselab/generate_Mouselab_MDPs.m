@@ -785,19 +785,23 @@ end
 for t=1:nr_trials, low_cost_rewards(:,t)=low_cost_condition(t).rewards(low_cost_condition(t).T>0),end
 mean(low_cost_rewards(:))
 scaling_factor.low_cost=10.6/(2*(16/12))/std(low_cost_rewards(:))
-shift.low_cost=4.5 - scaling_factor.low_cost * mean(low_cost_rewards(:));
+shift.low_cost=4.5/(2*16/12) - scaling_factor.low_cost * mean(low_cost_rewards(:));
 
 for t=1:nr_trials, medium_cost_rewards(:,t)=medium_cost_condition(t).rewards(medium_cost_condition(t).T>0),end
 mean(medium_cost_rewards(:))
 std(medium_cost_rewards(:))
 scaling_factor.medium_cost=10.6/(2*(16/12))/std(medium_cost_rewards(:))
-shift.medium_cost=4.5 - scaling_factor.medium_cost * mean(medium_cost_rewards(:));
+shift.medium_cost=4.5/(2*16/12) - scaling_factor.medium_cost * mean(medium_cost_rewards(:));
 
 for t=1:nr_trials, high_cost_rewards(:,t)=high_cost_condition(t).rewards(high_cost_condition(t).T>0),end
 mean(high_cost_rewards(:))
 std(high_cost_rewards(:))
 scaling_factor.high_cost=10.6/(2*(16/12))/std(high_cost_rewards(:));
-shift.high_cost=4.5 - scaling_factor.high_cost * mean(high_cost_rewards(:));
+shift.high_cost=4.5/(2*16/12) - scaling_factor.high_cost * mean(high_cost_rewards(:));
+
+save high_cost_condition_unscaled high_cost_condition
+save low_cost_condition_unscaled high_cost_condition
+save medium_cost_condition_unscaled high_cost_condition
 
 for t=1:nr_trials
     high_cost_condition(t).rewards(high_cost_condition(t).T>0)=round(...

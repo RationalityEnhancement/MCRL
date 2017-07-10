@@ -16,6 +16,7 @@ parfor c=1:numel(conditions)
     policySearchMouselabMDP(costs(c),conditions{c},names{c})
 end
 
+%{
 parfor c=1:numel(low_costs)
     policySearchMouselabMDP(low_costs(c),low_cost_condition,'low_cost')
 end
@@ -27,7 +28,7 @@ end
 parfor c=1:numel(high_costs)
     policySearchMouselabMDP(high_costs(c),high_cost_condition,'high_cost')
 end
-
+%}
 %%
 clear
 
@@ -45,8 +46,8 @@ addpath([pwd,'../MatlabTools/'])
 add_pseudorewards=false;
 pseudoreward_type='none';
 
-mean_payoff=4.5;
-std_payoff=10.6;
+mean_payoff=4.5/(2*16/12);
+std_payoff=10.6/(2*16/12);
 
 conditions={'lowCost','mediumCost','highCost'};
 
@@ -130,5 +131,5 @@ for c=1:numel(conditions)
 end
 %end
 fit.glm=glm_Q; fit.MSE=MSE; fit.R_total=R_total; fit.conditions=conditions;
-fit.featureNames={'is_click*(E[max_a Q(s,a)]-max_a)','VPI', 'VOC', 'cost', 'ER_act','VPI2','VPI3','VPI4','1'};
+fit.featureNames={'is_click*(E[max_a Q(s,a)]-max_a)','VPI', 'VOC+cost', 'cost', 'ER_act','1'};
 save ../../results/BO/valueFunctionFitConditionSpecificTrainingDataFromControlCondition.mat fit
