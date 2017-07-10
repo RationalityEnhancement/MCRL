@@ -343,9 +343,8 @@ initializeExperiment = ->
            won’t be able to proceed to the next round before the countdown has
            finished, but you can take as much time as you like afterwards.
         2. </b>You will earn <u>real money</u> for your flights.</b>
-           Specifically, one of the #{N_TRIALS} rounds will be chosen
-           at random and you will receive 5% of your earnings in that round as
-           a bonus payment.
+           Specifically, a small portion of your earnings on every round will count toward you bonus payment.
+           Your earnings from both the #{N_TRAIN} rounds with feedback and the final #{N_TEST} rounds without feedback will count towards you bonus.
 
         #{img('task_images/Slide3.png')}
 
