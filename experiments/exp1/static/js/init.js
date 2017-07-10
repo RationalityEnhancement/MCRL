@@ -15,7 +15,7 @@ if (mode === "{{ mode }}") {
   condition = 2;
 }
 
-experiment_nr = 3;
+experiment_nr = 2;
 
 switch (experiment_nr) {
   case 0:

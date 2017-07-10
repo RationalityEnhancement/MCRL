@@ -22,7 +22,7 @@ if mode is "{{ mode }}"
   # counterbalance = 0
 
 
-experiment_nr = 3
+experiment_nr = 2
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    

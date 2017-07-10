@@ -73,9 +73,9 @@ function metaMDP(){
     
     var meta_MDP={
         cost_per_click: [],
-        cost_per_planning_step: 0.01,
-        mean_payoff: 4.5,
-        std_payoff: 10.6,        
+        cost_per_planning_step: 0,
+        mean_payoff: 4.5/(2*16/12),
+        std_payoff: 10.6/(2*16/12),        
         object_level_MDPs: trials,
         object_level_MDP: [],
         object_level_PRs: [],
