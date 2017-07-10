@@ -4,6 +4,7 @@ import sys
 sys.path.append('lib')
 from utils import dict_product
 from datetime import datetime
+from collections import defaultdict
 
 def standard_to_pseudo(trials):
     def parse_trial(trial):    
@@ -24,7 +25,7 @@ def standard_to_pseudo(trials):
 
 
 def write_optimal():
-    with open('results/selected_computations.json') as f:
+    with open('../results/selected_computations.json') as f:
         trials = json.load(f)
 
     out = defaultdict(list)
@@ -41,7 +42,7 @@ def write_optimal():
         for c, (actions, ) in zip(costs, trial):
             out[c].append(list(parse(actions)))
 
-    outfile = 'experiments/exp1/static/json/optimal_policy.json'
+    outfile = 'exp1/static/json/optimal_policy.json'
     with open(outfile, 'w+') as f:
         print('writing', outfile)
         json.dump(out, f)
