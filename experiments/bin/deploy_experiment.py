@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 
 import os
 import subprocess
 
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-from termcolor import colored
 
 
 
@@ -38,7 +37,7 @@ def upload(args):
 
     for source, dest in zip(src_paths, dst_paths):
         cmd = " ".join(cmd_template) % (source, dest)
-        print(colored(cmd, 'blue'))
+        print(cmd)
         code = subprocess.call(cmd, shell=True)
         if code != 0:
             raise RuntimeError("rsync exited abnormally: %d" % code)
@@ -48,7 +47,7 @@ def upload(args):
            "touch /home/cocosci/cocosci-mcrl.dreamhosters.com/tmp/restart.txt'" % (
                address))
 
-    print(colored(cmd, 'blue'))
+    print(cmd)
     code = subprocess.call(cmd, shell=True)
     if code != 0:
         raise RuntimeError("command exited abnormally: %s" % code)
