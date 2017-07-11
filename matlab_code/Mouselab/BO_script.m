@@ -43,9 +43,9 @@ clear
 
 addpath('../MatlabTools/')
 addpath('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/')
-load low_cost_condition
-load medium_cost_condition
-load high_cost_condition
+%load low_cost_condition
+%load medium_cost_condition
+%load high_cost_condition
 
 %condition='lowCost';
 
@@ -73,7 +73,7 @@ for c=1:numel(conditions)
         training_data1=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_none.mat');
         training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_none.mat');
         %training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_featureBased.mat');
-        load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/high_cost_condition.mat')
+        load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/high_cost_condition_pilot.mat')
         experiment=high_cost_condition;
     end
     
@@ -89,7 +89,7 @@ for c=1:numel(conditions)
         training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_medium_none.mat');
         %training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_medium_featureBased.mat');
         %training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_low_none.mat');
-        load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/medium_cost_condition.mat')
+        load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/medium_cost_condition_pilot.mat')
         experiment=medium_cost_condition;
     end
     
@@ -104,7 +104,8 @@ for c=1:numel(conditions)
         training_data1=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_low_none.mat')
         training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_low_none.mat')
         %training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_low_featureBased.mat')
-        load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/low_cost_condition.mat')
+        
+        load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/low_cost_condition_pilot.mat')
         experiment=low_cost_condition;
     end
     
