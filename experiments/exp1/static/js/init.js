@@ -20,10 +20,9 @@ SHOW_PARTICIPANT_DATA = '0/108';
 
 /*
 All Mouselab-MDP trials will be demonstration trials
-with data pulled from static/json/trace.json
-
-You can copy any trace from experiments/exp1/data/1B.0/traces to
-that location to view that participant's behaviorr.
+with data for the given participant. The coding is
+CONDITION/PID and you can find the available codes
+in exp1/static/json/data/1B.0/traces
  */
 
 experiment_nr = 2;
