@@ -356,7 +356,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
-      var head, info, msg, penalty, redGreenSpan, result;
+      var head, info, msg, penalty, redGreenSpan, result, showCriticism;
       if (!this.feedback) {
         $('#mdp-feedback').css({
           display: 'none'
@@ -366,6 +366,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       result = registerMove(a);
       result.delay = Math.round(result.delay);
       console.log('feedback', result);
+      showCriticism = result.delay > 1;
       if (PARAMS.PR_type === 'none') {
         result.delay = (function() {
           switch (PARAMS.info_cost) {
@@ -391,18 +392,18 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           }
         } else {
           if (PARAMS.message === 'full') {
-            if (result.planned_too_little) {
-              if (result.planned_too_much) {
+            if (result.planned_too_little && showCriticism) {
+              if (result.planned_too_much && showCriticism) {
                 head = redGreenSpan("You gathered the wrong information.", -1);
               } else {
                 head = redGreenSpan("You gathered too little information.", -1);
               }
             } else {
-              if (result.planned_too_much) {
+              if (result.planned_too_much && showCriticism) {
                 head = redGreenSpan("You gathered too much information.", -1);
               } else {
                 head = redGreenSpan("You gathered the right amount of information.", 1);
-                if (result.information_used_correctly && result.delay >= 1) {
+                if (result.information_used_correctly && showCriticism) {
                   head += redGreenSpan(" But you didn't prioritize the most important locations.", -1);
                 }
               }
