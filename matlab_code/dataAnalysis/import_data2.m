@@ -11,11 +11,13 @@
 %% Initialize variables.
 
 if strcmp(getenv('USER'),'paulkrueger')
-    filename = '~/Desktop/Tom_Griffiths/MCRL/';  
+    filename = '~/Desktop/Tom_Griffiths/MCRL/'; 
+elseif strcmp(getenv('USER'), 'priyamdas')
+    filename = '~\Documents\Berkeley\CoCoSci Lab\mcrl\MCRL\';
 else
     filename = '~/Dropbox/PhD/Metacognitive RL/';
 end
-filename = [filename,'experiments/data/human/0.6/trials.csv'];
+filename = [filename,'experiments/data/human/1A.0/trials.csv'];
 delimiter = ',';
 startRow = 2;
 
