@@ -34,6 +34,12 @@ When you're sure the experiment is ready to deploy and all parameters in remote-
 make deploy
 ```
 
+in the directory `experiments`. If you see a message saying `make: deploy is up to date.`, then run 
+
+```
+rm -r deploy
+```
+
 This will upload all your experiment files to the webserver. If you see an error about the file `tmp/restart.txt` not existing, make sure there is a directory called `tmp` existing on the server:
 
 ```

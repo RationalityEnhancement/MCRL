@@ -15,8 +15,13 @@ glm.mu_n=w(:);
 add_pseudorewards=false;
 pseudoreward_type='none';
 
-mean_payoff=4.5;
-std_payoff=10.6;
+for t=1:length(experiment)
+    avg_payoff(t)=nanmean(experiment(t).rewards(experiment(t).T>0));
+    std_payoff(t)=nanstd(experiment(t).rewards(experiment(t).T>0));
+end
+
+mean_payoff=mean(avg_payoff);
+std_payoff=mean(std_payoff);
 
 if not(exist('experiment','var'))
     load('MouselabMDPExperiment_normalized')

@@ -73,9 +73,9 @@ function metaMDP(){
     
     var meta_MDP={
         cost_per_click: [],
-        cost_per_planning_step: 0.01,
-        mean_payoff: 4.5,
-        std_payoff: 10.6,        
+        cost_per_planning_step: 0,
+        mean_payoff: 4.5/(2*16/12),
+        std_payoff: 10.6/(2*16/12),        
         object_level_MDPs: trials,
         object_level_MDP: [],
         object_level_PRs: [],
@@ -981,16 +981,16 @@ function predictQValue(state,computation){
     var feature_weights = null;
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {allActionsVPI: 1.0154, VPI: 0.0440, VOC1: 0.1147, cost: -0.0920, ER: 0.7746, offset: 8.2285} //otherVPIs: [0.3230, -0.6466, -0.5869]
+            feature_weights = {allActionsVPI: 1.1774, VPI: -0.0487, VOC1: 0.3259, cost: -0.0579, ER: 0.7644, offset: 8.8683} //otherVPIs: [0.3230, -0.6466, -0.5869]
             //feature_weights = {VPI: 2.7287, VOC1: 0.3350, ER: 1.0665, cost: -0.2817};
             //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.0:
-            feature_weights = {allActionsVPI: 1.2895, VPI: 0.0858, VOC1: 0.4536, cost: -2.6655, ER: 0.9791, offset: 4.8433} //otherVPIs: [-0.3154, -0.4761, -0.5306]
+            feature_weights = {allActionsVPI: 1.6846, VPI: -0.2000, VOC1: -0.2133, cost: -1.9371, ER: 0.9742, offset: 6.9905}//{allActionsVPI: 1.2895, VPI: 0.0858, VOC1: 0.4536, cost: -2.6655, ER: 0.9791, offset: 4.8433} //otherVPIs: [-0.3154, -0.4761, -0.5306]
             //feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.5:
-            feature_weights = {allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
+            feature_weights = {allActionsVPI: -0.2868, VPI: 0.3554, VOC1: -0.0095, cost: -1.7169, ER: 0.8051, offset: 3.9714}//{allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
             //feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
@@ -1016,22 +1016,23 @@ function predictQValueOfSequence(state,computations){
     
     switch(PARAMS.info_cost){
         case 0.01:
-            feature_weights = {allActionsVPI: 1.0154, VPI: 0.0440, VOC1: 0.1147, cost: -0.0920, ER: 0.7746, offset: 8.2285} //otherVPIs: [0.3230, -0.6466, -0.5869]
+            feature_weights = {allActionsVPI: 1.1774, VPI: -0.0487, VOC1: 0.3259, cost: -0.0579, ER: 0.7644, offset: 8.8683} //otherVPIs: [0.3230, -0.6466, -0.5869]
             //feature_weights = {VPI: 2.7287, VOC1: 0.3350, ER: 1.0665, cost: -0.2817};
             //feature_weights = {VPI: 1.2065, VOC1: 2.1510, ER: 1.5298};//{VPI: 1.1261, VOC1: 1.0934, ER: 1.0142};
             break;
         case 1.0:
-            feature_weights = {allActionsVPI: 1.2895, VPI: 0.0858, VOC1: 0.4536, cost: -2.6655, ER: 0.9791, offset: 4.8433} //otherVPIs: [-0.3154, -0.4761, -0.5306]
+            feature_weights = {allActionsVPI: 1.6846, VPI: -0.2000, VOC1: -0.2133, cost: -1.9371, ER: 0.9742, offset: 6.9905}//{allActionsVPI: 1.2895, VPI: 0.0858, VOC1: 0.4536, cost: -2.6655, ER: 0.9791, offset: 4.8433} //otherVPIs: [-0.3154, -0.4761, -0.5306]
             //feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 2.5:
-            feature_weights = {allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
+            feature_weights = {allActionsVPI: -0.2868, VPI: 0.3554, VOC1: -0.0095, cost: -1.7169, ER: 0.8051, offset: 3.9714}//{allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
             //feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
-                        
+
     }
+
     console.log('weights', feature_weights)
-    
+   
     //1. Compute the sum of the VPIs and VOC1 values of the individual computations and the sum of the costs
     var VPIs = new Array()
     var VOC1s = new Array()

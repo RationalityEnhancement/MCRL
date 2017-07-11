@@ -1,9 +1,10 @@
 %% Evaluate performance of learned and no-observation policy on the planning problems posed in our experiment
 
-costs=[0.01,1.60,2.80];
+%costs=[0.01,1.60,2.80];
 nr_episodes_evaluation=1;
 addpath('../MatlabTools/')
 
+%{
 load PilotExperiment
 nr_trials=numel(experiment);
 
@@ -31,14 +32,56 @@ for e=1:numel(experiment)
     experiment(e).parent_by_state={1,1,1,1,1,2,3,4,5,6,6,7,7,8,8,9,9};
 end
 save PilotExperiment experiment
+%}
 
-for c=1:3
-    meta_MDP=MouselabMDPMetaMDPNIPS(false,'none',4.5,10.6,experiment,costs(c));
+%{
+costs=[0.01, 0.25, 0.50,0.60,0.65,0.70,0.75, 1.25, 1.50];
+environment={'low_cost_condition','medium_cost_condition','medium_cost_condition',...
+    'medium_cost_condition','medium_cost_condition','medium_cost_condition',...
+    'medium_cost_condition','high_cost_condition','high_cost_condition'};
+name='test_cost';
+%}
+
+costs=[0.01,1,2.50];
+environment={'low_cost_condition','medium_cost_condition','high_cost_condition'};
+names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallActions'};
+
+
+root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/';    
+nb_iter=100;
+
+scaling_factor=2*16/12;
+
+for c=1:numel(costs)
     
-    temp=load(['../../results/BO/BO_c',int2str(100*costs(c)),'n35.mat']);
+    if strcmp(environment{c},'low_cost_condition')
+        load low_cost_condition
+        experiment=low_cost_condition;
+    end
+    
+    if strcmp(environment{c},'medium_cost_condition')
+        load medium_cost_condition
+        experiment=medium_cost_condition;
+    end
+    
+    if strcmp(environment{c},'high_cost_condition')
+        load high_cost_condition
+        experiment=high_cost_condition;
+    end    
+    nr_trials=numel(experiment);
+    
+    for t=1:nr_trials
+        avg_payoff(t) = nanmean(experiment(t).rewards(experiment(t).T>0));
+        std_payoff(t) = nanstd(experiment(t).rewards(experiment(t).T>0));
+    end
+    
+    meta_MDP=MouselabMDPMetaMDPNIPS(false,'none',mean(avg_payoff),mean(std_payoff),experiment,costs(c));
+    
+    temp=load([root_dir,'results/BO/BO_c',int2str(100*costs(c)),'n',int2str(nb_iter),names{c},'.mat']);
     
     learned_policy=@(state,mdp) deterministicPolicy(state,mdp,temp.BO.w_hat);
     no_observation_policy= @(state,mdp) noObservationPolicy(state,mdp);
+    
     
     for t=1:nr_trials
         [R_total,problems{t,c},states{t,c},chosen_actions{t,c},indices(t,c)]=...
@@ -54,7 +97,7 @@ for c=1:3
     end
 end
 
-for c=1:3
+for c=1:numel(costs)
     for t=1:nr_trials
         avg_nr_observations(t,c)=mean(indices(t,c).nr_acquisitions);
     end
