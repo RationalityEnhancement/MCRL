@@ -22,7 +22,7 @@ if mode is "{{ mode }}"
   # counterbalance = 0
 
 
-SHOW_PARTICIPANT_DATA = true
+SHOW_PARTICIPANT_DATA = '0/108'
 ###
 All Mouselab-MDP trials will be demonstration trials
 with data pulled from static/json/trace.json

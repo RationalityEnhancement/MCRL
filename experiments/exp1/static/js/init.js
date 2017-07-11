@@ -15,7 +15,7 @@ if (mode === "{{ mode }}") {
   condition = 2;
 }
 
-SHOW_PARTICIPANT_DATA = true;
+SHOW_PARTICIPANT_DATA = '0/108';
 
 
 /*
