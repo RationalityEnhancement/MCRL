@@ -343,8 +343,8 @@ initializeExperiment = ->
            won’t be able to proceed to the next round before the countdown has
            finished, but you can take as much time as you like afterwards.
         2. </b>You will earn <u>real money</u> for your flights.</b>
-           Specifically, you will receive 1% of your profit in every one of the
-           #{N_TRIALS} rounds.
+           Specifically, for every $10 you earn in the game, we will add 5 cents to your bonus. Please note that each and every one of the
+           #{N_TRIALS} rounds counts towards your bonus.
 
         #{img('task_images/Slide3.png')}
 
