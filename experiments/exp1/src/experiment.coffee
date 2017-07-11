@@ -14,9 +14,9 @@ psiturk = new PsiTurk uniqueId, adServerLoc, mode
 isIE = false || !!document.documentMode
 TEST_TRIALS = undefined
 TRAIN_TRIALS = undefined
-N_TEST = undefined
-N_TRAIN = undefined
-N_TRIALS = undefined
+N_TEST = 6
+N_TRAIN = 10
+N_TRIALS = 16
 SCORE = 0
 calculateBonus = undefined
 
@@ -65,8 +65,8 @@ $(window).on 'load', ->
     
         
     trials = expData.blocks.standard
-    TRAIN_TRIALS = trials[...6]
-    TEST_TRIALS = trials[6...]
+    TRAIN_TRIALS = trials[...N_TRAIN]
+    TEST_TRIALS = trials[N_TRAIN...]
     N_TRAIN = TRAIN_TRIALS.length
     N_TEST = TEST_TRIALS.length
     N_TRIALS = N_TRAIN + N_TEST
@@ -343,8 +343,8 @@ initializeExperiment = ->
            won’t be able to proceed to the next round before the countdown has
            finished, but you can take as much time as you like afterwards.
         2. </b>You will earn <u>real money</u> for your flights.</b>
-           Specifically, you will receive 1% of your total profit over all
-           #{N_TRIAL} rounds.
+           Specifically, you will receive 1% of your profit in every one of the
+           #{N_TRIALS} rounds.
 
         #{img('task_images/Slide3.png')}
 

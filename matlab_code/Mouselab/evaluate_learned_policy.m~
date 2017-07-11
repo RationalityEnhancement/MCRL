@@ -39,14 +39,11 @@ costs=[0.01, 0.25, 0.50,0.60,0.65,0.70,0.75, 1.25, 1.50];
 environment={'low_cost_condition','medium_cost_condition','medium_cost_condition',...
     'medium_cost_condition','medium_cost_condition','medium_cost_condition',...
     'medium_cost_condition','high_cost_condition','high_cost_condition'};
-name='test_cost';
 %}
 
-costs=[0.01,1,2.50];
-environment={'low_cost_condition','medium_cost_condition','high_cost_condition'};
-names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallActions'};
+costs=[0.01,1,1.50];
 
-
+name='test_cost';
 root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/';    
 nb_iter=100;
 
@@ -77,7 +74,7 @@ for c=1:numel(costs)
     
     meta_MDP=MouselabMDPMetaMDPNIPS(false,'none',mean(avg_payoff),mean(std_payoff),experiment,costs(c));
     
-    temp=load([root_dir,'results/BO/BO_c',int2str(100*costs(c)),'n',int2str(nb_iter),names{c},'.mat']);
+    temp=load([root_dir,'results/BO/BO_c',int2str(100*costs(c)),'n',int2str(nb_iter),name,'.mat']);
     
     learned_policy=@(state,mdp) deterministicPolicy(state,mdp,temp.BO.w_hat);
     no_observation_policy= @(state,mdp) noObservationPolicy(state,mdp);
