@@ -18,11 +18,11 @@ TEST_TRIALS = void 0;
 
 TRAIN_TRIALS = void 0;
 
-N_TEST = void 0;
+N_TEST = 6;
 
-N_TRAIN = void 0;
+N_TRAIN = 10;
 
-N_TRIALS = void 0;
+N_TRIALS = 16;
 
 SCORE = 0;
 
@@ -51,8 +51,8 @@ $(window).on('load', function() {
     console.log('expData', expData);
     condition_nr = condition % nrConditions;
     trials = expData.blocks.standard;
-    TRAIN_TRIALS = trials.slice(0, 6);
-    TEST_TRIALS = trials.slice(6);
+    TRAIN_TRIALS = trials.slice(0, N_TRAIN);
+    TEST_TRIALS = trials.slice(N_TRAIN);
     N_TRAIN = TRAIN_TRIALS.length;
     N_TEST = TEST_TRIALS.length;
     N_TRIALS = N_TRAIN + N_TEST;
@@ -207,7 +207,7 @@ initializeExperiment = function() {
   });
   instructions = new Block({
     type: "instructions",
-    pages: [markdown("# Instructions " + (text.debug()) + "\n\nIn this game, you are in charge of flying an aircraft. As shown below,\nyou will begin in the central location. The arrows show which actions\nare available in each location. Note that once you have made a move you\ncannot go back; you can only move forward along the arrows. There are\neight possible final destinations labelled 1-8 in the image below. On\nyour way there, you will visit two intermediate locations. <b>Every\nlocation you visit will add or subtract money to your account</b>, and\nyour task is to earn as much money as possible. <b>To find out how much\nmoney you earn or lose in a location, you have to click on it.</b> You\ncan uncover the value of as many or as few locations as you wish.\n\n" + (img('task_images/Slide1.png')) + "\n\nTo navigate the airplane, use the arrows (the example above is non-interactive).\nYou can uncover the value of a location at any time. Click \"Next\" to proceed."), markdown("# Instructions\n\nYou will play the game for " + N_TRIALS + " rounds. The value of\nevery location will change from each round to the next. At the\nbegining of each round, the value of every location will be hidden,\nand you will only discover the value of the locations you click on.\nThe example below shows the value of every location, just to give you\nan example of values you could see if you clicked on every location.\n<b>Every time you click a circle to observe its value, you pay a fee\nof " + (fmtMoney(PARAMS.info_cost)) + ".</b>\n\n" + (img('task_images/Slide2_' + COST_LEVEL + '.png')) + "\n\nEach time you move to a\nlocation, your profit will be adjusted. If you move to a location with\na hidden value, your profit will still be adjusted according to the\nvalue of that location. " + (text.constantDelay()))].concat((text.feedback()).concat([markdown("# Instructions\n\nThere are two more important things to understand:\n1. You must spend at least 45 seconds on each round. A countdown timer\n   will show you how much more time you must spend on the round. You\n   won’t be able to proceed to the next round before the countdown has\n   finished, but you can take as much time as you like afterwards.\n2. </b>You will earn <u>real money</u> for your flights.</b>\n   Specifically, you will receive 1% of your total profit over all\n   " + N_TRIAL + " rounds.\n\n" + (img('task_images/Slide3.png')) + "\n\n You may proceed to take an entry quiz, or go back to review the instructions.")])),
+    pages: [markdown("# Instructions " + (text.debug()) + "\n\nIn this game, you are in charge of flying an aircraft. As shown below,\nyou will begin in the central location. The arrows show which actions\nare available in each location. Note that once you have made a move you\ncannot go back; you can only move forward along the arrows. There are\neight possible final destinations labelled 1-8 in the image below. On\nyour way there, you will visit two intermediate locations. <b>Every\nlocation you visit will add or subtract money to your account</b>, and\nyour task is to earn as much money as possible. <b>To find out how much\nmoney you earn or lose in a location, you have to click on it.</b> You\ncan uncover the value of as many or as few locations as you wish.\n\n" + (img('task_images/Slide1.png')) + "\n\nTo navigate the airplane, use the arrows (the example above is non-interactive).\nYou can uncover the value of a location at any time. Click \"Next\" to proceed."), markdown("# Instructions\n\nYou will play the game for " + N_TRIALS + " rounds. The value of\nevery location will change from each round to the next. At the\nbegining of each round, the value of every location will be hidden,\nand you will only discover the value of the locations you click on.\nThe example below shows the value of every location, just to give you\nan example of values you could see if you clicked on every location.\n<b>Every time you click a circle to observe its value, you pay a fee\nof " + (fmtMoney(PARAMS.info_cost)) + ".</b>\n\n" + (img('task_images/Slide2_' + COST_LEVEL + '.png')) + "\n\nEach time you move to a\nlocation, your profit will be adjusted. If you move to a location with\na hidden value, your profit will still be adjusted according to the\nvalue of that location. " + (text.constantDelay()))].concat((text.feedback()).concat([markdown("# Instructions\n\nThere are two more important things to understand:\n1. You must spend at least 45 seconds on each round. A countdown timer\n   will show you how much more time you must spend on the round. You\n   won’t be able to proceed to the next round before the countdown has\n   finished, but you can take as much time as you like afterwards.\n2. </b>You will earn <u>real money</u> for your flights.</b>\n   Specifically, for every $10 you earn in the game, we will add 5 cents to your bonus. Please note that each and every one of the\n   " + N_TRIALS + " rounds counts towards your bonus.\n\n" + (img('task_images/Slide3.png')) + "\n\n You may proceed to take an entry quiz, or go back to review the instructions.")])),
     show_clickable_nav: true
   });
   quiz = new Block({
@@ -216,9 +216,9 @@ initializeExperiment = function() {
     },
     type: 'survey-multi-choice',
     questions: ["True or false: The hidden values will change each time I start a new round.", "How much does it cost to observe each hidden value?", "How many hidden values am I allowed to observe in each round?", "How is your bonus determined?"].concat((PARAMS.PR_type !== "none" & PARAMS.PR_type !== "demonstration" ? ["What does the feedback teach you?"] : [])),
-    options: [['True', 'False'], ['$0.01', '$0.05', '$1.00', '$2.50'], ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish'], ['1% of my best score on any round', '1% of my total score on all rounds', '10% of my best score on any round', '10% of my score on a random round']].concat((PARAMS.PR_type === "objectLevel" ? [['Whether I chose the move that was best.', 'The length of the delay is based on how much more money I could have earned.', 'All of the above.']] : PARAMS.PR_type !== "none" ? [['Whether I observed the rewards of relevant locations.', 'Whether I chose the move that was best according to the information I had.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']] : [])),
+    options: [['True', 'False'], ['$0.01', '$0.05', '$1.00', '$2.50'], ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish'], ['1% of my best score on any round', '5 cents for every $10 I earn in each round', '10% of my best score on any round', '10% of my score on a random round']].concat((PARAMS.PR_type === "objectLevel" ? [['Whether I chose the move that was best.', 'The length of the delay is based on how much more money I could have earned.', 'All of the above.']] : PARAMS.PR_type !== "none" ? [['Whether I observed the rewards of relevant locations.', 'Whether I chose the move that was best according to the information I had.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']] : [])),
     required: [true, true, true, true, true],
-    correct: ['True', fmtMoney(PARAMS.info_cost), 'As many or as few as I wish', '1% of my total score on all rounds', 'All of the above.'],
+    correct: ['True', fmtMoney(PARAMS.info_cost), 'As many or as few as I wish', '5 cents for every $10 I earn in each round', 'All of the above.'],
     on_mistake: function(data) {
       return alert("You got at least one question wrong. We'll send you back to the\ninstructions and then you can try again.");
     }

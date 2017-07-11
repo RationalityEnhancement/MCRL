@@ -14,9 +14,9 @@ psiturk = new PsiTurk uniqueId, adServerLoc, mode
 isIE = false || !!document.documentMode
 TEST_TRIALS = undefined
 TRAIN_TRIALS = undefined
-N_TEST = undefined
-N_TRAIN = undefined
-N_TRIALS = undefined
+N_TEST = 6
+N_TRAIN = 10
+N_TRIALS = 16
 SCORE = 0
 calculateBonus = undefined
 
@@ -65,8 +65,8 @@ $(window).on 'load', ->
     
         
     trials = expData.blocks.standard
-    TRAIN_TRIALS = trials[...6]
-    TEST_TRIALS = trials[6...]
+    TRAIN_TRIALS = trials[...N_TRAIN]
+    TEST_TRIALS = trials[N_TRAIN...]
     N_TRAIN = TRAIN_TRIALS.length
     N_TEST = TEST_TRIALS.length
     N_TRIALS = N_TRAIN + N_TEST
@@ -343,8 +343,8 @@ initializeExperiment = ->
            won’t be able to proceed to the next round before the countdown has
            finished, but you can take as much time as you like afterwards.
         2. </b>You will earn <u>real money</u> for your flights.</b>
-           Specifically, you will receive 1% of your total profit over all
-           #{N_TRIAL} rounds.
+           Specifically, for every $10 you earn in the game, we will add 5 cents to your bonus. Please note that each and every one of the
+           #{N_TRIALS} rounds counts towards your bonus.
 
         #{img('task_images/Slide3.png')}
 
@@ -371,7 +371,7 @@ initializeExperiment = ->
       ['$0.01', '$0.05', '$1.00', '$2.50']
       ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish']
       ['1% of my best score on any round'
-       '1% of my total score on all rounds'
+       '5 cents for every $10 I earn in each round'
        '10% of my best score on any round'
        '10% of my score on a random round']
     ] .concat (if PARAMS.PR_type == "objectLevel" then [[
@@ -389,7 +389,7 @@ initializeExperiment = ->
       'True'
       fmtMoney PARAMS.info_cost
       'As many or as few as I wish'
-      '1% of my total score on all rounds'
+      '5 cents for every $10 I earn in each round'
       'All of the above.'
     ]
     on_mistake: (data) ->
