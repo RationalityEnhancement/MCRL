@@ -26,7 +26,7 @@ login_pw =
 threads = 4
 
 [Task Parameters]
-experiment_code_version = B
+experiment_code_version = 1B.1
 num_conds = 4
 num_counters = 1
 

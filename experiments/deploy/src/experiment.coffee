@@ -48,10 +48,10 @@ $(window).on 'load', ->
 
 
   delay 300, ->
-    console.log 'Loading data'
-    expData = loadJson "static/json/#{COST_LEVEL}_cost.json"
-    console.log 'expData', expData
-
+    if SHOW_PARTICIPANT_DATA
+      expData = loadJson "static/json/data/1B.0/stimuli/#{COST_LEVEL}_cost.json"
+    else    
+      expData = loadJson "static/json/#{COST_LEVEL}_cost.json"
     
     condition_nr = condition % nrConditions
     # PARAMS=
@@ -67,8 +67,9 @@ $(window).on 'load', ->
     trials = expData.blocks.standard
     TRAIN_TRIALS = trials[...N_TRAIN]
     TEST_TRIALS = trials[N_TRAIN...]
-    N_TRAIN = TRAIN_TRIALS.length
-    N_TEST = TEST_TRIALS.length
+    if not SHOW_PARTICIPANT_DATA
+      TRAIN_TRIALS = _.shuffle TRAIN_TRIALS
+      TEST_TRIALS = _.shuffle TEST_TRIALS
     N_TRIALS = N_TRAIN + N_TEST
     psiturk.recordUnstructuredData 'params', PARAMS
     psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
@@ -414,7 +415,7 @@ initializeExperiment = ->
 
   train = new MDPBlock
     demonstrate: PARAMS.PR_type is "demonstration"   
-    timeline: _.shuffle TRAIN_TRIALS
+    timeline: TRAIN_TRIALS
   
   test = new Block
     timeline: do ->
@@ -443,7 +444,7 @@ initializeExperiment = ->
                 
       tl.push new MDPBlock
         feedback: false
-        timeline: _.shuffle TEST_TRIALS
+        timeline: TEST_TRIALS
       return tl
     
       
@@ -486,8 +487,6 @@ initializeExperiment = ->
   # ================================================ #
 
   calculateBonus = (final=false) ->
-    console.log 'calculateBonus'
-    console.log SCORE
     data = jsPsych.data.getTrialsOfType 'mouselab-mdp'
     # score = sum (_.pluck data, 'score')
     # console.log 'score', score
