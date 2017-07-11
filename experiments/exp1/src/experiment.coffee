@@ -371,7 +371,7 @@ initializeExperiment = ->
       ['$0.01', '$0.05', '$1.00', '$2.50']
       ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish']
       ['1% of my best score on any round'
-       '1% of my total score on all rounds'
+       '5 cents for every $10 I earn an each round'
        '10% of my best score on any round'
        '10% of my score on a random round']
     ] .concat (if PARAMS.PR_type == "objectLevel" then [[
@@ -389,7 +389,7 @@ initializeExperiment = ->
       'True'
       fmtMoney PARAMS.info_cost
       'As many or as few as I wish'
-      '1% of my total score on all rounds'
+      '5 cents for every $10 I earn an each round'
       'All of the above.'
     ]
     on_mistake: (data) ->
