@@ -11,7 +11,6 @@ OPTIMAL = undefined
 
 jsPsych.plugins['mouselab-mdp'] = do ->
 
-  OPTIMAL = (loadJson 'static/json/optimal_policy.json')[COST_LEVEL]
 
   PRINT = (args...) -> console.log args...
   NULL = (args...) -> null
@@ -21,10 +20,20 @@ jsPsych.plugins['mouselab-mdp'] = do ->
   # a scaling parameter, determines size of drawn objects
   SIZE = undefined
   TRIAL_INDEX = 1
+  DEMO_SPEED = 1000
+  MOVE_SPEED = 500
+
 
   fabric.Object::originX = fabric.Object::originY = 'center'
   fabric.Object::selectable = false
   fabric.Object::hoverCursor = 'plain'
+
+  if SHOW_PARTICIPANT_DATA
+    OPTIMAL = loadJson 'static/json/trace.json'
+    DEMO_SPEED = 500
+    MOVE_SPEED = 300
+  else
+    OPTIMAL = (loadJson 'static/json/optimal_policy.json')[COST_LEVEL]
 
   # =========================== #
   # ========= Helpers ========= #
@@ -124,6 +133,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       if @demonstrate
         lowerMessage = "This is a demonstration of optimal planning."
 
+      if SHOW_PARTICIPANT_DATA
+        @demonstrate = true
+        lowerMessage = "This is a participant's behavior."
+
+
       # _.extend this, config
       checkObj this
       @initial = "#{@initial}"
@@ -214,7 +228,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         if i is actions.length
           window.clearInterval ID
 
-      ID = window.setInterval act, 1000
+      ID = window.setInterval act, DEMO_SPEED
     # ---------- Responding to user input ---------- #
 
     # Called when a valid action is initiated via a key press.
@@ -228,7 +242,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       s1g = @states[s1]
       @player.animate {left: s1g.left, top: s1g.top},
-          duration: dist(@player, s0) * 4
+          duration: MOVE_SPEED
           onChange: @canvas.renderAll.bind(@canvas)
           onComplete: =>
             @addScore r
