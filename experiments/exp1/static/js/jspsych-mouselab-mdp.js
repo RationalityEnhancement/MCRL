@@ -38,7 +38,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
   fabric.Object.prototype.selectable = false;
   fabric.Object.prototype.hoverCursor = 'plain';
   if (SHOW_PARTICIPANT_DATA) {
-    OPTIMAL = loadJson('static/json/trace.json');
+    OPTIMAL = loadJson("static/json/data/1B.0/traces/" + SHOW_PARTICIPANT_DATA + ".json");
     DEMO_SPEED = 500;
     MOVE_SPEED = 300;
   } else {
@@ -131,8 +131,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       }
       if (SHOW_PARTICIPANT_DATA) {
         this.demonstrate = true;
-        lowerMessage = "This is a participant's behavior.";
+        lowerMessage = "Behavior of participant " + SHOW_PARTICIPANT_DATA;
       }
+      console.log('TRIAL NUMBER', this.trial_i);
       checkObj(this);
       this.initial = "" + this.initial;
       this.invKeys = _.invert(this.keys);

@@ -29,7 +29,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
   fabric.Object::hoverCursor = 'plain'
 
   if SHOW_PARTICIPANT_DATA
-    OPTIMAL = loadJson 'static/json/trace.json'
+    OPTIMAL = loadJson "static/json/data/1B.0/traces/#{SHOW_PARTICIPANT_DATA}.json"
     DEMO_SPEED = 500
     MOVE_SPEED = 300
   else
@@ -135,9 +135,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       if SHOW_PARTICIPANT_DATA
         @demonstrate = true
-        lowerMessage = "This is a participant's behavior."
+        lowerMessage = "Behavior of participant #{SHOW_PARTICIPANT_DATA}"
 
-
+      console.log 'TRIAL NUMBER', @trial_i
       # _.extend this, config
       checkObj this
       @initial = "#{@initial}"
