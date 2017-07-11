@@ -3,7 +3,6 @@ import numpy as np
 
 
 # ---------- Functional utils ---------- #
-from toolz import pipe
 from toolz.curried import *
 max = curry(max)
 min = curry(min)

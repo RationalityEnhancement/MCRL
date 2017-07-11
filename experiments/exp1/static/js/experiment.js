@@ -46,15 +46,19 @@ $(window).on('load', function() {
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
   return delay(300, function() {
     var ERROR, condition_nr, expData, trials;
-    console.log('Loading data');
-    expData = loadJson("static/json/" + COST_LEVEL + "_cost.json");
-    console.log('expData', expData);
+    if (SHOW_PARTICIPANT_DATA) {
+      expData = loadJson("static/json/data/1B.0/stimuli/" + COST_LEVEL + "_cost.json");
+    } else {
+      expData = loadJson("static/json/" + COST_LEVEL + "_cost.json");
+    }
     condition_nr = condition % nrConditions;
     trials = expData.blocks.standard;
     TRAIN_TRIALS = trials.slice(0, N_TRAIN);
     TEST_TRIALS = trials.slice(N_TRAIN);
-    N_TRAIN = TRAIN_TRIALS.length;
-    N_TEST = TEST_TRIALS.length;
+    if (!SHOW_PARTICIPANT_DATA) {
+      TRAIN_TRIALS = _.shuffle(TRAIN_TRIALS);
+      TEST_TRIALS = _.shuffle(TEST_TRIALS);
+    }
     N_TRIALS = N_TRAIN + N_TEST;
     psiturk.recordUnstructuredData('params', PARAMS);
     psiturk.recordUnstructuredData('experiment_nr', experiment_nr);
@@ -241,7 +245,7 @@ initializeExperiment = function() {
   });
   train = new MDPBlock({
     demonstrate: PARAMS.PR_type === "demonstration",
-    timeline: _.shuffle(TRAIN_TRIALS)
+    timeline: TRAIN_TRIALS
   });
   test = new Block({
     timeline: (function() {
@@ -259,7 +263,7 @@ initializeExperiment = function() {
       }
       tl.push(new MDPBlock({
         feedback: false,
-        timeline: _.shuffle(TEST_TRIALS)
+        timeline: TEST_TRIALS
       }));
       return tl;
     })()
@@ -284,8 +288,6 @@ initializeExperiment = function() {
     if (final == null) {
       final = false;
     }
-    console.log('calculateBonus');
-    console.log(SCORE);
     data = jsPsych.data.getTrialsOfType('mouselab-mdp');
     bonus = (Math.max(0, SCORE)) * PARAMS.bonus_rate;
     bonus = (Math.round(bonus * 100)) / 100;

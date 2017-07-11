@@ -17,8 +17,7 @@ mdp = void 0;
 OPTIMAL = void 0;
 
 jsPsych.plugins['mouselab-mdp'] = (function() {
-  var Arrow, Edge, KEYS, LOG_DEBUG, LOG_INFO, MouselabMDP, NULL, PRINT, SIZE, State, TRIAL_INDEX, Text, angle, checkObj, dist, plugin, polarMove, redGreen, round;
-  OPTIMAL = (loadJson('static/json/optimal_policy.json'))[COST_LEVEL];
+  var Arrow, DEMO_SPEED, Edge, KEYS, LOG_DEBUG, LOG_INFO, MOVE_SPEED, MouselabMDP, NULL, PRINT, SIZE, State, TRIAL_INDEX, Text, angle, checkObj, dist, plugin, polarMove, redGreen, round;
   PRINT = function() {
     var args;
     args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
@@ -33,9 +32,18 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
   LOG_DEBUG = NULL;
   SIZE = void 0;
   TRIAL_INDEX = 1;
+  DEMO_SPEED = 1000;
+  MOVE_SPEED = 500;
   fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
   fabric.Object.prototype.selectable = false;
   fabric.Object.prototype.hoverCursor = 'plain';
+  if (SHOW_PARTICIPANT_DATA) {
+    OPTIMAL = loadJson("static/json/data/1B.0/traces/" + SHOW_PARTICIPANT_DATA + ".json");
+    DEMO_SPEED = 500;
+    MOVE_SPEED = 300;
+  } else {
+    OPTIMAL = (loadJson('static/json/optimal_policy.json'))[COST_LEVEL];
+  }
   angle = function(x1, y1, x2, y2) {
     var ang, x, y;
     x = x2 - x1;
@@ -121,6 +129,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       if (this.demonstrate) {
         lowerMessage = "This is a demonstration of optimal planning.";
       }
+      if (SHOW_PARTICIPANT_DATA) {
+        this.demonstrate = true;
+        lowerMessage = "Behavior of participant " + SHOW_PARTICIPANT_DATA;
+      }
+      console.log('TRIAL NUMBER', this.trial_i);
       checkObj(this);
       this.initial = "" + this.initial;
       this.invKeys = _.invert(this.keys);
@@ -220,7 +233,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           }
         };
       })(this);
-      return ID = window.setInterval(act, 1000);
+      return ID = window.setInterval(act, DEMO_SPEED);
     };
 
     MouselabMDP.prototype.handleKey = function(s0, a) {
@@ -235,7 +248,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         left: s1g.left,
         top: s1g.top
       }, {
-        duration: dist(this.player, s0) * 4,
+        duration: MOVE_SPEED,
         onChange: this.canvas.renderAll.bind(this.canvas),
         onComplete: (function(_this) {
           return function() {

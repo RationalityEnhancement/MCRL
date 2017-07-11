@@ -1,4 +1,4 @@
-DEBUG = false
+DEBUG = true
 
 if DEBUG
   console.log """
@@ -21,6 +21,14 @@ if mode is "{{ mode }}"
   condition = 2
   # counterbalance = 0
 
+
+SHOW_PARTICIPANT_DATA = '0/108'
+###
+All Mouselab-MDP trials will be demonstration trials
+with data for the given participant. The coding is
+CONDITION/PID and you can find the available codes
+in exp1/static/json/data/1B.0/traces
+###
 
 experiment_nr = 2
 
