@@ -222,6 +222,9 @@ for c=1:nr_conditions
             & trial_index ==t;
         avg_rel_score(t,c)=mean(relative_score(in_condition));
         sem_rel_score(t,c)=sem(relative_score(in_condition));
+        
+        avg_nr_clicks(t,c)=mean(n_click(in_condition));
+        sem_nr_clicks(t,c)=sem(n_click(in_condition));
     end
     
     avg_test_block_performance(c)=mean(avg_rel_score(test_trials,c));
@@ -231,16 +234,27 @@ end
 
 training_trials=1:10;
 
-line_styles={'-','-','--','--'};
-line_colors={[0 1 0],[1 0 0],[0 1 0],[1 0 0]};
-figure(1),
+line_styles={'--','-','--','-'};
+marker_colors={[1 1 1],[1 0 0],[1 1 1],[0 1 0]};
+line_colors={[1 0 0],[1 0 0],[0 1 0],[0 1 0]};
+
 for c=1:nr_conditions
+    figure(1),
     errorbar(avg_rel_score(training_trials,c),sem_rel_score(training_trials,c),...
         'LineWidth',3,'LineStyle',line_styles{c},'Color',line_colors{c}),hold on
     set(gca,'FontSize',18)
     xlabel('Trial Number','FontSize',24)
     ylabel('Relative Performance','FontSize',24)
     legend(condition_names)
+    
+    figure(2)
+    errorbar(avg_nr_clicks(training_trials,c),sem_nr_clicks(training_trials,c),...
+        'LineWidth',3,'LineStyle',line_styles{c},'Color',line_colors{c}),hold on
+    set(gca,'FontSize',18)
+    xlabel('Trial Number','FontSize',24)
+    ylabel('Number Clicks','FontSize',24)
+    legend(condition_names)
+    
 end
 
 in_test_block=trial_index>10;
@@ -294,13 +308,21 @@ X=[repmat(training_trials(:),[4,1]), PR_factor(:), message_factor(:)];
 training_scores=avg_rel_score(training_trials,:);
 y=training_scores(:);
 
-model=fitnlm(X,y,'y ~ (1-b1+b2*x2+b3*x3)*sigmoid((b4+b5*x2+b6*x3)*(x1))+b7',[0.1,0.1,0.1,0.1,0.1,0.1,0.1])
+model=fitnlm(X,y,'y ~ (1-b1+b2*x2+b3*x3)*sigmoid((b4+b5*x2+b6*x3)*(x1-1))+b7',[0.1,0.1,0.1,0.1,0.1,0.1,0.1])
+
+model_noPR_noMessage = fitnlm(X(:,1),y,'y ~ (1-b1)*sigmoid(b2*(x1-1))+b3',[0.1,0.1,0.1])
+model_PR_noMessage = fitnlm(X(:,[1,2]),y,'y ~ (1-b1+b2*x2)*sigmoid((b3+b4*x2)*(x1-1))+b5',[0.1,0.1,0.1,0.1,0.1])
+model_noPR_Message = fitnlm(X(:,[1,3]),y,'y ~ (1-b1)*sigmoid(b2*(x1-1))+b3',[0.1,0.1,0.1])
+
+
+
 model_with_interaction=fitnlm(X,y,'y ~ (1-b1+b2*x2+b3*x3+b9*x2*x3)*sigmoid(b4+(b5+b6*x2+b7*x3+b10*x2*x3)*x1)+b8',[0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1])
 
 
 %lower BIC is better
-model.ModelCriterion.BIC
-model_with_interaction.ModelCriterion.BIC
+BIC_model=model.ModelCriterion.BIC
+BIC_noPR_noMessage=simple_model.ModelCriterion.BIC
+BIC_complex=model_with_interaction.ModelCriterion.BIC
 
 figure()
 subplot(2,1,1)
@@ -331,7 +353,7 @@ for pr=1:2
 end
 
 line_styles={'--','-','--','-'};
-marker_colors={[0 1 0],[1 0 0],[1 1 1],[1 1 1]};
+marker_colors={[1 1 1],[1 0 0],[1 1 1],[0 1 0]};
 line_colors={[1 0 0],[1 0 0],[0 1 0],[0 1 0]};
 
 fig=figure()
@@ -347,5 +369,5 @@ end
 xlim([1,10])
 xlabel('Trial Number','FontSize',18)
 ylabel('Relative Score','FontSize',17)
-legend('no PR, no message','no PR, message','PR, no message','PR, message')
-saveas(fig,'figures/LearningC')
+legend('no PR, no message','no PR, message','PR, no message','PR, message','Location','South')
+saveas(fig,'figures/LearningCurvesExp1B.png')
