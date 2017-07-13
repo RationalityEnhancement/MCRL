@@ -339,6 +339,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       result.delay = Math.round result.delay  
       console.log 'feedback', result
     
+      showCriticism = result.delay>1
       if PARAMS.PR_type is 'none'
         result.delay = switch PARAMS.info_cost
           when 0.01 then [null, 4, 0, 1][@data.actions.length]
@@ -361,18 +362,18 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                 #if the move was sub-optimal point out the optimal move
           else            
               if PARAMS.message is 'full'
-                if result.planned_too_little
-                  if result.planned_too_much
+                if result.planned_too_little and showCriticism
+                  if result.planned_too_much and showCriticism
                       head = redGreenSpan "You gathered the wrong information.", -1            
                   else
                       head = redGreenSpan "You gathered too little information.", -1            
                 else
-                  if result.planned_too_much
+                  if result.planned_too_much and showCriticism
                       head = redGreenSpan "You gathered too much information.", -1                    
                   else                      
                       head = redGreenSpan "You gathered the right amount of information.", 1
                       
-                      if result.information_used_correctly and result.delay>=1
+                      if result.information_used_correctly and showCriticism
                         head += redGreenSpan " But you didn't prioritize the most important locations.", -1
                         
               if PARAMS.message is 'simple'

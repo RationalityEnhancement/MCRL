@@ -1,4 +1,4 @@
-DEBUG = true
+DEBUG = false
 
 if DEBUG
   console.log """
@@ -22,7 +22,8 @@ if mode is "{{ mode }}"
   # counterbalance = 0
 
 
-SHOW_PARTICIPANT_DATA = '0/108'
+#SHOW_PARTICIPANT_DATA = '0/108'
+SHOW_PARTICIPANT_DATA = false
 ###
 All Mouselab-MDP trials will be demonstration trials
 with data for the given participant. The coding is
@@ -80,7 +81,7 @@ PARAMS =
   message:  conditions.messageType[condition % nrConditions]
   frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]
   condition: condition
-  bonus_rate: 0.01
+  bonus_rate: 0.005
 
 # if DEBUG
   # PARAMS.message = 'full'
