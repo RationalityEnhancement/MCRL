@@ -202,7 +202,7 @@ initializeExperiment = ->
               #{N_TRAIN} rounds; during the final #{N_TEST} rounds,
               no feedback will be presented.
 
-              In the example below, there is a 3 second timeout penalty. If
+              In the example below, there is a 6 second timeout penalty. If
               you observed too few relevant values, the message would say,
               "You should have gathered more information!"; if you observed
               too many values, it would say "You should have gathered less
@@ -214,7 +214,7 @@ initializeExperiment = ->
               immediately.</b> The example message here is not necessarily
               representative of the feedback you'll receive.
 
-              #{img('task_images/Slide4_neutral.png')}
+              #{img('task_images/Slide4_neutral2.png')}
               """
             ]
       else if PARAMS.message == "full"
