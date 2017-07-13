@@ -1,4 +1,4 @@
-DEBUG = false
+DEBUG = true
 
 if DEBUG
   console.log """
@@ -18,7 +18,7 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 2
+  condition = 3
   # counterbalance = 0
 
 
