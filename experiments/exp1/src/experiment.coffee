@@ -144,7 +144,7 @@ initializeExperiment = ->
               timeout penalty is proportional to how poor of a move you made:
               </b> the more money you could have earned, the longer the delay.
               <b> If you perform optimally, no feedback will be shown and you
-              can proceed immediately.</b>
+              can proceed immediately.</b> 
 
               #{img('task_images/Slide5.png')}
 
@@ -234,12 +234,10 @@ initializeExperiment = ->
               #{N_TRAIN} rounds; during the final #{N_TEST} rounds,
               no feedback will be presented.
 
-              In the example below, if
-              you observed too few relevant values, the message would say,
-              "You should have gathered more information!"; if you observed
-              too many values, it would say "You should have gathered less
-              information!". The example message here is not necessarily
-              representative of the feedback you'll receive.
+              If you observe too few relevant values, the message will say,
+              "You should have gathered more information!"; if you observe
+              too many values, it will say "You should have gathered less
+              information!"; and the image below shows the message you will see when you collected the right information but used it incorrectly.
 
               #{img('task_images/Slide4_neutral.png')}
               """
