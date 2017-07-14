@@ -16,11 +16,14 @@ TRIALS = undefined
 TEST_TRIALS = undefined
 TRAIN_TRIALS = undefined
 TEST_IDX = undefined
-N_TEST = 2
+N_TEST = 6
 N_TRAIN = 10
 N_TRIALS = 16
 SCORE = 0
 calculateBonus = undefined
+
+STAGE1 = false
+STAGE2 = true
 
 if DEBUG
   N_TEST = 1
@@ -129,6 +132,8 @@ initializeExperiment = ->
     debug: -> if DEBUG then "`DEBUG`" else ''
 
     feedback: ->
+      if STAGE2
+        return []
       if PARAMS.PR_type != "none"
         if PARAMS.PR_type == "objectLevel"
             [markdown """
@@ -456,7 +461,7 @@ initializeExperiment = ->
       "How much does it cost to observe each hidden value?"
       "How many hidden values am I allowed to observe in each round?"
       "How is your bonus determined?"
-      ] .concat (if PARAMS.PR_type != "none" & PARAMS.PR_type != "demonstration" then [
+      ] .concat (if (not STAGE2) & PARAMS.PR_type != "none" & PARAMS.PR_type != "demonstration" then [
         "What does the feedback teach you?"
     ] else [])
     options: [
@@ -467,16 +472,17 @@ initializeExperiment = ->
        '5 cents for every $10 I earn in each round'
        '10% of my best score on any round'
        '10% of my score on a random round']
-    ] .concat (if PARAMS.PR_type == "objectLevel" then [[
-       'Whether I chose the move that was best.'
-       'The length of the delay is based on how much more money I could have earned.'
-       'All of the above.']
-    ] else if PARAMS.PR_type != "none" then [[
-       'Whether I observed the rewards of relevant locations.'
-       'Whether I chose the move that was best according to the information I had.'
-       'The length of the delay is based on how much more money I could have earned by planning and deciding better.'
-       'All of the above.']
-    ] else [])
+    ] .concat (if STAGE2 then []
+    else if PARAMS.PR_type == "objectLevel" then [[
+      'Whether I chose the move that was best.'
+      'The length of the delay is based on how much more money I could have earned.'
+      'All of the above.']]
+    else if PARAMS.PR_type != "none" then [[
+      'Whether I observed the rewards of relevant locations.'
+      'Whether I chose the move that was best according to the information I had.'
+      'The length of the delay is based on how much more money I could have earned by planning and deciding better.'
+      'All of the above.']]
+    else [])
     required: [true, true, true, true, true]
     correct: [
       'True'
@@ -506,10 +512,12 @@ initializeExperiment = ->
   #   t.pseudo = t.stim.pseudo
 
   train = new MDPBlock
+    leftMessage: -> "Round: #{TRIAL_INDEX}/#{N_TRAIN}"
     demonstrate: PARAMS.PR_type is "demonstration"   
     timeline: TRAIN_TRIALS
   
   test = new Block
+    leftMessage: -> "Round: #{TRIAL_INDEX - N_TRAIN}/#{N_TEST}"
     timeline: do ->
       tl = []
       if PARAMS.feedback and not PARAMS.delay_hours
@@ -568,12 +576,19 @@ initializeExperiment = ->
       finish
     ]
   else
-    experiment_timeline = [
-      instruct_loop
-      train
-      test
-      finish
-    ]
+    experiment_timeline = do ->
+      tl = []
+      if STAGE1
+        tl.push retention_instruction
+      if STAGE2
+        tl.push check_returning
+      tl.push instruct_loop
+      unless STAGE2
+        tl.push train
+      unless STAGE1
+        tl.push test
+      tl.push finish
+      return tl
 
 
   # ================================================ #

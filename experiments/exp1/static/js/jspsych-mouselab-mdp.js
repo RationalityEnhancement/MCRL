@@ -6,7 +6,7 @@ Fred Callaway
 
 https://github.com/fredcallaway/Mouselab-MDP
  */
-var OPTIMAL, mdp,
+var OPTIMAL, TRIAL_INDEX, mdp,
   slice = [].slice,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -16,8 +16,10 @@ mdp = void 0;
 
 OPTIMAL = void 0;
 
+TRIAL_INDEX = 1;
+
 jsPsych.plugins['mouselab-mdp'] = (function() {
-  var Arrow, DEMO_SPEED, Edge, KEYS, LOG_DEBUG, LOG_INFO, MOVE_SPEED, MouselabMDP, NULL, PRINT, SIZE, State, TRIAL_INDEX, Text, angle, checkObj, dist, plugin, polarMove, redGreen, round;
+  var Arrow, DEMO_SPEED, Edge, KEYS, LOG_DEBUG, LOG_INFO, MOVE_SPEED, MouselabMDP, NULL, PRINT, SIZE, State, Text, angle, checkObj, dist, plugin, polarMove, redGreen, round;
   PRINT = function() {
     var args;
     args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
@@ -31,7 +33,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
   LOG_INFO = PRINT;
   LOG_DEBUG = NULL;
   SIZE = void 0;
-  TRIAL_INDEX = 1;
   DEMO_SPEED = 1000;
   MOVE_SPEED = 500;
   fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';

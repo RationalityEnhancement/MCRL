@@ -6,7 +6,7 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var N_TEST, N_TRAIN, N_TRIALS, SCORE, TEST_IDX, TEST_TRIALS, TRAIN_TRIALS, TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk,
+var N_TEST, N_TRAIN, N_TRIALS, SCORE, STAGE1, STAGE2, TEST_IDX, TEST_TRIALS, TRAIN_TRIALS, TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -22,7 +22,7 @@ TRAIN_TRIALS = void 0;
 
 TEST_IDX = void 0;
 
-N_TEST = 2;
+N_TEST = 6;
 
 N_TRAIN = 10;
 
@@ -31,6 +31,10 @@ N_TRIALS = 16;
 SCORE = 0;
 
 calculateBonus = void 0;
+
+STAGE1 = false;
+
+STAGE2 = true;
 
 if (DEBUG) {
   N_TEST = 1;
@@ -141,6 +145,9 @@ initializeExperiment = function() {
       }
     },
     feedback: function() {
+      if (STAGE2) {
+        return [];
+      }
       if (PARAMS.PR_type !== "none") {
         if (PARAMS.PR_type === "objectLevel") {
           return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback\nwill help you learn how to make better decisions.</b> After each\nflight, if you did not make the best move, a feedback message\nwill apear. This message will tell you whether you flew along\nthe best route given your current location, and what the best\nmove would have been.\n\nThis feedback will be presented after each of the first\n" + N_TRAIN + " rounds; during the final " + N_TEST + " rounds,\nno feedback will be presented.\n\nIn the example below, the best move was not taken. As a result,\nthere is a 15 second timeout penalty.<b> The duration of the\ntimeout penalty is proportional to how poor of a move you made:\n</b> the more money you could have earned, the longer the delay.\n<b> If you perform optimally, no feedback will be shown and you\ncan proceed immediately.</b> \n\n" + (img('task_images/Slide5.png')) + "\n")];
@@ -294,8 +301,8 @@ initializeExperiment = function() {
       return markdown("# Quiz");
     },
     type: 'survey-multi-choice',
-    questions: ["True or false: The hidden values will change each time I start a new round.", "How much does it cost to observe each hidden value?", "How many hidden values am I allowed to observe in each round?", "How is your bonus determined?"].concat((PARAMS.PR_type !== "none" & PARAMS.PR_type !== "demonstration" ? ["What does the feedback teach you?"] : [])),
-    options: [['True', 'False'], ['$0.01', '$0.05', '$1.00', '$2.50'], ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish'], ['1% of my best score on any round', '5 cents for every $10 I earn in each round', '10% of my best score on any round', '10% of my score on a random round']].concat((PARAMS.PR_type === "objectLevel" ? [['Whether I chose the move that was best.', 'The length of the delay is based on how much more money I could have earned.', 'All of the above.']] : PARAMS.PR_type !== "none" ? [['Whether I observed the rewards of relevant locations.', 'Whether I chose the move that was best according to the information I had.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']] : [])),
+    questions: ["True or false: The hidden values will change each time I start a new round.", "How much does it cost to observe each hidden value?", "How many hidden values am I allowed to observe in each round?", "How is your bonus determined?"].concat(((!STAGE2) & PARAMS.PR_type !== "none" & PARAMS.PR_type !== "demonstration" ? ["What does the feedback teach you?"] : [])),
+    options: [['True', 'False'], ['$0.01', '$0.05', '$1.00', '$2.50'], ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish'], ['1% of my best score on any round', '5 cents for every $10 I earn in each round', '10% of my best score on any round', '10% of my score on a random round']].concat((STAGE2 ? [] : PARAMS.PR_type === "objectLevel" ? [['Whether I chose the move that was best.', 'The length of the delay is based on how much more money I could have earned.', 'All of the above.']] : PARAMS.PR_type !== "none" ? [['Whether I observed the rewards of relevant locations.', 'Whether I chose the move that was best according to the information I had.', 'The length of the delay is based on how much more money I could have earned by planning and deciding better.', 'All of the above.']] : [])),
     required: [true, true, true, true, true],
     correct: ['True', fmtMoney(PARAMS.info_cost), 'As many or as few as I wish', '5 cents for every $10 I earn in each round', 'All of the above.'],
     on_mistake: function(data) {
@@ -319,10 +326,16 @@ initializeExperiment = function() {
     }
   });
   train = new MDPBlock({
+    leftMessage: function() {
+      return "Round: " + TRIAL_INDEX + "/" + N_TRAIN;
+    },
     demonstrate: PARAMS.PR_type === "demonstration",
     timeline: TRAIN_TRIALS
   });
   test = new Block({
+    leftMessage: function() {
+      return "Round: " + (TRIAL_INDEX - N_TRAIN) + "/" + N_TEST;
+    },
     timeline: (function() {
       var tl;
       tl = [];
@@ -356,7 +369,25 @@ initializeExperiment = function() {
   if (DEBUG) {
     experiment_timeline = [check_returning, test, finish];
   } else {
-    experiment_timeline = [instruct_loop, train, test, finish];
+    experiment_timeline = (function() {
+      var tl;
+      tl = [];
+      if (STAGE1) {
+        tl.push(retention_instruction);
+      }
+      if (STAGE2) {
+        tl.push(check_returning);
+      }
+      tl.push(instruct_loop);
+      if (!STAGE2) {
+        tl.push(train);
+      }
+      if (!STAGE1) {
+        tl.push(test);
+      }
+      tl.push(finish);
+      return tl;
+    })();
   }
   calculateBonus = function(final) {
     var bonus;

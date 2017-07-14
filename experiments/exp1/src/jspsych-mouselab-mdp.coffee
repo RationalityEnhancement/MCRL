@@ -8,7 +8,7 @@ https://github.com/fredcallaway/Mouselab-MDP
 # coffeelint: disable=max_line_length
 mdp = undefined
 OPTIMAL = undefined
-
+TRIAL_INDEX = 1
 jsPsych.plugins['mouselab-mdp'] = do ->
 
 
@@ -19,7 +19,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
   # a scaling parameter, determines size of drawn objects
   SIZE = undefined
-  TRIAL_INDEX = 1
   DEMO_SPEED = 1000
   MOVE_SPEED = 500
 
