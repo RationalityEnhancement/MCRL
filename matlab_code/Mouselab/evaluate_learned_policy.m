@@ -50,7 +50,7 @@ names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallAct
 root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/';    
 nb_iter=100;
 
-scaling_factor=2*16/12;
+%scaling_factor=2*16/12;
 
 for c=1:numel(costs)
     
