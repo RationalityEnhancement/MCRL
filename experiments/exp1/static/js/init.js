@@ -12,7 +12,7 @@ if (DEBUG) {
 
 if (mode === "{{ mode }}") {
   DEMO = true;
-  condition = 2;
+  condition = 3;
 }
 
 SHOW_PARTICIPANT_DATA = false;
@@ -25,7 +25,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
  */
 
-experiment_nr = 2;
+experiment_nr = 1;
 
 switch (experiment_nr) {
   case 0:

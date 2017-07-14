@@ -144,7 +144,7 @@ initializeExperiment = ->
               timeout penalty is proportional to how poor of a move you made:
               </b> the more money you could have earned, the longer the delay.
               <b> If you perform optimally, no feedback will be shown and you
-              can proceed immediately.</b>
+              can proceed immediately.</b> 
 
               #{img('task_images/Slide5.png')}
 
@@ -169,7 +169,7 @@ initializeExperiment = ->
               help you learn how to make better decisions.</b> After each flight, if
               you did not plan optimally, a feedback message will apear.
 
-              In the example below, there is a 15 second timeout penalty. <b>The duration of the timeout penalty is
+              In the example below, there is a 26 second timeout penalty. <b>The duration of the timeout penalty is
               proportional to how poorly you planned your route:</b> the more
               money you could have earned from observing more/less values
               and/or choosing a better route, the longer the delay. <b>If you
@@ -181,7 +181,7 @@ initializeExperiment = ->
               #{N_TRAIN} rounds; during the final #{N_TEST} rounds,
               no feedback will be presented.
 
-              #{img('task_images/Slide4_simpleMsg.png')}
+              #{img('task_images/Slide4_simple.png')}
               """
             ]
         else
@@ -202,7 +202,7 @@ initializeExperiment = ->
               #{N_TRAIN} rounds; during the final #{N_TEST} rounds,
               no feedback will be presented.
 
-              In the example below, there is a 15 second timeout penalty. If
+              In the example below, there is a 6 second timeout penalty. If
               you observed too few relevant values, the message would say,
               "You should have gathered more information!"; if you observed
               too many values, it would say "You should have gathered less
@@ -214,7 +214,7 @@ initializeExperiment = ->
               immediately.</b> The example message here is not necessarily
               representative of the feedback you'll receive.
 
-              #{img('task_images/Slide4' + msgType + '.png')}
+              #{img('task_images/Slide4_neutral2.png')}
               """
             ]
       else if PARAMS.message == "full"
@@ -234,14 +234,12 @@ initializeExperiment = ->
               #{N_TRAIN} rounds; during the final #{N_TEST} rounds,
               no feedback will be presented.
 
-              In the example below, if
-              you observed too few relevant values, the message would say,
-              "You should have gathered more information!"; if you observed
-              too many values, it would say "You should have gathered less
-              information!". The example message here is not necessarily
-              representative of the feedback you'll receive.
+              If you observe too few relevant values, the message will say,
+              "You should have gathered more information!"; if you observe
+              too many values, it will say "You should have gathered less
+              information!"; and the image below shows the message you will see when you collected the right information but used it incorrectly.
 
-              #{img('task_images/Slide4_noPR.png')}
+              #{img('task_images/Slide4_neutral.png')}
               """
             ]
       else []
@@ -468,7 +466,7 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      # instruct_loop
+      instruct_loop
       train
       test
       finish
