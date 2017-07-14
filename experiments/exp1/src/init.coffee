@@ -1,4 +1,4 @@
-DEBUG = false
+DEBUG = yes
 
 if DEBUG
   console.log """

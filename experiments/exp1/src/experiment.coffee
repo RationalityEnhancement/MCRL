@@ -289,6 +289,9 @@ initializeExperiment = ->
     type: 'html'
     url: 'test.html'
 
+  check_code = new Block
+    type: 'secret-code'
+    code: 'apple'
 
   instructions = new Block
     type: "instructions"
@@ -468,6 +471,7 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
+      check_code
       # instruct_loop
       train
       test
