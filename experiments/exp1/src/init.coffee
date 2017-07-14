@@ -82,6 +82,7 @@ PARAMS =
   frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]
   condition: condition
   bonus_rate: 0.005
+  delay_hours: 1
 
 # if DEBUG
   # PARAMS.message = 'full'

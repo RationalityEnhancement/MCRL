@@ -12,14 +12,20 @@ Demonstrates the jsych-mdp plugin
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 isIE = false || !!document.documentMode
+TRIALS = undefined
 TEST_TRIALS = undefined
 TRAIN_TRIALS = undefined
-N_TEST = 6
+TEST_IDX = undefined
+N_TEST = 2
 N_TRAIN = 10
 N_TRIALS = 16
 SCORE = 0
 calculateBonus = undefined
 
+if DEBUG
+  N_TEST = 1
+  N_TRAIN = 1
+  N_TRIALS = 2
 # because the order of arguments of setTimeout is awful.
 delay = (time, func) -> setTimeout func, time
 
@@ -63,14 +69,13 @@ $(window).on 'load', ->
     #   condition: condition_nr
     #   start_time: new Date
     
-        
-    trials = expData.blocks.standard
-    TRAIN_TRIALS = trials[...N_TRAIN]
-    TEST_TRIALS = trials[N_TRAIN...]
-    if not SHOW_PARTICIPANT_DATA
-      TRAIN_TRIALS = _.shuffle TRAIN_TRIALS
-      TEST_TRIALS = _.shuffle TEST_TRIALS
-    N_TRIALS = N_TRAIN + N_TEST
+    TRIALS = expData.blocks.standard
+    idx = _.shuffle (_.range N_TRIALS)
+    train_idx = idx[...N_TRAIN]
+    test_idx = idx[N_TRAIN...]    
+    TRAIN_TRIALS = (TRIALS[i] for i in train_idx)
+    TEST_TRIALS = (TRIALS[i] for i in test_idx)
+
     psiturk.recordUnstructuredData 'params', PARAMS
     psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
     psiturk.recordUnstructuredData 'condition_nr', condition_nr
@@ -170,13 +175,14 @@ initializeExperiment = ->
               help you learn how to make better decisions.</b> After each flight, if
               you did not plan optimally, a feedback message will apear.
 
-              In the example below, there is a 26 second timeout penalty. <b>The duration of the timeout penalty is
-              proportional to how poorly you planned your route:</b> the more
-              money you could have earned from observing more/less values
-              and/or choosing a better route, the longer the delay. <b>If you
-              perform optimally, no feedback will be shown and you can proceed
-              immediately.</b> The example message here is not necessarily
-              representative of the feedback you'll receive.
+              In the example below, there is a 26 second timeout penalty.
+              <b>The duration of the timeout penalty is proportional to how
+              poorly you planned your route:</b> the more money you could have
+              earned from observing more/less values and/or choosing a better
+              route, the longer the delay. <b>If you perform optimally, no
+              feedback will be shown and you can proceed immediately.</b> The
+              example message here is not necessarily representative of the
+              feedback you'll receive.
 
               This feedback will be presented after each of the first
               #{N_TRAIN} rounds; during the final #{N_TEST} rounds,
@@ -222,9 +228,10 @@ initializeExperiment = ->
             [markdown """
               # Instructions
 
-              <b>You will receive feedback about your planning. This feedback will
-              help you learn how to make better decisions.</b> After each flight a feedback message will apear. This message
-              will tell you two things:
+              <b>You will receive feedback about your planning. This feedback
+              will help you learn how to make better decisions.</b> After each
+              flight a feedback message will apear. This message will tell you
+              two things:
 
               1. Whether you observed too few relevant values or if you observed
                  irrelevant values (values of locations that you can't fly to).
@@ -236,9 +243,11 @@ initializeExperiment = ->
               no feedback will be presented.
 
               If you observe too few relevant values, the message will say,
-              "You should have gathered more information!"; if you observe
-              too many values, it will say "You should have gathered less
-              information!"; and the image below shows the message you will see when you collected the right information but used it incorrectly.
+              "You should have gathered more information!"; if you observe too
+              many values, it will say "You should have gathered less
+              information!"; and the image below shows the message you will
+              see when you collected the right information but used it
+              incorrectly.
 
               #{img('task_images/Slide4_neutral.png')}
               """
@@ -292,6 +301,58 @@ initializeExperiment = ->
     type: 'secret-code'
     code: 'elephant'
 
+  check_returning = new Block
+    type: 'text'
+    text: ->
+      # worker_id = workerId[0]
+      worker_id = 'test_worker'
+      stage1 = (loadJson 'static/json/stage1.json')[worker_id]
+      if stage1?
+        console.log 'stage1.return_time', stage1.return_time
+        return_time = new Date stage1.return_time
+        time_str = return_time.toLocaleTimeString [], {hour: '2-digit', minute: '2-digit'}
+        date_str = return_time.toLocaleDateString [], {day: '2-digit', month: '2-digit'}
+        console.log stage1
+        if getTime() > return_time
+          # Redefine test trials to match breakdown established in stage 1.
+          TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
+          SCORE += stage1.score
+
+          return markdown """
+            # Welcome back
+
+            Thanks for returning to complete Stage 2! You're current bonus is
+            **$#{calculateBonus()}**. In this stage you'll have #{N_TEST} rounds to
+            increase your bonus. Unlike in Stage 1, there will be no feedback
+            messages or delays.
+
+            Before you begin, you will review the instructions and take another
+            quiz.
+
+            Press **space** to continue.
+          """
+        else
+          return markdown """
+            # Stage 2 not ready yet
+
+            You need to wait #{PARAMS.delay_hours} hours after completing Stage 1 before
+            you can begin Stage 2. You can begin the HIT at
+            #{time_str} on #{date_str}
+
+            Please return the HIT and come back later.
+          """
+      else
+        markdown """
+          # Stage 1 not completed
+
+          We can't find you in our database. This is the second part of a two-part
+          experiment. If you did not complete the first stage yesterday, please
+          return this HIT. If you did complete Stage 1 yesterday, please email
+          cocosci.turk@gmail.com and include the secret code you received
+          when you completed that HIT.
+        """
+
+
   retention_instruction = new Block
     type: 'button-response'
     is_html: true
@@ -312,7 +373,7 @@ initializeExperiment = ->
 
       Upon completing stage 2, you will receive $1.00 plus your bonus of
       up to $3.50.<br>**By completing both stages, you can make up to
-      $5.25.**
+      $5.25**.
 
       <div class="alert alert-warning">
         Only continue if you can complete the second HIT which 
@@ -374,7 +435,8 @@ initializeExperiment = ->
            won’t be able to proceed to the next round before the countdown has
            finished, but you can take as much time as you like afterwards.
         2. </b>You will earn <u>real money</u> for your flights.</b>
-           Specifically, for every $10 you earn in the game, we will add 5 cents to your bonus. Please note that each and every one of the
+           Specifically, for every $10 you earn in the game, we will add 5
+           cents to your bonus. Please note that each and every one of the
            #{N_TRIALS} rounds counts towards your bonus.
 
         #{img('task_images/Slide3.png')}
@@ -450,7 +512,7 @@ initializeExperiment = ->
   test = new Block
     timeline: do ->
       tl = []
-      if PARAMS.feedback
+      if PARAMS.feedback and not PARAMS.delay_hours
         tl.push new TextBlock
           text: markdown """
             # No more feedback
@@ -498,9 +560,10 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      retention_instruction
-      check_code
-      train
+      check_returning
+      # retention_instruction
+      # check_code
+      # train
       test
       finish
     ]
@@ -518,7 +581,7 @@ initializeExperiment = ->
   # ================================================ #
 
   calculateBonus = (final=false) ->
-    data = jsPsych.data.getTrialsOfType 'mouselab-mdp'
+    # data = jsPsych.data.getTrialsOfType 'mouselab-mdp'
     # score = sum (_.pluck data, 'score')
     # console.log 'score', score
     bonus = (Math.max 0, SCORE) * PARAMS.bonus_rate
@@ -571,7 +634,12 @@ initializeExperiment = ->
       if DEBUG
         jsPsych.data.displayData()
       else
-        psiturk.recordUnstructuredData 'final_bonus', calculateBonus()
+        completion_data =
+          bonus: calculateBonus()
+          time: getTime()
+          test_idx: TEST_IDX
+        psiturk.recordUnstructuredData 'completed', completion_data
+
         save_data()
 
     on_data_update: (data) ->
