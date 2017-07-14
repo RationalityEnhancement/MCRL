@@ -101,6 +101,7 @@ createStartButton = ->
 
 
 initializeExperiment = ->
+  $('#jspsych-target').html('')
   console.log 'INITIALIZE EXPERIMENT'
             
   msgType = 
@@ -250,7 +251,7 @@ initializeExperiment = ->
       if PARAMS.PR_type != "none"
         ""
       else
-        "Note: there will be short delays after taking some flights."
+        "<b>Note:</b> there will be short delays after taking some flights."
 
   # ================================= #
   # ========= BLOCK CLASSES ========= #
@@ -291,7 +292,35 @@ initializeExperiment = ->
 
   check_code = new Block
     type: 'secret-code'
-    code: 'apple'
+    code: 'elephant'
+
+  retention_instruction = new Block
+    type: 'button-response'
+    is_html: true
+    choices: ['Continue']
+    button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
+    stimulus: markdown """
+      # You are beginning a two-day experiment
+
+      This experiment has two stages which you will complete in separate HITs.
+      The total base payment for both hits is $1.75, plus a **performance-dependent
+      bonus** of up to $3.50 ($2.50 is a typical bonus).
+
+      Stage 1 takes about 15 minutes, and you will receive $0.75 when you
+      complete it. Tomorrow at 9:00am, we will post a second HIT in which you
+      can complete stage 2. This HIT will only be available for 6 hours, and
+      takes about 10 minutes to complete. If you will not be available in that
+      time period, please return this HIT.
+
+      Upon completing stage 2, you will receive $1.00 plus your bonus of
+      up to $3.50.<br>**By completing both stages, you can make up to
+      $5.25.**
+
+      <div class="alert alert-warning">
+        Only continue if you can complete the second HIT which 
+        will be available tomorrow from 9:00am to 3:00pm Pacific Time.
+      </div>
+    """
 
   instructions = new Block
     type: "instructions"
@@ -471,6 +500,7 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
+      retention_instruction
       check_code
       # instruct_loop
       train

@@ -95,7 +95,8 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, MDPBlock, QuizLoop, TextBlock, check_code, debug_slide, experiment_timeline, finish, instruct_loop, instructions, msgType, prompt_resubmit, quiz, reprompt, save_data, test, text, train;
+  var Block, MDPBlock, QuizLoop, TextBlock, check_code, debug_slide, experiment_timeline, finish, instruct_loop, instructions, msgType, prompt_resubmit, quiz, reprompt, retention_instruction, save_data, test, text, train;
+  $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   msgType = (function() {
     switch (PARAMS.message) {
@@ -136,7 +137,7 @@ initializeExperiment = function() {
       if (PARAMS.PR_type !== "none") {
         return "";
       } else {
-        return "Note: there will be short delays after taking some flights.";
+        return "<b>Note:</b> there will be short delays after taking some flights.";
       }
     }
   };
@@ -211,7 +212,14 @@ initializeExperiment = function() {
   });
   check_code = new Block({
     type: 'secret-code',
-    code: 'apple'
+    code: 'elephant'
+  });
+  retention_instruction = new Block({
+    type: 'button-response',
+    is_html: true,
+    choices: ['Continue'],
+    button_html: '<button class="btn btn-primary btn-lg">%choice%</button>',
+    stimulus: markdown("# You are beginning a two-day experiment\n\nThis experiment has two stages which you will complete in separate HITs.\nThe total base payment for both hits is $1.75, plus a **performance-dependent\nbonus** of up to $3.50 ($2.50 is a typical bonus).\n\nStage 1 takes about 15 minutes, and you will receive $0.75 when you\ncomplete it. Tomorrow at 9:00am, we will post a second HIT in which you\ncan complete stage 2. This HIT will only be available for 6 hours, and\ntakes about 10 minutes to complete. If you will not be available in that\ntime period, please return this HIT.\n\nUpon completing stage 2, you will receive $1.00 plus your bonus of\nup to $3.50.<br>**By completing both stages, you can make up to\n$5.25.**\n\n<div class=\"alert alert-warning\">\n  Only continue if you can complete the second HIT which \n  will be available tomorrow from 9:00am to 3:00pm Pacific Time.\n</div>")
   });
   instructions = new Block({
     type: "instructions",
@@ -283,7 +291,7 @@ initializeExperiment = function() {
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [check_code, train, test, finish];
+    experiment_timeline = [retention_instruction, check_code, train, test, finish];
   } else {
     experiment_timeline = [instruct_loop, train, test, finish];
   }
