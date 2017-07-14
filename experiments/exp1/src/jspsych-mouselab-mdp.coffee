@@ -144,6 +144,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @invKeys = _.invert @keys
       @data =
         delays: []
+        planned_too_little: []
+        planned_too_much: []
+        information_used_correctly: []
         trial_i: @trial_i
         trialIndex: @trialIndex
         score: 0
@@ -346,7 +349,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
           when 1.00 then [null, 3, 0, 1][@data.actions.length]
           when 2.50 then [null, 15, 0, 3][@data.actions.length]
             
-      @data.delays.push(result.delay)
+      @data.delays.push result.delay
+      @data.planned_too_little.push result.planned_too_little
+      @data.planned_too_much.push result.planned_too_much
+      @data.information_used_correctly.push result.information_used_correctly
+
             
       redGreenSpan = (txt, val) ->
         "<span style='color: #{redGreen val}; font-weight: bold;'>#{txt}</span>"
