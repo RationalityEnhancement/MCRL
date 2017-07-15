@@ -112,14 +112,23 @@ def reformat_data(version):
             identifiers['pid'].append(pid_labeler(wid))
             row['pid'] = pid_labeler(wid)
 
-            bonus_row = df[df[1] == 'final_bonus']
-            if len(bonus_row):
-                bonus = float(list(bonus_row[2])[0])
-                row['bonus'] = bonus
+            completed_row = df[df[1] == 'completed']
+            if len(completed_row):
+                assert len(completed_row) == 1
                 row['completed'] = True
+                data = ast.literal_eval(completed_row[2].iloc[0])
+                for k, v in data.items():
+                    print(k, v)
+                    row[k] = v
             else:
-                row['bonus'] = 0
-                row['completed'] = False
+                bonus_row = df[df[1] == 'final_bonus']
+                if len(bonus_row):
+                    bonus = float(list(bonus_row[2])[0])
+                    row['bonus'] = bonus
+                    row['completed'] = True
+                else:
+                    row['bonus'] = 0
+                    row['completed'] = False
             yield row
 
     pdf = pd.DataFrame(parse_questiondata())

@@ -1,6 +1,7 @@
 [HIT Configuration]
 title = <# TITLE #>
 description = <# PAYMENT #> <# DESCRIPTION #>
+allow_repeats = <# ALLOW_REPEATS #>
 amt_keywords = psychology, experiment
 lifetime = 24
 us_only = true

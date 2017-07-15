@@ -31,7 +31,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-experiment_nr = 1
+experiment_nr = 4
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
@@ -89,8 +89,8 @@ PARAMS =
   delay_window: 8
 
 if experiment_nr is 4
-  STAGE1 = true
-  STAGE2 = false
+  STAGE1 = false
+  STAGE2 = true
   RETURN_TIME = new Date (getTime() + 1000 * 60 * 60 * PARAMS.delay_hours)
 
 # if DEBUG
