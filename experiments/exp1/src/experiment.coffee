@@ -22,9 +22,6 @@ N_TRIALS = 16
 SCORE = 0
 calculateBonus = undefined
 
-STAGE1 = false
-STAGE2 = true
-
 if DEBUG
   N_TEST = 1
   N_TRAIN = 1
@@ -131,6 +128,14 @@ initializeExperiment = ->
   text =
     debug: -> if DEBUG then "`DEBUG`" else ''
 
+    return_window: ->
+      cutoff = new Date (RETURN_TIME.getTime() + 1000 * 60 * 60 * PARAMS.delay_window)
+      return """
+        <b>tomorrow between #{format_time RETURN_TIME}
+        and #{format_time cutoff}</b>
+      """
+
+
     feedback: ->
       if STAGE2
         return []
@@ -158,7 +163,6 @@ initializeExperiment = ->
               can proceed immediately.</b> 
 
               #{img('task_images/Slide5.png')}
-
               """
             ]
         else if PARAMS.PR_type == "demonstration"
@@ -310,14 +314,13 @@ initializeExperiment = ->
     type: 'text'
     text: ->
       # worker_id = workerId[0]
-      worker_id = 'test_worker'
+      # worker_id = 'test_worker'
+      worker_id = 'foobar'
       stage1 = (loadJson 'static/json/stage1.json')[worker_id]
       if stage1?
         console.log 'stage1.return_time', stage1.return_time
         return_time = new Date stage1.return_time
-        time_str = return_time.toLocaleTimeString [], {hour: '2-digit', minute: '2-digit'}
-        date_str = return_time.toLocaleDateString [], {day: '2-digit', month: '2-digit'}
-        console.log stage1
+
         if getTime() > return_time
           # Redefine test trials to match breakdown established in stage 1.
           TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
@@ -342,7 +345,7 @@ initializeExperiment = ->
 
             You need to wait #{PARAMS.delay_hours} hours after completing Stage 1 before
             you can begin Stage 2. You can begin the HIT at
-            #{time_str} on #{date_str}
+            #{format_time(return_time)} on #{format_date(date)}
 
             Please return the HIT and come back later.
           """
@@ -363,7 +366,8 @@ initializeExperiment = ->
     is_html: true
     choices: ['Continue']
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
-    stimulus: markdown """
+    stimulus: ->
+      markdown """
       # You are beginning a two-day experiment
 
       This experiment has two stages which you will complete in separate HITs.
@@ -371,18 +375,18 @@ initializeExperiment = ->
       bonus** of up to $3.50 ($2.50 is a typical bonus).
 
       Stage 1 takes about 15 minutes, and you will receive $0.75 when you
-      complete it. Tomorrow at 9:00am, we will post a second HIT in which you
-      can complete stage 2. This HIT will only be available for 6 hours, and
-      takes about 10 minutes to complete. If you will not be available in that
-      time period, please return this HIT.
+      complete it. You will complete Stage 2 in a second HIT, which will be
+      posted tomorrow. You can begin the second HIT any time between #{text.return_window()}.
+      If you do not begin the HIT within this time frame, you will not receive the
+      second base payment or any bonus.
 
-      Upon completing stage 2, you will receive $1.00 plus your bonus of
+      Upon completing Stage 2, you will receive $1.00 plus your bonus of
       up to $3.50.<br>**By completing both stages, you can make up to
       $5.25**.
 
       <div class="alert alert-warning">
-        Only continue if you can complete the second HIT which 
-        will be available tomorrow from 9:00am to 3:00pm Pacific Time.
+        Only continue if you can complete the second (~10 minute) HIT which
+        which will be available #{text.return_window()}.
       </div>
     """
 
@@ -520,7 +524,7 @@ initializeExperiment = ->
     leftMessage: -> "Round: #{TRIAL_INDEX - N_TRAIN}/#{N_TEST}"
     timeline: do ->
       tl = []
-      if PARAMS.feedback and not PARAMS.delay_hours
+      if PARAMS.feedback and not STAGE2
         tl.push new TextBlock
           text: markdown """
             # No more feedback
@@ -549,25 +553,55 @@ initializeExperiment = ->
     
       
         
+  ask_email = new Block
+    type: 'survey-text'
+    preamble: -> markdown """
+        # You've completed Stage 1
 
-  console.log 'test', test
+        So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
+        You will receive this bonus, along with the additional bonus you earn 
+        in Stage 2 when you complete the HIT tomorrow. If you don't complete
+        the HIT tomorrow, you will give up the bonus you have earned.
+
+        The HIT for Stage 2 will have the title "Day 2 of two-day decsion-making experiment"
+        Remember, you must begin the HIT #{text.return_window()}.
+      """
+    questions: ['If you would like a reminder email, you can optionally enter it here.']
+    button: 'Submit HIT'
+
   finish = new Block
     type: 'button-response'
-    stimulus: -> markdown """
-      # You've completed the HIT
+    stimulus: -> 
+      if STAGE1
+        markdown """
+          # You've completed Stage 1
 
-      Thanks again for participating. We hope you had fun!
+          Remember to come back #{text.return_window()} to complete Stage 2.
+          The HIT will have the same title as this HIT: <# TITLE #>
 
-      Based on your performance, you will be
-      awarded a bonus of **$#{calculateBonus().toFixed(2)}**.
-      """
+          So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
+          You will receive this bonus, along with the additional bonus you earn 
+          in Stage 2 when you complete the HIT tomorrow. If you don't complete
+          the HIT tomorrow, you give up the bonus you have earned.
+        """
+      else 
+        markdown """
+          # You've completed the HIT
+
+          Thanks again for participating. We hope you had fun!
+
+          Based on your performance, you will be
+          awarded a bonus of **$#{calculateBonus().toFixed(2)}**.
+        """
     is_html: true
-    choices: ['Submit hit']
+    choices: ['Submit HIT']
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
 
 
   if DEBUG
     experiment_timeline = [
+      ask_email
+      retention_instruction
       check_returning
       # retention_instruction
       # check_code
@@ -587,7 +621,10 @@ initializeExperiment = ->
         tl.push train
       unless STAGE1
         tl.push test
-      tl.push finish
+      if STAGE1
+        tl.push ask_email
+      else
+        tl.push finish
       return tl
 
 

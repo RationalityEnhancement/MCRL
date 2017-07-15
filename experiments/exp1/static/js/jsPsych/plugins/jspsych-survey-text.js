@@ -28,6 +28,7 @@ jsPsych.plugins['survey-text'] = (function() {
         trial.columns.push(40);
       }
     }
+    trial.button = trial.button || 'Submit Answers'
 
     // if any trial variables are functions
     // this evaluates the function and replaces
@@ -62,7 +63,7 @@ jsPsych.plugins['survey-text'] = (function() {
       'id': 'jspsych-survey-text-next',
       'class': 'jspsych-btn jspsych-survey-text'
     }));
-    $("#jspsych-survey-text-next").html('Submit Answers');
+    $("#jspsych-survey-text-next").html(trial.button);
     $("#jspsych-survey-text-next").click(function() {
       // measure response time
       var endTime = (new Date()).getTime();

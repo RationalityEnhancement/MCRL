@@ -31,7 +31,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-experiment_nr = 1
+experiment_nr = 2
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
@@ -75,6 +75,7 @@ for PRType in IVs.PRTypes
                 conditions.infoCost.push(infoCost)
                 conditions.frequencyOfFB.push(frequency)
         
+  
 
 PARAMS =
   PR_type: conditions.PRType[condition % nrConditions]
@@ -84,7 +85,13 @@ PARAMS =
   frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]
   condition: condition
   bonus_rate: 0.005
-  delay_hours: 1
+  delay_hours: 18
+  delay_window: 8
+
+if experiment_nr is 4
+  STAGE1 = true
+  STAGE2 = false
+  RETURN_TIME = new Date (getTime() + 1000 * 60 * 60 * PARAMS.delay_hours)
 
 # if DEBUG
   # PARAMS.message = 'full'

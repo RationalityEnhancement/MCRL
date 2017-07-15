@@ -6,7 +6,7 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var N_TEST, N_TRAIN, N_TRIALS, SCORE, STAGE1, STAGE2, TEST_IDX, TEST_TRIALS, TRAIN_TRIALS, TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk,
+var N_TEST, N_TRAIN, N_TRIALS, SCORE, TEST_IDX, TEST_TRIALS, TRAIN_TRIALS, TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -31,10 +31,6 @@ N_TRIALS = 16;
 SCORE = 0;
 
 calculateBonus = void 0;
-
-STAGE1 = false;
-
-STAGE2 = true;
 
 if (DEBUG) {
   N_TEST = 1;
@@ -123,7 +119,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, MDPBlock, QuizLoop, TextBlock, check_code, check_returning, debug_slide, experiment_timeline, finish, instruct_loop, instructions, msgType, prompt_resubmit, quiz, reprompt, retention_instruction, save_data, test, text, train;
+  var Block, MDPBlock, QuizLoop, TextBlock, ask_email, check_code, check_returning, debug_slide, experiment_timeline, finish, instruct_loop, instructions, msgType, prompt_resubmit, quiz, reprompt, retention_instruction, save_data, test, text, train;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   msgType = (function() {
@@ -144,13 +140,18 @@ initializeExperiment = function() {
         return '';
       }
     },
+    return_window: function() {
+      var cutoff;
+      cutoff = new Date(RETURN_TIME.getTime() + 1000 * 60 * 60 * PARAMS.delay_window);
+      return "<b>tomorrow between " + (format_time(RETURN_TIME)) + "\nand " + (format_time(cutoff)) + "</b>";
+    },
     feedback: function() {
       if (STAGE2) {
         return [];
       }
       if (PARAMS.PR_type !== "none") {
         if (PARAMS.PR_type === "objectLevel") {
-          return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback\nwill help you learn how to make better decisions.</b> After each\nflight, if you did not make the best move, a feedback message\nwill apear. This message will tell you whether you flew along\nthe best route given your current location, and what the best\nmove would have been.\n\nThis feedback will be presented after each of the first\n" + N_TRAIN + " rounds; during the final " + N_TEST + " rounds,\nno feedback will be presented.\n\nIn the example below, the best move was not taken. As a result,\nthere is a 15 second timeout penalty.<b> The duration of the\ntimeout penalty is proportional to how poor of a move you made:\n</b> the more money you could have earned, the longer the delay.\n<b> If you perform optimally, no feedback will be shown and you\ncan proceed immediately.</b> \n\n" + (img('task_images/Slide5.png')) + "\n")];
+          return [markdown("# Instructions\n\n<b>You will receive feedback about your planning. This feedback\nwill help you learn how to make better decisions.</b> After each\nflight, if you did not make the best move, a feedback message\nwill apear. This message will tell you whether you flew along\nthe best route given your current location, and what the best\nmove would have been.\n\nThis feedback will be presented after each of the first\n" + N_TRAIN + " rounds; during the final " + N_TEST + " rounds,\nno feedback will be presented.\n\nIn the example below, the best move was not taken. As a result,\nthere is a 15 second timeout penalty.<b> The duration of the\ntimeout penalty is proportional to how poor of a move you made:\n</b> the more money you could have earned, the longer the delay.\n<b> If you perform optimally, no feedback will be shown and you\ncan proceed immediately.</b> \n\n" + (img('task_images/Slide5.png')))];
         } else if (PARAMS.PR_type === "demonstration") {
           return [markdown("# Instructions\n\n<b>You will receive guidance about how to plan. This guidance\nwill help you learn how to make better decisions.</b> In the\nfirst " + N_TRAIN + " rounds, an expert will demonstrate what optimal\nplanning and flight paths look like. In the remaining " + N_TEST + "\nrounds, you will make your own choices.")];
         } else if (PARAMS.message === "simple") {
@@ -248,21 +249,12 @@ initializeExperiment = function() {
   check_returning = new Block({
     type: 'text',
     text: function() {
-      var date_str, i, return_time, stage1, time_str, worker_id;
-      worker_id = 'test_worker';
+      var i, return_time, stage1, worker_id;
+      worker_id = 'foobar';
       stage1 = (loadJson('static/json/stage1.json'))[worker_id];
       if (stage1 != null) {
         console.log('stage1.return_time', stage1.return_time);
         return_time = new Date(stage1.return_time);
-        time_str = return_time.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        date_str = return_time.toLocaleDateString([], {
-          day: '2-digit',
-          month: '2-digit'
-        });
-        console.log(stage1);
         if (getTime() > return_time) {
           TEST_TRIALS = (function() {
             var j, len, ref, results;
@@ -277,7 +269,7 @@ initializeExperiment = function() {
           SCORE += stage1.score;
           return markdown("# Welcome back\n\nThanks for returning to complete Stage 2! You're current bonus is\n**$" + (calculateBonus()) + "**. In this stage you'll have " + N_TEST + " rounds to\nincrease your bonus. Unlike in Stage 1, there will be no feedback\nmessages or delays.\n\nBefore you begin, you will review the instructions and take another\nquiz.\n\nPress **space** to continue.");
         } else {
-          return markdown("# Stage 2 not ready yet\n\nYou need to wait " + PARAMS.delay_hours + " hours after completing Stage 1 before\nyou can begin Stage 2. You can begin the HIT at\n" + time_str + " on " + date_str + "\n\nPlease return the HIT and come back later.");
+          return markdown("# Stage 2 not ready yet\n\nYou need to wait " + PARAMS.delay_hours + " hours after completing Stage 1 before\nyou can begin Stage 2. You can begin the HIT at\n" + (format_time(return_time)) + " on " + (format_date(date)) + "\n\nPlease return the HIT and come back later.");
         }
       } else {
         return markdown("# Stage 1 not completed\n\nWe can't find you in our database. This is the second part of a two-part\nexperiment. If you did not complete the first stage yesterday, please\nreturn this HIT. If you did complete Stage 1 yesterday, please email\ncocosci.turk@gmail.com and include the secret code you received\nwhen you completed that HIT.");
@@ -289,7 +281,9 @@ initializeExperiment = function() {
     is_html: true,
     choices: ['Continue'],
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>',
-    stimulus: markdown("# You are beginning a two-day experiment\n\nThis experiment has two stages which you will complete in separate HITs.\nThe total base payment for both hits is $1.75, plus a **performance-dependent\nbonus** of up to $3.50 ($2.50 is a typical bonus).\n\nStage 1 takes about 15 minutes, and you will receive $0.75 when you\ncomplete it. Tomorrow at 9:00am, we will post a second HIT in which you\ncan complete stage 2. This HIT will only be available for 6 hours, and\ntakes about 10 minutes to complete. If you will not be available in that\ntime period, please return this HIT.\n\nUpon completing stage 2, you will receive $1.00 plus your bonus of\nup to $3.50.<br>**By completing both stages, you can make up to\n$5.25**.\n\n<div class=\"alert alert-warning\">\n  Only continue if you can complete the second HIT which \n  will be available tomorrow from 9:00am to 3:00pm Pacific Time.\n</div>")
+    stimulus: function() {
+      return markdown("# You are beginning a two-day experiment\n\nThis experiment has two stages which you will complete in separate HITs.\nThe total base payment for both hits is $1.75, plus a **performance-dependent\nbonus** of up to $3.50 ($2.50 is a typical bonus).\n\nStage 1 takes about 15 minutes, and you will receive $0.75 when you\ncomplete it. You will complete Stage 2 in a second HIT, which will be\nposted tomorrow. You can begin the second HIT any time between " + (text.return_window()) + ".\nIf you do not begin the HIT within this time frame, you will not receive the\nsecond base payment or any bonus.\n\nUpon completing Stage 2, you will receive $1.00 plus your bonus of\nup to $3.50.<br>**By completing both stages, you can make up to\n$5.25**.\n\n<div class=\"alert alert-warning\">\n  Only continue if you can complete the second (~10 minute) HIT which\n  which will be available " + (text.return_window()) + ".\n</div>");
+    }
   });
   instructions = new Block({
     type: "instructions",
@@ -339,7 +333,7 @@ initializeExperiment = function() {
     timeline: (function() {
       var tl;
       tl = [];
-      if (PARAMS.feedback && !PARAMS.delay_hours) {
+      if (PARAMS.feedback && !STAGE2) {
         tl.push(new TextBlock({
           text: markdown("# No more feedback\n\nYou are now entering a block without feedback. There will be no\nmessages and no delays regardless of what you do, but your\nperformance still affects your bonus.\n\nPress **space** to continue.")
         }));
@@ -356,18 +350,29 @@ initializeExperiment = function() {
       return tl;
     })()
   });
-  console.log('test', test);
+  ask_email = new Block({
+    type: 'survey-text',
+    preamble: function() {
+      return markdown("# You've completed Stage 1\n\nSo far, you've earned a bonus of **$" + (calculateBonus().toFixed(2)) + "**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the HIT tomorrow. If you don't complete\nthe HIT tomorrow, you will give up the bonus you have earned.\n\nThe HIT for Stage 2 will have the title \"Day 2 of two-day decsion-making experiment\"\nRemember, you must begin the HIT " + (text.return_window()) + ".");
+    },
+    questions: ['If you would like a reminder email, you can optionally enter it here.'],
+    button: 'Submit HIT'
+  });
   finish = new Block({
     type: 'button-response',
     stimulus: function() {
-      return markdown("# You've completed the HIT\n\nThanks again for participating. We hope you had fun!\n\nBased on your performance, you will be\nawarded a bonus of **$" + (calculateBonus().toFixed(2)) + "**.");
+      if (STAGE1) {
+        return markdown("# You've completed Stage 1\n\nRemember to come back " + (text.return_window()) + " to complete Stage 2.\nThe HIT will have the same title as this HIT: <# TITLE #>\n\nSo far, you've earned a bonus of **$" + (calculateBonus().toFixed(2)) + "**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the HIT tomorrow. If you don't complete\nthe HIT tomorrow, you give up the bonus you have earned.");
+      } else {
+        return markdown("# You've completed the HIT\n\nThanks again for participating. We hope you had fun!\n\nBased on your performance, you will be\nawarded a bonus of **$" + (calculateBonus().toFixed(2)) + "**.");
+      }
     },
     is_html: true,
-    choices: ['Submit hit'],
+    choices: ['Submit HIT'],
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [check_returning, test, finish];
+    experiment_timeline = [ask_email, retention_instruction, check_returning, test, finish];
   } else {
     experiment_timeline = (function() {
       var tl;
@@ -385,7 +390,11 @@ initializeExperiment = function() {
       if (!STAGE1) {
         tl.push(test);
       }
-      tl.push(finish);
+      if (STAGE1) {
+        tl.push(ask_email);
+      } else {
+        tl.push(finish);
+      }
       return tl;
     })();
   }
