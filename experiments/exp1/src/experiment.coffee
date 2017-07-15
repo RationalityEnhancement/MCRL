@@ -72,9 +72,9 @@ $(window).on 'load', ->
     TRIALS = expData.blocks.standard
     idx = _.shuffle (_.range N_TRIALS)
     train_idx = idx[...N_TRAIN]
-    test_idx = idx[N_TRAIN...]    
+    TEST_IDX = idx[N_TRAIN...]    
     TRAIN_TRIALS = (TRIALS[i] for i in train_idx)
-    TEST_TRIALS = (TRIALS[i] for i in test_idx)
+    TEST_TRIALS = (TRIALS[i] for i in TEST_IDX)
 
     psiturk.recordUnstructuredData 'params', PARAMS
     psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
@@ -313,9 +313,9 @@ initializeExperiment = ->
   check_returning = new Block
     type: 'text'
     text: ->
-      # worker_id = workerId[0]
+      worker_id = workerId[0]
       # worker_id = 'test_worker'
-      worker_id = 'foobar'
+      # worker_id = 'A34SCRE20A7XV5'
       stage1 = (loadJson 'static/json/stage1.json')[worker_id]
       if stage1?
         console.log 'stage1.return_time', stage1.return_time
@@ -329,8 +329,8 @@ initializeExperiment = ->
           return markdown """
             # Welcome back
 
-            Thanks for returning to complete Stage 2! You're current bonus is
-            **$#{calculateBonus()}**. In this stage you'll have #{N_TEST} rounds to
+            Thanks for returning to complete Stage 2! Your current bonus is
+            **$#{calculateBonus().toFixed(2)}**. In this stage you'll have #{N_TEST} rounds to
             increase your bonus. Unlike in Stage 1, there will be no feedback
             messages or delays.
 
@@ -521,7 +521,11 @@ initializeExperiment = ->
     timeline: TRAIN_TRIALS
   
   test = new Block
-    leftMessage: -> "Round: #{TRIAL_INDEX - N_TRAIN}/#{N_TEST}"
+    leftMessage: -> 
+      if STAGE2 
+        "Round: #{TRIAL_INDEX}/#{N_TEST}"
+      else
+        "Round: #{TRIAL_INDEX - N_TRAIN}/#{N_TEST}"
     timeline: do ->
       tl = []
       if PARAMS.feedback and not STAGE2
@@ -687,8 +691,9 @@ initializeExperiment = ->
         jsPsych.data.displayData()
       else
         completion_data =
+          score: SCORE
           bonus: calculateBonus()
-          time: getTime()
+          return_time: RETURN_TIME
           test_idx: TEST_IDX
         psiturk.recordUnstructuredData 'completed', completion_data
 

@@ -4,6 +4,6 @@ PAYMENT: >
   The total base payment for both hits is $1.75, plus a performance-dependent
   bonus of up to $3.50.
   In total, the two HITS take roughly 25 minutes to complete.
-
 DESCRIPTION: >
   The experiment tests your ability to make good decisions.
+ALLOW_REPEATS: 'false'

@@ -2,7 +2,7 @@ TITLE: Flight Planning
 PAYMENT: >
   This HIT takes about 20 minutes. It pays 
   $1.00 plus a performance bonus of up to $3.50.
-
 DESCRIPTION: >
   You will play an airplane flight simulation game. You will
   decide where to fly your plane in order to maximize earnings.
+ALLOW_REPEATS: 'false'

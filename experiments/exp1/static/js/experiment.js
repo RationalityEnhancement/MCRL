@@ -55,7 +55,7 @@ $(window).on('load', function() {
   loadTimeout = delay(12000, slowLoad);
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
   return delay(300, function() {
-    var ERROR, condition_nr, expData, i, idx, test_idx, train_idx;
+    var ERROR, condition_nr, expData, i, idx, train_idx;
     if (SHOW_PARTICIPANT_DATA) {
       expData = loadJson("static/json/data/1B.0/stimuli/" + COST_LEVEL + "_cost.json");
     } else {
@@ -65,7 +65,7 @@ $(window).on('load', function() {
     TRIALS = expData.blocks.standard;
     idx = _.shuffle(_.range(N_TRIALS));
     train_idx = idx.slice(0, N_TRAIN);
-    test_idx = idx.slice(N_TRAIN);
+    TEST_IDX = idx.slice(N_TRAIN);
     TRAIN_TRIALS = (function() {
       var j, len, results;
       results = [];
@@ -78,8 +78,8 @@ $(window).on('load', function() {
     TEST_TRIALS = (function() {
       var j, len, results;
       results = [];
-      for (j = 0, len = test_idx.length; j < len; j++) {
-        i = test_idx[j];
+      for (j = 0, len = TEST_IDX.length; j < len; j++) {
+        i = TEST_IDX[j];
         results.push(TRIALS[i]);
       }
       return results;
@@ -250,7 +250,7 @@ initializeExperiment = function() {
     type: 'text',
     text: function() {
       var i, return_time, stage1, worker_id;
-      worker_id = 'foobar';
+      worker_id = workerId[0];
       stage1 = (loadJson('static/json/stage1.json'))[worker_id];
       if (stage1 != null) {
         console.log('stage1.return_time', stage1.return_time);
@@ -267,7 +267,7 @@ initializeExperiment = function() {
             return results;
           })();
           SCORE += stage1.score;
-          return markdown("# Welcome back\n\nThanks for returning to complete Stage 2! You're current bonus is\n**$" + (calculateBonus()) + "**. In this stage you'll have " + N_TEST + " rounds to\nincrease your bonus. Unlike in Stage 1, there will be no feedback\nmessages or delays.\n\nBefore you begin, you will review the instructions and take another\nquiz.\n\nPress **space** to continue.");
+          return markdown("# Welcome back\n\nThanks for returning to complete Stage 2! Your current bonus is\n**$" + (calculateBonus().toFixed(2)) + "**. In this stage you'll have " + N_TEST + " rounds to\nincrease your bonus. Unlike in Stage 1, there will be no feedback\nmessages or delays.\n\nBefore you begin, you will review the instructions and take another\nquiz.\n\nPress **space** to continue.");
         } else {
           return markdown("# Stage 2 not ready yet\n\nYou need to wait " + PARAMS.delay_hours + " hours after completing Stage 1 before\nyou can begin Stage 2. You can begin the HIT at\n" + (format_time(return_time)) + " on " + (format_date(date)) + "\n\nPlease return the HIT and come back later.");
         }
@@ -328,7 +328,11 @@ initializeExperiment = function() {
   });
   test = new Block({
     leftMessage: function() {
-      return "Round: " + (TRIAL_INDEX - N_TRAIN) + "/" + N_TEST;
+      if (STAGE2) {
+        return "Round: " + TRIAL_INDEX + "/" + N_TEST;
+      } else {
+        return "Round: " + (TRIAL_INDEX - N_TRAIN) + "/" + N_TEST;
+      }
     },
     timeline: (function() {
       var tl;
@@ -439,8 +443,9 @@ initializeExperiment = function() {
         return jsPsych.data.displayData();
       } else {
         completion_data = {
+          score: SCORE,
           bonus: calculateBonus(),
-          time: getTime(),
+          return_time: RETURN_TIME,
           test_idx: TEST_IDX
         };
         psiturk.recordUnstructuredData('completed', completion_data);

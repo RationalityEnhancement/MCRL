@@ -25,7 +25,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
  */
 
-experiment_nr = 2;
+experiment_nr = 4;
 
 switch (experiment_nr) {
   case 0:
@@ -158,8 +158,8 @@ PARAMS = {
 };
 
 if (experiment_nr === 4) {
-  STAGE1 = true;
-  STAGE2 = false;
+  STAGE1 = false;
+  STAGE2 = true;
   RETURN_TIME = new Date(getTime() + 1000 * 60 * 60 * PARAMS.delay_hours);
 }
 
