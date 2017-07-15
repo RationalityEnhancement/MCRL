@@ -1,5 +1,5 @@
+#!/usr/bin/env python3
 import os
-
 
 class Compensator(object):
     """Tools for compensating MTurk workers."""
@@ -270,7 +270,23 @@ class MechanicalTurkResponse(dict):
 
 
 if __name__ == '__main__':
+    from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+    import pandas as pd
+
+    parser = ArgumentParser(
+        formatter_class=ArgumentDefaultsHelpFormatter,
+        description='Approves and assigns bonuses.'
+    )
+    parser.add_argument(
+        'version',
+        help='Version code e.g. 1A.0'
+    )
+    args = parser.parse_args()
     comp = Compensator()
-    print(comp.get_bonus('3W8CV64QJ2Z31CNK9A858K2TZPDH9V'))
-
-
+    identifiers = pd.read_csv('data/human_raw/{}/identifiers.csv'.format(args.version))
+    pdf = pd.read_csv('data/human/{}/participants.csv'.format(args.version))
+    pdf = pdf.join(identifiers.set_index('pid'))
+    for i, row in pdf.iterrows():
+        comp.approve(row.assignment_id)
+        if row.bonus > 0:
+            comp.grant_bonus(row.worker_id, row.assignment_id, round(row.bonus, 2))
