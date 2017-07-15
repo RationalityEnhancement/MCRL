@@ -286,9 +286,9 @@ legend([condition_names(1,:)';'Optimal Strategy'],'Location','SouthEast')
 saveas(fig2,[MCRL_path,'matlab_code/dataAnalysis/figures/AvgNrClicks',experiment_name,'.png'])
 
 
-
+fig_all_scores=figure(),  fig_all_clicks=figure()
 for c=1:nr_conditions
-    figure(3),
+    figure(fig_all_scores),
     errorbar(avg_rel_score(:,c),sem_rel_score(:,c),...
         'LineWidth',3,'LineStyle',line_styles{c},'Color',line_colors{c}),hold on
     set(gca,'FontSize',18)
@@ -296,7 +296,7 @@ for c=1:nr_conditions
     ylabel('Relative Performance','FontSize',24)
     
     
-    figure(4)
+    figure(fig_all_clicks)
     errorbar(avg_nr_clicks(:,c),sem_nr_clicks(:,c),...
         'LineWidth',3,'LineStyle',line_styles{c},'Color',line_colors{c}),hold on
     set(gca,'FontSize',18)
@@ -304,15 +304,17 @@ for c=1:nr_conditions
     ylabel('Number Clicks','FontSize',24)
     
 end
-fig3=figure(3),
+figure(fig_all_scores),
 plot(1:nr_trials,mean(rel_score_pi_star(:,2))*ones(1,nr_trials),'LineWidth',3)
+xlim([0.5,nr_trials+0.5])
 legend([condition_names(1,:)';'Optimal Strategy'],'Location','SouthEast')
-saveas(fig3,[MCRL_path,'matlab_code/dataAnalysis/figures/AvgRelScoreAllTrials',experiment_name,'.png'])
+saveas(fig_all_scores,[MCRL_path,'matlab_code/dataAnalysis/figures/AvgRelScoreAllTrials',experiment_name,'.png'])
 
-fig4=figure(4),
-plot(1:nr_trials,mean(nr_observations_pi_star(:,2))*ones(1training_trials)),'LineWidth',3)
+figure(fig_all_clicks),
+plot(1:nr_trials,mean(nr_observations_pi_star(:,2))*ones(1,nr_trials),'LineWidth',3)
+xlim([0.5,nr_trials+0.5])
 legend([condition_names(1,:)';'Optimal Strategy'],'Location','SouthEast')
-saveas(fig4,[MCRL_path,'matlab_code/dataAnalysis/figures/AvgNrClicksAllTrials',experiment_name,'.png'])
+saveas(fig_all_clicks,[MCRL_path,'matlab_code/dataAnalysis/figures/AvgNrClicksAllTrials',experiment_name,'.png'])
 
 
 
@@ -322,11 +324,17 @@ in_test_block=trial_index>10;
 message_nr = 0* strcmp(message,message_types{1}) + 1* strcmp(message,message_types{2});
 FB_nr = 0* strcmp(PR_type,PR_types{1}) + 1* strcmp(PR_type,PR_types{2});
 p_FB_test=anovan(relative_score(in_test_block),{FB_nr(in_test_block),...
-    message_nr(in_test_block)},'varnames',{'Delay','Message'});
+    message_nr(in_test_block)},'varnames',{'Delay','Message'},'model','full');
 
 
 p_clicks_test=anovan(n_click(in_test_block),{FB_nr(in_test_block),...
-    message_nr(in_test_block)},'varnames',{'Delay','Message'});
+    message_nr(in_test_block)},'varnames',{'Delay','Message'},'model','full');
+
+optimal_nr_clicks_by_trial_type=nr_observations_pi_star(:,2);
+optimal_nr_clicks=optimal_nr_clicks_by_trial_type(trial_i+1);
+[p,h,ci,stats]=ttest(n_click(in_test_block & strcmp(PR_type,'featureBased'))-optimal_nr_clicks(in_test_block & strcmp(PR_type,'featureBased')))
+
+[p,h,ci,stats]=ttest(n_click(in_test_block & ~strcmp(PR_type,'featureBased'))-optimal_nr_clicks(in_test_block & ~strcmp(PR_type,'featureBased')))
 
 
 fig=figure()
@@ -411,9 +419,9 @@ model_with_interaction=fitnlm(X,y,'y ~ (1-b1+b2*x2+b3*x3+b9*x2*x3)*sigmoid(b4+(b
 
 %lower BIC is better
 BIC_model=model.ModelCriterion.BIC
-BIC_noPR_noMessage=model_noPR_noMessage.ModelCriterion.BIC
-BIC_PR_noMessage=model_PR_noMessage.ModelCriterion.BIC
 BIC_noPR_Message=model_noPR_Message.ModelCriterion.BIC
+BIC_PR_noMessage=model_PR_noMessage.ModelCriterion.BIC
+BIC_noPR_noMessage=model_noPR_noMessage.ModelCriterion.BIC
 BIC_complex=model_with_interaction.ModelCriterion.BIC
 
 z=(model.Coefficients.Estimate(2)-model.Coefficients.Estimate(3))/sqrt(model.Coefficients.SE(2)^2+model.Coefficients.SE(3)^2)

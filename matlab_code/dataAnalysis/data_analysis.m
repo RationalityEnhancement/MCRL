@@ -251,6 +251,16 @@ for c=1:nr_conditions
     sem_nr_clicks_test_block(c)=sem(avg_nr_clicks(test_trials,c));
 end
 
+optimal_nr_clicks_by_trial_type=nr_observations_pi_star(:,2);
+optimal_nr_clicks=optimal_nr_clicks_by_trial_type(trial_i+1);
+
+[h,p,ci,stats]=ttest(n_click(trial_index==16 & strcmp(PR_type,'featureBased') & strcmp(message,'full'))-n_click(trial_index==10 & strcmp(PR_type,'featureBased') & strcmp(message,'full')))
+
+[h,p,ci,stats]=ttest(n_click(trial_index==10 & strcmp(PR_type,'featureBased') & strcmp(message,'full'))-optimal_nr_clicks(trial_index==10 & strcmp(PR_type,'featureBased') & strcmp(message,'full')))
+[h,p,ci,stats]=ttest(n_click(trial_index==16 & strcmp(PR_type,'featureBased') & strcmp(message,'full'))-optimal_nr_clicks(trial_index==10 & strcmp(PR_type,'featureBased') & strcmp(message,'full')))
+
+
+
 
 training_trials=1:10;
 
@@ -324,11 +334,15 @@ in_test_block=trial_index>10;
 message_nr = 0* strcmp(message,message_types{1}) + 1* strcmp(message,message_types{2});
 FB_nr = 0* strcmp(PR_type,PR_types{1}) + 1* strcmp(PR_type,PR_types{2});
 p_FB_test=anovan(relative_score(in_test_block),{FB_nr(in_test_block),...
-    message_nr(in_test_block)},'varnames',{'Delay','Message'});
+    message_nr(in_test_block)},'varnames',{'Delay','Message'},'model','full');
 
 
 p_clicks_test=anovan(n_click(in_test_block),{FB_nr(in_test_block),...
-    message_nr(in_test_block)},'varnames',{'Delay','Message'});
+    message_nr(in_test_block)},'varnames',{'Delay','Message'},'model','full');
+
+[h,p,ci,stats]=ttest(n_click(in_test_block & strcmp(PR_type,'featureBased'))-optimal_nr_clicks(in_test_block & strcmp(PR_type,'featureBased')))
+
+[h,p,ci,stats]=ttest(n_click(in_test_block & ~strcmp(PR_type,'featureBased'))-optimal_nr_clicks(in_test_block & ~strcmp(PR_type,'featureBased')))
 
 
 fig=figure()
@@ -413,9 +427,9 @@ model_with_interaction=fitnlm(X,y,'y ~ (1-b1+b2*x2+b3*x3+b9*x2*x3)*sigmoid(b4+(b
 
 %lower BIC is better
 BIC_model=model.ModelCriterion.BIC
-BIC_noPR_noMessage=model_noPR_noMessage.ModelCriterion.BIC
-BIC_PR_noMessage=model_PR_noMessage.ModelCriterion.BIC
 BIC_noPR_Message=model_noPR_Message.ModelCriterion.BIC
+BIC_PR_noMessage=model_PR_noMessage.ModelCriterion.BIC
+BIC_noPR_noMessage=model_noPR_noMessage.ModelCriterion.BIC
 BIC_complex=model_with_interaction.ModelCriterion.BIC
 
 z=(model.Coefficients.Estimate(2)-model.Coefficients.Estimate(3))/sqrt(model.Coefficients.SE(2)^2+model.Coefficients.SE(3)^2)
