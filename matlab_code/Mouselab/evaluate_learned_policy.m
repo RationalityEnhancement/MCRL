@@ -51,7 +51,7 @@ root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/';
 nb_iter=100;
 
 %scaling_factor=2*16/12;
-
+clear R_total_no_obs
 for c=1:numel(costs)
     
     if strcmp(environment{c},'low_cost_condition')
@@ -147,10 +147,10 @@ load('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/worst.csv')
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/optimal.csv')
 
-relative_performace_pi_star=(score_pi_star-repmat(worst',[1,3]))./(repmat(optimal,[1,3])-repmat(worst',[1,3]))
+relative_performace_pi_star=(score_pi_star-worst)./(optimal-worst);
 mean(relative_performace_pi_star)
 
-relative_performance_pi_no_obs=(score_pi_no_obs-repmat(worst',[1,3]))./(repmat(optimal,[1,3])-repmat(worst',[1,3]))
+relative_performance_pi_no_obs=(score_pi_no_obs-worst)./(optimal-worst)
 mean(relative_performance_pi_no_obs)
 
 fig=figure()
@@ -257,6 +257,6 @@ save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/results/behavior_of_learned_
 save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/selected_computations.mat','selected_computations')
 
 json_string=savejson('',selected_computations)
-fid=fopen('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/selected_computations.json','w')
+fid=fopen('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/results/selected_computations.json','w')
 fwrite(fid,json_string)
 fclose(fid)

@@ -169,10 +169,8 @@ initializeExperiment = ->
             [markdown """
               # Instructions
 
-              <b>You will receive guidance about how to plan. This guidance
-              will help you learn how to make better decisions.</b> In the
-              first #{N_TRAIN} rounds, an expert will demonstrate what optimal
-              planning and flight paths look like. In the remaining #{N_TEST}
+              <b> In the first #{N_TRAIN} rounds, an expert will demonstrate what optimal
+              planning and flight paths look like.</b> In the remaining #{N_TEST}
               rounds, you will make your own choices.
               """
             ]
