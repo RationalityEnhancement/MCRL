@@ -22,10 +22,23 @@ N_TRIALS = 16
 SCORE = 0
 calculateBonus = undefined
 
+
+
+# if 'hidden' in document
+#   document.addEventListener("visibilitychange", onchange);
+# else if 'mozHidden' in document
+#   document.addEventListener("mozvisibilitychange", onchange);
+# else if 'webkitHidden' in document
+#   document.addEventListener("webkitvisibilitychange", onchange);
+# else if 'msHidden' in document
+  # document.addEventListener("msvisibilitychange", onchange);
+
+
 if DEBUG
-  N_TEST = 1
-  N_TRAIN = 1
-  N_TRIALS = 2
+  0
+  # N_TEST = 1
+  # N_TRAIN = 1
+  # N_TRIALS = 2
 # because the order of arguments of setTimeout is awful.
 delay = (time, func) -> setTimeout func, time
 
@@ -603,12 +616,12 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      ask_email
-      retention_instruction
-      check_returning
+      # ask_email
+      # retention_instruction
+      # check_returning
       # retention_instruction
       # check_code
-      # train
+      train
       test
       finish
     ]

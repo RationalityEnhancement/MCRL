@@ -33,9 +33,7 @@ SCORE = 0;
 calculateBonus = void 0;
 
 if (DEBUG) {
-  N_TEST = 1;
-  N_TRAIN = 1;
-  N_TRIALS = 2;
+  0;
 }
 
 delay = function(time, func) {
@@ -376,7 +374,7 @@ initializeExperiment = function() {
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [ask_email, retention_instruction, check_returning, test, finish];
+    experiment_timeline = [train, test, finish];
   } else {
     experiment_timeline = (function() {
       var tl;

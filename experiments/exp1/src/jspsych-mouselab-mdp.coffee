@@ -219,18 +219,33 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       actions = OPTIMAL[@trial_i]
       i = 0
-      act = () =>
-        a = actions[i]
-        if a.is_click
-          @clickState @states[a.state], a.state
-        else
-          s = _.last @data.path
-          @handleKey s, a.move
-        i += 1
-        if i is actions.length
-          window.clearInterval ID
+      interval = ifvisible.onEvery 1, =>
+        if ifvisible.now()
+          a = actions[i]
+          if a.is_click
+            @clickState @states[a.state], a.state
+          else
+            s = _.last @data.path
+            @handleKey s, a.move
+          i += 1
+          if i is actions.length
+            do interval.stop
+            # window.clearInterval ID
 
-      ID = window.setInterval act, DEMO_SPEED
+      # act = () =>
+      #   if ifvisible.now()
+      #     console.log 'foo'
+      #     a = actions[i]
+      #     if a.is_click
+      #       @clickState @states[a.state], a.state
+      #     else
+      #       s = _.last @data.path
+      #       @handleKey s, a.move
+      #     i += 1
+      #     if i is actions.length
+      #       window.clearInterval ID
+
+      # ID = window.setInterval act, DEMO_SPEED
     # ---------- Responding to user input ---------- #
 
     # Called when a valid action is initiated via a key press.
@@ -509,18 +524,18 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @timeLeft = @minTime
       intervalID = undefined
 
-      tick = =>
+      interval = ifvisible.onEvery 1, =>
         if @freeze then return
         @timeLeft -= 1
         $('#mdp-time').html @timeLeft
         $('#mdp-time').css 'color', (redGreen (-@timeLeft + .1))  # red if > 0
         if @timeLeft is 0
-          window.clearInterval intervalID
-          @checkFinished()
+          do interval.stop
+          do @checkFinished
       
       $('#mdp-time').html @timeLeft
       $('#mdp-time').css 'color', (redGreen (-@timeLeft + .1))
-      intervalID = window.setInterval tick, 1000
+      # intervalID = window.setInterval tick, 1000
 
     # Draws the player image.
     initPlayer: (img) =>

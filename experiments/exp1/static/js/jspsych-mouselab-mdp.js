@@ -216,28 +216,29 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     }
 
     MouselabMDP.prototype.runDemo = function() {
-      var ID, act, actions, i;
+      var actions, i, interval;
       this.feedback = false;
       this.timeLeft = 1;
       actions = OPTIMAL[this.trial_i];
       i = 0;
-      act = (function(_this) {
+      return interval = ifvisible.onEvery(1, (function(_this) {
         return function() {
           var a, s;
-          a = actions[i];
-          if (a.is_click) {
-            _this.clickState(_this.states[a.state], a.state);
-          } else {
-            s = _.last(_this.data.path);
-            _this.handleKey(s, a.move);
-          }
-          i += 1;
-          if (i === actions.length) {
-            return window.clearInterval(ID);
+          if (ifvisible.now()) {
+            a = actions[i];
+            if (a.is_click) {
+              _this.clickState(_this.states[a.state], a.state);
+            } else {
+              s = _.last(_this.data.path);
+              _this.handleKey(s, a.move);
+            }
+            i += 1;
+            if (i === actions.length) {
+              return interval.stop();
+            }
           }
         };
-      })(this);
-      return ID = window.setInterval(act, DEMO_SPEED);
+      })(this));
     };
 
     MouselabMDP.prototype.handleKey = function(s0, a) {
@@ -547,10 +548,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.startTimer = function() {
-      var intervalID, tick;
+      var interval, intervalID;
       this.timeLeft = this.minTime;
       intervalID = void 0;
-      tick = (function(_this) {
+      interval = ifvisible.onEvery(1, (function(_this) {
         return function() {
           if (_this.freeze) {
             return;
@@ -559,14 +560,13 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           $('#mdp-time').html(_this.timeLeft);
           $('#mdp-time').css('color', redGreen(-_this.timeLeft + .1));
           if (_this.timeLeft === 0) {
-            window.clearInterval(intervalID);
+            interval.stop();
             return _this.checkFinished();
           }
         };
-      })(this);
+      })(this));
       $('#mdp-time').html(this.timeLeft);
-      $('#mdp-time').css('color', redGreen(-this.timeLeft + .1));
-      return intervalID = window.setInterval(tick, 1000);
+      return $('#mdp-time').css('color', redGreen(-this.timeLeft + .1));
     };
 
     MouselabMDP.prototype.initPlayer = function(img) {
