@@ -1,0 +1,23 @@
+action_times,actions,button_pressed,correct,delays,information_used_correctly,path,planned_too_little,planned_too_much,queries,questions,responses,rt,score,stimulus,time_elapsed,trial_index,trial_i,trial_type,view_history,pid
+,,0.0,,,,,,,,,,31763,,"<h1 id=""youarebeginningatwodayexperiment"">You are beginning a two-day experiment</h1>
+
+<p>This experiment has two stages which you will complete in separate HITs.
+The total base payment for both hits is $1.75, plus a <strong>performance-dependent
+bonus</strong> of up to $3.50 ($2.50 is a typical bonus).</p>
+
+<p>Stage 1 takes about 15 minutes, and you will receive $0.75 when you
+complete it. You will complete Stage 2 in a second HIT, which will be
+posted tomorrow. You can begin the second HIT any time between <b>tomorrow between 8:08 PM
+and 4:08 AM</b>.
+If you do not begin the HIT within this time frame, you will not receive the
+second base payment or any bonus.</p>
+
+<p>Upon completing Stage 2, you will receive $1.00 plus your bonus of
+up to $3.50.<br><strong>By completing both stages, you can make up to
+$5.25</strong>.</p>
+
+<div class=""alert alert-warning"">
+  Only continue if you can complete the second (~10 minute) HIT which
+  which will be available <b>tomorrow between 8:08 PM
+and 4:08 AM</b>.
+</div>",31775,,,button-response,,0

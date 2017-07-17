@@ -169,11 +169,10 @@ initializeExperiment = ->
             [markdown """
               # Instructions
 
-              <b>You will receive guidance about how to plan. This guidance
-              will help you learn how to make better decisions.</b> In the
-              first #{N_TRAIN} rounds, an expert will demonstrate what optimal
-              planning and flight paths look like. In the remaining #{N_TEST}
+              <b> In the first #{N_TRAIN} rounds, an expert will demonstrate optimal flight planning.</b> In the remaining #{N_TEST}
               rounds, you will make your own choices.
+
+                <font color="red">Do <b>NOT</b> switch to a different tab while a demonstration is running. If you do, you won't be able to continue the HIT when you return.</font>
               """
             ]
         else if PARAMS.message == "simple"

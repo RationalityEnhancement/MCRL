@@ -1,6 +1,6 @@
 %%  Which experiment do you want to analyze?
-%experiment_name='1A';
-experiment_name='1B';
+experiment_name='1A';
+%experiment_name='1B';
 
 %%
 if strcmp(experiment_name,'1A')
@@ -204,7 +204,6 @@ rel_score_pi_star=(score_pi_star-min_score)./(max_score-min_score);
 
 nr_observations_pi_star=csvread([MCRL_path,'experiments/data/stimuli/exp1/nr_observations_pi_star.csv']);
 
-
 eval(['import_data_exp',experiment_name])
 
 message_types={'simple','full'};%unique(message); message_types=message_types(2:-1:1);
@@ -250,6 +249,16 @@ for c=1:nr_conditions
     avg_nr_clicks_test_block(c)=mean(avg_nr_clicks(test_trials,c));
     sem_nr_clicks_test_block(c)=sem(avg_nr_clicks(test_trials,c));
 end
+
+optimal_nr_clicks_by_trial_type=nr_observations_pi_star(:,2);
+optimal_nr_clicks=optimal_nr_clicks_by_trial_type(trial_i+1);
+
+[h,p,ci,stats]=ttest(n_click(trial_index==16 & strcmp(PR_type,'featureBased') & strcmp(message,'full'))-n_click(trial_index==10 & strcmp(PR_type,'featureBased') & strcmp(message,'full')))
+
+[h,p,ci,stats]=ttest(n_click(trial_index==10 & strcmp(PR_type,'featureBased') & strcmp(message,'full'))-optimal_nr_clicks(trial_index==10 & strcmp(PR_type,'featureBased') & strcmp(message,'full')))
+[h,p,ci,stats]=ttest(n_click(trial_index==16 & strcmp(PR_type,'featureBased') & strcmp(message,'full'))-optimal_nr_clicks(trial_index==10 & strcmp(PR_type,'featureBased') & strcmp(message,'full')))
+
+
 
 
 training_trials=1:10;
@@ -324,22 +333,47 @@ in_test_block=trial_index>10;
 message_nr = 0* strcmp(message,message_types{1}) + 1* strcmp(message,message_types{2});
 FB_nr = 0* strcmp(PR_type,PR_types{1}) + 1* strcmp(PR_type,PR_types{2});
 p_FB_test=anovan(relative_score(in_test_block),{FB_nr(in_test_block),...
-    message_nr(in_test_block)},'varnames',{'Delay','Message'});
+    message_nr(in_test_block)},'varnames',{'Delay','Message'},'model','full');
 
 
 p_clicks_test=anovan(n_click(in_test_block),{FB_nr(in_test_block),...
-    message_nr(in_test_block)},'varnames',{'Delay','Message'});
+    message_nr(in_test_block)},'varnames',{'Delay','Message'},'model','full');
+
+[h,p,ci,stats]=ttest(n_click(in_test_block & strcmp(PR_type,'featureBased'))-optimal_nr_clicks(in_test_block & strcmp(PR_type,'featureBased')))
+
+[h,p,ci,stats]=ttest(n_click(in_test_block & ~strcmp(PR_type,'featureBased'))-optimal_nr_clicks(in_test_block & ~strcmp(PR_type,'featureBased')))
 
 
 fig=figure()
-handles=barwitherr([sem_test_block_performance([1,2]); sem_test_block_performance([3,4])],...
-           [avg_test_block_performance([1,2]); avg_test_block_performance([3,4])]),
-hold on
-handles(3)=plot([0.5,2.5],mean(rel_score_pi_star(:,2))*ones(1,2),'LineWidth',3)
-set(gca,'XTickLabel',{'constant delays','PR-based delays'},'FontSize',16)
-legend(handles,'No message','Message','optimal strategy','Location','best')
-ylabel('Relative Performance in Test Block','FontSize',16)
-title('Experiment 1B','FontSize',18)
+%xlim([0.6,2]),ylim([0,0.9])
+handles(1,1)=barwitherr([0,sem_test_block_performance(1)],[0,0.875],...
+           [0,avg_test_block_performance(1)],'BarWidth',0.2),hold on
+handles(2,1)=barwitherr([0,sem_test_block_performance(3)],[0,1.125],...
+    [0,avg_test_block_performance([3])],'BarWidth',0.2),hold on
+handles(1,2)=barwitherr([0,sem_test_block_performance([1])],[0,1.575],...
+           [0,avg_test_block_performance([2])],'BarWidth',0.2),hold on
+handles(2,2)=barwitherr([0,sem_test_block_performance([3])],[0,1.825],...
+    [0,avg_test_block_performance([4])],'BarWidth',0.2),hold on
+set(gca,'FontSize',16,'XTickLabel',{})
+set(handles(1,1),'FaceColor',[1 1 1],'BarWidth',0.2), set(handles(1,2),'FaceColor',[1 1 1],'BarWidth',0.2)  
+set(handles(2,1),'FaceColor',[1 1 1],'BarWidth',0.2) ,set(handles(2,2),'FaceColor',[1 1 1],'BarWidth',0.2)
+set(handles(1,1),'LineStyle','--','LineWidth',3,'EdgeColor',[1 0 0],'BarWidth',0.2),
+set(handles(1,2),'LineStyle','-','LineWidth',3,'EdgeColor',[1 0 0],'BarWidth',0.2),
+set(handles(2,1),'LineStyle','--','LineWidth',3,'EdgeColor',[0 1 0],'BarWidth',0.2)
+set(handles(2,2),'LineStyle','-','LineWidth',3,'EdgeColor',[0 1 0],'BarWidth',0.2)
+set(handles(1,1),'BarWidth',0.1)
+set(handles(1,2),'BarWidth',0.05)
+set(handles(2,1),'BarWidth',0.1)
+set(handles(2,2),'BarWidth',0.05)
+xlim([0.75,2])
+ylim([0.3,0.9])
+handles(3,1)=plot([0.5,2.5],mean(rel_score_pi_star(:,2))*ones(1,2),'LineWidth',3)
+%handles(3)=plot([0.5,2.5],mean(rel_score_pi_star(:,2))*ones(1,2),'LineWidth',3)
+%set(gca,'XTickLabel',{'constant delays','PR-based delays'},'FontSize',16)
+%legend([handles(1,:),handles(2,:)],...
+%    'no PR, no message','no PR, message','PR, no message','PR, message','Location','best')
+ylabel('Relative Performance in Test Block','FontSize',18)
+%title('Experiment 1B','FontSize',18)
 saveas(fig,'figures/TestPerformance1B.png')
 
 
@@ -413,9 +447,9 @@ model_with_interaction=fitnlm(X,y,'y ~ (1-b1+b2*x2+b3*x3+b9*x2*x3)*sigmoid(b4+(b
 
 %lower BIC is better
 BIC_model=model.ModelCriterion.BIC
-BIC_noPR_noMessage=model_noPR_noMessage.ModelCriterion.BIC
-BIC_PR_noMessage=model_PR_noMessage.ModelCriterion.BIC
 BIC_noPR_Message=model_noPR_Message.ModelCriterion.BIC
+BIC_PR_noMessage=model_PR_noMessage.ModelCriterion.BIC
+BIC_noPR_noMessage=model_noPR_noMessage.ModelCriterion.BIC
 BIC_complex=model_with_interaction.ModelCriterion.BIC
 
 z=(model.Coefficients.Estimate(2)-model.Coefficients.Estimate(3))/sqrt(model.Coefficients.SE(2)^2+model.Coefficients.SE(3)^2)
