@@ -1,1447 +1,1627 @@
-action_times,actions,button_pressed,correct,delays,key_press,path,queries,questions,responses,rt,score,stimulus,time_elapsed,trial_index,trial_i,trial_type,view_history,pid
-,,0.0,,,,,,,,3019,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+action_times,actions,button_pressed,correct,delays,information_used_correctly,key_press,path,planned_too_little,planned_too_much,queries,questions,responses,rt,score,stimulus,time_elapsed,trial_index,trial_i,trial_type,view_history,pid
+,,0.0,,,,,,,,,,,3019,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
 awarded a bonus of <strong>$2.34</strong>.</p>",1448462,,,button-response,,0
-,,0.0,,,,,,,,8976,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+,,0.0,,,,,,,,,,,8976,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
 awarded a bonus of <strong>$0.68</strong>.</p>",1522866,,,button-response,,1
-,,0.0,,,,,,,,6683,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+,,0.0,,,,,,,,,,,6683,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
 awarded a bonus of <strong>$1.31</strong>.</p>",1391196,,,button-response,,2
-,,0.0,,,,,,,,4670,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+,,0.0,,,,,,,,,,,4670,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
 awarded a bonus of <strong>$1.20</strong>.</p>",1452371,,,button-response,,3
-,,0.0,,,,,,,,4245,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+,,0.0,,,,,,,,,,,7871,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.31</strong>.</p>",2035210,,,button-response,,5
-,,0.0,,,,,,,,3533,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.23</strong>.</p>",1183068,,,button-response,,4
+,,0.0,,,,,,,,,,,1469,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.68</strong>.</p>",1429991,,,button-response,,6
-,,0.0,,,,,,,,6276,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.87</strong>.</p>",1131364,,,button-response,,6
+,,0.0,,,,,,,,,,,4245,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.70</strong>.</p>",1590979,,,button-response,,7
-,,0.0,,,,,,,,11124,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.31</strong>.</p>",2035210,,,button-response,,7
+,,0.0,,,,,,,,,,,3533,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.02</strong>.</p>",1135636,,,button-response,,8
-,,0.0,,,,,,,,4987,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.68</strong>.</p>",1429991,,,button-response,,8
+,,0.0,,,,,,,,,,,6276,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.32</strong>.</p>",1640403,,,button-response,,9
-,,0.0,,,,,,,,2773,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.70</strong>.</p>",1590979,,,button-response,,9
+,,0.0,,,,,,,,,,,11124,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.44</strong>.</p>",1296193,,,button-response,,10
-,,0.0,,,,,,,,5256,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.02</strong>.</p>",1135636,,,button-response,,10
+,,0.0,,,,,,,,,,,4987,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.98</strong>.</p>",1180970,,,button-response,,11
-,,0.0,,,,,,,,6758,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.32</strong>.</p>",1640403,,,button-response,,11
+,,0.0,,,,,,,,,,,2773,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.83</strong>.</p>",1081183,,,button-response,,12
-,,0.0,,,,,,,,3489,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.44</strong>.</p>",1296193,,,button-response,,12
+,,0.0,,,,,,,,,,,5256,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.13</strong>.</p>",1136411,,,button-response,,13
-,,0.0,,,,,,,,5999,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.98</strong>.</p>",1180970,,,button-response,,13
+,,0.0,,,,,,,,,,,6758,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.45</strong>.</p>",1075704,,,button-response,,14
-,,0.0,,,,,,,,3361,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.83</strong>.</p>",1081183,,,button-response,,14
+,,0.0,,,,,,,,,,,3489,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.96</strong>.</p>",1160566,,,button-response,,15
-,,0.0,,,,,,,,4720,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.13</strong>.</p>",1136411,,,button-response,,15
+,,0.0,,,,,,,,,,,8365,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.68</strong>.</p>",1092408,,,button-response,,17
-,,0.0,,,,,,,,7292,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.19</strong>.</p>",1189031,,,button-response,,16
+,,0.0,,,,,,,,,,,5999,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.74</strong>.</p>",1754019,,,button-response,,18
-,,0.0,,,,,,,,3210,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.45</strong>.</p>",1075704,,,button-response,,17
+,,0.0,,,,,,,,,,,3361,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.87</strong>.</p>",1305411,,,button-response,,19
-,,0.0,,,,,,,,7788,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.96</strong>.</p>",1160566,,,button-response,,18
+,,0.0,,,,,,,,,,,4720,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.43</strong>.</p>",1022610,,,button-response,,20
-,,0.0,,,,,,,,4608,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.68</strong>.</p>",1092408,,,button-response,,20
+,,0.0,,,,,,,,,,,7292,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.84</strong>.</p>",1331111,,,button-response,,21
-,,0.0,,,,,,,,3646,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.74</strong>.</p>",1754019,,,button-response,,21
+,,0.0,,,,,,,,,,,3210,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.03</strong>.</p>",1087279,,,button-response,,22
-,,0.0,,,,,,,,3454,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.87</strong>.</p>",1305411,,,button-response,,22
+,,0.0,,,,,,,,,,,7788,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.20</strong>.</p>",1141488,,,button-response,,24
-,,0.0,,,,,,,,4065,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.43</strong>.</p>",1022610,,,button-response,,23
+,,0.0,,,,,,,,,,,4608,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.99</strong>.</p>",967607,,,button-response,,25
-,,0.0,,,,,,,,3649,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.84</strong>.</p>",1331111,,,button-response,,24
+,,0.0,,,,,,,,,,,3646,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.11</strong>.</p>",1166794,,,button-response,,26
-,,0.0,,,,,,,,8769,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.03</strong>.</p>",1087279,,,button-response,,25
+,,0.0,,,,,,,,,,,1600,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.98</strong>.</p>",1190046,,,button-response,,27
-,,0.0,,,,,,,,5882,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.55</strong>.</p>",2027452,,,button-response,,26
+,,0.0,,,,,,,,,,,3454,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.69</strong>.</p>",1142225,,,button-response,,28
-,,0.0,,,,,,,,4650,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.20</strong>.</p>",1141488,,,button-response,,28
+,,0.0,,,,,,,,,,,4065,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.51</strong>.</p>",1152082,,,button-response,,29
-,,0.0,,,,,,,,10615,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.99</strong>.</p>",967607,,,button-response,,29
+,,0.0,,,,,,,,,,,3649,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.92</strong>.</p>",1370048,,,button-response,,30
-,,0.0,,,,,,,,8007,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.11</strong>.</p>",1166794,,,button-response,,30
+,,0.0,,,,,,,,,,,8769,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.74</strong>.</p>",1299799,,,button-response,,31
-,,0.0,,,,,,,,3250,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.98</strong>.</p>",1190046,,,button-response,,31
+,,0.0,,,,,,,,,,,5882,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.33</strong>.</p>",1114709,,,button-response,,32
-,,0.0,,,,,,,,3274,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.69</strong>.</p>",1142225,,,button-response,,32
+,,0.0,,,,,,,,,,,4650,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.09</strong>.</p>",1292268,,,button-response,,33
-,,0.0,,,,,,,,6771,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.51</strong>.</p>",1152082,,,button-response,,33
+,,0.0,,,,,,,,,,,10615,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.12</strong>.</p>",1419712,,,button-response,,34
-,,0.0,,,,,,,,2491,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.92</strong>.</p>",1370048,,,button-response,,34
+,,0.0,,,,,,,,,,,8007,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.99</strong>.</p>",1491410,,,button-response,,35
-,,0.0,,,,,,,,4216,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.74</strong>.</p>",1299799,,,button-response,,35
+,,0.0,,,,,,,,,,,3250,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.41</strong>.</p>",1106989,,,button-response,,36
-,,0.0,,,,,,,,6467,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.33</strong>.</p>",1114709,,,button-response,,36
+,,0.0,,,,,,,,,,,3274,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.78</strong>.</p>",1727423,,,button-response,,37
-,,0.0,,,,,,,,3904,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.09</strong>.</p>",1292268,,,button-response,,37
+,,0.0,,,,,,,,,,,6771,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.24</strong>.</p>",1539686,,,button-response,,38
-,,0.0,,,,,,,,1763,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.12</strong>.</p>",1419712,,,button-response,,38
+,,0.0,,,,,,,,,,,2491,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.98</strong>.</p>",1380915,,,button-response,,39
-,,0.0,,,,,,,,4565,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.99</strong>.</p>",1491410,,,button-response,,39
+,,0.0,,,,,,,,,,,4216,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.96</strong>.</p>",1404886,,,button-response,,40
-,,0.0,,,,,,,,3387,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.41</strong>.</p>",1106989,,,button-response,,40
+,,0.0,,,,,,,,,,,6467,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.84</strong>.</p>",2805797,,,button-response,,41
-,,0.0,,,,,,,,1571,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.78</strong>.</p>",1727423,,,button-response,,41
+,,0.0,,,,,,,,,,,3904,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.64</strong>.</p>",1453718,,,button-response,,42
-,,0.0,,,,,,,,20652,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.24</strong>.</p>",1539686,,,button-response,,42
+,,0.0,,,,,,,,,,,1763,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.09</strong>.</p>",1240376,,,button-response,,43
-,,0.0,,,,,,,,5285,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.98</strong>.</p>",1380915,,,button-response,,43
+,,0.0,,,,,,,,,,,4565,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.27</strong>.</p>",1088260,,,button-response,,44
-,,0.0,,,,,,,,9653,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.96</strong>.</p>",1404886,,,button-response,,44
+,,0.0,,,,,,,,,,,3387,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.98</strong>.</p>",1358825,,,button-response,,45
-,,0.0,,,,,,,,2381,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.84</strong>.</p>",2805797,,,button-response,,45
+,,0.0,,,,,,,,,,,3023,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.60</strong>.</p>",1490226,,,button-response,,46
-,,0.0,,,,,,,,2434,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.30</strong>.</p>",1606592,,,button-response,,46
+,,0.0,,,,,,,,,,,1571,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.15</strong>.</p>",1101252,,,button-response,,47
-,,0.0,,,,,,,,4330,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.64</strong>.</p>",1453718,,,button-response,,47
+,,0.0,,,,,,,,,,,20652,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.63</strong>.</p>",1125707,,,button-response,,48
-,,0.0,,,,,,,,20790,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.09</strong>.</p>",1240376,,,button-response,,48
+,,0.0,,,,,,,,,,,8543,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.98</strong>.</p>",1664339,,,button-response,,49
-,,0.0,,,,,,,,5110,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.06</strong>.</p>",1207929,,,button-response,,49
+,,0.0,,,,,,,,,,,5285,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.90</strong>.</p>",1312632,,,button-response,,50
-,,0.0,,,,,,,,6064,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.27</strong>.</p>",1088260,,,button-response,,50
+,,0.0,,,,,,,,,,,9653,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.47</strong>.</p>",1190101,,,button-response,,51
-,,0.0,,,,,,,,3116,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.98</strong>.</p>",1358825,,,button-response,,51
+,,0.0,,,,,,,,,,,2381,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.73</strong>.</p>",1355763,,,button-response,,52
-,,0.0,,,,,,,,4045,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.60</strong>.</p>",1490226,,,button-response,,52
+,,0.0,,,,,,,,,,,2434,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.60</strong>.</p>",923334,,,button-response,,53
-,,0.0,,,,,,,,1804,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.15</strong>.</p>",1101252,,,button-response,,53
+,,0.0,,,,,,,,,,,4330,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.99</strong>.</p>",1135980,,,button-response,,55
-,,0.0,,,,,,,,6412,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.63</strong>.</p>",1125707,,,button-response,,54
+,,0.0,,,,,,,,,,,20790,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.84</strong>.</p>",1199759,,,button-response,,56
-,,0.0,,,,,,,,6127,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.98</strong>.</p>",1664339,,,button-response,,55
+,,0.0,,,,,,,,,,,5110,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.00</strong>.</p>",953983,,,button-response,,58
-,,0.0,,,,,,,,6973,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.90</strong>.</p>",1312632,,,button-response,,56
+,,0.0,,,,,,,,,,,6064,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.58</strong>.</p>",1282735,,,button-response,,59
-,,0.0,,,,,,,,5045,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.47</strong>.</p>",1190101,,,button-response,,57
+,,0.0,,,,,,,,,,,3116,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.30</strong>.</p>",1226868,,,button-response,,60
-,,0.0,,,,,,,,13865,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.73</strong>.</p>",1355763,,,button-response,,58
+,,0.0,,,,,,,,,,,4045,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.30</strong>.</p>",1249982,,,button-response,,62
-,,0.0,,,,,,,,3844,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.60</strong>.</p>",923334,,,button-response,,59
+,,0.0,,,,,,,,,,,1804,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.34</strong>.</p>",1385507,,,button-response,,63
-,,0.0,,,,,,,,4910,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.99</strong>.</p>",1135980,,,button-response,,61
+,,0.0,,,,,,,,,,,6412,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.63</strong>.</p>",1230720,,,button-response,,65
-,,0.0,,,,,,,,4202,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.84</strong>.</p>",1199759,,,button-response,,62
+,,0.0,,,,,,,,,,,8833,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.65</strong>.</p>",1135314,,,button-response,,67
-,,0.0,,,,,,,,3265,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.12</strong>.</p>",1246593,,,button-response,,63
+,,0.0,,,,,,,,,,,6127,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.37</strong>.</p>",1062834,,,button-response,,68
-,,0.0,,,,,,,,3715,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.00</strong>.</p>",953983,,,button-response,,65
+,,0.0,,,,,,,,,,,6973,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.71</strong>.</p>",1517138,,,button-response,,69
-,,0.0,,,,,,,,1929,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.58</strong>.</p>",1282735,,,button-response,,66
+,,0.0,,,,,,,,,,,5045,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.10</strong>.</p>",2110326,,,button-response,,70
-,,0.0,,,,,,,,5068,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.30</strong>.</p>",1226868,,,button-response,,67
+,,0.0,,,,,,,,,,,13865,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.15</strong>.</p>",1577020,,,button-response,,71
-,,0.0,,,,,,,,5380,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.30</strong>.</p>",1249982,,,button-response,,69
+,,0.0,,,,,,,,,,,3844,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.73</strong>.</p>",1413095,,,button-response,,72
-,,0.0,,,,,,,,4865,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.34</strong>.</p>",1385507,,,button-response,,70
+,,0.0,,,,,,,,,,,4832,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.36</strong>.</p>",1132911,,,button-response,,73
-,,0.0,,,,,,,,3486,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.27</strong>.</p>",1571270,,,button-response,,71
+,,0.0,,,,,,,,,,,4910,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.67</strong>.</p>",1033380,,,button-response,,74
-,,0.0,,,,,,,,3880,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.63</strong>.</p>",1230720,,,button-response,,74
+,,0.0,,,,,,,,,,,4202,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.72</strong>.</p>",1274227,,,button-response,,75
-,,0.0,,,,,,,,2757,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.65</strong>.</p>",1135314,,,button-response,,76
+,,0.0,,,,,,,,,,,3265,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.61</strong>.</p>",1322787,,,button-response,,76
-,,0.0,,,,,,,,5510,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.37</strong>.</p>",1062834,,,button-response,,77
+,,0.0,,,,,,,,,,,4919,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.50</strong>.</p>",1303626,,,button-response,,77
-,,0.0,,,,,,,,5690,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.98</strong>.</p>",1039242,,,button-response,,78
+,,0.0,,,,,,,,,,,3715,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.14</strong>.</p>",1294950,,,button-response,,78
-,,0.0,,,,,,,,16107,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.71</strong>.</p>",1517138,,,button-response,,80
+,,0.0,,,,,,,,,,,1929,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.21</strong>.</p>",1413648,,,button-response,,79
-,,0.0,,,,,,,,6212,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.10</strong>.</p>",2110326,,,button-response,,81
+,,0.0,,,,,,,,,,,5068,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.07</strong>.</p>",1313116,,,button-response,,80
-,,0.0,,,,,,,,4804,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.15</strong>.</p>",1577020,,,button-response,,82
+,,0.0,,,,,,,,,,,5380,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.01</strong>.</p>",1082693,,,button-response,,81
-,,0.0,,,,,,,,6770,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.73</strong>.</p>",1413095,,,button-response,,83
+,,0.0,,,,,,,,,,,4865,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.80</strong>.</p>",1374242,,,button-response,,82
-,,0.0,,,,,,,,1170,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.36</strong>.</p>",1132911,,,button-response,,84
+,,0.0,,,,,,,,,,,3486,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.63</strong>.</p>",1153911,,,button-response,,83
-,,0.0,,,,,,,,3969,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.67</strong>.</p>",1033380,,,button-response,,85
+,,0.0,,,,,,,,,,,3880,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.33</strong>.</p>",1033206,,,button-response,,84
-,,0.0,,,,,,,,5285,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.72</strong>.</p>",1274227,,,button-response,,86
+,,0.0,,,,,,,,,,,2757,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.23</strong>.</p>",1676699,,,button-response,,86
-,,0.0,,,,,,,,4370,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.61</strong>.</p>",1322787,,,button-response,,87
+,,0.0,,,,,,,,,,,7948,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.99</strong>.</p>",1080166,,,button-response,,88
-,,0.0,,,,,,,,9848,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.97</strong>.</p>",1386040,,,button-response,,88
+,,0.0,,,,,,,,,,,5510,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.82</strong>.</p>",1440201,,,button-response,,89
-,,0.0,,,,,,,,10017,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.50</strong>.</p>",1303626,,,button-response,,89
+,,0.0,,,,,,,,,,,5690,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.32</strong>.</p>",1348197,,,button-response,,90
-,,0.0,,,,,,,,5410,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.14</strong>.</p>",1294950,,,button-response,,90
+,,0.0,,,,,,,,,,,16107,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.88</strong>.</p>",1075592,,,button-response,,91
-,,0.0,,,,,,,,2927,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.21</strong>.</p>",1413648,,,button-response,,91
+,,0.0,,,,,,,,,,,2572,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.75</strong>.</p>",1065607,,,button-response,,92
-,,0.0,,,,,,,,6793,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.77</strong>.</p>",1178294,,,button-response,,92
+,,0.0,,,,,,,,,,,6212,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.00</strong>.</p>",2857101,,,button-response,,93
-,,0.0,,,,,,,,3688,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.07</strong>.</p>",1313116,,,button-response,,93
+,,0.0,,,,,,,,,,,4804,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.17</strong>.</p>",2217285,,,button-response,,94
-,,0.0,,,,,,,,5592,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.01</strong>.</p>",1082693,,,button-response,,94
+,,0.0,,,,,,,,,,,6770,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.40</strong>.</p>",1211598,,,button-response,,95
-,,0.0,,,,,,,,3885,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.80</strong>.</p>",1374242,,,button-response,,95
+,,0.0,,,,,,,,,,,1170,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.96</strong>.</p>",1079930,,,button-response,,96
-,,0.0,,,,,,,,2778,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.63</strong>.</p>",1153911,,,button-response,,96
+,,0.0,,,,,,,,,,,3969,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.56</strong>.</p>",1068605,,,button-response,,98
-,,0.0,,,,,,,,2866,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.33</strong>.</p>",1033206,,,button-response,,97
+,,0.0,,,,,,,,,,,5285,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.03</strong>.</p>",1433422,,,button-response,,99
-,,0.0,,,,,,,,2319,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.23</strong>.</p>",1676699,,,button-response,,99
+,,0.0,,,,,,,,,,,4370,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.39</strong>.</p>",1153173,,,button-response,,100
-,,0.0,,,,,,,,2147,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.99</strong>.</p>",1080166,,,button-response,,101
+,,0.0,,,,,,,,,,,9848,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.40</strong>.</p>",1542707,,,button-response,,101
-,,0.0,,,,,,,,5448,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.82</strong>.</p>",1440201,,,button-response,,102
+,,0.0,,,,,,,,,,,10017,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.01</strong>.</p>",1396554,,,button-response,,102
-,,0.0,,,,,,,,8433,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.32</strong>.</p>",1348197,,,button-response,,103
+,,0.0,,,,,,,,,,,5410,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.06</strong>.</p>",1104634,,,button-response,,103
-,,0.0,,,,,,,,16290,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.88</strong>.</p>",1075592,,,button-response,,104
+,,0.0,,,,,,,,,,,2927,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.14</strong>.</p>",1298262,,,button-response,,104
-,,0.0,,,,,,,,9343,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.75</strong>.</p>",1065607,,,button-response,,105
+,,0.0,,,,,,,,,,,6793,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.01</strong>.</p>",1601264,,,button-response,,105
-,,0.0,,,,,,,,4140,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.00</strong>.</p>",2857101,,,button-response,,106
+,,0.0,,,,,,,,,,,3688,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.84</strong>.</p>",1064664,,,button-response,,106
-,,0.0,,,,,,,,1685,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.17</strong>.</p>",2217285,,,button-response,,107
+,,0.0,,,,,,,,,,,5997,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.76</strong>.</p>",1256878,,,button-response,,107
-,,0.0,,,,,,,,2238,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.05</strong>.</p>",1207754,,,button-response,,108
+,,0.0,,,,,,,,,,,5592,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.06</strong>.</p>",1101466,,,button-response,,109
-,,0.0,,,,,,,,4669,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.40</strong>.</p>",1211598,,,button-response,,109
+,,0.0,,,,,,,,,,,3885,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.69</strong>.</p>",1245532,,,button-response,,110
-,,0.0,,,,,,,,5997,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.96</strong>.</p>",1079930,,,button-response,,110
+,,0.0,,,,,,,,,,,2778,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.31</strong>.</p>",1607279,,,button-response,,111
-,,0.0,,,,,,,,4868,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.56</strong>.</p>",1068605,,,button-response,,112
+,,0.0,,,,,,,,,,,2866,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.82</strong>.</p>",1232660,,,button-response,,112
-,,0.0,,,,,,,,7700,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.03</strong>.</p>",1433422,,,button-response,,113
+,,0.0,,,,,,,,,,,2319,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.67</strong>.</p>",1399831,,,button-response,,113
-,,0.0,,,,,,,,2436,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.39</strong>.</p>",1153173,,,button-response,,114
+,,0.0,,,,,,,,,,,2147,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.11</strong>.</p>",1628580,,,button-response,,114
-,,0.0,,,,,,,,3850,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.40</strong>.</p>",1542707,,,button-response,,115
+,,0.0,,,,,,,,,,,5448,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.17</strong>.</p>",1182707,,,button-response,,115
-,,0.0,,,,,,,,3467,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.01</strong>.</p>",1396554,,,button-response,,116
+,,0.0,,,,,,,,,,,8433,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.13</strong>.</p>",1491615,,,button-response,,116
-,,0.0,,,,,,,,3062,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.06</strong>.</p>",1104634,,,button-response,,117
+,,0.0,,,,,,,,,,,16290,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.70</strong>.</p>",1269357,,,button-response,,117
-,,0.0,,,,,,,,3134,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.14</strong>.</p>",1298262,,,button-response,,118
+,,0.0,,,,,,,,,,,9343,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.50</strong>.</p>",1295814,,,button-response,,118
-,,0.0,,,,,,,,1406,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.01</strong>.</p>",1601264,,,button-response,,119
+,,0.0,,,,,,,,,,,4140,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.44</strong>.</p>",1607394,,,button-response,,119
-,,0.0,,,,,,,,2686,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.84</strong>.</p>",1064664,,,button-response,,120
+,,0.0,,,,,,,,,,,1685,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.09</strong>.</p>",1112062,,,button-response,,120
-,,0.0,,,,,,,,3925,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.76</strong>.</p>",1256878,,,button-response,,121
+,,0.0,,,,,,,,,,,2238,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.80</strong>.</p>",979285,,,button-response,,121
-,,0.0,,,,,,,,5037,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.06</strong>.</p>",1101466,,,button-response,,123
+,,0.0,,,,,,,,,,,4669,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.58</strong>.</p>",2021967,,,button-response,,122
-,,0.0,,,,,,,,4210,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.69</strong>.</p>",1245532,,,button-response,,124
+,,0.0,,,,,,,,,,,5997,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.38</strong>.</p>",1154833,,,button-response,,123
-,,0.0,,,,,,,,3010,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.31</strong>.</p>",1607279,,,button-response,,125
+,,0.0,,,,,,,,,,,4868,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.07</strong>.</p>",973414,,,button-response,,125
-,,0.0,,,,,,,,7607,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.82</strong>.</p>",1232660,,,button-response,,126
+,,0.0,,,,,,,,,,,3766,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.96</strong>.</p>",1109628,,,button-response,,126
-,,0.0,,,,,,,,3849,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.02</strong>.</p>",1069386,,,button-response,,127
+,,0.0,,,,,,,,,,,6961,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.71</strong>.</p>",1875891,,,button-response,,127
-,,0.0,,,,,,,,4582,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.62</strong>.</p>",1273405,,,button-response,,128
+,,0.0,,,,,,,,,,,7700,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.69</strong>.</p>",1229574,,,button-response,,128
-,,0.0,,,,,,,,5581,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.67</strong>.</p>",1399831,,,button-response,,129
+,,0.0,,,,,,,,,,,2436,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.22</strong>.</p>",1110688,,,button-response,,132
-,,0.0,,,,,,,,4544,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.11</strong>.</p>",1628580,,,button-response,,130
+,,0.0,,,,,,,,,,,3850,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.75</strong>.</p>",3201086,,,button-response,,133
-,,0.0,,,,,,,,3058,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.17</strong>.</p>",1182707,,,button-response,,131
+,,0.0,,,,,,,,,,,3467,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.83</strong>.</p>",1593030,,,button-response,,134
-,,0.0,,,,,,,,4500,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.13</strong>.</p>",1491615,,,button-response,,132
+,,0.0,,,,,,,,,,,3062,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.89</strong>.</p>",1129138,,,button-response,,135
-,,0.0,,,,,,,,7748,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.70</strong>.</p>",1269357,,,button-response,,133
+,,0.0,,,,,,,,,,,3134,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.45</strong>.</p>",1187049,,,button-response,,136
-,,0.0,,,,,,,,6423,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.50</strong>.</p>",1295814,,,button-response,,134
+,,0.0,,,,,,,,,,,1406,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.58</strong>.</p>",1121676,,,button-response,,137
-,,0.0,,,,,,,,2086,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.44</strong>.</p>",1607394,,,button-response,,135
+,,0.0,,,,,,,,,,,6343,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.20</strong>.</p>",1217576,,,button-response,,138
-,,0.0,,,,,,,,8133,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.73</strong>.</p>",4384674,,,button-response,,136
+,,0.0,,,,,,,,,,,2686,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.78</strong>.</p>",1220860,,,button-response,,139
-,,0.0,,,,,,,,1386,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.09</strong>.</p>",1112062,,,button-response,,137
+,,0.0,,,,,,,,,,,3925,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.35</strong>.</p>",895435,,,button-response,,141
-,,0.0,,,,,,,,3296,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.80</strong>.</p>",979285,,,button-response,,138
+,,0.0,,,,,,,,,,,5037,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.25</strong>.</p>",1136378,,,button-response,,142
-,,0.0,,,,,,,,20285,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.58</strong>.</p>",2021967,,,button-response,,139
+,,0.0,,,,,,,,,,,4210,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.76</strong>.</p>",1171058,,,button-response,,145
-,,0.0,,,,,,,,3360,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.38</strong>.</p>",1154833,,,button-response,,140
+,,0.0,,,,,,,,,,,3010,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.00</strong>.</p>",1027791,,,button-response,,146
-,,0.0,,,,,,,,3750,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.07</strong>.</p>",973414,,,button-response,,142
+,,0.0,,,,,,,,,,,7607,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.89</strong>.</p>",1394060,,,button-response,,147
-,,0.0,,,,,,,,3088,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.96</strong>.</p>",1109628,,,button-response,,143
+,,0.0,,,,,,,,,,,3849,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.55</strong>.</p>",1085632,,,button-response,,148
-,,0.0,,,,,,,,2797,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.71</strong>.</p>",1875891,,,button-response,,144
+,,0.0,,,,,,,,,,,3928,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.08</strong>.</p>",1308906,,,button-response,,149
-,,0.0,,,,,,,,4703,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.07</strong>.</p>",1801458,,,button-response,,145
+,,0.0,,,,,,,,,,,4582,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.75</strong>.</p>",1095449,,,button-response,,150
-,,0.0,,,,,,,,7106,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.69</strong>.</p>",1229574,,,button-response,,146
+,,0.0,,,,,,,,,,,5581,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.18</strong>.</p>",1065147,,,button-response,,151
-,,0.0,,,,,,,,4206,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.22</strong>.</p>",1110688,,,button-response,,151
+,,0.0,,,,,,,,,,,4544,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.44</strong>.</p>",1572190,,,button-response,,152
-,,0.0,,,,,,,,2942,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.75</strong>.</p>",3201086,,,button-response,,152
+,,0.0,,,,,,,,,,,3058,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.98</strong>.</p>",1219661,,,button-response,,153
-,,0.0,,,,,,,,3690,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.83</strong>.</p>",1593030,,,button-response,,153
+,,0.0,,,,,,,,,,,4500,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.12</strong>.</p>",1595001,,,button-response,,154
-,,0.0,,,,,,,,2130,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.89</strong>.</p>",1129138,,,button-response,,154
+,,0.0,,,,,,,,,,,7748,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.95</strong>.</p>",993129,,,button-response,,155
-,,0.0,,,,,,,,3990,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.45</strong>.</p>",1187049,,,button-response,,155
+,,0.0,,,,,,,,,,,6423,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.66</strong>.</p>",1320309,,,button-response,,156
-,,0.0,,,,,,,,3025,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.58</strong>.</p>",1121676,,,button-response,,156
+,,0.0,,,,,,,,,,,2086,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.01</strong>.</p>",1097302,,,button-response,,157
-,,0.0,,,,,,,,7258,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.20</strong>.</p>",1217576,,,button-response,,157
+,,0.0,,,,,,,,,,,8133,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.30</strong>.</p>",1408961,,,button-response,,158
-,,0.0,,,,,,,,4799,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.78</strong>.</p>",1220860,,,button-response,,158
+,,0.0,,,,,,,,,,,1386,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.26</strong>.</p>",946313,,,button-response,,160
-,,0.0,,,,,,,,9782,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.35</strong>.</p>",895435,,,button-response,,160
+,,0.0,,,,,,,,,,,3296,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.38</strong>.</p>",1462844,,,button-response,,161
-,,0.0,,,,,,,,3133,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.25</strong>.</p>",1136378,,,button-response,,161
+,,0.0,,,,,,,,,,,3016,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.67</strong>.</p>",1564497,,,button-response,,162
-,,0.0,,,,,,,,6916,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.94</strong>.</p>",1477099,,,button-response,,162
+,,0.0,,,,,,,,,,,20285,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.27</strong>.</p>",1680809,,,button-response,,163
-,,0.0,,,,,,,,10651,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.76</strong>.</p>",1171058,,,button-response,,165
+,,0.0,,,,,,,,,,,3360,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.88</strong>.</p>",1694053,,,button-response,,164
-,,0.0,,,,,,,,3389,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.00</strong>.</p>",1027791,,,button-response,,166
+,,0.0,,,,,,,,,,,3750,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.33</strong>.</p>",1586689,,,button-response,,165
-,,0.0,,,,,,,,5417,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.89</strong>.</p>",1394060,,,button-response,,167
+,,0.0,,,,,,,,,,,3088,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.88</strong>.</p>",988631,,,button-response,,166
-,,0.0,,,,,,,,3961,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.55</strong>.</p>",1085632,,,button-response,,168
+,,0.0,,,,,,,,,,,2797,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.53</strong>.</p>",1016297,,,button-response,,168
-,,0.0,,,,,,,,3269,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.08</strong>.</p>",1308906,,,button-response,,169
+,,0.0,,,,,,,,,,,4703,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.85</strong>.</p>",1175279,,,button-response,,169
-,,0.0,,,,,,,,5802,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.75</strong>.</p>",1095449,,,button-response,,170
+,,0.0,,,,,,,,,,,7106,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.81</strong>.</p>",1409754,,,button-response,,170
-,,0.0,,,,,,,,7106,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.18</strong>.</p>",1065147,,,button-response,,171
+,,0.0,,,,,,,,,,,4206,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.59</strong>.</p>",1617688,,,button-response,,171
-,,0.0,,,,,,,,6680,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.44</strong>.</p>",1572190,,,button-response,,172
+,,0.0,,,,,,,,,,,2942,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.99</strong>.</p>",1077115,,,button-response,,172
-,,0.0,,,,,,,,4120,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.98</strong>.</p>",1219661,,,button-response,,173
+,,0.0,,,,,,,,,,,3690,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.44</strong>.</p>",1319163,,,button-response,,173
-,,0.0,,,,,,,,4542,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.12</strong>.</p>",1595001,,,button-response,,174
+,,0.0,,,,,,,,,,,2130,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.99</strong>.</p>",1017291,,,button-response,,174
-,,0.0,,,,,,,,5102,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.95</strong>.</p>",993129,,,button-response,,175
+,,0.0,,,,,,,,,,,3990,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.83</strong>.</p>",1170471,,,button-response,,175
-,,0.0,,,,,,,,4471,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.66</strong>.</p>",1320309,,,button-response,,176
+,,0.0,,,,,,,,,,,3025,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.99</strong>.</p>",1150222,,,button-response,,176
-,,0.0,,,,,,,,4758,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.01</strong>.</p>",1097302,,,button-response,,177
+,,0.0,,,,,,,,,,,7258,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.86</strong>.</p>",1349824,,,button-response,,177
-,,0.0,,,,,,,,2835,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.30</strong>.</p>",1408961,,,button-response,,178
+,,0.0,,,,,,,,,,,4799,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.90</strong>.</p>",1133892,,,button-response,,178
-,,0.0,,,,,,,,3733,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.26</strong>.</p>",946313,,,button-response,,180
+,,0.0,,,,,,,,,,,9782,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.00</strong>.</p>",1572796,,,button-response,,179
-,,0.0,,,,,,,,11452,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.38</strong>.</p>",1462844,,,button-response,,181
+,,0.0,,,,,,,,,,,3133,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.94</strong>.</p>",1118456,,,button-response,,180
-,,0.0,,,,,,,,4849,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.67</strong>.</p>",1564497,,,button-response,,182
+,,0.0,,,,,,,,,,,6916,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.27</strong>.</p>",1151869,,,button-response,,181
-,,0.0,,,,,,,,2822,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.27</strong>.</p>",1680809,,,button-response,,183
+,,0.0,,,,,,,,,,,10651,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.65</strong>.</p>",1056806,,,button-response,,182
-,,0.0,,,,,,,,3169,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.88</strong>.</p>",1694053,,,button-response,,184
+,,0.0,,,,,,,,,,,3389,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.32</strong>.</p>",1018718,,,button-response,,183
-,,0.0,,,,,,,,2673,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.33</strong>.</p>",1586689,,,button-response,,185
+,,0.0,,,,,,,,,,,5417,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.25</strong>.</p>",1330702,,,button-response,,184
-,,0.0,,,,,,,,1382,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.88</strong>.</p>",988631,,,button-response,,186
+,,0.0,,,,,,,,,,,3961,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.95</strong>.</p>",1455970,,,button-response,,185
-,,0.0,,,,,,,,6161,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.53</strong>.</p>",1016297,,,button-response,,188
+,,0.0,,,,,,,,,,,3269,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.71</strong>.</p>",1233731,,,button-response,,186
-,,0.0,,,,,,,,8357,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.85</strong>.</p>",1175279,,,button-response,,189
+,,0.0,,,,,,,,,,,5802,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.99</strong>.</p>",1104306,,,button-response,,187
-,,0.0,,,,,,,,6814,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.81</strong>.</p>",1409754,,,button-response,,190
+,,0.0,,,,,,,,,,,19941,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.57</strong>.</p>",1326673,,,button-response,,188
-,,0.0,,,,,,,,4170,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.12</strong>.</p>",1587566,,,button-response,,191
+,,0.0,,,,,,,,,,,7106,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.99</strong>.</p>",1044113,,,button-response,,189
-,,0.0,,,,,,,,5454,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.59</strong>.</p>",1617688,,,button-response,,192
+,,0.0,,,,,,,,,,,6680,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.87</strong>.</p>",986572,,,button-response,,190
-,,0.0,,,,,,,,3425,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.99</strong>.</p>",1077115,,,button-response,,193
+,,0.0,,,,,,,,,,,4120,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.59</strong>.</p>",1437112,,,button-response,,192
-,,0.0,,,,,,,,4286,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.44</strong>.</p>",1319163,,,button-response,,194
+,,0.0,,,,,,,,,,,4542,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.53</strong>.</p>",1094191,,,button-response,,193
-,,0.0,,,,,,,,2760,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.99</strong>.</p>",1017291,,,button-response,,195
+,,0.0,,,,,,,,,,,5102,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.99</strong>.</p>",1266885,,,button-response,,194
-,,0.0,,,,,,,,3105,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.83</strong>.</p>",1170471,,,button-response,,196
+,,0.0,,,,,,,,,,,3006,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.00</strong>.</p>",1248134,,,button-response,,195
-,,0.0,,,,,,,,4353,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.06</strong>.</p>",1221408,,,button-response,,197
+,,0.0,,,,,,,,,,,4471,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.07</strong>.</p>",1537027,,,button-response,,197
-,,0.0,,,,,,,,4450,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.99</strong>.</p>",1150222,,,button-response,,198
+,,0.0,,,,,,,,,,,4758,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.18</strong>.</p>",1090308,,,button-response,,198
-,,0.0,,,,,,,,7718,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.86</strong>.</p>",1349824,,,button-response,,199
+,,0.0,,,,,,,,,,,2835,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.88</strong>.</p>",1259473,,,button-response,,199
-,,0.0,,,,,,,,2551,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.90</strong>.</p>",1133892,,,button-response,,200
+,,0.0,,,,,,,,,,,3733,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.25</strong>.</p>",1101895,,,button-response,,200
-,,0.0,,,,,,,,7774,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.00</strong>.</p>",1572796,,,button-response,,201
+,,0.0,,,,,,,,,,,11452,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.14</strong>.</p>",1046058,,,button-response,,202
-,,0.0,,,,,,,,9994,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.94</strong>.</p>",1118456,,,button-response,,202
+,,0.0,,,,,,,,,,,4849,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.65</strong>.</p>",1067041,,,button-response,,203
-,,0.0,,,,,,,,4939,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.27</strong>.</p>",1151869,,,button-response,,203
+,,0.0,,,,,,,,,,,2822,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.16</strong>.</p>",1166989,,,button-response,,205
-,,0.0,,,,,,,,34079,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.65</strong>.</p>",1056806,,,button-response,,204
+,,0.0,,,,,,,,,,,3169,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.91</strong>.</p>",979109,,,button-response,,206
-,,0.0,,,,,,,,2488,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.32</strong>.</p>",1018718,,,button-response,,205
+,,0.0,,,,,,,,,,,5548,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.39</strong>.</p>",1638113,,,button-response,,208
-,,0.0,,,,,,,,5393,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.52</strong>.</p>",1351955,,,button-response,,206
+,,0.0,,,,,,,,,,,2673,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.89</strong>.</p>",1215595,,,button-response,,209
-,,0.0,,,,,,,,2699,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.25</strong>.</p>",1330702,,,button-response,,207
+,,0.0,,,,,,,,,,,1382,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.87</strong>.</p>",1252815,,,button-response,,210
-,,0.0,,,,,,,,7244,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.95</strong>.</p>",1455970,,,button-response,,208
+,,0.0,,,,,,,,,,,5013,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.73</strong>.</p>",1421684,,,button-response,,211
-,,0.0,,,,,,,,15004,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.07</strong>.</p>",1084036,,,button-response,,209
+,,0.0,,,,,,,,,,,6161,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.84</strong>.</p>",1019538,,,button-response,,212
-,,0.0,,,,,,,,9578,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.71</strong>.</p>",1233731,,,button-response,,210
+,,0.0,,,,,,,,,,,8357,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.22</strong>.</p>",1049244,,,button-response,,213
-,,0.0,,,,,,,,6763,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.99</strong>.</p>",1104306,,,button-response,,211
+,,0.0,,,,,,,,,,,6814,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.80</strong>.</p>",1206994,,,button-response,,214
-,,0.0,,,,,,,,3247,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.57</strong>.</p>",1326673,,,button-response,,212
+,,0.0,,,,,,,,,,,4170,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.54</strong>.</p>",1049543,,,button-response,,216
-,,0.0,,,,,,,,5873,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.99</strong>.</p>",1044113,,,button-response,,213
+,,0.0,,,,,,,,,,,5454,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.87</strong>.</p>",1012484,,,button-response,,217
-,,0.0,,,,,,,,3640,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.87</strong>.</p>",986572,,,button-response,,214
+,,0.0,,,,,,,,,,,3425,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.36</strong>.</p>",1629541,,,button-response,,218
-,,0.0,,,,,,,,6184,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.59</strong>.</p>",1437112,,,button-response,,216
+,,0.0,,,,,,,,,,,4286,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.29</strong>.</p>",1130396,,,button-response,,219
-,,0.0,,,,,,,,8215,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.53</strong>.</p>",1094191,,,button-response,,217
+,,0.0,,,,,,,,,,,2760,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.86</strong>.</p>",1582983,,,button-response,,220
-,,0.0,,,,,,,,19996,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.99</strong>.</p>",1266885,,,button-response,,218
+,,0.0,,,,,,,,,,,3105,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.83</strong>.</p>",2280890,,,button-response,,221
-,,0.0,,,,,,,,3260,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.00</strong>.</p>",1248134,,,button-response,,219
+,,0.0,,,,,,,,,,,4353,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.70</strong>.</p>",919911,,,button-response,,222
-,,0.0,,,,,,,,7319,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.07</strong>.</p>",1537027,,,button-response,,221
+,,0.0,,,,,,,,,,,6039,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.94</strong>.</p>",1856200,,,button-response,,223
-,,0.0,,,,,,,,5807,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.68</strong>.</p>",1134497,,,button-response,,222
+,,0.0,,,,,,,,,,,4450,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.00</strong>.</p>",1322104,,,button-response,,225
-,,0.0,,,,,,,,6627,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.18</strong>.</p>",1090308,,,button-response,,223
+,,0.0,,,,,,,,,,,9019,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.94</strong>.</p>",1274539,,,button-response,,226
-,,0.0,,,,,,,,6786,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.99</strong>.</p>",1790690,,,button-response,,224
+,,0.0,,,,,,,,,,,7718,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.69</strong>.</p>",1277483,,,button-response,,227
-,,0.0,,,,,,,,4459,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.88</strong>.</p>",1259473,,,button-response,,225
+,,0.0,,,,,,,,,,,2551,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.99</strong>.</p>",1108575,,,button-response,,228
-,,0.0,,,,,,,,9691,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.25</strong>.</p>",1101895,,,button-response,,226
+,,0.0,,,,,,,,,,,7774,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.98</strong>.</p>",1149080,,,button-response,,229
-,,0.0,,,,,,,,3515,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.14</strong>.</p>",1046058,,,button-response,,228
+,,0.0,,,,,,,,,,,9994,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.45</strong>.</p>",948572,,,button-response,,230
-,,0.0,,,,,,,,3396,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.65</strong>.</p>",1067041,,,button-response,,229
+,,0.0,,,,,,,,,,,4939,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.99</strong>.</p>",1598018,,,button-response,,231
-,,0.0,,,,,,,,6635,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.16</strong>.</p>",1166989,,,button-response,,231
+,,0.0,,,,,,,,,,,34079,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$3.00</strong>.</p>",1415349,,,button-response,,232
-,,0.0,,,,,,,,8546,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.91</strong>.</p>",979109,,,button-response,,232
+,,0.0,,,,,,,,,,,2488,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.41</strong>.</p>",1455875,,,button-response,,233
-,,0.0,,,,,,,,8502,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.39</strong>.</p>",1638113,,,button-response,,234
+,,0.0,,,,,,,,,,,5393,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.63</strong>.</p>",1835382,,,button-response,,235
-,,0.0,,,,,,,,4359,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.89</strong>.</p>",1215595,,,button-response,,235
+,,0.0,,,,,,,,,,,2699,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.67</strong>.</p>",1165451,,,button-response,,236
-,,0.0,,,,,,,,2359,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.87</strong>.</p>",1252815,,,button-response,,236
+,,0.0,,,,,,,,,,,7244,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.22</strong>.</p>",1118995,,,button-response,,237
-,,0.0,,,,,,,,3878,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.73</strong>.</p>",1421684,,,button-response,,237
+,,0.0,,,,,,,,,,,15004,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.08</strong>.</p>",1635144,,,button-response,,238
-,,0.0,,,,,,,,4382,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.84</strong>.</p>",1019538,,,button-response,,238
+,,0.0,,,,,,,,,,,3541,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.94</strong>.</p>",1146503,,,button-response,,239
-,,0.0,,,,,,,,6130,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.89</strong>.</p>",1502693,,,button-response,,239
+,,0.0,,,,,,,,,,,9578,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.92</strong>.</p>",1375854,,,button-response,,240
-,,0.0,,,,,,,,16039,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.22</strong>.</p>",1049244,,,button-response,,240
+,,0.0,,,,,,,,,,,6763,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.44</strong>.</p>",1697613,,,button-response,,241
-,,0.0,,,,,,,,6574,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.80</strong>.</p>",1206994,,,button-response,,241
+,,0.0,,,,,,,,,,,3247,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.99</strong>.</p>",1749324,,,button-response,,242
-,,0.0,,,,,,,,3539,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.54</strong>.</p>",1049543,,,button-response,,243
+,,0.0,,,,,,,,,,,5873,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.28</strong>.</p>",1189956,,,button-response,,243
-,,0.0,,,,,,,,1475,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.87</strong>.</p>",1012484,,,button-response,,244
+,,0.0,,,,,,,,,,,3640,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.93</strong>.</p>",979863,,,button-response,,244
-,,0.0,,,,,,,,4278,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.36</strong>.</p>",1629541,,,button-response,,245
+,,0.0,,,,,,,,,,,6184,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.56</strong>.</p>",1153422,,,button-response,,245
-,,0.0,,,,,,,,5704,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.29</strong>.</p>",1130396,,,button-response,,246
+,,0.0,,,,,,,,,,,8215,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.85</strong>.</p>",1005840,,,button-response,,246
-,,0.0,,,,,,,,4930,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.86</strong>.</p>",1582983,,,button-response,,247
+,,0.0,,,,,,,,,,,19996,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.78</strong>.</p>",980651,,,button-response,,248
-,,0.0,,,,,,,,6699,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.83</strong>.</p>",2280890,,,button-response,,248
+,,0.0,,,,,,,,,,,3260,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.75</strong>.</p>",1086107,,,button-response,,249
-,,0.0,,,,,,,,5004,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.70</strong>.</p>",919911,,,button-response,,249
+,,0.0,,,,,,,,,,,7319,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.79</strong>.</p>",1028439,,,button-response,,250
-,,0.0,,,,,,,,2172,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.94</strong>.</p>",1856200,,,button-response,,250
+,,0.0,,,,,,,,,,,5807,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.56</strong>.</p>",1351138,,,button-response,,251
-,,0.0,,,,,,,,4792,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.00</strong>.</p>",1322104,,,button-response,,252
+,,0.0,,,,,,,,,,,4051,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.84</strong>.</p>",1383627,,,button-response,,253
-,,0.0,,,,,,,,5347,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.80</strong>.</p>",1101287,,,button-response,,253
+,,0.0,,,,,,,,,,,1927,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.42</strong>.</p>",964523,,,button-response,,254
-,,0.0,,,,,,,,4821,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.98</strong>.</p>",1100092,,,button-response,,254
+,,0.0,,,,,,,,,,,6627,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.29</strong>.</p>",1368608,,,button-response,,255
-,,0.0,,,,,,,,1952,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.94</strong>.</p>",1274539,,,button-response,,255
+,,0.0,,,,,,,,,,,6786,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.61</strong>.</p>",1373405,,,button-response,,256
-,,0.0,,,,,,,,3335,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.69</strong>.</p>",1277483,,,button-response,,256
+,,0.0,,,,,,,,,,,4459,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.53</strong>.</p>",1568989,,,button-response,,257
-,,0.0,,,,,,,,1806,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.99</strong>.</p>",1108575,,,button-response,,257
+,,0.0,,,,,,,,,,,9691,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.14</strong>.</p>",1197128,,,button-response,,258
-,,0.0,,,,,,,,3111,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.98</strong>.</p>",1149080,,,button-response,,258
+,,0.0,,,,,,,,,,,3515,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.01</strong>.</p>",1174154,,,button-response,,259
-,,0.0,,,,,,,,1701,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.45</strong>.</p>",948572,,,button-response,,259
+,,0.0,,,,,,,,,,,3396,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.99</strong>.</p>",1100540,,,button-response,,260
-,,0.0,,,,,,,,8185,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.99</strong>.</p>",1598018,,,button-response,,260
+,,0.0,,,,,,,,,,,6635,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.73</strong>.</p>",1529613,,,button-response,,261
-,,0.0,,,,,,,,6552,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$3.00</strong>.</p>",1415349,,,button-response,,261
+,,0.0,,,,,,,,,,,8546,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.75</strong>.</p>",1902571,,,button-response,,263
-,,0.0,,,,,,,,6013,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.41</strong>.</p>",1455875,,,button-response,,262
+,,0.0,,,,,,,,,,,8502,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.76</strong>.</p>",1077714,,,button-response,,264
-,,0.0,,,,,,,,3577,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.63</strong>.</p>",1835382,,,button-response,,264
+,,0.0,,,,,,,,,,,4359,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.33</strong>.</p>",1313698,,,button-response,,265
-,,0.0,,,,,,,,4689,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.67</strong>.</p>",1165451,,,button-response,,265
+,,0.0,,,,,,,,,,,5721,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.47</strong>.</p>",1406061,,,button-response,,266
-,,0.0,,,,,,,,2077,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.43</strong>.</p>",1412877,,,button-response,,266
+,,0.0,,,,,,,,,,,2359,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.08</strong>.</p>",1091953,,,button-response,,267
-,,0.0,,,,,,,,8270,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.22</strong>.</p>",1118995,,,button-response,,267
+,,0.0,,,,,,,,,,,3878,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$1.09</strong>.</p>",1900312,,,button-response,,268
-,,0.0,,,,,,,,5706,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.08</strong>.</p>",1635144,,,button-response,,268
+,,0.0,,,,,,,,,,,4382,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.73</strong>.</p>",976952,,,button-response,,270
-,,0.0,,,,,,,,23297,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$0.94</strong>.</p>",1146503,,,button-response,,269
+,,0.0,,,,,,,,,,,6130,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.83</strong>.</p>",1442860,,,button-response,,272
-,,0.0,,,,,,,,3761,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$2.92</strong>.</p>",1375854,,,button-response,,270
+,,0.0,,,,,,,,,,,16039,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$2.98</strong>.</p>",964046,,,button-response,,273
-,,0.0,,,,,,,,3342,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+awarded a bonus of <strong>$1.44</strong>.</p>",1697613,,,button-response,,271
+,,0.0,,,,,,,,,,,6574,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
 
 <p>Thanks again for participating. We hope you had fun!</p>
 
 <p>Based on your performance, you will be
-awarded a bonus of <strong>$0.46</strong>.</p>",987796,,,button-response,,274
+awarded a bonus of <strong>$0.99</strong>.</p>",1749324,,,button-response,,272
+,,0.0,,,,,,,,,,,3539,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.28</strong>.</p>",1189956,,,button-response,,273
+,,0.0,,,,,,,,,,,1475,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.93</strong>.</p>",979863,,,button-response,,274
+,,0.0,,,,,,,,,,,4278,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.56</strong>.</p>",1153422,,,button-response,,275
+,,0.0,,,,,,,,,,,5704,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.85</strong>.</p>",1005840,,,button-response,,276
+,,0.0,,,,,,,,,,,4930,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.78</strong>.</p>",980651,,,button-response,,278
+,,0.0,,,,,,,,,,,6699,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.75</strong>.</p>",1086107,,,button-response,,279
+,,0.0,,,,,,,,,,,5004,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$0.79</strong>.</p>",1028439,,,button-response,,280
+,,0.0,,,,,,,,,,,2172,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$1.56</strong>.</p>",1351138,,,button-response,,281
+,,0.0,,,,,,,,,,,4792,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$0.84</strong>.</p>",1383627,,,button-response,,283
+,,0.0,,,,,,,,,,,5347,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.42</strong>.</p>",964523,,,button-response,,284
+,,0.0,,,,,,,,,,,4821,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$1.29</strong>.</p>",1368608,,,button-response,,285
+,,0.0,,,,,,,,,,,1952,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.61</strong>.</p>",1373405,,,button-response,,286
+,,0.0,,,,,,,,,,,3335,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.53</strong>.</p>",1568989,,,button-response,,287
+,,0.0,,,,,,,,,,,1806,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$1.14</strong>.</p>",1197128,,,button-response,,288
+,,0.0,,,,,,,,,,,3111,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$1.01</strong>.</p>",1174154,,,button-response,,289
+,,0.0,,,,,,,,,,,6729,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.34</strong>.</p>",538843,,,button-response,,290
+,,0.0,,,,,,,,,,,1701,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.99</strong>.</p>",1100540,,,button-response,,291
+,,0.0,,,,,,,,,,,8185,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.73</strong>.</p>",1529613,,,button-response,,292
+,,0.0,,,,,,,,,,,6552,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$0.75</strong>.</p>",1902571,,,button-response,,294
+,,0.0,,,,,,,,,,,6013,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$1.76</strong>.</p>",1077714,,,button-response,,295
+,,0.0,,,,,,,,,,,3577,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$1.33</strong>.</p>",1313698,,,button-response,,296
+,,0.0,,,,,,,,,,,4689,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$1.47</strong>.</p>",1406061,,,button-response,,297
+,,0.0,,,,,,,,,,,20330,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$0.64</strong>.</p>",2081779,,,button-response,,298
+,,0.0,,,,,,,,,,,2077,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$1.08</strong>.</p>",1091953,,,button-response,,299
+,,0.0,,,,,,,,,,,4015,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.46</strong>.</p>",1040840,,,button-response,,300
+,,0.0,,,,,,,,,,,8270,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$1.09</strong>.</p>",1900312,,,button-response,,301
+,,0.0,,,,,,,,,,,5706,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.73</strong>.</p>",976952,,,button-response,,303
+,,0.0,,,,,,,,,,,23297,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.83</strong>.</p>",1442860,,,button-response,,305
+,,0.0,,,,,,,,,,,3761,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$2.98</strong>.</p>",964046,,,button-response,,306
+,,0.0,,,,,,,,,,,3342,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$0.46</strong>.</p>",987796,,,button-response,,307
