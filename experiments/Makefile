@@ -2,7 +2,7 @@ all:
 	bin/make_stimuli.py
 	bin/convert_json.py
 deploy: exp1
-	bin/templater.py exp1 -v stage2.yml
+	bin/templater.py exp1 -v variables.yml
 	bin/deploy_experiment.py deploy
 	rm -r deploy
 clean:

@@ -942,7 +942,7 @@ load low_cost_condition
 load medium_cost_condition
 load high_cost_condition
 
-experiment_name='1B';
+experiment_name='1A';
 
 addpath('~/Dropbox/PhD/Gamification/')
 

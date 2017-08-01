@@ -1082,15 +1082,17 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                         
                         a=path(state.step);
                         
-                        mu_prior=NaN(1,4);
-                        for a=1:4
-                            moves(a)=struct('is_decision_mechanism',true,'decision',a);
-                            
-                            if ismember(a,state.available_actions)
-                                mu_prior(a)=meta_MDP.expectedRewardOfActing(state,moves(a))
-                            else
-                                mu_prior(a)=NaN;
+                        moves=[];
+                        for a=1:numel(meta_MDP.actions)
+                            if meta_MDP.actions(a).is_decision_mechanism
+                                moves=[moves; meta_MDP.actions(a)];
                             end
+                        end
+                        
+                        if state.step>
+                        
+                        for a=1:numel(moves)
+                            mu_prior(a)=meta_MDP.expectedRewardOfActing(state, moves(a));
                         end
                         %state.mu_Q(state.s,:);
                         
@@ -1191,9 +1193,8 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             mu_beta=mu_sorted(2);
             beta=pos_sorted(2);
             
-            %E_max=EVofMaxOfGaussians([meta_MDP.mean_payoff,known_alternative],...
-            %    [meta_MDP.std_payoff,0]);
-            E_R_leaf = max(meta_MDP.mean_payoff,known_alternative);
+            E_max=EVofMaxOfGaussians([meta_MDP.mean_payoff,known_alternative],...
+                [meta_MDP.std_payoff,0]);
             
             if a==alpha
                 %information is valuable if it reveals that action c is suboptimal
@@ -1208,7 +1209,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                     %the known alternative
                     ub=known_alternative;                    
                     VOC=normcdf(ub,meta_MDP.mean_payoff,meta_MDP.std_payoff)*...
-                        (mu_beta-(mu_alpha-E_R_leaf+known_alternative))-meta_MDP.cost_per_click;                    
+                        (mu_beta-(mu_alpha-E_max+known_alternative))-meta_MDP.cost_per_click;                    
                 end                                                
                 
             else
@@ -1219,7 +1220,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 lb=mu_alpha-mu_prior(a)+E_max;
                 
                 VOC=meta_MDP.std_payoff^2*normpdf(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff)-...
-                    (mu_alpha-mu_prior(a)-E_R_leaf-meta_MDP.mean_payoff)*...
+                    (mu_alpha-mu_prior(a)-E_max-meta_MDP.mean_payoff)*...
                     (1-normcdf(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff))-...
                     meta_MDP.cost_per_click;
             end
@@ -1240,9 +1241,8 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
             mu_beta=mu_sorted(2);
             beta=pos_sorted(2);
             
-            %E_max=EVofMaxOfGaussians([meta_MDP.mean_payoff,meta_MDP.mean_payoff],...
-            %    [meta_MDP.std_payoff,meta_MDP.std_payoff]);
-            E_R_leaf = meta_MDP.mean_payoff;
+            E_max=EVofMaxOfGaussians([meta_MDP.mean_payoff,meta_MDP.mean_payoff],...
+                [meta_MDP.std_payoff,meta_MDP.std_payoff]);
             
             if a==alpha
                 %information is valuable if it reveals that action c is suboptimal
@@ -1251,7 +1251,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 ub=meta_MDP.mean_payoff;
                 
                 VOC=integral(@(x) normpdf(x,meta_MDP.mean_payoff,meta_MDP.std_payoff).*...
-                    max(0, mu_beta - (mu_alpha-E_R_leaf+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,...
+                    max(0, mu_beta - (mu_alpha-E_max+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,...
                     x,inf))),lb,ub)-meta_MDP.cost_per_click;  
                 %normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_max+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff, x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))
             else
@@ -1260,7 +1260,7 @@ action_feature_names={'Expected regret','regret reduction','VOC',...
                 ub=inf;%meta_MDP.mean_payoff+5*meta_MDP.std_payoff;
                 
                 VOC=integral(@(x) normpdf(x,meta_MDP.mean_payoff,meta_MDP.std_payoff).*...
-                    max(0, (mu_prior(a)-E_R_leaf+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,...
+                    max(0, (mu_prior(a)-E_max+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,...
                     x,inf))-mu_alpha),lb,ub)-meta_MDP.cost_per_click;                                
             end
             
