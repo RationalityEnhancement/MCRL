@@ -7,7 +7,7 @@ load high_cost_condition
 %scaling_factor = 2*16/12;
 scaling_factor=1;
 low_costs=ceil(100*[0.01]/scaling_factor)/100; %[0.01]
-medium_costs=ceil(100*[1]/scaling_factor)/100;%[0.25,0.50,0.75,1];
+edmedium_costs=ceil(100*[1]/scaling_factor)/100;%[0.25,0.50,0.75,1];
 high_costs=ceil(100*[2.5]/scaling_factor)/100;%[1.50,2,2.50,3];
 
 costs=round(100*[0.01,1,2.50]/scaling_factor)/100;

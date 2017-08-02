@@ -49,6 +49,7 @@ names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallAct
 
 root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/';    
 nb_iter=100;
+%nb_iter=50;
 
 %scaling_factor=2*16/12;
 clear R_total_no_obs
@@ -82,6 +83,7 @@ for c=1:numel(costs)
     learned_policy=@(state,mdp) deterministicPolicy(state,mdp,temp.BO.w_hat);
     no_observation_policy= @(state,mdp) noObservationPolicy(state,mdp);
     
+    satisficing_policy = @(state,mdp) satisficingPolicy(state,mdp);
     
     for t=1:nr_trials
         [R_total,problems{t,c},states{t,c},chosen_actions{t,c},indices(t,c)]=...

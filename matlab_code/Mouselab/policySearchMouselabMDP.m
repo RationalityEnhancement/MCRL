@@ -30,6 +30,7 @@ d=4;
 
 x_input_domain = [-1 2; -1 1; -1 1; -5 1];
 nb_iter=100;
+%nb_iter=50;
 result_display=true; result_save=true; plot_func=false; plot_point=false;
 
 cd(GPO_dir)

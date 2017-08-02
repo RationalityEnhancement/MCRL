@@ -892,11 +892,13 @@ classdef MouselabMDPMetaMDPNIPS < MDP
                 cost=meta_MDP.cost_per_click;
                 %}
                 VPI=meta_MDP.computeVPI(state,c);
+                %tic()
                 [VOC,meta_MDP]=meta_MDP.myopicVOC(state,c);
-                tic()
-                VOC_slow=meta_MDP.myopicVOCSlow(state,c);
-                toc()
-                disp((VOC-VOC_slow))
+                %toc()
+                %tic()
+                %VOC_slow=meta_MDP.myopicVOCSlow(state,c);
+                %toc()
+                %disp((VOC-VOC_slow))
                 
                 cost=meta_MDP.cost_per_click;
                 VPI_all_actions=state.mu_V(state.s)-max(state.mu_Q(state.s,:));
@@ -911,7 +913,7 @@ classdef MouselabMDPMetaMDPNIPS < MDP
             %}
             %action_features=[VPI; VOC; cost; ER_act];
             
-            action_features=[VPI_all_actions; VPI; VOC; cost];
+            action_features=[VPI_all_actions; VPI; VOC+cost; cost];
         end
         
         function action_features=QFeatures(meta_MDP,state,c)
@@ -1582,7 +1584,7 @@ classdef MouselabMDPMetaMDPNIPS < MDP
                         available_actions=state.getAvailableActions(current_location);
                         
                         max_Q = max(state.mu_Q(current_location,available_actions));
-                        best_actions = find(state.mu_Q(current_location,:)==max_Q);
+                        best_actions = available_actions(find(state.mu_Q(current_location,available_actions)==max_Q));
                         
                         for a = 1:numel(best_actions)
                             plans{s,plan_nr}=[plan(1:s-1);best_actions(a)];

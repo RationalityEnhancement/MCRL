@@ -1,7 +1,7 @@
 %%  Which experiment do you want to analyze?
 experiment_name='1A';
 %experiment_name='1B';
-
+%experiment_name='1C';
 
 
 %%
@@ -15,9 +15,13 @@ if strcmp(experiment_name,'1A')
     max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.csv']);
     min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.csv']);
     
+    rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.csv'])
+    nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star_',experiment_name,'.csv'])
+    
     eval(['import_data_exp',experiment_name])
     
-    PR_types=PR_types([2,3,1])
+    PR_types = unique(PR_type);
+    PR_types=PR_types([2,3,1]);
     
     info_costs=unique(info_cost);
     
@@ -51,7 +55,15 @@ if strcmp(experiment_name,'1A')
             sem_rel_score_test_block(ic,pr)=sem(relative_score(...
                 strcmp(PR_type,PR_types{pr}) & info_cost==info_costs(ic) & ...
                 ismember(trial_index,test_trials)));
-            
+
+            avg_nr_clicks_test_block(ic,pr)=mean(n_click(...
+                strcmp(PR_type,PR_types{pr}) & info_cost==info_costs(ic) & ...
+                ismember(trial_index,test_trials)));
+
+            sem_nr_clicks_test_block(ic,pr)=sem(n_click(...
+                strcmp(PR_type,PR_types{pr}) & info_cost==info_costs(ic) & ...
+                ismember(trial_index,test_trials)));
+                                    
         end
     end
     
@@ -71,6 +83,24 @@ if strcmp(experiment_name,'1A')
     
     [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'featureBased') & info_cost==2.50 & trial_index<=3),...
         relative_score(strcmp(PR_type,'none') & info_cost==2.50 & trial_index <= 3))
+    
+    fig_clicks=figure()
+    barwitherr([sem_nr_clicks_test_block,zeros(3,1)],...
+        [avg_nr_clicks_test_block,nr_observations_pi_star']), hold on
+    set(gca,'XTickLabel',{'$0.01/click','$1.00/click','$2.50/click'},'FontSize',16),
+    xlabel('Time cost','FontSize',18)
+    ylabel('Number Clicks','FontSize',18)
+    %plot([0.5;3.5],repmat(rel_score_pi_star,[2,1]))
+    legend('no FB','action FB','metacognitive FB','optimal')%
+    title('Test Block Performance in Exp 1A','FontSize',18)
+    saveas(fig_clicks,'figures/test_block_nr_clicks_Exp1A.png')
+
+    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & info_cost==2.50 & trial_index> nr_training_trials),...
+        n_click(strcmp(PR_type,'none') & info_cost==2.50 & trial_index > nr_training_trials))
+    
+    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & info_cost==2.50 & trial_index> nr_training_trials),...
+        n_click(strcmp(PR_type,'objectLevel') & info_cost==2.50 & trial_index > nr_training_trials))
+    
     
     PR_types = unique(PR_type(2:end));
     info_costs = unique(info_cost(2:end));
