@@ -1190,8 +1190,10 @@ function computeMyopicVOCNetCost(state,c){
     return computeMyopicVOC(state,c)+meta_MDP.cost_per_click
 }
 
-function computeMyopicVOC(state,c){
+function computeMyopicVOC(input_state,c){
     //Computes the myoptic VOC (VOC1, Equation 4 in the NIPS paper) in a highly efficient manner. VOC1 is -cost(c) if the computation cannot improve the decision. VOC1 is positive if the expected improvement in decision quality from a single computation is higher than the cost of computation and negative else. The output should be identical to the outputs of the method myopicVOC of MouselabMDPMetaMDPNIPS in Matlab.
+    
+    state = deepCopy(input_state)
     
     //is c a computation or an object-level action?
     if (c.is_click)  {
