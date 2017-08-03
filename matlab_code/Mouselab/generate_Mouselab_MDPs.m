@@ -1002,9 +1002,10 @@ for c=1:numel(conditions)
                
 end
 
-csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/optimal',experiment_name,'.csv'],max_score)
-csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/worst',experiment_name,'.csv'],min_score)
+version='2';
 
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv'],max_score)
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv'],min_score)
 
 %% evaluate the performance of different levels of planning
 %{

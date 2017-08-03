@@ -42,7 +42,8 @@ environment={'low_cost_condition','medium_cost_condition','medium_cost_condition
 name='test_cost';
 %}
 
-costs=[0.01,1,2.50];
+%costs=[0.01,1,2.50];
+costs=[0.01,1,1];
 environment={'low_cost_condition','medium_cost_condition','high_cost_condition'};
 names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallActions'};
 

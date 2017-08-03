@@ -126,7 +126,7 @@ function metaMDP(){
                 this.locations_by_path[locus.path.toString()]=locus
             }
             
-            this.state=updateBelief(this,state,_.range(1,state.observations.length+1))
+            this.state=updateBelief(this,state,_.range(1,state.observations.length+1),true)
         },
         rational_moves: function(belief_state){
             
@@ -435,7 +435,7 @@ function registerMove(direction){
     var last_move = moves.slice(-1).pop()    
     var updated_belief=deepCopy(meta_MDP.state)
     updated_belief.observations=addObservations(clicks,meta_MDP.locations,updated_belief.observations)   
-    updated_belief=updateBelief(meta_MDP,updated_belief,_.range(1,updated_belief.observations.length+1))
+    updated_belief=updateBelief(meta_MDP,updated_belief,_.range(1,updated_belief.observations.length+1),true)
     var information_used_correctly= _.contains(meta_MDP.rational_moves(updated_belief), last_move.move.direction)
 
     //The participant collected too much information if there was a click that had a lower Q-value than one of the moves
@@ -594,7 +594,7 @@ function getNextState(state,actions,update_belief){
     }
      
     if (update_belief){
-        next_state=updateBelief(meta_MDP,next_state,observed_outcomes)
+        next_state=updateBelief(meta_MDP,next_state,observed_outcomes,true)
     }
  
  
@@ -746,7 +746,7 @@ function getObservations(clicks,locations){
     return observations
 }
 
-function updateBelief(meta_MDP,state,new_observations){
+function updateBelief(meta_MDP,state,new_observations,extra_info){
     /* 
         computes state.mu_Q, state.sigma_Q, state.mu_V, and
         state.sigma_V from meta_MDP.observations and meta_MDP
@@ -814,7 +814,12 @@ function updateBelief(meta_MDP,state,new_observations){
                 state.sigma_Q[node.nr-1]=state.sigma_Q[node.nr-1].filter(function(val) { return val !== undefined;})                
                 //b) Update belief about state value V
                 var EV_and_sigma=EVOfMaxOfGaussians(state.mu_Q[node.nr-1],state.sigma_Q[node.nr-1]);
-                state.mu_V[node.nr-1]=EV_and_sigma[0];
+                if (extra_info){
+                    state.mu_V[node.nr-1]=EV_and_sigma[0];                
+                }
+                else{
+                    state.mu_V[node.nr-1]=_.max(state.sigma_Q[node.nr-1])
+                }
                 state.sigma_V[node.nr-1]=EV_and_sigma[1];
 
             }
@@ -989,8 +994,9 @@ function predictQValue(state,computation){
             feature_weights = {allActionsVPI: 1.3292, VPI: 0.0961, VOC1: 0.4374, cost: -2.4929, ER: 0.9749, offset: 3.7757}//{allActionsVPI: 1.2895, VPI: 0.0858, VOC1: 0.4536, cost: -2.6655, ER: 0.9791, offset: 4.8433} //otherVPIs: [-0.3154, -0.4761, -0.5306]
             //feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
-        case 2.5:
-            feature_weights = {allActionsVPI: -0.2509, VPI: 0.1815, VOC1: 0.3011, cost: -1.3726, ER: 0.9104, offset: 0.3676}//{allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
+        case 1.0001:
+            feature_weights = {allActionsVPI: -0.3099, VPI: -0.4186, VOC1: 0.1261, cost: 0.1815, ER: 0.6477, offset: 6.683}
+            //feature_weights = {allActionsVPI: -0.2509, VPI: 0.1815, VOC1: 0.3011, cost: -1.3726, ER: 0.9104, offset: 0.3676}//{allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
             //feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
 
@@ -1024,8 +1030,9 @@ function predictQValueOfSequence(state,computations){
             feature_weights = {allActionsVPI: 1.3292, VPI: 0.0961, VOC1: 0.4374, cost: -2.4929, ER: 0.9749, offset: 3.7757}//{allActionsVPI: 1.2895, VPI: 0.0858, VOC1: 0.4536, cost: -2.6655, ER: 0.9791, offset: 4.8433} //otherVPIs: [-0.3154, -0.4761, -0.5306]
             //feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
-        case 2.5:
-            feature_weights = {allActionsVPI: -0.2509, VPI: 0.1815, VOC1: 0.3011, cost: -1.3726, ER: 0.9104, offset: 0.3676}//{allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
+        case 1.0001:
+            feature_weights = {allActionsVPI: -0.3099, VPI: -0.4186, VOC1: 0.1261, cost: 0.1815, ER: 0.6477, offset: 6.683}
+            //feature_weights = {allActionsVPI: -0.2509, VPI: 0.1815, VOC1: 0.3011, cost: -1.3726, ER: 0.9104, offset: 0.3676}//{allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
             //feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
     }
@@ -1185,23 +1192,25 @@ function computeMyopicVOCNetCost(state,c){
 
 function computeMyopicVOC(state,c){
     //Computes the myoptic VOC (VOC1, Equation 4 in the NIPS paper) in a highly efficient manner. VOC1 is -cost(c) if the computation cannot improve the decision. VOC1 is positive if the expected improvement in decision quality from a single computation is higher than the cost of computation and negative else. The output should be identical to the outputs of the method myopicVOC of MouselabMDPMetaMDPNIPS in Matlab.
-     
+    
+    //is c a computation or an object-level action?
     if (c.is_click)  {
         
+        //If the agent had no choice, then the click wasn't worth it.
         if (state.mu_Q[state.s-1].length==1){
             return -meta_MDP.cost_per_click
         }
+        
         
         if ((isNaN(state.observations[c.cell-1]) || state.observations[c.cell-1]==null)  && c.cell>1){
  
             if (_.contains(getDownStreamStates(state),c.cell)){
                 locations=getLocations(0)
                 path=locations[c.cell].path;
- 
+                
+                state = updateBelief(meta_MDP,state,_.range(1,state.observations.length+1),false)
                 var a=path[state.step-1];                        
-                mu_prior=state.mu_Q[state.s-1];
-                                
- 
+                mu_prior=state.mu_Q[state.s-1];                                
  
                 //if hallway state
                 if (_.contains(meta_MDP.object_level_MDP.hallway_states,c.cell)){
@@ -1295,26 +1304,30 @@ mu_sorted = mu_prior.slice(0).sort(function(a, b){return b - a})
 mu_alpha = mu_sorted[0]
 mu_beta = mu_sorted[1]
  
-appears_best = mu_prior[a-1] == mu_alpha
+appears_best = (mu_prior[a-1] == mu_alpha) && (mu_alpha>mu_beta)
  
-E_max=EVOfMaxOfGaussians([meta_MDP.mean_payoff,meta_MDP.mean_payoff],
-[meta_MDP.std_payoff,meta_MDP.std_payoff]);
+//E_max=EVOfMaxOfGaussians([meta_MDP.mean_payoff,meta_MDP.mean_payoff],
+//[meta_MDP.std_payoff,meta_MDP.std_payoff]);
+E_leaf = meta_MDP.mean_payoff
  
 if (appears_best){
     //information is valuable if it reveals that action c is suboptimal
  
     lb=meta_MDP.mean_payoff-3*meta_MDP.std_payoff;
     ub=meta_MDP.mean_payoff;
-    delta_x=meta_MDP.std_payoff/25.0;
-    VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_max[0]+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff, x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))])})-meta_MDP.cost_per_click; 
+    delta_x = 1 //meta_MDP.std_payoff/25.0;
+    /* VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_leaf+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff, x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))])})-meta_MDP.cost_per_click; 
+    */
+    VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_leaf+_.max(x,meta_MDP.mean_payoff))])})-meta_MDP.cost_per_click; 
 }
 else{
     //information is valuable if it reveals that action is optimal                
     lb=meta_MDP.mean_payoff;
     ub=meta_MDP.mean_payoff+3*meta_MDP.std_payoff;
-    delta_x=meta_MDP.std_payoff/25.0;
+    delta_x = 1 //meta_MDP.std_payoff/25.0;
     
-    VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0, (mu_prior[a-1]-E_max[0]+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))-mu_alpha])})-meta_MDP.cost_per_click;                                
+    /* VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0, (mu_prior[a-1] - E_leaf + ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))-mu_alpha])})-meta_MDP.cost_per_click;                                */
+    VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0, (mu_prior[a-1] - E_leaf + _.max(x, meta_MDP.mean_payoff))-mu_alpha])})-meta_MDP.cost_per_click;                                
 }
  
 return VOC
@@ -1334,14 +1347,15 @@ function myopicVOCMaxKnown(mu_prior,a,known_alternative){
  
     appears_best = mu_prior[a-1] == mu_alpha
  
-    E_max= EVOfMaxOfGaussians([meta_MDP.mean_payoff,known_alternative],[meta_MDP.std_payoff,0]);
+    //E_max= EVOfMaxOfGaussians([meta_MDP.mean_payoff,known_alternative],[meta_MDP.std_payoff,0]);
+    E_R_leaf = _.max(meta_MDP.mean_payoff,known_alternative)
  
     if (appears_best){
         //information is valuable if it reveals that action c is suboptimal
  
         //The decision can only change if E[max{known_alternative,x}]-k>mu_alpha-mu_beta
  
-        if (E_max[0]-known_alternative<= mu_alpha-mu_beta){
+        if (E_R_leaf-known_alternative<= mu_alpha-mu_beta){
             VOC=0-meta_MDP.cost_per_click;
         }
         else{
@@ -1353,9 +1367,9 @@ function myopicVOCMaxKnown(mu_prior,a,known_alternative){
     else{
         //information is valuable if it reveals that action is optimal       
         //To change the decision, the sampled value would have to be larger than lb
-        lb=mu_alpha-mu_prior[a-1]+E_max[0];
+        lb=mu_alpha-mu_prior[a-1]+E_R_leaf//E_max[0];
  
-        VOC=meta_MDP.std_payoff**2*normPDF(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff)-(mu_alpha-mu_prior[a-1]-E_max[0]-meta_MDP.mean_payoff)*(1-normCDF(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff))-meta_MDP.cost_per_click;
+        VOC=meta_MDP.std_payoff**2*normPDF(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff)-(mu_alpha-mu_prior[a-1]-E_R_leaf-meta_MDP.mean_payoff)*(1-normCDF(lb,meta_MDP.mean_payoff,meta_MDP.std_payoff))-meta_MDP.cost_per_click;
     }
  
     return VOC

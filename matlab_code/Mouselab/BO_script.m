@@ -10,11 +10,12 @@ low_costs=ceil(100*[0.01]/scaling_factor)/100; %[0.01]
 edmedium_costs=ceil(100*[1]/scaling_factor)/100;%[0.25,0.50,0.75,1];
 high_costs=ceil(100*[2.5]/scaling_factor)/100;%[1.50,2,2.50,3];
 
-costs=round(100*[0.01,1,2.50]/scaling_factor)/100;
+%costs=round(100*[0.01,1,2.50]/scaling_factor)/100;
+costs=round(100*[0.01,1,1]/scaling_factor)/100;
 conditions={low_cost_condition,medium_cost_condition,high_cost_condition};
 names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallActions'};
 
-parfor c=1:numel(conditions)
+parfor c=3%1:numel(conditions)
     policySearchMouselabMDP(costs(c),conditions{c},names{c})
 end
 
@@ -41,6 +42,8 @@ end
 %%
 clear
 
+version='2';
+
 addpath('../MatlabTools/')
 addpath('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/')
 %load low_cost_condition
@@ -58,22 +61,28 @@ pseudoreward_type='none';
 
 conditions={'lowCost','mediumCost','highCost'};
 
-for c=1:numel(conditions)
+for c=3%1:numel(conditions)
     
     condition=conditions{c};
     
     if strcmp(condition,'highCost')
         %load high_cost_condition
         %experiment = high_cost_condition;
-        cost = 2.50;
+        if strcmp(version,'1')
+            cost = 2.50;
+            temp=load(['../../results/BO/BO_c250n100high_cost_VPIallActions.mat']);
+        elseif strcmp(version,'2')
+            cost = 1;
+            temp=load(['../../results/BO/BO_c100n100high_cost_VPIallActions.mat']);            
+        end
         
-        temp=load(['../../results/BO/BO_c250n100high_cost_VPIallActions.mat']);
         w_policy=temp.BO.w_hat;
         
         training_data1=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_none.mat');
         training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_none.mat');
         %training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_featureBased.mat');
-        load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/high_cost_condition_pilot.mat')
+        %load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/high_cost_condition_pilot.mat')
+        load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/high_cost_condition.mat')
         experiment=high_cost_condition;
     end
     

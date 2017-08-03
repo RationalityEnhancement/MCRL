@@ -1,5 +1,6 @@
 %%  Which experiment do you want to analyze?
 experiment_name='1A';
+version = '1';
 %experiment_name='1B';
 %experiment_name='1C';
 
@@ -9,14 +10,15 @@ if strcmp(experiment_name,'1A')
     %import_data: MCRL/experiments/data/1.0A/trials_matlab.csv
     MCRL_path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
     
-    training_trials=1:10;
+    nr_training_trials = 10;
+    training_trials=1:nr_training_trials;
     test_trials=11:16;
     
-    max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.csv']);
-    min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.csv']);
+    max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
+    min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
     
-    rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.csv'])
-    nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star_',experiment_name,'.csv'])
+    rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.',version,'.csv'])
+    nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star_',experiment_name,'.',version,'.csv'])
     
     eval(['import_data_exp',experiment_name])
     
@@ -119,8 +121,8 @@ if strcmp(experiment_name,'1A')
     end
     
     
-    rel_score_pi_star=csvread('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/rel_score_pi_star_1A.csv');
-    optimal_nr_clicks=csvread('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star_1A.csv');
+    rel_score_pi_star=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/rel_score_pi_star_1A','.',version,'.csv']);
+    optimal_nr_clicks=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star_1A','.',version,'.csv']);
     
     fig_performance=figure()
     fig_nr_clicks=figure()
@@ -245,6 +247,33 @@ if strcmp(experiment_name,'1A')
     end
     
     figure(1),tightfig
+end
+
+%% analyze number of clicks on the first trial before vs. after the first message
+for a=1:numel(action_times)
+    eval(['move_time(a,:)=',action_times{a},';'])
+    eval(['click_time{a}=',strrep(click_times{a},'None','NaN'),';'])
+        
+end
+
+first_trials = find(trial_index == 1);
+
+for i=1:numel(first_trials)
+   idx = first_trials(i);
+   nr_clicks_trial1(i)=numel(click_time{idx});
+   nr_clicks_before_first_msg(i) = sum(click_time{idx}<move_time(idx,1));
+   nr_clicks_after_first_msg(i) = sum(click_time{idx}>move_time(idx,1));
+   FB_condition(i) = find(strcmp(PR_type{idx},PR_types))
+   cost_condition(i) = find(info_cost(idx)==info_costs)
+end
+
+anovan(nr_clicks_trial1,{FB_condition,cost_condition},'model','full','varnames',{'FB','cost'})
+anovan(nr_clicks_before_first_msg,{FB_condition,cost_condition},'model','full','varnames',{'FB','cost'})
+anovan(nr_clicks_after_first_msg,{FB_condition,cost_condition},'model','full','varnames',{'FB','cost'})
+
+for c=1:3
+    avg_nr_clicks_before_msg(c)=mean(nr_clicks_before_first_msg(condition==c))
+    avg_nr_clicks_after_msg(c)=mean(nr_clicks_after_first_msg(condition==c))
 end
 %% Analyze Data from Experiment 1B
 
