@@ -707,9 +707,9 @@ if strcmp(experiment_name,'1C')
            n_click(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)))
        
     [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)),...
-           n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))  
+           relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))  
        
-    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
-           n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))         
+    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
+           relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))         
        
 end
