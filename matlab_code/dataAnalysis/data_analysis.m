@@ -691,8 +691,13 @@ if strcmp(experiment_name,'1C')
        
     [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
            relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))         
-
-
+    
+    test_scores = relative_score(ismember(trial_index,test_trials));
+    test_clicks = n_click(ismember(trial_index,test_trials));
+    training_method = PR_type(ismember(trial_index,test_trials))
+    anovan(test_scores, {training_method})
+    anovan(test_clicks, {training_method})
+       
     fig_1C_clicks=figure()
     barwitherr(sem_nr_clicks_test_block,avg_nr_clicks_test_block,'FaceColor',[0.75,0.75,0.75])
     set(gca,'XTickLabel',condition_labels,'FontSize',18)
@@ -713,3 +718,49 @@ if strcmp(experiment_name,'1C')
            n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))         
        
 end
+
+%% Analyze Experiment 1A.2
+%1. import data manually
+
+experiment_name = '1A';
+version = '2';
+MCRL_path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
+
+nr_trials = 16;
+nr_training_trials = 10;
+
+training_trials = 1:nr_training_trials;
+test_trials = (nr_training_trials+1):nr_trials;
+
+max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
+min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
+    
+%rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.',version,'.csv'])
+%nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star_',experiment_name,'.',version,'.csv'])
+            
+info_costs=unique(info_cost);
+    
+condition_nr=3;
+for i=1:numel(score)
+    relative_score(i,1)=(score(i)-min_score(trial_i(i)+1,condition_nr))/...
+        (max_score(trial_i(i)+1,condition_nr)-min_score(trial_i(i)+1,condition_nr));
+end
+
+
+for t=1:nr_trials
+    avg_nr_clicks(t)=mean(n_click(trial_index==t));
+    sem_nr_clicks(t)=sem(n_click(trial_index==t));
+    
+    avg_rel_score(t)=mean(relative_score(trial_index==t))
+    sem_rel_score(t)=sem(relative_score(trial_index==t))
+end
+
+figure()
+errorbar(avg_nr_clicks,sem_nr_clicks)
+ylabel('Number Clicks','FontSize',18)
+xlabel('Trial Number','FontSize',18)
+
+figure()
+errorbar(avg_rel_score,sem_rel_score)
+ylabel('Relative Score','FontSize',18)
+xlabel('Trial Number','FontSize',18)

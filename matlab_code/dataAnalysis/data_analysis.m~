@@ -691,8 +691,13 @@ if strcmp(experiment_name,'1C')
        
     [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
            relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))         
-
-
+    
+    test_scores = relative_score(ismember(trial_index,test_trials));
+    test_clicks = n_click(ismember(trial_index,test_trials));
+    training_method = PR_type(ismember(trial_index,test_trials))
+    anovan(test_scores, {training_method})
+    anovan(test_clicks, {training_method})
+       
     fig_1C_clicks=figure()
     barwitherr(sem_nr_clicks_test_block,avg_nr_clicks_test_block,'FaceColor',[0.75,0.75,0.75])
     set(gca,'XTickLabel',condition_labels,'FontSize',18)
@@ -707,9 +712,28 @@ if strcmp(experiment_name,'1C')
            n_click(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)))
        
     [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)),...
-           relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))  
+           n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))  
        
-    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
-           relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))         
+    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
+           n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))         
        
 end
+
+%% Analyze Experiment 1A.2
+%1. import data manually
+
+nr_trials = 16;
+nr_training_trials = 10;
+
+
+
+for t=1:nr_trials
+    avg_nr_clicks(t)=mean(n_click(trial_index==t));
+    sem_nr_clicks(t)=sem(n_click(trial_index==t));
+    
+    avg_rel_score(t)=mean(rel_score(trial_index==t))
+    sem_rel_score(t)=sem(rel_score(trial_index==t))
+end
+
+figure()
+errorbar(avg_nr_clicks,sem_nr_clicks)
