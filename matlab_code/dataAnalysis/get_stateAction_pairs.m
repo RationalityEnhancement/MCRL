@@ -9,7 +9,9 @@ PR_types = unique(PR_type);
 for p = 1:length(unique(PR_type))
     PR_str = PR_types{p};
 for x = unique(info_cost)'
-    if x == min(unique(info_cost))
+    if length(length(unique(info_cost))) == 1
+        cost_str = '';
+    elseif x == min(unique(info_cost))
         cost_str = 'low';
     elseif x == max(unique(info_cost))
         cost_str = 'high';
