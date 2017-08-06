@@ -371,7 +371,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       result = registerMove(a);
       result.delay = Math.round(result.delay);
       console.log('feedback', result);
-      showCriticism = result.delay > 1;
+      showCriticism = result.delay >= 1;
       if (PARAMS.PR_type === 'none') {
         result.delay = (function() {
           switch (PARAMS.info_cost) {
@@ -381,6 +381,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
               return [null, 3, 0, 1][this.data.actions.length];
             case 2.50:
               return [null, 15, 0, 3][this.data.actions.length];
+            case 1.0001:
+              return [null, 2, 0, 1][this.data.actions.length];
           }
         }).call(this);
       }
@@ -410,7 +412,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
               if (result.planned_too_much && showCriticism) {
                 head = redGreenSpan("You gathered too much information.", -1);
               } else {
-                head = redGreenSpan("You gathered the right amount of information.", 1);
+                if (!result.planned_too_much & !result.planned_too_little) {
+                  head = redGreenSpan("You gathered the right amount of information.", 1);
+                }
                 if (result.information_used_correctly && showCriticism) {
                   head += redGreenSpan(" But you didn't prioritize the most important locations.", -1);
                 }

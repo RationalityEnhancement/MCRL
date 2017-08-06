@@ -78,8 +78,11 @@ for c=3%1:numel(conditions)
         
         w_policy=temp.BO.w_hat;
         
-        training_data1=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_none.mat');
-        training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_none.mat');
+        training_data1=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/1A.2/stateActions.mat');
+        training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/1A.2/stateActions.mat');
+        
+        %training_data1=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_none.mat');
+        %training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_none.mat');
         %training_data2=load('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_high_featureBased.mat');
         %load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/high_cost_condition_pilot.mat')
         load('~/Dropbox/PhD/Metacognitive RL/MCRL/matlab_code/Mouselab/high_cost_condition.mat')

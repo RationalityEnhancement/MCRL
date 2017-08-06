@@ -6,7 +6,7 @@ DEBUG = false;
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
   console.log('FOOBAR');
-  condition = 5;
+  condition = 2;
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
@@ -25,7 +25,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
  */
 
-experiment_nr = 0.95;
+experiment_nr = 0.96;
 
 switch (experiment_nr) {
   case 0:
@@ -57,6 +57,14 @@ switch (experiment_nr) {
       frequencyOfFB: ['after_each_move'],
       PRTypes: ['none'],
       messageTypes: ['none'],
+      infoCosts: [1.0001]
+    };
+    break;
+  case 0.96:
+    IVs = {
+      frequencyOfFB: ['after_each_move'],
+      PRTypes: ['featureBased'],
+      messageTypes: ['none', 'full'],
       infoCosts: [1.0001]
     };
     break;
@@ -111,6 +119,8 @@ nrConditions = (function() {
     case 0.9:
       return 6;
     case 0.95:
+      return 1;
+    case 0.96:
       return 1;
     case 1:
       return 3 * 3;
@@ -181,6 +191,8 @@ COST_LEVEL = (function() {
       return 'low';
     case 1.00:
       return 'med';
+    case 2.50:
+      return 'high';
     case 1.0001:
       return 'high';
     default:

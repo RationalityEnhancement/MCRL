@@ -7,7 +7,7 @@ if DEBUG
   X X X X X X X X X X X X X X X X X
   """
   console.log 'FOOBAR'
-  condition = 5
+  condition = 2
   
 else
   console.log """
@@ -31,13 +31,14 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-experiment_nr = 0.95
+experiment_nr = 0.96
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
   when 0.6 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','none'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,2.50]}
   when 0.9 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','none','object_level'], messageTypes: ['full'],infoCosts: [0.01,1.00,2.50]}    
   when 0.95 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['none'],infoCosts: [1.0001]}
+  when 0.96 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased'], messageTypes: ['none','full'],infoCosts: [1.0001]}
   when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,1.0001]}
   when 2 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.00]}
   when 3 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','demonstration'], messageTypes: ['full'],infoCosts: [1.00]}        
@@ -55,6 +56,7 @@ nrConditions = switch experiment_nr
     when 0.6 then 6
     when 0.9 then 6
     when 0.95 then 1
+    when 0.96 then 1
     when 1 then 3 * 3
     else nrDelays * nrMessages * nrInfoCosts
 
@@ -104,5 +106,6 @@ COST_LEVEL =
   switch PARAMS.info_cost
     when 0.01 then 'low'
     when 1.00 then 'med'
+    when 2.50 then 'high'
     when 1.0001 then 'high'
     else throw new Error('bad info_cost')

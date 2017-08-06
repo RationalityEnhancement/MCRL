@@ -1,10 +1,14 @@
+%1. Import data
+import_data_exp1A2
+
+%2. Extract state-action sequences.
 trial_properties = ['../../experiments/data/trial_properties_high_cost_condition.mat']; %['trial_properties_',cost_str,'_cost_condition']
-savedir = '~/Desktop/Tom_Griffiths/MCRL/experiments/data/stimuli/exp1/1A.2/';
+savedir = '../../experiments/data/stimuli/exp1/1A.2/';
 if ~exist(savedir,'dir')
    mkdir(savedir) 
 end
 
-nr_trials = 12;%length(unique(trial_i));
+nr_trials = length(unique(trial_i));
 PR_types = unique(PR_type);
 for p = 1:length(unique(PR_type))
     PR_str = PR_types{p};

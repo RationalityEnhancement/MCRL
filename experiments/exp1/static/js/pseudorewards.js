@@ -452,7 +452,8 @@ function registerMove(direction){
             }
         }
         
-        if (_.max(Q_moves) - Q_click > 0.50/meta_MDP.delay_per_point){
+        //if (_.max(Q_moves) - Q_click > 0.50/meta_MDP.delay_per_point){
+        if (_.max(Q_moves) - Q_click > 0){
             observed_too_much = true;
         }
         
@@ -472,7 +473,8 @@ function registerMove(direction){
             Q_moves.push(predictQValue(intermediate_state,available_actions[a]))
         }        
     }    
-    var observed_too_little= (_.max(Q_clicks)- _.max(Q_moves) > 0.50/meta_MDP.delay_per_point)
+    //var observed_too_little= (_.max(Q_clicks)- _.max(Q_moves) > 0.50/meta_MDP.delay_per_point)
+    var observed_too_little= (_.max(Q_clicks)- _.max(Q_moves) > 0)
     
     /*
     //feedback message based on full-observation policy:
@@ -995,7 +997,7 @@ function predictQValue(state,computation){
             //feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 1.0001:
-            feature_weights = {allActionsVPI: -0.3099, VPI: -0.4186, VOC1: 0.1261, cost: 0.1815, ER: 0.6477, offset: 6.683}
+            feature_weights = {allActionsVPI: 0.1796, VPI: -0.1035, VOC1: -0.2684, cost: -1.855, ER: 0.3047, offset: 5.994}
             //feature_weights = {allActionsVPI: -0.2509, VPI: 0.1815, VOC1: 0.3011, cost: -1.3726, ER: 0.9104, offset: 0.3676}//{allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
             //feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
@@ -1031,7 +1033,7 @@ function predictQValueOfSequence(state,computations){
             //feature_weights = {VPI: 1.2589, VOC1: 0.3007, ER: 1.0007, cost: -0.1703}; //{VPI: 0.1852, VOC1: 0.3436, ER: 0.9455} //{VPI: 0.3199, VOC1: 0.3363, ER: 0.9178};//{VPI: 1.0734, VOC1: 0.0309, ER: 0.5921};
             break;
         case 1.0001:
-            feature_weights = {allActionsVPI: -0.3099, VPI: -0.4186, VOC1: 0.1261, cost: 0.1815, ER: 0.6477, offset: 6.683}
+            feature_weights = {allActionsVPI: 0.1796, VPI: -0.1035, VOC1: -0.2684, cost: -1.855, ER: 0.3047, offset: 5.994}
             //feature_weights = {allActionsVPI: -0.2509, VPI: 0.1815, VOC1: 0.3011, cost: -1.3726, ER: 0.9104, offset: 0.3676}//{allActionsVPI: -0.1546, VPI: 0.1337, VOC1: 0.0981, cost: -1.4057, ER: 0.9330, offset: 0.1887} //otherVPIs: [-0.4179, 0.5560, 1.4445]
             //feature_weights = {VPI: -2.2738, VOC1: 2.1263, ER: 0.7978, cost: -1.7262};//{VPI: -0.5920, VOC1: -0.1227, ER: 0.8685};
             break;
@@ -1187,7 +1189,13 @@ function computeExpectedRewardOfActingOld(state){
 */
 
 function computeMyopicVOCNetCost(state,c){
-    return computeMyopicVOC(state,c)+meta_MDP.cost_per_click
+    
+    if (c.is_click){
+        return computeMyopicVOC(state,c)+meta_MDP.cost_per_click
+    }
+    else{
+        return 0
+    }
 }
 
 function computeMyopicVOC(input_state,c){
@@ -1320,7 +1328,7 @@ if (appears_best){
     delta_x = 1 //meta_MDP.std_payoff/25.0;
     /* VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_leaf+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff, x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))])})-meta_MDP.cost_per_click; 
     */
-    VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_leaf+_.max(x,meta_MDP.mean_payoff))])})-meta_MDP.cost_per_click; 
+    VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_leaf+_.max([x,meta_MDP.mean_payoff]))])})-meta_MDP.cost_per_click; 
 }
 else{
     //information is valuable if it reveals that action is optimal                
@@ -1329,7 +1337,7 @@ else{
     delta_x = 1 //meta_MDP.std_payoff/25.0;
     
     /* VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0, (mu_prior[a-1] - E_leaf + ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))-mu_alpha])})-meta_MDP.cost_per_click;                                */
-    VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0, (mu_prior[a-1] - E_leaf + _.max(x, meta_MDP.mean_payoff))-mu_alpha])})-meta_MDP.cost_per_click;                                
+    VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0, (mu_prior[a-1] - E_leaf + _.max([x, meta_MDP.mean_payoff]))-mu_alpha])})-meta_MDP.cost_per_click;                                
 }
  
 return VOC
@@ -1350,7 +1358,7 @@ function myopicVOCMaxKnown(mu_prior,a,known_alternative){
     appears_best = mu_prior[a-1] == mu_alpha
  
     //E_max= EVOfMaxOfGaussians([meta_MDP.mean_payoff,known_alternative],[meta_MDP.std_payoff,0]);
-    E_R_leaf = _.max(meta_MDP.mean_payoff,known_alternative)
+    E_R_leaf = _.max([meta_MDP.mean_payoff,known_alternative])
  
     if (appears_best){
         //information is valuable if it reveals that action c is suboptimal
