@@ -64,7 +64,7 @@ switch (experiment_nr) {
     IVs = {
       frequencyOfFB: ['after_each_move'],
       PRTypes: ['featureBased'],
-      messageTypes: ['none', 'full'],
+      messageTypes: ['full'],
       infoCosts: [1.0001]
     };
     break;
