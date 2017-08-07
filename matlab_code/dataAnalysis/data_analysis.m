@@ -721,6 +721,7 @@ end
 
 %% Analyze Experiment 1A.2
 %1. import data manually
+import_data_exp1A2
 
 experiment_name = '1A';
 version = '2';
@@ -765,11 +766,21 @@ errorbar(avg_rel_score,sem_rel_score)
 ylabel('Relative Score','FontSize',18)
 ylabel('Trial Number','FontSize',18)
 
+without_FB.avg_rel_score = avg_rel_score;
+without_FB.sem_rel_score = sem_rel_score;
+without_FB.avg_nr_clicks = avg_nr_clicks;
+without_FB.sem_nr_clicks = sem_nr_clicks;
+without_FB.trial_index = trial_index;
+without_FB.rel_score = relative_score;
+without_FB.nr_clicks = n_click;
+
+keep without_FB
 %% Analyze Experiment 1A.3
 %1. import data manually
+import_data_exp1A3
 
 experiment_name = '1A';
-version = '2';
+version = '3';
 MCRL_path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
 
 nr_trials = 16;
@@ -810,3 +821,37 @@ figure()
 errorbar(avg_rel_score,sem_rel_score)
 ylabel('Relative Score','FontSize',18)
 ylabel('Trial Number','FontSize',18)
+
+with_FB.avg_rel_score = avg_rel_score;
+with_FB.sem_rel_score = sem_rel_score;
+with_FB.avg_nr_clicks = avg_nr_clicks;
+with_FB.sem_nr_clicks = sem_nr_clicks;
+with_FB.trial_index = trial_index;
+with_FB.rel_score = relative_score;
+with_FB.nr_clicks = n_click;
+
+
+fig_rel_score=figure()
+errorbar(without_FB.avg_rel_score,without_FB.sem_rel_score),hold on
+errorbar(with_FB.avg_rel_score,with_FB.sem_rel_score),hold on
+ylabel('Relative Score','FontSize',18)
+xlabel('Trial Number','FontSize',18)
+legend('without FB','with FB')
+saveas(fig_rel_score,'figures/relScoreExp1A3.png')
+
+fig_nr_clicks=figure()
+errorbar(without_FB.avg_nr_clicks,without_FB.sem_nr_clicks),hold on
+errorbar(with_FB.avg_nr_clicks,with_FB.sem_nr_clicks),hold on
+ylabel('Number Clicks','FontSize',18)
+xlabel('Trial Number','FontSize',18)
+legend('without FB','with FB')
+saveas(fig_nr_clicks,'figures/nrClicksExp1A3.png')
+
+nr_training_trials = 10;
+[h_score,p_score,ci_score,stats_score]=ttest2(with_FB.rel_score(...
+    with_FB.trial_index>nr_training_trials),...
+    without_FB.rel_score(without_FB.trial_index>nr_training_trials))
+
+[h_clicks,p_clicks,ci_clicks,stats_clicks]=ttest2(...
+    with_FB.nr_clicks(with_FB.trial_index>nr_training_trials),...
+    without_FB.nr_clicks(test_trials))
