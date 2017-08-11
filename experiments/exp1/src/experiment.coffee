@@ -23,7 +23,6 @@ SCORE = 0
 calculateBonus = undefined
 
 
-
 # if 'hidden' in document
 #   document.addEventListener("visibilitychange", onchange);
 # else if 'mozHidden' in document
@@ -89,6 +88,9 @@ $(window).on 'load', ->
     TRAIN_TRIALS = (TRIALS[i] for i in train_idx)
     TEST_TRIALS = (TRIALS[i] for i in TEST_IDX)
 
+    if DEBUG
+      TRAIN_TRIALS = TRIALS
+
     psiturk.recordUnstructuredData 'params', PARAMS
     psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
     psiturk.recordUnstructuredData 'condition_nr', condition_nr
@@ -143,8 +145,10 @@ initializeExperiment = ->
 
     return_window: ->
       cutoff = new Date (RETURN_TIME.getTime() + 1000 * 60 * 60 * PARAMS.delay_window)
+      tomorrow = if RETURN_TIME.getDate() > (new Date).getDate() then 'tomorrow' else ''
       return """
-        <b>tomorrow between #{format_time RETURN_TIME}
+        <b>#{tomorrow}
+        between #{format_time RETURN_TIME}
         and #{format_time cutoff}</b>
       """
 
@@ -320,54 +324,59 @@ initializeExperiment = ->
     type: 'secret-code'
     code: 'elephant'
 
-  check_returning = new Block
-    type: 'text'
-    text: ->
-      worker_id = workerId[0]
-      # worker_id = 'test_worker'
-      # worker_id = 'A34SCRE20A7XV5'
-      stage1 = (loadJson 'static/json/stage1.json')[worker_id]
-      if stage1?
-        console.log 'stage1.return_time', stage1.return_time
-        return_time = new Date stage1.return_time
+  check_returning = do ->
+    console.log 'worker', uniqueId
+    worker_id = uniqueId.split(':')[0]
+    stage1 = (loadJson 'static/json/stage1.json')[worker_id]
+    if stage1?
+      console.log 'stage1.return_time', stage1.return_time
+      return_time = new Date stage1.return_time
+      console.log 'return_time', return_time
 
-        if getTime() > return_time
-          # Redefine test trials to match breakdown established in stage 1.
-          TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
-          SCORE += stage1.score
+      if getTime() > return_time
+        # Redefine test trials to match breakdown established in stage 1.
+        TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
+        SCORE += stage1.score
 
-          return markdown """
+        return new Block
+          type: 'button-response'
+          is_html: true
+          choices: ['Continue']
+          button_html: '<button id="return-continue" class="btn btn-primary btn-lg">%choice%</button>'
+          stimulus: -> markdown """
             # Welcome back
 
             Thanks for returning to complete Stage 2! Your current bonus is
             **$#{calculateBonus().toFixed(2)}**. In this stage you'll have #{N_TEST} rounds to
-            increase your bonus. Unlike in Stage 1, there will be no feedback
-            messages or delays.
+            increase your bonus.
 
             Before you begin, you will review the instructions and take another
             quiz.
-
-            Press **space** to continue.
           """
-        else
-          return markdown """
+      else
+        return new Block
+          type: 'text'
+          cont_key: [null]
+          text: -> markdown """
             # Stage 2 not ready yet
 
             You need to wait #{PARAMS.delay_hours} hours after completing Stage 1 before
             you can begin Stage 2. You can begin the HIT at
-            #{format_time(return_time)} on #{format_date(date)}
-
-            Please return the HIT and come back later.
+            #{format_time(return_time)} on #{format_date(return_time)}
           """
-      else
-        markdown """
+          # **If you return the HIT, you may not be able to take it again later.**
+          # Please leave the HIT open until it is time for you to complete Stage 2.
+    else
+      return new Block
+        type: 'text'
+        cont_key: [null]
+        text: -> markdown """
           # Stage 1 not completed
 
           We can't find you in our database. This is the second part of a two-part
-          experiment. If you did not complete the first stage yesterday, please
-          return this HIT. If you did complete Stage 1 yesterday, please email
-          cocosci.turk@gmail.com and include the secret code you received
-          when you completed that HIT.
+          experiment. If you did not complete the first stage, please
+          return this HIT. If you did complete Stage 1, please email
+          cocosci.turk@gmail.com to report the error.
         """
 
 
@@ -378,15 +387,15 @@ initializeExperiment = ->
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
     stimulus: ->
       markdown """
-      # You are beginning a two-day experiment
+      # You are beginning a two-part experiment
 
       This experiment has two stages which you will complete in separate HITs.
       The total base payment for both hits is $1.75, plus a **performance-dependent
       bonus** of up to $3.50 ($2.50 is a typical bonus).
 
       Stage 1 takes about 15 minutes, and you will receive $0.75 when you
-      complete it. You will complete Stage 2 in a second HIT, which will be
-      posted tomorrow. You can begin the second HIT any time between #{text.return_window()}.
+      complete it. You will complete Stage 2 in a second HIT.
+      You can begin the second HIT #{text.return_window()}.
       If you do not begin the HIT within this time frame, you will not receive the
       second base payment or any bonus.
 
@@ -564,6 +573,8 @@ initializeExperiment = ->
         feedback: false
         timeline: TEST_TRIALS
       return tl
+
+  console.log 'test', test
     
       
         
@@ -574,12 +585,16 @@ initializeExperiment = ->
 
         So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
         You will receive this bonus, along with the additional bonus you earn 
-        in Stage 2 when you complete the HIT tomorrow. If you don't complete
-        the HIT tomorrow, you will give up the bonus you have earned.
+        in Stage 2 when you complete the second HIT. If you don't complete
+        the second HIT, you will give up the bonus you have earned.
 
-        The HIT for Stage 2 will have the title "Day 2 of two-day decsion-making experiment"
+        The HIT for Stage 2 will have the title "Part 2 of two-part decision-making experiment"
         Remember, you must begin the HIT #{text.return_window()}.
+        **Note:** The official base pay on mTurk will be $0.01;
+        you'll receive the $1 base pay for Stage 2 as part of your bonus 
+        (in addition to the bonus you earn).
       """
+
     questions: ['If you would like a reminder email, you can optionally enter it here.']
     button: 'Submit HIT'
 
@@ -591,12 +606,15 @@ initializeExperiment = ->
           # You've completed Stage 1
 
           Remember to come back #{text.return_window()} to complete Stage 2.
-          The HIT will have the same title as this HIT: <# TITLE #>
+          The HIT will be titled "Part 2 of two-part decision-making
+          experiment". **Note:** The official base pay on mTurk will be $0.01;
+          you'll receive the $1 base pay for Stage 2 as part of your bonus 
+          (in addition to the bonus you earn).
 
           So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
           You will receive this bonus, along with the additional bonus you earn 
-          in Stage 2 when you complete the HIT tomorrow. If you don't complete
-          the HIT tomorrow, you give up the bonus you have earned.
+          in Stage 2 when you complete the second HIT. If you don't complete
+          the second HIT, you give up the bonus you have already earned.
         """
       else 
         markdown """
@@ -614,11 +632,11 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      # ask_email
-      # retention_instruction
-      # check_returning
-      # retention_instruction
-      # check_code
+      train
+      test
+      check_returning
+      retention_instruction
+      check_code
       train
       test
       finish
@@ -703,7 +721,7 @@ initializeExperiment = ->
         completion_data =
           score: SCORE
           bonus: calculateBonus()
-          return_time: RETURN_TIME
+          return_time: RETURN_TIME.getTime()
           test_idx: TEST_IDX
         psiturk.recordUnstructuredData 'completed', completion_data
 

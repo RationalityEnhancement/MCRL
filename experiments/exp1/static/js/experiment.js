@@ -82,6 +82,9 @@ $(window).on('load', function() {
       }
       return results;
     })();
+    if (DEBUG) {
+      TRAIN_TRIALS = TRIALS;
+    }
     psiturk.recordUnstructuredData('params', PARAMS);
     psiturk.recordUnstructuredData('experiment_nr', experiment_nr);
     psiturk.recordUnstructuredData('condition_nr', condition_nr);
@@ -139,9 +142,10 @@ initializeExperiment = function() {
       }
     },
     return_window: function() {
-      var cutoff;
+      var cutoff, tomorrow;
       cutoff = new Date(RETURN_TIME.getTime() + 1000 * 60 * 60 * PARAMS.delay_window);
-      return "<b>tomorrow between " + (format_time(RETURN_TIME)) + "\nand " + (format_time(cutoff)) + "</b>";
+      tomorrow = RETURN_TIME.getDate() > (new Date).getDate() ? 'tomorrow' : '';
+      return "<b>" + tomorrow + "\nbetween " + (format_time(RETURN_TIME)) + "\nand " + (format_time(cutoff)) + "</b>";
     },
     feedback: function() {
       if (STAGE2) {
@@ -244,43 +248,62 @@ initializeExperiment = function() {
     type: 'secret-code',
     code: 'elephant'
   });
-  check_returning = new Block({
-    type: 'text',
-    text: function() {
-      var i, return_time, stage1, worker_id;
-      worker_id = workerId[0];
-      stage1 = (loadJson('static/json/stage1.json'))[worker_id];
-      if (stage1 != null) {
-        console.log('stage1.return_time', stage1.return_time);
-        return_time = new Date(stage1.return_time);
-        if (getTime() > return_time) {
-          TEST_TRIALS = (function() {
-            var j, len, ref, results;
-            ref = stage1.test_idx;
-            results = [];
-            for (j = 0, len = ref.length; j < len; j++) {
-              i = ref[j];
-              results.push(TRIALS[i]);
-            }
-            return results;
-          })();
-          SCORE += stage1.score;
-          return markdown("# Welcome back\n\nThanks for returning to complete Stage 2! Your current bonus is\n**$" + (calculateBonus().toFixed(2)) + "**. In this stage you'll have " + N_TEST + " rounds to\nincrease your bonus. Unlike in Stage 1, there will be no feedback\nmessages or delays.\n\nBefore you begin, you will review the instructions and take another\nquiz.\n\nPress **space** to continue.");
-        } else {
-          return markdown("# Stage 2 not ready yet\n\nYou need to wait " + PARAMS.delay_hours + " hours after completing Stage 1 before\nyou can begin Stage 2. You can begin the HIT at\n" + (format_time(return_time)) + " on " + (format_date(date)) + "\n\nPlease return the HIT and come back later.");
-        }
+  check_returning = (function() {
+    var i, return_time, stage1, worker_id;
+    console.log('worker', uniqueId);
+    worker_id = uniqueId.split(':')[0];
+    stage1 = (loadJson('static/json/stage1.json'))[worker_id];
+    if (stage1 != null) {
+      console.log('stage1.return_time', stage1.return_time);
+      return_time = new Date(stage1.return_time);
+      console.log('return_time', return_time);
+      if (getTime() > return_time) {
+        TEST_TRIALS = (function() {
+          var j, len, ref, results;
+          ref = stage1.test_idx;
+          results = [];
+          for (j = 0, len = ref.length; j < len; j++) {
+            i = ref[j];
+            results.push(TRIALS[i]);
+          }
+          return results;
+        })();
+        SCORE += stage1.score;
+        return new Block({
+          type: 'button-response',
+          is_html: true,
+          choices: ['Continue'],
+          button_html: '<button id="return-continue" class="btn btn-primary btn-lg">%choice%</button>',
+          stimulus: function() {
+            return markdown("# Welcome back\n\nThanks for returning to complete Stage 2! Your current bonus is\n**$" + (calculateBonus().toFixed(2)) + "**. In this stage you'll have " + N_TEST + " rounds to\nincrease your bonus.\n\nBefore you begin, you will review the instructions and take another\nquiz.");
+          }
+        });
       } else {
-        return markdown("# Stage 1 not completed\n\nWe can't find you in our database. This is the second part of a two-part\nexperiment. If you did not complete the first stage yesterday, please\nreturn this HIT. If you did complete Stage 1 yesterday, please email\ncocosci.turk@gmail.com and include the secret code you received\nwhen you completed that HIT.");
+        return new Block({
+          type: 'text',
+          cont_key: [null],
+          text: function() {
+            return markdown("# Stage 2 not ready yet\n\nYou need to wait " + PARAMS.delay_hours + " hours after completing Stage 1 before\nyou can begin Stage 2. You can begin the HIT at\n" + (format_time(return_time)) + " on " + (format_date(return_time)));
+          }
+        });
       }
+    } else {
+      return new Block({
+        type: 'text',
+        cont_key: [null],
+        text: function() {
+          return markdown("# Stage 1 not completed\n\nWe can't find you in our database. This is the second part of a two-part\nexperiment. If you did not complete the first stage, please\nreturn this HIT. If you did complete Stage 1, please email\ncocosci.turk@gmail.com to report the error.");
+        }
+      });
     }
-  });
+  })();
   retention_instruction = new Block({
     type: 'button-response',
     is_html: true,
     choices: ['Continue'],
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>',
     stimulus: function() {
-      return markdown("# You are beginning a two-day experiment\n\nThis experiment has two stages which you will complete in separate HITs.\nThe total base payment for both hits is $1.75, plus a **performance-dependent\nbonus** of up to $3.50 ($2.50 is a typical bonus).\n\nStage 1 takes about 15 minutes, and you will receive $0.75 when you\ncomplete it. You will complete Stage 2 in a second HIT, which will be\nposted tomorrow. You can begin the second HIT any time between " + (text.return_window()) + ".\nIf you do not begin the HIT within this time frame, you will not receive the\nsecond base payment or any bonus.\n\nUpon completing Stage 2, you will receive $1.00 plus your bonus of\nup to $3.50.<br>**By completing both stages, you can make up to\n$5.25**.\n\n<div class=\"alert alert-warning\">\n  Only continue if you can complete the second (~10 minute) HIT which\n  which will be available " + (text.return_window()) + ".\n</div>");
+      return markdown("# You are beginning a two-part experiment\n\nThis experiment has two stages which you will complete in separate HITs.\nThe total base payment for both hits is $1.75, plus a **performance-dependent\nbonus** of up to $3.50 ($2.50 is a typical bonus).\n\nStage 1 takes about 15 minutes, and you will receive $0.75 when you\ncomplete it. You will complete Stage 2 in a second HIT.\nYou can begin the second HIT " + (text.return_window()) + ".\nIf you do not begin the HIT within this time frame, you will not receive the\nsecond base payment or any bonus.\n\nUpon completing Stage 2, you will receive $1.00 plus your bonus of\nup to $3.50.<br>**By completing both stages, you can make up to\n$5.25**.\n\n<div class=\"alert alert-warning\">\n  Only continue if you can complete the second (~10 minute) HIT which\n  which will be available " + (text.return_window()) + ".\n</div>");
     }
   });
   instructions = new Block({
@@ -352,10 +375,11 @@ initializeExperiment = function() {
       return tl;
     })()
   });
+  console.log('test', test);
   ask_email = new Block({
     type: 'survey-text',
     preamble: function() {
-      return markdown("# You've completed Stage 1\n\nSo far, you've earned a bonus of **$" + (calculateBonus().toFixed(2)) + "**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the HIT tomorrow. If you don't complete\nthe HIT tomorrow, you will give up the bonus you have earned.\n\nThe HIT for Stage 2 will have the title \"Day 2 of two-day decsion-making experiment\"\nRemember, you must begin the HIT " + (text.return_window()) + ".");
+      return markdown("# You've completed Stage 1\n\nSo far, you've earned a bonus of **$" + (calculateBonus().toFixed(2)) + "**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the second HIT. If you don't complete\nthe second HIT, you will give up the bonus you have earned.\n\nThe HIT for Stage 2 will have the title \"Part 2 of two-part decision-making experiment\"\nRemember, you must begin the HIT " + (text.return_window()) + ".\n**Note:** The official base pay on mTurk will be $0.01;\nyou'll receive the $1 base pay for Stage 2 as part of your bonus \n(in addition to the bonus you earn).");
     },
     questions: ['If you would like a reminder email, you can optionally enter it here.'],
     button: 'Submit HIT'
@@ -364,7 +388,7 @@ initializeExperiment = function() {
     type: 'button-response',
     stimulus: function() {
       if (STAGE1) {
-        return markdown("# You've completed Stage 1\n\nRemember to come back " + (text.return_window()) + " to complete Stage 2.\nThe HIT will have the same title as this HIT: <# TITLE #>\n\nSo far, you've earned a bonus of **$" + (calculateBonus().toFixed(2)) + "**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the HIT tomorrow. If you don't complete\nthe HIT tomorrow, you give up the bonus you have earned.");
+        return markdown("# You've completed Stage 1\n\nRemember to come back " + (text.return_window()) + " to complete Stage 2.\nThe HIT will be titled \"Part 2 of two-part decision-making\nexperiment\". **Note:** The official base pay on mTurk will be $0.01;\nyou'll receive the $1 base pay for Stage 2 as part of your bonus \n(in addition to the bonus you earn).\n\nSo far, you've earned a bonus of **$" + (calculateBonus().toFixed(2)) + "**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the second HIT. If you don't complete\nthe second HIT, you give up the bonus you have already earned.");
       } else {
         return markdown("# You've completed the HIT\n\nThanks again for participating. We hope you had fun!\n\nBased on your performance, you will be\nawarded a bonus of **$" + (calculateBonus().toFixed(2)) + "**.");
       }
@@ -374,7 +398,7 @@ initializeExperiment = function() {
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
   if (DEBUG) {
-    experiment_timeline = [train, test, finish];
+    experiment_timeline = [train, test, check_returning, retention_instruction, check_code, train, test, finish];
   } else {
     experiment_timeline = (function() {
       var tl;
@@ -443,7 +467,7 @@ initializeExperiment = function() {
         completion_data = {
           score: SCORE,
           bonus: calculateBonus(),
-          return_time: RETURN_TIME,
+          return_time: RETURN_TIME.getTime(),
           test_idx: TEST_IDX
         };
         psiturk.recordUnstructuredData('completed', completion_data);
