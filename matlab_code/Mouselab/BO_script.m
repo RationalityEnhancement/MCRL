@@ -16,7 +16,7 @@ conditions={low_cost_condition,medium_cost_condition,high_cost_condition};
 %names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallActions'};
 names={'low_cost_exactVOC1','medium_cost_exactVOC1','high_cost_exactVOC1'};
 
-fast_VOC1_approximation = true;
+fast_VOC1_approximation = false;
 parfor c=1:numel(conditions)
     policySearchMouselabMDP(costs(c),conditions{c},names{c},fast_VOC1_approximation)
 end

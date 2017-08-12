@@ -68,8 +68,6 @@ for step=2:(nr_steps+1)
                     'nr',action,'state',0,'reward',NaN,'done',false);
             end
             
-            
-            
             state=struct('nr',state_nr,'path',path,'available_actions',...
                 available_actions,'is_terminal_state',step==nr_steps,...
                 'is_initial_state',false,'location',[x,y],'actions',actions_struct);
@@ -578,7 +576,8 @@ save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_prope
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/trial_properties_March1.mat')
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/experiment_March1.mat')
 
-experiment_name 
+experiment_name = '1A';
+version = '1';
 
 nr_trials=16;
 
@@ -965,6 +964,7 @@ load medium_cost_condition
 load high_cost_condition
 
 experiment_name='1A';
+version = '1';
 
 addpath('~/Dropbox/PhD/Gamification/')
 
@@ -1003,8 +1003,6 @@ for c=1:numel(conditions)
     savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/exp1/static/json/ObjectLevelPRs_',condition_names{c},'.json'])
                
 end
-
-version='2';
 
 csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv'],max_score)
 csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv'],min_score)
@@ -1080,3 +1078,109 @@ for e=1:numel(experiment)
 end
 %}
 %save trial_properties trial_propertiesload('~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/0.6/stateActions_low_featureBased.mat')
+
+%% Generate MDPs where the rewards are i.i.d.
+clear
+load baseline_mdp
+
+nr_problems = 100;
+mu_reward = 5;
+nr_values = 7;
+
+reward_stds = 1:5:75;
+%std_reward = 10.6;
+
+cost_per_click = 1;
+nr_planning_operations = [0,4,8,16];
+cost_of_planning = cost_per_click * nr_planning_operations;
+
+for v=1:numel(reward_stds)
+    
+std_reward= reward_stds(v);
+
+mdps=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
+
+for m=1:numel(mdps)
+    properties(m)=evaluateMouselabMDP(mdps(m).T,mdps(m).rewards,mdps(m).start_state,...
+        mdps(m).horizon,false, mdps(m).horizon);
+    
+    delta_R(m,:)=properties(m).delta_R;
+    benefit_of_planning(m,:) = delta_R(m,:) - delta_R(m,1);
+    
+    for n=1:3
+        n_step_planning_beneficial(m,n)=benefit_of_planning(m,n+1)>benefit_of_planning(m,n);
+    end
+    
+end
+
+avg_benefit_of_planning(v,:)=mean(benefit_of_planning);
+std_benefit_of_planning(v,:)=std(benefit_of_planning);
+p_planning_beneficial(v,:)=mean(n_step_planning_beneficial);
+end
+
+VOC_of_planning_cost1dollar = avg_benefit_of_planning - repmat(cost_of_planning,...
+    [numel(reward_stds),1]);
+
+VOC_of_planning_cost1cent = avg_benefit_of_planning - 0.01 * repmat(cost_of_planning,...
+    [numel(reward_stds),1]);
+
+figure(1)
+plot(reward_stds,p_planning_beneficial,'LineWidth',3)
+ylabel('Prob. that n-step planning is beneficial','FontSize',18)
+xlabel('STD of rewards','FontSize',18)
+set(gca,'FontSize',16)
+legend('1-step planning','2-step planning','3-step planning')
+
+nr_subjects = 50;
+nr_trials = 6;
+N = nr_subjects*nr_trials;
+sem_benefit_of_planning = std_benefit_of_planning(:,2:end)/sqrt(N);
+
+figure(2)
+errorbar(repmat(reward_stds',[1,3]),avg_benefit_of_planning(:,2:end),1.96*sem_benefit_of_planning,'LineWidth',3)
+ylabel('Benefit of Planning (Mean with 95% CI)','FontSize',18)
+xlabel('STD of rewards','FontSize',18)
+set(gca,'FontSize',16)
+legend('1-step planning','2-step planning','3-step planning')
+
+sem_benefit_of_planning = std_benefit_of_planning(:,1:end)/sqrt(N);
+figure(3)
+errorbar(repmat(reward_stds',[1,4]),VOC_of_planning_cost1dollar(:,1:end),1.96*sem_benefit_of_planning,'LineWidth',3)
+ylabel('VOC of Planning','FontSize',18)
+xlabel('STD of rewards','FontSize',18)
+set(gca,'FontSize',16)
+legend('no planning','1-step planning','2-step planning','3-step planning')
+title('$1.00 per click','FontSize',18)
+
+fig_low_cost=figure(4)
+errorbar(repmat(reward_stds',[1,4]),VOC_of_planning_cost1cent(:,1:end),1.96*sem_benefit_of_planning,'LineWidth',3)
+ylabel('VOC of Planning','FontSize',18)
+xlabel('STD of rewards','FontSize',18)
+set(gca,'FontSize',16)
+legend('no planning','1-step planning','2-step planning','3-step planning',...
+    'Location','NorthWest')
+title('$0.01 per click','FontSize',18)
+saveas(fig_low_cost)
+
+for h=1:3
+    betas(:,h)=regress(avg_benefit_of_planning(:,h+1),[ones(numel(reward_stds),1),reward_stds(:)])
+end
+
+delta_VOC=5;
+
+%Determine the sigma required to make 3-step planning optimal
+sigma_min_cost_1dollat = (8*1.00+delta_VOC)/(betas(2,3)-betas(2,2));
+sigma_min_cost_1cent = (8*0.01+delta_VOC)/(betas(2,3)-betas(2,2));
+
+%Determine the sigma and c required to make 0-step planning optimal
+sigma_low = 1
+delta_VOC_low  = 2.5
+c_min = delta_VOC_low + sigma_low * betas(2,1)
+
+%Determine sigma and c so that 2-step planning is optimal
+delta_VOC = 5;
+c_med=1;
+%2-step planning is better than 1-step planning
+sigma_min_med = (4*c_med+delta_VOC)/(betas(2,2)-betas(2,1))
+sigma_max_med = (8*c_med)/(betas(2,3)-betas(2,2))
+mean([sigma_min_med,sigma_max_med])

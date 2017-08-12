@@ -74,8 +74,8 @@ function metaMDP(){
     var meta_MDP={
         cost_per_click: [],
         cost_per_planning_step: 0,
-        mean_payoff: 4.5,
-        std_payoff: 10.6,        
+        mean_payoff: 0,//4.5,
+        std_payoff: 1,//10.6,        
         object_level_MDPs: trials,
         object_level_MDP: [],
         object_level_PRs: [],
@@ -1325,7 +1325,7 @@ if (appears_best){
  
     lb=meta_MDP.mean_payoff-3*meta_MDP.std_payoff;
     ub=meta_MDP.mean_payoff;
-    delta_x = 3 //meta_MDP.std_payoff/25.0;
+    delta_x = 0.1 //meta_MDP.std_payoff/25.0;
     /* VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_leaf+ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff, x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))])})-meta_MDP.cost_per_click; 
     */
     VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0,  mu_beta - (mu_alpha-E_leaf+_.max([x,meta_MDP.mean_payoff]))])})-meta_MDP.cost_per_click; 
@@ -1334,7 +1334,7 @@ else{
     //information is valuable if it reveals that action is optimal                
     lb=meta_MDP.mean_payoff;
     ub=meta_MDP.mean_payoff+3*meta_MDP.std_payoff;
-    delta_x = 3 //meta_MDP.std_payoff/25.0;
+    delta_x = 0.1 //meta_MDP.std_payoff/25.0;
     
     /* VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0, (mu_prior[a-1] - E_leaf + ETruncatedNormal(meta_MDP.mean_payoff,meta_MDP.std_payoff,x,meta_MDP.mean_payoff+5*meta_MDP.std_payoff))-mu_alpha])})-meta_MDP.cost_per_click;                                */
     VOC=integral(lb,ub,delta_x,function(x){return normPDF(x,meta_MDP.mean_payoff,meta_MDP.std_payoff)*_.max([0, (mu_prior[a-1] - E_leaf + _.max([x, meta_MDP.mean_payoff]))-mu_alpha])})-meta_MDP.cost_per_click;                                

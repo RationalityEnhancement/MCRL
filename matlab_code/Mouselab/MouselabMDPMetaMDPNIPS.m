@@ -42,7 +42,7 @@ classdef MouselabMDPMetaMDPNIPS < MDP
             meta_MDP.std_payoff=std_payoff;
             meta_MDP.min_payoff=meta_MDP.mean_payoff-3*meta_MDP.std_payoff;
             meta_MDP.max_payoff=meta_MDP.mean_payoff+3*meta_MDP.std_payoff;
-            meta_MDP.nr_possible_payoffs=25;
+            meta_MDP.nr_possible_payoffs=10; %25
             meta_MDP.payoff_values=linspace(meta_MDP.min_payoff,meta_MDP.max_payoff,...
                 meta_MDP.nr_possible_payoffs);
             
