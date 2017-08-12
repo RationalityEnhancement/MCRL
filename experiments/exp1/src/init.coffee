@@ -1,4 +1,4 @@
-DEBUG = false
+DEBUG = true
 
 if DEBUG
   console.log """
@@ -6,8 +6,9 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  console.log 'FOOBAR'
-  condition = 2
+  condition = 0
+  workerId = ['debugFRED']
+
   
 else
   console.log """
@@ -18,7 +19,8 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  #condition = 5
+  condition = 0
+  workerId = ['debugFRED']
   # counterbalance = 0
 
 
@@ -31,7 +33,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-experiment_nr = 1
+experiment_nr = 4  # retention
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
@@ -42,7 +44,7 @@ switch experiment_nr
   when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,1.0001]}
   when 2 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.00]}
   when 3 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','demonstration'], messageTypes: ['full'],infoCosts: [1.00]}        
-  when 4 then IVs = IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased'], messageTypes: ['full'],infoCosts: [1.00]}
+  when 4 then IVs = IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['full'],infoCosts: [1.00]}
   #when 4 then IVs = {IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.00]}}
   else console.log "Invalid experiment_nr!" 
         
@@ -88,12 +90,12 @@ PARAMS =
   frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]
   condition: condition
   bonus_rate: 0.005
-  delay_hours: 18
-  delay_window: 8
+  delay_hours: 24
+  delay_window: 4
 
 if experiment_nr is 4
-  STAGE1 = false
-  STAGE2 = true
+  STAGE1 = true
+  STAGE2 = false
   RETURN_TIME = new Date (getTime() + 1000 * 60 * 60 * PARAMS.delay_hours)
 
 # if DEBUG
