@@ -10,13 +10,15 @@ low_costs=ceil(100*[0.01]/scaling_factor)/100; %[0.01]
 edmedium_costs=ceil(100*[1]/scaling_factor)/100;%[0.25,0.50,0.75,1];
 high_costs=ceil(100*[2.5]/scaling_factor)/100;%[1.50,2,2.50,3];
 
-%costs=round(100*[0.01,1,2.50]/scaling_factor)/100;
-costs=round(100*[0.01,1,1]/scaling_factor)/100;
+costs=round(100*[0.01,1,2.50]/scaling_factor)/100;
+%costs=round(100*[0.01,1,1]/scaling_factor)/100;
 conditions={low_cost_condition,medium_cost_condition,high_cost_condition};
-names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallActions'};
+%names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallActions'};
+names={'low_cost_exactVOC1','medium_cost_exactVOC1','high_cost_exactVOC1'};
 
-parfor c=3%1:numel(conditions)
-    policySearchMouselabMDP(costs(c),conditions{c},names{c})
+fast_VOC1_approximation = true;
+parfor c=1:numel(conditions)
+    policySearchMouselabMDP(costs(c),conditions{c},names{c},fast_VOC1_approximation)
 end
 
 %{

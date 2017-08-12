@@ -1,4 +1,4 @@
-function policySearchMouselabMDP(c,experiment,name)
+function policySearchMouselabMDP(c,experiment,name,fast_VOC1_approximation)
 
 username = getenv('USER');
 Falk_local=strcmp(username,'Falk');
@@ -18,12 +18,16 @@ addpath(genpath(GPO_dir))
 
 %% Direct Policy Search
 
+if not(exist('fast_VOC1_approximation','var'))
+    fast_VOC1_approximation = true;
+end
+
 if exist('experiment','var')
     nr_episodes=numel(experiment);
-    ER_hat=@(w) evaluatePolicy([w(:);1],c,nr_episodes,experiment);
+    ER_hat=@(w) evaluatePolicy([w(:);1],c,nr_episodes,experiment,fast_VOC1_approximation);
 else
     nr_episodes=1000;
-    ER_hat=@(w) evaluatePolicy([w(:);1],c,nr_episodes);
+    ER_hat=@(w) evaluatePolicy([w(:);1],c,nr_episodes,fast_VOC1_approximation);
 end
 
 d=4;

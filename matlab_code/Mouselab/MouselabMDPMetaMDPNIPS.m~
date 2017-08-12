@@ -838,11 +838,9 @@ classdef MouselabMDPMetaMDPNIPS < MDP
             end
         end
         
-        function action_features=extractActionFeatures(meta_MDP,state,c,fast_VOC1_approximation)
+        function action_features=extractActionFeatures(meta_MDP,state,c,use_fast_VOC1_approximation)
             
-            if not(exist('fast_VOC1_approximation','var'))
-                fast_VOC1_approximation = true;
-            end
+            if exist('use_fast_VOC')
             
             
             if c.is_decision_mechanism
@@ -898,11 +896,7 @@ classdef MouselabMDPMetaMDPNIPS < MDP
                 %}
                 VPI=meta_MDP.computeVPI(state,c);
                 %tic()
-                if fast_VOC1_approximation
-                    [VOC,meta_MDP]=meta_MDP.myopicVOC(state,c);
-                else
-                    VOC=meta_MDP.myopicVOCSlow(state,c);                    
-                end
+                [VOC,meta_MDP]=meta_MDP.myopicVOC(state,c);
                 %toc()
                 %tic()
                 %VOC_slow=meta_MDP.myopicVOCSlow(state,c);

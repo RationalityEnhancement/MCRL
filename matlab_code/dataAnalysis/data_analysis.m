@@ -1,9 +1,9 @@
 %%  Which experiment do you want to analyze?
-%experiment_name='1A';
-%version = '1';
-%experiment_name='1B';
-experiment_name='1C';
+experiment_name='1A';
 version = '1';
+%experiment_name='1B';
+%experiment_name='1C';
+%version = '1';
 
 MCRL_path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
 

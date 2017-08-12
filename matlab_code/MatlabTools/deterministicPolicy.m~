@@ -9,7 +9,11 @@ w_hat=weights;
 
 [actions,mdp]=mdp.getActions(state);
 for a=1:numel(actions) %parfor
-    action_features=mdp.extractActionFeatures(state,actions(a),use_fast_VOC1_approximation);
+    if use_fast_VOC1_approximation
+        action_features=mdp.extractActionFeaturesFast(state,actions(a));
+    else
+        
+    end
     Q_hat(a)=dot(w_hat(mdp.action_features),action_features);
 end
 %a_max=argmaxWithRandomTieBreak(Q_hat);

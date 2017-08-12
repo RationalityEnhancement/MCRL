@@ -578,8 +578,7 @@ save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/trial_prope
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/trial_properties_March1.mat')
 load('/Users/Falk/Dropbox/PhD/Metacognitive RL/mcrl-experiment/data/experiment_March1.mat')
 
-experiment_name = '1A';
-version = '1';
+experiment_name 
 
 nr_trials=16;
 
@@ -966,7 +965,6 @@ load medium_cost_condition
 load high_cost_condition
 
 experiment_name='1A';
-version = '1';
 
 addpath('~/Dropbox/PhD/Gamification/')
 
@@ -1005,6 +1003,8 @@ for c=1:numel(conditions)
     savejson('',pseudorewards,['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/exp1/static/json/ObjectLevelPRs_',condition_names{c},'.json'])
                
 end
+
+version='2';
 
 csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv'],max_score)
 csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv'],min_score)
