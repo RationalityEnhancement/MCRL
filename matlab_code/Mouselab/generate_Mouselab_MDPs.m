@@ -1203,3 +1203,27 @@ c_med=1;
 sigma_min_med = (4*c_med+delta_VOC)/(betas(2,2)-betas(2,1))
 sigma_max_med = (8*c_med)/(betas(2,3)-betas(2,2))
 mean([sigma_min_med,sigma_max_med])
+
+%% 
+
+nr_problems = 100;
+mu_reward = 5;
+nr_values = 7;
+
+std_reward = 25;
+mdps_high_VOC=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
+experiment_json=rmfield(mdps_high_VOC,'states_by_path');
+%problems = array2cell(mdps);
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/iidMDPsSigma25.json')
+
+std_reward = 1;
+mdps_low_VOC=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
+experiment_json=rmfield(mdps_low_VOC,'states_by_path');
+%problems = array2cell(mdps);
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/iidMDPsSigma1.json')
+
+std_reward = 28;
+mdps_med_VOC=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
+experiment_json=rmfield(mdps_med_VOC,'states_by_path');
+%problems = array2cell(mdps);
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/iidMDPsSigma28.json')

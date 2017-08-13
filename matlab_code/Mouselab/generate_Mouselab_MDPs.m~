@@ -1124,6 +1124,10 @@ VOC_of_planning_cost1dollar = avg_benefit_of_planning - repmat(cost_of_planning,
 VOC_of_planning_cost1cent = avg_benefit_of_planning - 0.01 * repmat(cost_of_planning,...
     [numel(reward_stds),1]);
 
+VOC_of_planning_cost4dollar = avg_benefit_of_planning - 4.00 * repmat(cost_of_planning,...
+    [numel(reward_stds),1]);
+
+
 figure(1)
 plot(reward_stds,p_planning_beneficial,'LineWidth',3)
 ylabel('Prob. that n-step planning is beneficial','FontSize',18)
@@ -1144,23 +1148,38 @@ set(gca,'FontSize',16)
 legend('1-step planning','2-step planning','3-step planning')
 
 sem_benefit_of_planning = std_benefit_of_planning(:,1:end)/sqrt(N);
-figure(3)
+
+fig_med_cost=figure(3)
 errorbar(repmat(reward_stds',[1,4]),VOC_of_planning_cost1dollar(:,1:end),1.96*sem_benefit_of_planning,'LineWidth',3)
 ylabel('VOC of Planning','FontSize',18)
 xlabel('STD of rewards','FontSize',18)
 set(gca,'FontSize',16)
 legend('no planning','1-step planning','2-step planning','3-step planning')
 title('$1.00 per click','FontSize',18)
+saveas(fig_med_cost,'VOC_planning_med_cost_iid.png')
 
 fig_low_cost=figure(4)
 errorbar(repmat(reward_stds',[1,4]),VOC_of_planning_cost1cent(:,1:end),1.96*sem_benefit_of_planning,'LineWidth',3)
-ylabel('VOC of Planning','FontSize',18)
+ylabel('VOC of Planning (95% CI for 50 subjects)','FontSize',18)
 xlabel('STD of rewards','FontSize',18)
 set(gca,'FontSize',16)
 legend('no planning','1-step planning','2-step planning','3-step planning',...
     'Location','NorthWest')
 title('$0.01 per click','FontSize',18)
-saveas(fig_low_cost)
+saveas(fig_low_cost,'VOC_planning_low_cost_iid.png')
+
+
+fig_high_cost=figure(5)
+errorbar(repmat(reward_stds',[1,4]),VOC_of_planning_cost4dollar(:,1:end),...
+    1.96*sem_benefit_of_planning,'LineWidth',3)
+ylabel('VOC of Planning (95% CI for 50 subjects)','FontSize',18)
+xlabel('STD of rewards','FontSize',18)
+set(gca,'FontSize',16)
+legend('no planning','1-step planning','2-step planning','3-step planning',...
+    'Location','NorthWest')
+title('$4.00 per click','FontSize',18)
+saveas(fig_high_cost,'VOC_planning_high_cost_iid.png')
+
 
 for h=1:3
     betas(:,h)=regress(avg_benefit_of_planning(:,h+1),[ones(numel(reward_stds),1),reward_stds(:)])
@@ -1184,3 +1203,27 @@ c_med=1;
 sigma_min_med = (4*c_med+delta_VOC)/(betas(2,2)-betas(2,1))
 sigma_max_med = (8*c_med)/(betas(2,3)-betas(2,2))
 mean([sigma_min_med,sigma_max_med])
+
+%% 
+
+nr_problems = 100;
+mu_reward = 5;
+nr_values = 7;
+
+std_reward = 25;
+mdps_high_VOC=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
+experiment_json=rmfield(mdps_high_VOC,'states_by_path');
+%problems = array2cell(mdps);
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/iidMDPsSigma25.json')
+
+std_reward = 1;
+mdps_low_VOC=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
+experiment_json=rmfield(mdps_low_VOC,'states_by_path');
+%problems = array2cell(mdps);
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/iidMDPsSigma1.json')
+
+std_reward = 28;
+mdps_med_VOC=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
+experiment_json=rmfield(mdps_med_VOC,'states_by_path');
+%problems = array2cell(mdps);
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/iidMDPsSigma28.json')

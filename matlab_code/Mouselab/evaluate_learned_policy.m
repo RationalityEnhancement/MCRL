@@ -60,7 +60,7 @@ nb_iter=100;
 
 %scaling_factor=2*16/12;
 clear R_total_no_obs
-for c=3%1:numel(costs)
+for c=1:numel(costs)
     
     if strcmp(environment{c},'low_cost_condition')
         load low_cost_condition

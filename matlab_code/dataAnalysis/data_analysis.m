@@ -1,6 +1,6 @@
 %%  Which experiment do you want to analyze?
 experiment_name='1A';
-version = '3';
+version = '1';
 %experiment_name='1B';
 %experiment_name='1C';
 %version = '1';
