@@ -1206,24 +1206,30 @@ mean([sigma_min_med,sigma_max_med])
 
 %% 
 
-nr_problems = 100;
+nr_problems = 16;
 mu_reward = 5;
 nr_values = 7;
 
 std_reward = 25;
 mdps_high_VOC=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
+
+benefit_of_planning = benefitOfPlanning(mdps_high_VOC)
+
 experiment_json=rmfield(mdps_high_VOC,'states_by_path');
-%problems = array2cell(mdps);
-savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/iidMDPsSigma25.json')
+%experiment_json = array2cell(experiment_json);
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/low_cost_iid.json')
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/low_cost.json')
 
 std_reward = 1;
 mdps_low_VOC=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
 experiment_json=rmfield(mdps_low_VOC,'states_by_path');
 %problems = array2cell(mdps);
 savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/iidMDPsSigma1.json')
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/high_cost.json')
 
 std_reward = 28;
 mdps_med_VOC=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
 experiment_json=rmfield(mdps_med_VOC,'states_by_path');
 %problems = array2cell(mdps);
 savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/iidMDPsSigma28.json')
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/med_cost.json')
