@@ -10,7 +10,6 @@ Demonstrates the jsych-mdp plugin
 
 # Globals.
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
-
 isIE = false || !!document.documentMode
 TRIALS = undefined
 TEST_TRIALS = undefined
@@ -20,8 +19,10 @@ N_TEST = 6
 N_TRAIN = 10
 N_TRIALS = 16
 SCORE = 0
+STRUCTURE = undefined
 calculateBonus = undefined
 
+train = undefined
 
 # if 'hidden' in document
 #   document.addEventListener("visibilitychange", onchange);
@@ -67,10 +68,12 @@ $(window).on 'load', ->
 
   delay 300, ->
     if SHOW_PARTICIPANT_DATA
-      expData = loadJson "static/json/data/1B.0/stimuli/#{COST_LEVEL}_cost.json"
-    else    
-      expData = loadJson "static/json/#{COST_LEVEL}_cost.json"
-    
+      TRIALS = loadJson "static/json/data/1B.0/stimuli/#{COST_LEVEL}_cost.json"
+    else
+      TRIALS = loadJson "static/json/#{COST_LEVEL}_cost.json"
+      STRUCTURE = loadJson "static/json/structure.json"
+      console.log 'STRUCTURE', STRUCTURE
+      console.log 'TRIALS', TRIALS
     condition_nr = condition % nrConditions
     # PARAMS=
     #   PR_type: conditions.PRType[condition_nr]
@@ -81,7 +84,6 @@ $(window).on 'load', ->
     #   condition: condition_nr
     #   start_time: new Date
     
-    TRIALS = expData.blocks.standard
     idx = _.shuffle (_.range N_TRIALS)
     train_idx = idx[...N_TRAIN]
     TEST_IDX = idx[N_TRAIN...]    
@@ -91,7 +93,7 @@ $(window).on 'load', ->
     if DEBUG
       TRAIN_TRIALS = TRIALS
 
-    psiturk.recordUnstructuredData 'params', PARAMS
+    # psiturk.recordUnstructuredData 'params', PARAMS
     psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
     psiturk.recordUnstructuredData 'condition_nr', condition_nr
 
@@ -290,6 +292,7 @@ initializeExperiment = ->
   class Block
     constructor: (config) ->
       _.extend(this, config)
+      _.extend(this, STRUCTURE)
       @_block = this  # allows trial to access its containing block for tracking state
       if @_init?
         @_init()
@@ -306,10 +309,15 @@ initializeExperiment = ->
           return true
       return false
 
+  foobar = _.extend STRUCTURE, {type: 'mouselab-mdp', _init: -> @trialCount = 0}
+  console.log 'foobar', foobar
+  foobar =
+    type: 'mouselab-mdp'
+    _init: -> @trialCount = 0
   class MDPBlock extends Block
     type: 'mouselab-mdp'
-    # playerImage: 'static/images/spider.png'
     _init: -> @trialCount = 0
+
 
 
   #  ============================== #
@@ -378,7 +386,6 @@ initializeExperiment = ->
           return this HIT. If you did complete Stage 1, please email
           cocosci.turk@gmail.com to report the error.
         """
-
 
   retention_instruction = new Block
     type: 'button-response'
@@ -518,7 +525,6 @@ initializeExperiment = ->
       alert """You got at least one question wrong. We'll send you back to the
                instructions and then you can try again."""
 
-
   instruct_loop = new Block
     timeline: [instructions, quiz]
     loop_function: (data) ->
@@ -538,6 +544,8 @@ initializeExperiment = ->
     leftMessage: -> "Round: #{TRIAL_INDEX}/#{N_TRAIN}"
     demonstrate: PARAMS.PR_type is "demonstration"   
     timeline: TRAIN_TRIALS
+
+  console.log 'train', train
   
   test = new Block
     leftMessage: -> 

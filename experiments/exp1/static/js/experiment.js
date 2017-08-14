@@ -6,7 +6,7 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var N_TEST, N_TRAIN, N_TRIALS, SCORE, TEST_IDX, TEST_TRIALS, TRAIN_TRIALS, TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk,
+var N_TEST, N_TRAIN, N_TRIALS, SCORE, STRUCTURE, TEST_IDX, TEST_TRIALS, TRAIN_TRIALS, TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk, train,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -30,7 +30,11 @@ N_TRIALS = 16;
 
 SCORE = 0;
 
+STRUCTURE = void 0;
+
 calculateBonus = void 0;
+
+train = void 0;
 
 if (DEBUG) {
   0;
@@ -53,14 +57,16 @@ $(window).on('load', function() {
   loadTimeout = delay(12000, slowLoad);
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
   return delay(300, function() {
-    var ERROR, condition_nr, expData, i, idx, train_idx;
+    var ERROR, condition_nr, i, idx, train_idx;
     if (SHOW_PARTICIPANT_DATA) {
-      expData = loadJson("static/json/data/1B.0/stimuli/" + COST_LEVEL + "_cost.json");
+      TRIALS = loadJson("static/json/data/1B.0/stimuli/" + COST_LEVEL + "_cost.json");
     } else {
-      expData = loadJson("static/json/" + COST_LEVEL + "_cost.json");
+      TRIALS = loadJson("static/json/" + COST_LEVEL + "_cost.json");
+      STRUCTURE = loadJson("static/json/structure.json");
+      console.log('STRUCTURE', STRUCTURE);
+      console.log('TRIALS', TRIALS);
     }
     condition_nr = condition % nrConditions;
-    TRIALS = expData.blocks.standard;
     idx = _.shuffle(_.range(N_TRIALS));
     train_idx = idx.slice(0, N_TRAIN);
     TEST_IDX = idx.slice(N_TRAIN);
@@ -85,7 +91,6 @@ $(window).on('load', function() {
     if (DEBUG) {
       TRAIN_TRIALS = TRIALS;
     }
-    psiturk.recordUnstructuredData('params', PARAMS);
     psiturk.recordUnstructuredData('experiment_nr', experiment_nr);
     psiturk.recordUnstructuredData('condition_nr', condition_nr);
     if (DEBUG || DEMO) {
@@ -120,7 +125,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, MDPBlock, QuizLoop, TextBlock, ask_email, check_code, check_returning, debug_slide, experiment_timeline, finish, instruct_loop, instructions, msgType, prompt_resubmit, quiz, reprompt, retention_instruction, save_data, test, text, train;
+  var Block, MDPBlock, QuizLoop, TextBlock, ask_email, check_code, check_returning, debug_slide, experiment_timeline, finish, foobar, instruct_loop, instructions, msgType, prompt_resubmit, quiz, reprompt, retention_instruction, save_data, test, text;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   msgType = (function() {
@@ -178,6 +183,7 @@ initializeExperiment = function() {
   Block = (function() {
     function Block(config) {
       _.extend(this, config);
+      _.extend(this, STRUCTURE);
       this._block = this;
       if (this._init != null) {
         this._init();
@@ -224,6 +230,19 @@ initializeExperiment = function() {
     return QuizLoop;
 
   })(Block);
+  foobar = _.extend(STRUCTURE, {
+    type: 'mouselab-mdp',
+    _init: function() {
+      return this.trialCount = 0;
+    }
+  });
+  console.log('foobar', foobar);
+  foobar = {
+    type: 'mouselab-mdp',
+    _init: function() {
+      return this.trialCount = 0;
+    }
+  };
   MDPBlock = (function(superClass) {
     extend(MDPBlock, superClass);
 
@@ -347,6 +366,7 @@ initializeExperiment = function() {
     demonstrate: PARAMS.PR_type === "demonstration",
     timeline: TRAIN_TRIALS
   });
+  console.log('train', train);
   test = new Block({
     leftMessage: function() {
       if (STAGE2) {

@@ -108,6 +108,8 @@ def mat_to_standard():
         with open(infile) as f:
             print('reading', infile)
             data = json.load(f)
+            if len(data) == 1:
+                data = data[0]
         
         trials = [parse_trial(t, i) for i, t in enumerate(data)]
 

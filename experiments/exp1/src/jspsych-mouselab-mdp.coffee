@@ -199,7 +199,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         id: 'mouselab-msg-bottom'
         html: lowerMessage or '&nbsp'
       ).appendTo @display
-      
+
       mdp = this
       LOG_INFO 'new MouselabMDP', this
 
@@ -274,11 +274,13 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       LOG_DEBUG "clickState #{s}"
       if @complete or s is @initial
         return
-      registerClick s
       if @stateLabels and @stateDisplay is 'click' and not g.label.text
         @addScore -@stateClickCost
-        g.setLabel (@getStateLabel s)
+        r = @getStateLabel s
+        g.setLabel r
         @recordQuery 'click', 'state', s
+        @PRclicks.push s
+        @beliefState[s] = r
 
     mouseoverState: (g, s) =>
       LOG_DEBUG "mouseoverState #{s}"
@@ -348,11 +350,15 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @data.queries[queryType][targetType].time.push Date.now() - @initTime
 
     displayFeedback: (a, s1) =>
+      @arrive s1
+      return
+
       if not @feedback
         $('#mdp-feedback').css(display: 'none')
         @arrive s1
+        return
 
-      result = registerMove a
+      # result = registerMove a
       result.delay = Math.round result.delay  
       console.log 'feedback', result
     
@@ -457,7 +463,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             @freeze = false
             $('#mdp-feedback').css(display: 'none')
             @arrive s1
-          ), (if DEBUG then 1000 else result.delay * 1000)
+          ), (if false then 1000 else result.delay * 1000)
       else
         $('#mdp-feedback').css(display: 'none')
         @arrive s1
@@ -469,6 +475,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Called when the player arrives in a new state.
     arrive: (s) =>
+      @PRclicks = []
       LOG_DEBUG 'arrive', s
       @data.path.push s
 
@@ -505,7 +512,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     run: =>
       LOG_DEBUG 'run'
-      meta_MDP.init @trial_i
+      # meta_MDP.init @trial_i
       do @buildMap
       do @startTimer
       fabric.Image.fromURL @playerImage, ((img) =>
@@ -559,7 +566,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @canvas = new fabric.Canvas 'mouselab-canvas', selection: false
 
       @states = {}
+      @beliefState = []
       for s, location of @layout
+        @beliefState[s] = null
         [x, y] = location
         @states[s] = @draw new State s, x, y,
           fill: '#bbb'
