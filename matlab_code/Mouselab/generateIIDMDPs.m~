@@ -36,11 +36,7 @@ for rep = 1:nr_problems
         end
     end
     
-    for step=1:numel(state_idx_by_step)
-        for s=1:numel(state_idx_by_step{step})
-            mdps(rep).states_by_step{step}(s)=mdps(rep).states(s);
-        end
-    end
+    for ste
     
 end
 

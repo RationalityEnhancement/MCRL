@@ -1219,6 +1219,7 @@ experiment_json=rmfield(mdps_high_VOC,'states_by_path');
 %experiment_json = array2cell(experiment_json);
 savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/low_cost_iid.json')
 savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/low_cost.json')
+savejson('',experiment_json,'~/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/iidMDPsSigma25.json')
 
 std_reward = 1;
 mdps_low_VOC=generateIIDMDPs(baseline_mdp,mu_reward,std_reward,nr_values,nr_problems);
