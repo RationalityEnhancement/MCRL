@@ -1204,6 +1204,26 @@ sigma_min_med = (4*c_med+delta_VOC)/(betas(2,2)-betas(2,1))
 sigma_max_med = (8*c_med)/(betas(2,3)-betas(2,2))
 mean([sigma_min_med,sigma_max_med])
 
+%explore the effects of different planning costs
+costs = 1:0.5:3.5;
+for c=1:numel(costs)
+    planning_costs = costs(c)*[0,4,8,16];
+    
+    VOC_of_planning = avg_benefit_of_planning - repmat(planning_costs,[numel(reward_stds),1]);
+    
+    figure(6)
+    subplot(2,3,c)
+    errorbar(repmat(reward_stds',[1,4]),VOC_of_planning(:,1:end),...
+        1.96*sem_benefit_of_planning,'LineWidth',3)
+    ylabel('VOC of Planning (95% CI for 50 subjects)','FontSize',18)
+    xlabel('STD of rewards','FontSize',18)
+    set(gca,'FontSize',16)
+    legend('no planning','1-step planning','2-step planning','3-step planning',...
+        'Location','NorthWest')
+    title(['$',num2str(costs(c)),' per click'],'FontSize',18)
+    
+    
+end
 %% 
 
 nr_problems = 16;
