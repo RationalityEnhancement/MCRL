@@ -27,7 +27,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
  */
 
-experiment_nr = 4;
+experiment_nr = 0.97;
 
 switch (experiment_nr) {
   case 0:
@@ -68,6 +68,14 @@ switch (experiment_nr) {
       PRTypes: ['featureBased'],
       messageTypes: ['full'],
       infoCosts: [1.0001]
+    };
+    break;
+  case 0.97:
+    IVs = {
+      frequencyOfFB: ['after_each_move'],
+      PRTypes: ['none'],
+      messageTypes: ['none'],
+      infoCosts: [1.00]
     };
     break;
   case 1:

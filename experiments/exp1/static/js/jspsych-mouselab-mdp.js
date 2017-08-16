@@ -269,15 +269,18 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.clickState = function(g, s) {
+      var r;
       LOG_DEBUG("clickState " + s);
       if (this.complete || s === this.initial) {
         return;
       }
-      registerClick(s);
       if (this.stateLabels && this.stateDisplay === 'click' && !g.label.text) {
         this.addScore(-this.stateClickCost);
-        g.setLabel(this.getStateLabel(s));
-        return this.recordQuery('click', 'state', s);
+        r = this.getStateLabel(s);
+        g.setLabel(r);
+        this.recordQuery('click', 'state', s);
+        this.PRclicks.push(s);
+        return this.beliefState[s] = r;
       }
     };
 
@@ -361,14 +364,16 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
-      var head, info, msg, penalty, redGreenSpan, result, showCriticism;
+      var head, info, msg, penalty, redGreenSpan, showCriticism;
+      this.arrive(s1);
+      return;
       if (!this.feedback) {
         $('#mdp-feedback').css({
           display: 'none'
         });
         this.arrive(s1);
+        return;
       }
-      result = registerMove(a);
       result.delay = Math.round(result.delay);
       console.log('feedback', result);
       showCriticism = result.delay >= 1;
@@ -471,7 +476,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             });
             return _this.arrive(s1);
           };
-        })(this)), (DEBUG ? 1000 : result.delay * 1000));
+        })(this)), (false ? 1000 : result.delay * 1000));
       } else {
         $('#mdp-feedback').css({
           display: 'none'
@@ -482,6 +487,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.arrive = function(s) {
       var a, keys;
+      this.PRclicks = [];
       LOG_DEBUG('arrive', s);
       this.data.path.push(s);
       if (this.graph[s]) {
@@ -530,7 +536,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.run = function() {
       LOG_DEBUG('run');
-      meta_MDP.init(this.trial_i);
       this.buildMap();
       this.startTimer();
       return fabric.Image.fromURL(this.playerImage, ((function(_this) {
@@ -601,9 +606,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         selection: false
       });
       this.states = {};
+      this.beliefState = [];
       ref1 = this.layout;
       for (s in ref1) {
         location = ref1[s];
+        this.beliefState[s] = null;
         x = location[0], y = location[1];
         this.states[s] = this.draw(new State(s, x, y, {
           fill: '#bbb',
