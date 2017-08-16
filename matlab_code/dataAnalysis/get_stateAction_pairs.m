@@ -1,5 +1,5 @@
 %1. Import data
-import_data_exp1A2
+import_data2%_exp1A2
 
 %2. Extract state-action sequences.
 trial_properties = ['../../experiments/data/trial_properties_high_cost_condition.mat']; %['trial_properties_',cost_str,'_cost_condition']
