@@ -1,0 +1,29 @@
+action_times,actions,button_pressed,correct,delays,information_used_correctly,path,planned_too_little,planned_too_much,queries,questions,responses,rt,score,stimulus,time_elapsed,trial_index,trial_i,trial_type,view_history,pid
+,,0.0,,,,,,,,,,8077,,"<h1 id=""welcomeback"">Welcome back</h1>
+
+<p>Thanks for returning to complete Stage 2! Your current bonus is
+<strong>$1.96</strong>. In this stage you'll have 6 rounds to
+increase your bonus.</p>
+
+<p>Before you begin, you will review the instructions and take another
+quiz.</p>",8083,,,button-response,,0
+,,0.0,,,,,,,,,,5412,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$3.33</strong>.</p>",403353,,,button-response,,0
+,,0.0,,,,,,,,,,1580,,"<h1 id=""welcomeback"">Welcome back</h1>
+
+<p>Thanks for returning to complete Stage 2! Your current bonus is
+<strong>$0.48</strong>. In this stage you'll have 6 rounds to
+increase your bonus.</p>
+
+<p>Before you begin, you will review the instructions and take another
+quiz.</p>",1589,,,button-response,,1
+,,0.0,,,,,,,,,,4724,,"<h1 id=""youvecompletedthehit"">You've completed the HIT</h1>
+
+<p>Thanks again for participating. We hope you had fun!</p>
+
+<p>Based on your performance, you will be
+awarded a bonus of <strong>$1.73</strong>.</p>",357426,,,button-response,,1
