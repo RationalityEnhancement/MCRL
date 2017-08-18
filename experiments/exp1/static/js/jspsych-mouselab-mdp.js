@@ -640,7 +640,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.endTrial = function() {
       SCORE += this.data.score;
-      this.lowerMessage.html("So far, you've earned a bonus of $" + (calculateBonus()) + "\n<br>\n<b>Press any key to continue.</b><e");
+      this.lowerMessage.html("So far, you've earned a bonus of $" + (calculateBonus().toFixed(2)) + "\n<br>\n<b>Press any key to continue.</b><e");
       return this.keyListener = jsPsych.pluginAPI.getKeyboardResponse({
         valid_responses: [],
         rt_method: 'date',

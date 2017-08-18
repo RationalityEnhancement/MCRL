@@ -90,7 +90,7 @@ PARAMS =
   message:  conditions.messageType[condition % nrConditions]
   frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]
   condition: condition
-  bonus_rate: 0.005
+  bonus_rate: 0.01
   delay_hours: 24
   delay_window: 4
 

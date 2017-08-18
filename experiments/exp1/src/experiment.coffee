@@ -292,7 +292,6 @@ initializeExperiment = ->
   class Block
     constructor: (config) ->
       _.extend(this, config)
-      _.extend(this, STRUCTURE)
       @_block = this  # allows trial to access its containing block for tracking state
       if @_init?
         @_init()
@@ -316,7 +315,9 @@ initializeExperiment = ->
     _init: -> @trialCount = 0
   class MDPBlock extends Block
     type: 'mouselab-mdp'
-    _init: -> @trialCount = 0
+    _init: -> 
+      _.extend(this, STRUCTURE)
+      @trialCount = 0
 
 
 
@@ -470,8 +471,8 @@ initializeExperiment = ->
            won’t be able to proceed to the next round before the countdown has
            finished, but you can take as much time as you like afterwards.
         2. </b>You will earn <u>real money</u> for your flights.</b>
-           Specifically, for every $10 you earn in the game, we will add 5
-           cents to your bonus. Please note that each and every one of the
+           Specifically, for every $1 you earn in the game, we will add 1
+           cent to your bonus. Please note that each and every one of the
            #{N_TRIALS} rounds counts towards your bonus.
 
         #{img('task_images/Slide3.png')}
@@ -499,7 +500,7 @@ initializeExperiment = ->
       ['$0.01', '$0.05', '$1.00', '$2.50']
       ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish']
       ['1% of my best score on any round'
-       '5 cents for every $10 I earn in each round'
+       '1 cent for every $1 I earn in each round'
        '10% of my best score on any round'
        '10% of my score on a random round']
     ] .concat (if STAGE2 then []
@@ -518,7 +519,7 @@ initializeExperiment = ->
       'True'
       fmtMoney PARAMS.info_cost
       'As many or as few as I wish'
-      '5 cents for every $10 I earn in each round'
+      '1 cent for every $1 I earn in each round'
       'All of the above.'
     ]
     on_mistake: (data) ->
@@ -640,13 +641,13 @@ initializeExperiment = ->
 
   if DEBUG
     experiment_timeline = [
-      train
-      test
-      check_returning
-      retention_instruction
-      check_code
-      train
-      test
+      # train
+      # test
+      # check_returning
+      # retention_instruction
+      # check_code
+      # train
+      # test
       finish
     ]
   else
@@ -723,14 +724,16 @@ initializeExperiment = ->
     # show_progress_bar: true
 
     on_finish: ->
+      completion_data =
+        score: SCORE
+        bonus: calculateBonus()
+        return_time: RETURN_TIME?.getTime()
+        test_idx: TEST_IDX
       if DEBUG
         jsPsych.data.displayData()
+        console.log 'completion_data', completion_data
       else
-        completion_data =
-          score: SCORE
-          bonus: calculateBonus()
-          return_time: RETURN_TIME.getTime()
-          test_idx: TEST_IDX
+
         psiturk.recordUnstructuredData 'completed', completion_data
 
         save_data()
