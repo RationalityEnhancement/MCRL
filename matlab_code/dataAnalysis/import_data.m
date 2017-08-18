@@ -13,7 +13,7 @@
 if strcmp(getenv('USER'),'paulkrueger')
     filename = '~/Desktop/Tom_Griffiths/MCRL/';  
 else
-    filename = '~/Dropbox/PhD/Metacognitive RL/';
+    filename = '~/Dropbox/PhD/Metacognitive RL/MCRL/';
 end
 filename = [filename,'experiments/data/human/0.6/trials_matlab.csv'];
 delimiter = ',';

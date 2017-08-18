@@ -15,9 +15,9 @@ if strcmp(getenv('USER'),'paulkrueger')
 elseif strcmp(getenv('USER'), 'priyamdas')
     filename = 'C:\Users\piichan\Documents\Berkeley\CoCoSci Lab\mcrl\MCRL\';
 else
-    filename = '~/Dropbox/PhD/Metacognitive RL/';
+    filename = '~/Dropbox/PhD/Metacognitive RL/MCRL/';
 end
-filename = [filename,'experiments/data/human/1A.2/trials.csv'];
+filename = [filename,'experiments/data/human/1B.2/trials.csv'];
 delimiter = ',';
 startRow = 2;
 
