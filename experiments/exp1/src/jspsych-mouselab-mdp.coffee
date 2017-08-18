@@ -593,7 +593,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       # else
       SCORE += @data.score
       @lowerMessage.html """
-        So far, you've earned a bonus of $#{calculateBonus()}
+        So far, you've earned a bonus of $#{calculateBonus().toFixed(2)}
         <br>
         <b>Press any key to continue.</b><e
       """

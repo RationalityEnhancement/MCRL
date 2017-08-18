@@ -105,7 +105,10 @@ def reformat_data(version):
     def parse_questiondata():
         qdf = pd.read_csv(data_path + 'questiondata.csv', header=None)
         for uid, df in qdf.groupby(0):
-            row = ast.literal_eval(list(df[df[1] == 'params'][2])[0])
+            try:
+                row = ast.literal_eval(list(df[df[1] == 'params'][2])[0])
+            except:
+                row = {}
             wid, aid = uid.split(':')
             identifiers['worker_id'].append(wid)
             identifiers['assignment_id'].append(aid)
