@@ -1,0 +1,232 @@
+var utils = webpplMouselab;
+var TERM_ACTION = '__TERM_ACTION__';
+var TERM_STATE = '__TERM_STATE__';
+var UNKNOWN = '__';
+var INITIAL_NODE = 0
+
+// ============================== //
+// ========= Object MDP ========= //
+// ============================== //
+
+// Environment has a single branching at the beginning
+// followed by a sequence of forced actions.
+
+var vals = function(mu,sigma) {
+  map(function(x) {mu + x * sigma}, [-2, -1, 1, 2])
+};
+var probs = function() {
+  [.15, .35, .35, .15]
+};
+globalStore.cost = 0.1
+globalStore.reward = Categorical({vs: vals(1, 2),
+                                  ps: probs()});
+
+var env = utils.buildEnv([4, 1, 2])
+// console.log('env', env)
+var tree = env.tree
+var nodes = _.range(tree.length)
+var children = function(node) {
+  tree[node]
+};
+
+// THIS COMMENT IS OUT OF DATE!
+// The true rewards at each node are memoized, allowing one to condition
+// on certain outcomes in an outer inference, e.g. in test.wppl run()
+// globalStore.reward = Categorical({vs: [0, 1, 5], ps: [0.4, 0.4, .2]});
+var nodeReward = function(node) {
+  node == INITIAL_NODE ? 0 : sample(globalStore.reward)
+};
+// The expected reward at a node from the agent's perspective..
+var expectedNodeReward = function(state, node) {
+  (node == INITIAL_NODE ? 0 :
+   state[node] == UNKNOWN ? expectation(globalStore.reward) :
+   state[node])
+};
+
+// Like a Q function, the expected value of reaching a node.
+var nodeQuality = dp.cache(function(state, node) {
+  var best_child_val = (
+    children(node).length == 0 ?
+    0 :
+    _.max(map(function(child) {nodeQuality(state, child)},
+              children(node)))
+  );
+  return expectedNodeReward(state, node) + best_child_val
+}); 
+
+globalStore.energySpent = 1;
+globalStore.rewardAccrued = 0;
+
+// ============================ //
+// ========= Meta MDP ========= //
+// ============================ //
+
+// For now, the agent deterministially receives the expected
+// termination reward when it terminates. Alternatievly,
+// this function could sample from the distribution of returns
+// when following the path with highest expected value.
+var termReward = function(state) {
+  var expectedReward = nodeQuality(state, INITIAL_NODE);
+  return expectedReward
+};
+
+// Observing nodes and terminating observation.
+var transition = function(state, action) {
+  if (state == TERM_STATE) error('transition from term ' + action);
+  if (action == TERM_ACTION) return TERM_STATE;
+  if (state[action] != UNKNOWN) {
+    console.log(actions(state));
+    error('observing state twice\n' + JSON.stringify(state)+' '+action);
+  }
+  return utils.updateList(state, action, nodeReward(action));
+};
+
+// Cost of observation and reward for terminating.
+var reward = function(state, action) {
+  (action == TERM_ACTION ?
+   termReward(state) :
+   globalStore.cost)
+};
+
+// The agent can observe an unobserved node or terminate observation.
+var unobservedNodes = function(state) {
+  filter(function(node) {state[node] == UNKNOWN}, nodes)
+};
+var numObserved = function(state) {
+  filter(function(node) {state[node] != UNKNOWN}, nodes).length - 1
+};
+var actions = function(state) {
+  unobservedNodes(state).concat([TERM_ACTION])
+};
+
+
+// ============================ //
+// ========= Policies ========= //
+// ============================ //
+
+var randPolicy = function() {
+  var policy = function(state) {
+    return uniformDraw(actions(state));
+  };
+  return policy
+};
+
+var fixedNumPolicy = function(nObs) {
+  var numObserved = function(state) {
+    sum(map(function(n) {n != UNKNOWN},
+            _.values(state)))
+  };
+  var policy = function(state) {
+    if (numObserved(state) >= nObs) return TERM_ACTION;
+    else {
+      var options = unobservedNodes(state);
+      return options.length ? uniformDraw(options) : TERM_ACTION
+    }
+  };
+  return policy
+};
+
+var enumPolicy = function(opts) {
+  var params = extend({
+    maxExecutions: Infinity,
+    // lookahead: Infinity,
+    alpha: 1000,
+    myActions: actions
+  }, opts);
+  var myActions = params.myActions
+
+
+  var actionAndValue = dp.cache(function(state) {
+    var Q = function(action) {
+      expectation(Infer({model() {
+        var newState = transition(state, action);
+        reward(state, action) + V(newState)
+      }, method: 'enumerate'}))
+    };
+    if (myActions(state).length == 0) error('no actions');
+    var result = maxWith(Q, myActions(state));
+    if (result[0] == -Infinity) error('problem!\n'+myActions(state));
+    return result;
+  });
+
+  var V = utils.cache(function(state) {
+    state == TERM_STATE ? 0 : actionAndValue(state)[1]
+  }, env);
+
+  var policy = function(state) {
+    var a = actionAndValue(state)[0]
+    // console.log('policy', state, a)
+    return a
+  };
+  return policy
+  
+  // var Q = dp.cache(function(state, action, lookahead) {
+  //   expectation(Infer({model() {
+  //     var newState = transition(state, action);
+  //     reward(state, action) + V(newState, lookahead)
+  //   }, method: 'enumerate'}))
+  // });
+  
+  // var policyDist = dp.cache(function(state, lookahead) {
+  //   Infer({model() {
+  //     if (lookahead == 0) {
+  //       return TERM_ACTION
+  //     }
+  //     // if (globalStore.lookahead == 0) return TERM_ACTION;
+  //     globalStore.lookahead -= 1
+  //     var action = uniformDraw(myActions(state));
+  //     factor(params.alpha * Q(state, action, lookahead-1))
+  //     action
+  //   }, method: 'enumerate', maxExecutions: params.maxExecutions})
+  // });
+  
+  // var V = dp.cache(function (state, lookahead) {
+  //   state == TERM_STATE ? 0 :
+  //   expectation(Infer({model() {
+  //     Q(state, sample(policyDist(state, lookahead)))
+  //   }, method: 'enumerate', maxExecutions: 1}))
+  // }, env);
+  // globalStore.V = V
+  
+  return function(state) {sample(policyDist(state, params.lookahead))};
+};
+
+var maxPolicy = function() {
+  var Q = dp.cache(function(state, action) {
+    expectation(Infer({model() {
+      var newState = transition(state, action);
+      var nextQ = (newState == TERM_STATE ? 
+                   0 : Q(newState, policy(newState)))
+      reward(state, action) + nextQ
+    }}))
+  });
+  var policy = dp.cache(function(state) {
+    maxWith(function(a) {Q(state, a)},
+            actions(state))[0]
+  });
+  return policy
+};
+
+
+// ============================ //
+// ========= Simulate ========= //
+// ============================ //
+
+var simulate = function(policy) {
+  var rec = function(acc) {
+    var state = _.last(acc.states);
+    if (state == TERM_STATE) return acc
+    // if (_.isEmpty(actions(state))) return acc
+    else {
+      var action = policy(state);
+      var newState = transition(state, action);
+      var r = reward(state, action);
+      return rec({
+        states: acc.states.concat([newState]),
+        rewards: acc.rewards.concat([r]),
+        actions: acc.actions.concat([action])
+      })
+    }
+  };
+  return rec({states: [env.initialState], rewards: [], actions: []})
+};

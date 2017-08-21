@@ -1,0 +1,25 @@
+{
+  "name": "webppl-mouselab",
+  "version": "0.0.1",
+  "description": "WebPPL library for Mouselab-MDP experiments.",
+  "webppl": {
+    "wppl": [
+      "src/mouselab.wppl",
+      "src/features.wppl"
+    ],
+    "headers": [
+      "src/header.js"
+    ]
+  },
+  "main": "src/utils.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/probmods/webppl-package-template.git"
+  },
+  "homepage": "https://github.com/probmods/webppl-package-template",
+  "dependencies": {
+    "deepcopy": "^0.6.3",
+    "lodash": "^4.17.4",
+    "lru-cache": "^4.1.1"
+  }
+}

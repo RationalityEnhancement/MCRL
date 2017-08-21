@@ -1,0 +1,116 @@
+// Foo
+
+/* This method requires a discrete reward distribution. Things slow down as you
+   add more possible rewards.
+*/
+var REWARD = Categorical({vs: [-3, -2, -1, 0, 1, 2, 3],
+                          ps: [0.006, 0.061, 0.242, 0.383, 
+                               0.242, 0.061, 0.006]});
+
+var COST = .1;
+
+/* The state is represented as a tree. Each element in the tree is one of
+   - a number, a previously observed reward
+   - 'hidden', an unobserved node
+   - 'observe', a node that will hypothetically be observed
+*/
+var value = function(tree) {
+    tree[0]
+};
+var children = function(tree) {
+    tree[1]
+};
+var OBSERVE = '__OBSERVE__';
+
+/* The subjective reward function returns a sample from the
+   distribution of the expected reward of the root of the given tree.
+   that is about to be observed, the expected observationValue will be
+   exactly the observationValue that is observed, and thus the future 
+   expected reward has the same distribution as the current 
+   unknown reward.
+*/
+var subjectiveReward = function(tree) {
+  var v = value(tree);
+  v == UNKNOWN ? expectation(REWARD) :
+  v == OBSERVE ? sample(REWARD) :
+  v  // already observed
+};
+
+
+/* The distribution over the expected value of the best path through 
+   a tree, where the expectation is conditioned on the outcome of
+   some yet-to-be-made observations.
+*/
+var observationValue = dp.cache(function(tree, params) {
+    var params = extend({method: 'enumerate'}, params)
+    Infer(extend(params, {model() {
+      var bestChildVal = (
+        children(tree).length == 0 ?
+        0 :
+        _.max(map(function(child) {sample(observationValue(child, params))},
+                  children(tree)))
+      );
+      subjectiveReward(tree) + bestChildVal
+    }}))
+});  
+
+var expectedObservationValue = function(tree, params) {
+  // console.log('EOV', JSON.stringify(tree))
+  var startTime = Date.now()
+  var result = expectation(observationValue(tree, params))
+  // console.log('observationValue:', Math.round(result * 100) / 100,
+  //             '  time:', Date.now() - startTime)
+  result
+};
+
+/* Alternative representation of the state, used to compute observationValue. */
+var stateTree = function(state) {
+  var s = state;
+  [s[0], [
+    // [s[1], [[s[5], [[s[9], []], [s[10], []]]]]],
+    // [s[2], [[s[6], [[s[11], []], [s[12], []]]]]],
+    // [s[3], [[s[7], [[s[13], []], [s[14], []]]]]],
+    // [s[4], [[s[8], [[s[15], []], [s[16], []]]]]]
+    [s[1], [[s[2], [[s[3], []], [s[4], []]]]]],
+    [s[5], [[s[6], [[s[7], []], [s[8], []]]]]],
+    [s[9], [[s[10], [[s[11], []], [s[12], []]]]]],
+    [s[13], [[s[14], [[s[15], []], [s[16], []]]]]]
+  ]]
+}
+
+var obsTree = function(state, toObserve) {
+  stateTree(mapIndexed(function(i, r) {
+    (_.includes(toObserve, i) && r == UNKNOWN) ? OBSERVE : r
+  }, state))
+}
+
+var termValue = cache(function(state) {
+  expectedObservationValue(stateTree(state))
+});
+
+var VOC_1 = function(state, action) {
+  expectedObservationValue(obsTree(state, [action]))
+}
+
+var VPI_full = function(state) {
+  expectedObservationValue(obsTree(state, _.range(17)))
+};
+
+var Q_meta = cache(function(state, action) {
+  // console.log('Q_meta', action)
+  action == TERM_ACTION ?
+  termValue(state) :
+  0.5 * VOC_1(state, action) + 0.5 * VPI_full(state)
+});
+
+var V_meta = function(state) {
+  // console.log('V_meta', JSON.stringify(state))
+  var best = maxWith(function(action) {Q_meta(state, action)},
+                     actions(state))
+  console.log('best action', best[0], 'value', best[1])
+  return best[1]
+};
+
+var calculatePR = function(arg) {
+  Q_meta(arg.state, arg.action) - V_meta(arg.state)
+}
