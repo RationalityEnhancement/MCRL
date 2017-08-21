@@ -17,6 +17,10 @@ if (mode === "{{ mode }}") {
   workerId = ['debugFRED'];
 }
 
+_.mapObject = mapObject;
+
+_.compose = _.flowRight;
+
 SHOW_PARTICIPANT_DATA = false;
 
 
@@ -192,8 +196,6 @@ if (experiment_nr === 4) {
   STAGE2 = false;
   RETURN_TIME = new Date(getTime() + 1000 * 60 * 60 * PARAMS.delay_hours);
 }
-
-console.log('PARAMS', PARAMS);
 
 COST_LEVEL = (function() {
   switch (PARAMS.info_cost) {

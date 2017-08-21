@@ -19,7 +19,7 @@ OPTIMAL = void 0;
 TRIAL_INDEX = 1;
 
 jsPsych.plugins['mouselab-mdp'] = (function() {
-  var Arrow, DEMO_SPEED, Edge, KEYS, LOG_DEBUG, LOG_INFO, MOVE_SPEED, MouselabMDP, NULL, PRINT, SIZE, State, Text, angle, checkObj, dist, plugin, polarMove, redGreen, round;
+  var Arrow, DEMO_SPEED, Edge, KEYS, LOG_DEBUG, LOG_INFO, MOVE_SPEED, MouselabMDP, NULL, PRINT, SIZE, State, TERM_ACTION, Text, UNKNOWN, angle, checkObj, dist, plugin, polarMove, redGreen, round;
   PRINT = function() {
     var args;
     args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
@@ -35,6 +35,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
   SIZE = void 0;
   DEMO_SPEED = 1000;
   MOVE_SPEED = 500;
+  UNKNOWN = '__';
+  TERM_ACTION = '__TERM_ACTION__';
   fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
   fabric.Object.prototype.selectable = false;
   fabric.Object.prototype.hoverCursor = 'plain';
@@ -246,6 +248,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       LOG_DEBUG('handleKey', s0, a);
       this.data.actions.push(a);
       this.data.actionTimes.push(Date.now() - this.initTime);
+      this.updatePR(TERM_ACTION);
       ref = this.getOutcome(s0, a), r = ref[0], s1 = ref[1];
       LOG_DEBUG(s0 + ", " + a + " -> " + r + ", " + s1);
       s1g = this.states[s1];
@@ -279,8 +282,30 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         r = this.getStateLabel(s);
         g.setLabel(r);
         this.recordQuery('click', 'state', s);
-        this.PRclicks.push(s);
-        return this.beliefState[s] = r;
+        return delay(0, (function(_this) {
+          return function() {
+            return _this.updatePR(parseInt(s), r);
+          };
+        })(this));
+      }
+    };
+
+    MouselabMDP.prototype.updatePR = function(action, r) {
+      this.PR = this.PR.then((function(_this) {
+        return function(prevPR) {
+          var arg;
+          arg = {
+            state: _this.beliefState,
+            action: action
+          };
+          console.log('arg', arg);
+          return callWebppl('PR', arg).then(function(newPR) {
+            return prevPR + newPR;
+          });
+        };
+      })(this));
+      if (action !== TERM_ACTION) {
+        return this.beliefState[action] = r;
       }
     };
 
@@ -364,7 +389,26 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
-      var head, info, msg, penalty, redGreenSpan, showCriticism;
+      var callback, globalStore, head, info, msg, penalty, redGreenSpan, showCriticism, start;
+      this.PR.then((function(_this) {
+        return function(pr) {
+          console.log("total PR = " + pr);
+          return _this.arrive(s1);
+        };
+      })(this));
+      return;
+      start = getTime();
+      callback = function(s, val) {
+        return console.log("webppl returned " + val + " in " + (getTime() - start) + " ms");
+      };
+      globalStore = {
+        states: this.PRstates,
+        actions: this.PRactions
+      };
+      console.log('gs', globalStore);
+      webppl.run(code, callback, {
+        initialStore: globalStore
+      });
       this.arrive(s1);
       return;
       if (!this.feedback) {
@@ -487,7 +531,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.arrive = function(s) {
       var a, keys;
-      this.PRclicks = [];
+      this.PRstates = [];
+      this.PRactions = [];
+      this.PR = new Promise(function(resolve) {
+        return resolve(0);
+      });
       LOG_DEBUG('arrive', s);
       this.data.path.push(s);
       if (this.graph[s]) {
@@ -610,13 +658,14 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       ref1 = this.layout;
       for (s in ref1) {
         location = ref1[s];
-        this.beliefState[s] = null;
+        this.beliefState[s] = UNKNOWN;
         x = location[0], y = location[1];
         this.states[s] = this.draw(new State(s, x, y, {
           fill: '#bbb',
           label: this.stateDisplay === 'always' ? this.getStateLabel(s) : ''
         }));
       }
+      this.beliefState[0] = 0;
       LOG_DEBUG('@graph', this.graph);
       LOG_DEBUG('@states', this.states);
       ref2 = this.graph;

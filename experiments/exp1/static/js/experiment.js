@@ -125,7 +125,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, MDPBlock, QuizLoop, TextBlock, ask_email, check_code, check_returning, debug_slide, experiment_timeline, finish, foobar, instruct_loop, instructions, msgType, prompt_resubmit, quiz, reprompt, retention_instruction, save_data, test, text;
+  var Block, MDPBlock, QuizLoop, TextBlock, ask_email, check_code, check_returning, debug_slide, experiment_timeline, finish, foobar, instruct_loop, instructions, msgType, ppl, prompt_resubmit, quiz, reprompt, retention_instruction, save_data, test, text;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   msgType = (function() {
@@ -417,8 +417,12 @@ initializeExperiment = function() {
     choices: ['Submit HIT'],
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
   });
+  ppl = new Block({
+    type: 'webppl',
+    code: 'globalStore.display_element.html(JSON.stringify(flip()))'
+  });
   if (DEBUG) {
-    experiment_timeline = [finish];
+    experiment_timeline = [train];
   } else {
     experiment_timeline = (function() {
       var tl;
@@ -495,7 +499,7 @@ initializeExperiment = function() {
         return save_data();
       }
     },
-    on_data_update: function(data) {
+    on_data_2: function(data) {
       console.log('data', data);
       return psiturk.recordTrialData(data);
     }

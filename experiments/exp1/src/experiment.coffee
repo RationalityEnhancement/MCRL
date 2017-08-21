@@ -639,6 +639,10 @@ initializeExperiment = ->
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
 
 
+  ppl = new Block
+    type: 'webppl'
+    code: 'globalStore.display_element.html(JSON.stringify(flip()))'
+    
   if DEBUG
     experiment_timeline = [
       # train
@@ -646,9 +650,10 @@ initializeExperiment = ->
       # check_returning
       # retention_instruction
       # check_code
-      # train
+      train
       # test
-      finish
+      # finish
+      # ppl
     ]
   else
     experiment_timeline = do ->
@@ -738,7 +743,7 @@ initializeExperiment = ->
 
         save_data()
 
-    on_data_update: (data) ->
+    on_data_2: (data) ->
       console.log 'data', data
       psiturk.recordTrialData data
       

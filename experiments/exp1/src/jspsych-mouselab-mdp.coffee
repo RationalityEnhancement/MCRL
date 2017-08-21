@@ -21,6 +21,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
   SIZE = undefined
   DEMO_SPEED = 1000
   MOVE_SPEED = 500
+  UNKNOWN = '__'
+  TERM_ACTION = '__TERM_ACTION__'
 
 
   fabric.Object::originX = fabric.Object::originY = 'center'
@@ -212,7 +214,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       </div>
       """
 
-
     runDemo: () =>
       @feedback = false
       @timeLeft = 1
@@ -232,20 +233,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             do interval.stop
             # window.clearInterval ID
 
-      # act = () =>
-      #   if ifvisible.now()
-      #     console.log 'foo'
-      #     a = actions[i]
-      #     if a.is_click
-      #       @clickState @states[a.state], a.state
-      #     else
-      #       s = _.last @data.path
-      #       @handleKey s, a.move
-      #     i += 1
-      #     if i is actions.length
-      #       window.clearInterval ID
 
-      # ID = window.setInterval act, DEMO_SPEED
     # ---------- Responding to user input ---------- #
 
     # Called when a valid action is initiated via a key press.
@@ -253,6 +241,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       LOG_DEBUG 'handleKey', s0, a
       @data.actions.push a
       @data.actionTimes.push (Date.now() - @initTime)
+      @updatePR TERM_ACTION
+
 
       [r, s1] = @getOutcome s0, a
       LOG_DEBUG "#{s0}, #{a} -> #{r}, #{s1}"
@@ -279,8 +269,17 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         r = @getStateLabel s
         g.setLabel r
         @recordQuery 'click', 'state', s
-        @PRclicks.push s
-        @beliefState[s] = r
+        delay 0, => @updatePR (parseInt s), r
+
+    updatePR: (action, r) ->
+      @PR = @PR.then (prevPR) =>
+        arg = {state: @beliefState, action: action}
+        console.log 'arg', arg
+        callWebppl('PR', arg).then (newPR) ->
+          prevPR + newPR
+
+      unless action is TERM_ACTION
+        @beliefState[action] = r
 
     mouseoverState: (g, s) =>
       LOG_DEBUG "mouseoverState #{s}"
@@ -350,6 +349,22 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @data.queries[queryType][targetType].time.push Date.now() - @initTime
 
     displayFeedback: (a, s1) =>
+      # @arrive s1
+      # return
+      @PR.then (pr) =>
+        console.log "total PR = #{pr}"
+        @arrive s1
+      return 
+
+
+
+      start = getTime()
+      callback = (s, val) -> console.log "webppl returned #{val} in #{getTime() - start} ms"
+      globalStore =
+        states: @PRstates
+        actions: @PRactions
+      console.log 'gs', globalStore
+      webppl.run code, callback, initialStore: globalStore
       @arrive s1
       return
 
@@ -358,7 +373,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @arrive s1
         return
 
-      # result = registerMove a
+      
       result.delay = Math.round result.delay  
       console.log 'feedback', result
     
@@ -378,6 +393,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             
       redGreenSpan = (txt, val) ->
         "<span style='color: #{redGreen val}; font-weight: bold;'>#{txt}</span>"
+
+
       
       if PARAMS.message
           if PARAMS.PR_type is 'objectLevel'                
@@ -475,7 +492,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Called when the player arrives in a new state.
     arrive: (s) =>
-      @PRclicks = []
+      @PRstates = []
+      @PRactions = []
+      @PR = new Promise (resolve) -> resolve(0)
       LOG_DEBUG 'arrive', s
       @data.path.push s
 
@@ -568,11 +587,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @states = {}
       @beliefState = []
       for s, location of @layout
-        @beliefState[s] = null
+        @beliefState[s] = UNKNOWN
         [x, y] = location
         @states[s] = @draw new State s, x, y,
           fill: '#bbb'
           label: if @stateDisplay is 'always' then (@getStateLabel s) else ''
+      @beliefState[0] = 0
 
       LOG_DEBUG '@graph', @graph
       LOG_DEBUG '@states', @states

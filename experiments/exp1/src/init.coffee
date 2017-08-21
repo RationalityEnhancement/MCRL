@@ -24,6 +24,8 @@ if mode is "{{ mode }}"
   # counterbalance = 0
 
 
+_.mapObject = mapObject
+_.compose = _.flowRight
 #SHOW_PARTICIPANT_DATA = '0/108'
 SHOW_PARTICIPANT_DATA = false
 ###
@@ -104,7 +106,7 @@ if experiment_nr is 4
   # PARAMS.info_cost = 2.50
   # PARAMS.PR_type = 'featureBased'
 
-console.log 'PARAMS', PARAMS
+# console.log 'PARAMS', PARAMS
 COST_LEVEL =
   switch PARAMS.info_cost
     when 0.01 then 'low'
