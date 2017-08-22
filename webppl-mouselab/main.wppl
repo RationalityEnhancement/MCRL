@@ -1,0 +1,165 @@
+var L = webpplMouselab;
+var round = function(x, p) {Math.round(x * Math.pow(10, p)) / Math.pow(10, p)}
+
+var vals = function(mu,sigma) {
+  // Temporarily hardcoding the values...
+  // map(function(x) {mu + x * sigma}, [-2, -1, 1, 2])
+  [-15, -5, 5, 15]
+};
+var probs = function() {
+  [0.159,  0.341,  0.341,  0.159]
+};
+globalStore.cost = -1
+globalStore.reward = Categorical({vs: vals(1, 2),
+                                  ps: probs()});
+
+// Run 10 rollouts of the given policy, return average total reward.
+var run = function(policy, samples, name) {
+  var result = timeit(function() {
+    return Infer({model() {
+      // Uncomment below to use a ground truth reward distribution. The policy
+      // doesn't use this information because the condition statement happens 
+      // outside of its own inference.
+      // var truth = [0, -5, 15, -5, 15, -5, 5, 5, 5, -5, -5, -15, 5, -5, -15, 15, -5]
+      // map(function(i) {condition(nodeReward(i) == truth[i])}, _.range(truth))
+      simulate(policy);
+    }, 
+    method: 'forward', samples: samples || 10,
+      // method: 'enumerate'  // integrate out all possible outcomes (slow!)
+    });
+  });
+  var avgUtil = expectation(Infer({model() {
+    sum(sample(result.value).rewards)}
+  }));
+  var avgNumObs = expectation(Infer({model() {
+    sample(result.value).actions.length - 1}
+  }));
+  console.log(
+    (name || 'run'), ':',
+    round(avgUtil, 3), ' ',
+    round(avgNumObs, 3), ' ',
+    result.runtimeInMilliseconds
+  )
+  return avgUtil
+}
+
+// This function doesn't work because vals and probs
+// are harcoded above.
+var testParams = function(mu, sigma) {
+  globalStore.reward = Categorical({vs: vals(mu, sigma),
+                                    ps: probs()});
+  var policy = enumPolicy();
+  run(policy, 1000, 'N('+mu+', '+sigma+')')
+};
+
+var cumsum = function (xs) {
+  var acf = function (n, acc) {
+    acc.concat((acc.length > 0 ? _.last(acc) : 0) + n)
+  }
+  reduce(acf, [], xs.reverse());
+}
+
+// Work-in-progress learning Q function by Monte Carlo regression.
+var inferWeights = function() {
+  Infer({model() {
+    var weights = repeat(4, function() {gaussian(0, 10)});
+    // var weights = sample(TensorGaussian({mu: 1, sigma: 10, dims: [4]}));
+    var state = env.initialState;
+    var sigma = gamma(1, 1);
+    var Q = makeQ_meta(weights);
+    var policy = softmaxQPolicy(Q, 1);
+    
+    var rollout = simulate(policy, state);
+    var trueQs = cumsum(rollout.rewards).reverse();
+    map(function(i) {
+      var predictQ = Q(rollout.states[i], rollout.actions[i]);
+      observe(Gaussian({mu: trueQs[i], sigma}), predictQ);
+    }, _.range(trueQs.length))
+    return {weights, sigma}
+  },
+  method: 'SMC', particles: 1000, rejuvSteps: 1, rejuvKernel: 'HMC'
+  // method: 'MCMC', kernel: 'HMC', samples: 1000
+  // method: 'MCMC', kernel: 'HMC', samples: 1000, onlyMAP: true
+  // method: 'optimize', steps: 500, onlyMAP: true, verbose: false
+})
+};
+
+
+var result = sample(inferWeights());
+var weights = result.weights;
+console.log('weights', weights)
+console.log('sigma', result.sigma)
+run(maxQPolicy(makeQ_meta(weights)), 500, 'learned')
+
+
+
+
+
+
+
+// var state = [0, -5, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN];
+// var state = env.initialState
+// console.log([
+//   Q_meta(env.initialState, 1),
+//   VOC_1(state, 2),
+//   VPI_action(state, 2),
+//   VPI_full(state),
+//   termValue(state)
+// ])
+
+
+// var infer = function() {
+//   Infer({model() {
+//     var arms = _.range(20);
+//     var a = uniformDraw(arms);
+//     factor(100 * gaussian(a, 10));
+//     factor(100 * gaussian(a, 10));
+//     factor(1000 * gaussian(a, 10));
+//     a
+//   }, 
+//   // method: 'MCMC', samples: 20
+//   method: 'SMC', particles: 20, rejuvSteps: 2
+//   })  
+// };
+
+// infer()
+
+
+
+// console.log(env.initialState)
+// console.log(JSON.stringify(obsTree(env.initialState, [])))
+// console.log(JSON.stringify())
+
+
+
+// console.log([
+//   // globalStore.V.cache.length,
+//   globalStore.Q.cache.length,
+//   // globalStore.policy.cache.length,
+// ])
+// var env = L.buildCross(2, 2)
+// env.hashState(env.initialState)
+
+// testParams(-1, 8, 3)
+// testParams(-1, 8, 4)
+// testParams(-1, 8, 5)
+// testParams(-1, 8, 10000)
+// testParams(3, 2)
+
+// testParams(-1, 8)
+// testParams(0, 8)
+// testParams(1, 8)
+
+// var pol = enumPolicy()
+// repeat(100, function() {sum(simulate(pol).rewards)})
+
+
+// globalStore.reward = Categorical({vs: vals(-1, 8),
+//                                   ps: probs()});
+// simulate(enumPolicy({
+//   lookahead: 2
+// }))
+
+// L.firstUnobserved(['a', 'aa', 'b', 'ccc'])
+
+

@@ -1,25 +1,11 @@
-// Foo
-
-/* This method requires a discrete reward distribution. Things slow down as you
-   add more possible rewards.
-*/
-var REWARD = Categorical({vs: [-3, -2, -1, 0, 1, 2, 3],
-                          ps: [0.006, 0.061, 0.242, 0.383, 
-                               0.242, 0.061, 0.006]});
-
-var COST = .1;
+// Defines features for linear approximation of the optimal Q function.
 
 /* The state is represented as a tree. Each element in the tree is one of
    - a number, a previously observed reward
    - 'hidden', an unobserved node
    - 'observe', a node that will hypothetically be observed
 */
-var value = function(tree) {
-    tree[0]
-};
-var children = function(tree) {
-    tree[1]
-};
+
 var OBSERVE = '__OBSERVE__';
 
 /* The subjective reward function returns a sample from the
@@ -30,12 +16,12 @@ var OBSERVE = '__OBSERVE__';
    unknown reward.
 */
 var subjectiveReward = function(tree) {
-  var v = value(tree);
-  v == UNKNOWN ? expectation(REWARD) :
-  v == OBSERVE ? sample(REWARD) :
-  v  // already observed
+  // tree is a 2-item list [val, [c1, c2...]] where each child c is also a tree.
+  var val = tree[0];
+  val == UNKNOWN ? expectation(globalStore.reward) :
+  val == OBSERVE ? sample(globalStore.reward) :
+  val  // already observed
 };
-
 
 /* The distribution over the expected value of the best path through 
    a tree, where the expectation is conditioned on the outcome of
@@ -45,10 +31,10 @@ var observationValue = dp.cache(function(tree, params) {
     var params = extend({method: 'enumerate'}, params)
     Infer(extend(params, {model() {
       var bestChildVal = (
-        children(tree).length == 0 ?
+        tree[1].length == 0 ?
         0 :
         _.max(map(function(child) {sample(observationValue(child, params))},
-                  children(tree)))
+                  tree[1]))
       );
       subjectiveReward(tree) + bestChildVal
     }}))
@@ -78,6 +64,13 @@ var stateTree = function(state) {
   ]]
 }
 
+var actionGroups = [
+  [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4],
+  [5, 6, 7, 8], [5, 6, 7, 8], [5, 6, 7, 8], [5, 6, 7, 8], [5, 6, 7, 8],
+  [9, 10, 11, 12], [9, 10, 11, 12], [9, 10, 11, 12], [9, 10, 11, 12], [9, 10, 11, 12],
+  [13, 14, 15, 16], [13, 14, 15, 16], [13, 14, 15, 16], [13, 14, 15, 16], [13, 14, 15, 16]
+]
+
 var obsTree = function(state, toObserve) {
   stateTree(mapIndexed(function(i, r) {
     (_.includes(toObserve, i) && r == UNKNOWN) ? OBSERVE : r
@@ -89,19 +82,40 @@ var termValue = cache(function(state) {
 });
 
 var VOC_1 = function(state, action) {
-  expectedObservationValue(obsTree(state, [action]))
+  expectedObservationValue(obsTree(state, [action])) - termValue(state)
 }
 
-var VPI_full = function(state) {
-  expectedObservationValue(obsTree(state, _.range(17)))
+var VPI_full = cache(function(state) {
+  expectedObservationValue(obsTree(state, nodes)) - termValue(state)
+});
+
+var VPI_action = function(state, action) {
+  var obs = actionGroups[action];
+  expectedObservationValue(obsTree(state, obs)) - termValue(state)
 };
 
-var Q_meta = cache(function(state, action) {
-  // console.log('Q_meta', action)
-  action == TERM_ACTION ?
-  termValue(state) :
-  0.5 * VOC_1(state, action) + 0.5 * VPI_full(state)
-});
+var dot = function(x, y) {
+  sum(map2(function(x, y) {
+    x * y
+  }, x, y))
+  
+};
+
+var makeQ_meta = function(weights) {
+  var Q_meta = cache(function(state, action) {
+    // var weights = [30, 30, 18.52, -2.57];
+    action == TERM_ACTION ?
+    termValue(state) :
+    dot(weights, [globalStore.cost,
+                  VOC_1(state, action),
+                  VPI_action(state, action),
+                  VPI_full(state)])
+  });
+  return Q_meta  
+};
+
+var Q_meta = makeQ_meta([20.27524, -0.86362, 27.71059, 16.14729]);
+
 
 var V_meta = function(state) {
   // console.log('V_meta', JSON.stringify(state))

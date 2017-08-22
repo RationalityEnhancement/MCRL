@@ -18,35 +18,65 @@ module.exports = {
     lst[idx] = val
     return lst
 
-  buildEnv: (branch) ->
-    branch = branch.concat [0]  # leaves have 0 children
+  buildEnv: () ->
+    getMoves = (addr) ->
+      last = parseInt (_.last addr)
+      # '0123456789'.slice(0, branch[addr.length])
+      switch addr.length
+        when 0
+          [0, 1, 2, 3]  # up, right, down, left
+        when 1
+          [last]
+        when 2
+          [(last + 1) % 4, (last + 3) % 4]
+        when 3
+          []
+        else
+          throw new Error ('too long ' + addr)
 
-    actions = (addr) ->
-      '0123456789'.slice(0, branch[addr.length])
+    newLoc = (loc, move) ->
+      [x, y] = loc
+      options = [
+        [x, y+1]
+        [x+1, y]
+        [x, y-1]
+        [x-1, y]
+      ]
+      options[move]
+
     belief = (addr) ->
       if addr == '' then 0 else UNKNOWN
     
     tree = []
+    transition = []
     initialState = []
     idx2address = []
     address2idx = {}
     layout = []
 
-    addNode = (addr) ->
+    addNode = (addr, loc) ->
       address2idx[addr] = idx = tree.length
       idx2address.push addr
+      layout.push loc
       children = []
       tree.push children
+      moves = {}
+      transition.push moves
       initialState.push (belief addr)
-      for a in (actions addr)
-        children.push (addNode (addr + a))
+      for m in (getMoves addr)
+        child = addNode (addr + m), (newLoc loc, m)
+        children.push child
+        moves[m] = child
+
       return idx
 
-    addNode('')
+    addNode('', [0, 0])
 
     return {
       initialState
+      transition
       tree
+      layout
       idx2address
       address2idx
       hashState: (state) -> state
@@ -148,8 +178,6 @@ module.exports = {
     # make the cache publically available to facillitate checking the complexity of algorithms
     cf.cache = c
     cf
-
-  
 
 }
 

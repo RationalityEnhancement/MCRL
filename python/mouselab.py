@@ -127,6 +127,7 @@ class MouselabEnv(gym.Env):
             self.myopic_voc(action, state),
             self.vpi_action(action, state),
             self.vpi(state),
+            self.expected_term_reward(state)
         ])
 
     @memoize
@@ -174,19 +175,22 @@ class MouselabEnv(gym.Env):
 
     @memoize
     def myopic_voc(self, action, state):
-        return (self.node_value_after_observe((action,), 0, state).expectation() -
-                self.expected_term_reward(state))
+        return (self.node_value_after_observe((action,), 0, state).expectation()
+                - self.expected_term_reward(state)
+                )
 
     @memoize
     def vpi_action(self, action, state):
         obs = self._relevant_subtree(action)
-        return (self.node_value_after_observe(obs, 0, state).expectation() -
-                self.expected_term_reward(state))
+        return (self.node_value_after_observe(obs, 0, state).expectation()
+                - self.expected_term_reward(state)
+                )
 
     @memoize
     def vpi(self, state):
-        return (self.node_value_after_observe('all', 0, state).expectation() -
-                self.expected_term_reward(state))
+        return (self.node_value_after_observe('all', 0, state).expectation()
+                - self.expected_term_reward(state)
+                )
 
     def unclicked(self, state):
         return sum(1 for x in state if hasattr(x, 'sample'))

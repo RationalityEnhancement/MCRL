@@ -1,3 +1,5 @@
+// Defines the mouselab meta-MDP and policies for solving it.
+
 var utils = webpplMouselab;
 var TERM_ACTION = '__TERM_ACTION__';
 var TERM_STATE = '__TERM_STATE__';
@@ -7,43 +9,30 @@ var INITIAL_NODE = 0
 // ============================== //
 // ========= Object MDP ========= //
 // ============================== //
-
-// Environment has a single branching at the beginning
-// followed by a sequence of forced actions.
-
-var vals = function(mu,sigma) {
-  map(function(x) {mu + x * sigma}, [-2, -1, 1, 2])
-};
-var probs = function() {
-  [.15, .35, .35, .15]
-};
-globalStore.cost = 0.1
-globalStore.reward = Categorical({vs: vals(1, 2),
-                                  ps: probs()});
-
-var env = utils.buildEnv([4, 1, 2])
-// console.log('env', env)
-var tree = env.tree
-var nodes = _.range(tree.length)
+var env = utils.buildEnv();
+var tree = env.tree;
+var nodes = _.range(tree.length);
 var children = function(node) {
   tree[node]
 };
 
-// THIS COMMENT IS OUT OF DATE!
-// The true rewards at each node are memoized, allowing one to condition
-// on certain outcomes in an outer inference, e.g. in test.wppl run()
-// globalStore.reward = Categorical({vs: [0, 1, 5], ps: [0.4, 0.4, .2]});
-var nodeReward = function(node) {
+
+// The true reward at a given state. They are memoized, allowing one to
+// condition on certain outcomes in an outer inference
+// e.g. run() in main.wppl
+var nodeReward = mem(function(node) {
   node == INITIAL_NODE ? 0 : sample(globalStore.reward)
-};
-// The expected reward at a node from the agent's perspective..
+});
+
+// The expected reward at a node from the agent's perspective.
 var expectedNodeReward = function(state, node) {
-  (node == INITIAL_NODE ? 0 :
-   state[node] == UNKNOWN ? expectation(globalStore.reward) :
-   state[node])
+  state[node] == UNKNOWN ?
+  expectation(globalStore.reward) :
+  state[node]
 };
 
 // Like a Q function, the expected value of reaching a node.
+// Includes reward at that node plus expected value of the node.
 var nodeQuality = dp.cache(function(state, node) {
   var best_child_val = (
     children(node).length == 0 ?
@@ -54,8 +43,6 @@ var nodeQuality = dp.cache(function(state, node) {
   return expectedNodeReward(state, node) + best_child_val
 }); 
 
-globalStore.energySpent = 1;
-globalStore.rewardAccrued = 0;
 
 // ============================ //
 // ========= Meta MDP ========= //
@@ -129,12 +116,9 @@ var fixedNumPolicy = function(nObs) {
 var enumPolicy = function(opts) {
   var params = extend({
     maxExecutions: Infinity,
-    // lookahead: Infinity,
-    alpha: 1000,
     myActions: actions
   }, opts);
   var myActions = params.myActions
-
 
   var actionAndValue = dp.cache(function(state) {
     var Q = function(action) {
@@ -155,64 +139,35 @@ var enumPolicy = function(opts) {
 
   var policy = function(state) {
     var a = actionAndValue(state)[0]
-    // console.log('policy', state, a)
     return a
   };
   return policy
   
-  // var Q = dp.cache(function(state, action, lookahead) {
-  //   expectation(Infer({model() {
-  //     var newState = transition(state, action);
-  //     reward(state, action) + V(newState, lookahead)
-  //   }, method: 'enumerate'}))
-  // });
-  
-  // var policyDist = dp.cache(function(state, lookahead) {
-  //   Infer({model() {
-  //     if (lookahead == 0) {
-  //       return TERM_ACTION
-  //     }
-  //     // if (globalStore.lookahead == 0) return TERM_ACTION;
-  //     globalStore.lookahead -= 1
-  //     var action = uniformDraw(myActions(state));
-  //     factor(params.alpha * Q(state, action, lookahead-1))
-  //     action
-  //   }, method: 'enumerate', maxExecutions: params.maxExecutions})
-  // });
-  
-  // var V = dp.cache(function (state, lookahead) {
-  //   state == TERM_STATE ? 0 :
-  //   expectation(Infer({model() {
-  //     Q(state, sample(policyDist(state, lookahead)))
-  //   }, method: 'enumerate', maxExecutions: 1}))
-  // }, env);
-  // globalStore.V = V
-  
-  return function(state) {sample(policyDist(state, params.lookahead))};
 };
 
-var maxPolicy = function() {
-  var Q = dp.cache(function(state, action) {
-    expectation(Infer({model() {
-      var newState = transition(state, action);
-      var nextQ = (newState == TERM_STATE ? 
-                   0 : Q(newState, policy(newState)))
-      reward(state, action) + nextQ
-    }}))
-  });
-  var policy = dp.cache(function(state) {
-    maxWith(function(a) {Q(state, a)},
-            actions(state))[0]
-  });
+var maxQPolicy = function(Q) {
+  var policy = function(state) {
+    maxWith(function(a) {Q(state, a)}, actions(state))[0]
+  };
   return policy
 };
 
+var softmaxQPolicy = function(Q, alpha) {
+  var alpha = alpha || 1
+  var policy = function(state) {
+    var a = uniformDraw(actions(state));
+    factor(alpha * Q(state, a))
+    return a
+  };
+  return policy
+};
 
 // ============================ //
 // ========= Simulate ========= //
 // ============================ //
 
-var simulate = function(policy) {
+var simulate = function(policy, initialState) {
+  var initialState = initialState || env.initialState
   var rec = function(acc) {
     var state = _.last(acc.states);
     if (state == TERM_STATE) return acc
@@ -228,5 +183,5 @@ var simulate = function(policy) {
       })
     }
   };
-  return rec({states: [env.initialState], rewards: [], actions: []})
+  return rec({states: [initialState], rewards: [], actions: []})
 };

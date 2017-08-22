@@ -27,11 +27,29 @@
       lst[idx] = val;
       return lst;
     },
-    buildEnv: function(branch) {
-      var actions, addNode, address2idx, belief, idx2address, initialState, layout, tree;
-      branch = branch.concat([0]);
-      actions = function(addr) {
-        return '0123456789'.slice(0, branch[addr.length]);
+    buildEnv: function() {
+      var addNode, address2idx, belief, getMoves, idx2address, initialState, layout, newLoc, transition, tree;
+      getMoves = function(addr) {
+        var last;
+        last = parseInt(_.last(addr));
+        switch (addr.length) {
+          case 0:
+            return [0, 1, 2, 3];
+          case 1:
+            return [last];
+          case 2:
+            return [(last + 1) % 4, (last + 3) % 4];
+          case 3:
+            return [];
+          default:
+            throw new Error('too long ' + addr);
+        }
+      };
+      newLoc = function(loc, move) {
+        var options, x, y;
+        x = loc[0], y = loc[1];
+        options = [[x, y + 1], [x + 1, y], [x, y - 1], [x - 1, y]];
+        return options[move];
       };
       belief = function(addr) {
         if (addr === '') {
@@ -41,28 +59,36 @@
         }
       };
       tree = [];
+      transition = [];
       initialState = [];
       idx2address = [];
       address2idx = {};
       layout = [];
-      addNode = function(addr) {
-        var a, children, idx, j, len, ref;
+      addNode = function(addr, loc) {
+        var child, children, idx, j, len, m, moves, ref;
         address2idx[addr] = idx = tree.length;
         idx2address.push(addr);
+        layout.push(loc);
         children = [];
         tree.push(children);
+        moves = {};
+        transition.push(moves);
         initialState.push(belief(addr));
-        ref = actions(addr);
+        ref = getMoves(addr);
         for (j = 0, len = ref.length; j < len; j++) {
-          a = ref[j];
-          children.push(addNode(addr + a));
+          m = ref[j];
+          child = addNode(addr + m, newLoc(loc, m));
+          children.push(child);
+          moves[m] = child;
         }
         return idx;
       };
-      addNode('');
+      addNode('', [0, 0]);
       return {
         initialState: initialState,
+        transition: transition,
         tree: tree,
+        layout: layout,
         idx2address: idx2address,
         address2idx: address2idx,
         hashState: function(state) {
