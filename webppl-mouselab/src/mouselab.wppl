@@ -113,6 +113,9 @@ var fixedNumPolicy = function(nObs) {
   return policy
 };
 
+// Enumerates all possible sequences of actions and outcomes, exactly
+// computing the optimal policy. It is too slow to run on the full Mouselab
+// environment.
 var enumPolicy = function(opts) {
   var params = extend({
     maxExecutions: Infinity,
@@ -152,6 +155,8 @@ var maxQPolicy = function(Q) {
   return policy
 };
 
+// Takes an action with probability proportional to 
+// exp(alpha * Q(state, action))
 var softmaxQPolicy = function(Q, alpha) {
   var alpha = alpha || 1
   var policy = function(state) {

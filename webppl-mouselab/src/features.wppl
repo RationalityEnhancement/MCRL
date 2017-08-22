@@ -106,10 +106,13 @@ var makeQ_meta = function(weights) {
     // var weights = [30, 30, 18.52, -2.57];
     action == TERM_ACTION ?
     termValue(state) :
-    dot(weights, [globalStore.cost,
-                  VOC_1(state, action),
-                  VPI_action(state, action),
-                  VPI_full(state)])
+    dot(weights, [
+      globalStore.cost,
+      VOC_1(state, action),
+      VPI_action(state, action),
+      VPI_full(state),
+      termValue(state)
+    ])
   });
   return Q_meta  
 };

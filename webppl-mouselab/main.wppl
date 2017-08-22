@@ -31,6 +31,9 @@ var run = function(policy, samples, name) {
   var avgUtil = expectation(Infer({model() {
     sum(sample(result.value).rewards)}
   }));
+  var varUtil = expectation(Infer({model() {
+    sum(sample(result.value).rewards)}
+  }));
   var avgNumObs = expectation(Infer({model() {
     sample(result.value).actions.length - 1}
   }));
@@ -61,36 +64,56 @@ var cumsum = function (xs) {
 
 // Work-in-progress learning Q function by Monte Carlo regression.
 var inferWeights = function() {
+  // This should be a list of human stateAction pairs.
+  var stateActions = [[env.initialState, 1]]
   Infer({model() {
-    var weights = repeat(4, function() {gaussian(0, 10)});
-    // var weights = sample(TensorGaussian({mu: 1, sigma: 10, dims: [4]}));
-    var state = env.initialState;
-    var sigma = gamma(1, 1);
+    // Sample weights and create Q function and softmax Q policy.
+    var weights = repeat(4, function() {gaussian(0, 2)});
     var Q = makeQ_meta(weights);
     var policy = softmaxQPolicy(Q, 1);
-    
-    var rollout = simulate(policy, state);
-    var trueQs = cumsum(rollout.rewards).reverse();
-    map(function(i) {
-      var predictQ = Q(rollout.states[i], rollout.actions[i]);
-      observe(Gaussian({mu: trueQs[i], sigma}), predictQ);
-    }, _.range(trueQs.length))
+    var sigma = gamma(1, 1); // sd of empirical Q distribution
+
+    // Observe 5 rollouts for the sampled weights.
+    repeat(5, function() {
+      // Sample an empirical state and action, then execute it.
+      var sa = uniformDraw(stateActions);
+      var state = sa[0], action = sa[1];
+      var newState = transition(state, action);
+      var r = reward(state, action);
+
+      // Follow the softmaxQ policy after that initial action.
+      var rollout = simulate(policy, newState);
+      var trueQs = cumsum(rollout.rewards).reverse();
+
+      // Observe the empirical Q for the sampled state and action.
+      // This could be repeated to upweight the importance of the
+      // empirical state actions in the regression.
+      var predictQ = Q(state, action);
+      observe(Gaussian({mu: r + trueQs[0], sigma}), predictQ)
+
+      // Observe the empirical Qs for the remainder of the rollout.
+      map(function(i) {
+        var predictQ = Q(rollout.states[i], rollout.actions[i]);
+        observe(Gaussian({mu: trueQs[i], sigma}), predictQ);
+      }, _.range(trueQs.length))
+    });
     return {weights, sigma}
   },
-  method: 'SMC', particles: 1000, rejuvSteps: 1, rejuvKernel: 'HMC'
-  // method: 'MCMC', kernel: 'HMC', samples: 1000
+  // method: 'SMC', particles: 100, rejuvSteps: 1
+  method: 'SMC', particles: 10000
   // method: 'MCMC', kernel: 'HMC', samples: 1000, onlyMAP: true
-  // method: 'optimize', steps: 500, onlyMAP: true, verbose: false
 })
 };
 
 
-var result = sample(inferWeights());
-var weights = result.weights;
-console.log('weights', weights)
-console.log('sigma', result.sigma)
-run(maxQPolicy(makeQ_meta(weights)), 500, 'learned')
+var result = timeit(function() {
+  sample(inferWeights())
+});
+console.log(result)
+var weights = result.value.weights;
+run(maxQPolicy(makeQ_meta(weights)), 1000, 'SMC')
 
+run(maxQPolicy(makeQ_meta([29.36747, -3.78976, 30.0, 16.27864, -0.22261])), 1000, 'Python')
 
 
 
