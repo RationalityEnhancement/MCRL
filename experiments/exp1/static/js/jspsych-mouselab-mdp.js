@@ -95,10 +95,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     return obj;
   };
   KEYS = _.mapObject({
-    up: 'uparrow',
-    down: 'downarrow',
-    right: 'rightarrow',
-    left: 'leftarrow'
+    2: 'uparrow',
+    0: 'downarrow',
+    1: 'rightarrow',
+    3: 'leftarrow'
   }, jsPsych.pluginAPI.convertKeyCharacterToKeyCode);
   MouselabMDP = (function() {
     function MouselabMDP(config) {
@@ -113,7 +113,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.arrive = bind(this.arrive, this);
       this.displayFeedback = bind(this.displayFeedback, this);
       this.recordQuery = bind(this.recordQuery, this);
-      this.getOutcome = bind(this.getOutcome, this);
       this.getStateLabel = bind(this.getStateLabel, this);
       this.getEdgeLabel = bind(this.getEdgeLabel, this);
       this.mouseoutEdge = bind(this.mouseoutEdge, this);
@@ -124,8 +123,39 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.clickState = bind(this.clickState, this);
       this.handleKey = bind(this.handleKey, this);
       this.runDemo = bind(this.runDemo, this);
-      var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage, timeMsg;
-      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.initial = config.initial, this.stateLabels = (ref = config.stateLabels) != null ? ref : null, this.stateDisplay = (ref1 = config.stateDisplay) != null ? ref1 : 'never', this.stateClickCost = (ref2 = config.stateClickCost) != null ? ref2 : PARAMS.info_cost, this.edgeLabels = (ref3 = config.edgeLabels) != null ? ref3 : 'reward', this.edgeDisplay = (ref4 = config.edgeDisplay) != null ? ref4 : 'always', this.edgeClickCost = (ref5 = config.edgeClickCost) != null ? ref5 : 0, this.trial_i = (ref6 = config.trial_i) != null ? ref6 : null, this.demonstrate = (ref7 = config.demonstrate) != null ? ref7 : false, this.stateRewards = (ref8 = config.stateRewards) != null ? ref8 : null, this.keys = (ref9 = config.keys) != null ? ref9 : KEYS, this.trialIndex = (ref10 = config.trialIndex) != null ? ref10 : TRIAL_INDEX, this.playerImage = (ref11 = config.playerImage) != null ? ref11 : 'static/images/plane.png', SIZE = (ref12 = config.SIZE) != null ? ref12 : 120, leftMessage = (ref13 = config.leftMessage) != null ? ref13 : null, centerMessage = (ref14 = config.centerMessage) != null ? ref14 : '&nbsp;', rightMessage = (ref15 = config.rightMessage) != null ? ref15 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref16 = config.lowerMessage) != null ? ref16 : "Navigate with the arrow keys.", this.minTime = (ref17 = config.minTime) != null ? ref17 : (DEBUG ? 5 : 45), this.feedback = (ref18 = config.feedback) != null ? ref18 : true;
+      var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage, timeMsg;
+      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.tree = (ref = config.tree) != null ? ref : null, this.initial = config.initial, this.stateLabels = (ref1 = config.stateLabels) != null ? ref1 : null, this.stateDisplay = (ref2 = config.stateDisplay) != null ? ref2 : 'never', this.stateClickCost = (ref3 = config.stateClickCost) != null ? ref3 : PARAMS.info_cost, this.edgeLabels = (ref4 = config.edgeLabels) != null ? ref4 : 'reward', this.edgeDisplay = (ref5 = config.edgeDisplay) != null ? ref5 : 'always', this.edgeClickCost = (ref6 = config.edgeClickCost) != null ? ref6 : 0, this.trial_i = (ref7 = config.trial_i) != null ? ref7 : null, this.demonstrate = (ref8 = config.demonstrate) != null ? ref8 : false, this.stateRewards = (ref9 = config.stateRewards) != null ? ref9 : null, this.keys = (ref10 = config.keys) != null ? ref10 : KEYS, this.trialIndex = (ref11 = config.trialIndex) != null ? ref11 : TRIAL_INDEX, this.playerImage = (ref12 = config.playerImage) != null ? ref12 : 'static/images/plane.png', SIZE = (ref13 = config.SIZE) != null ? ref13 : 110, leftMessage = (ref14 = config.leftMessage) != null ? ref14 : null, centerMessage = (ref15 = config.centerMessage) != null ? ref15 : '&nbsp;', rightMessage = (ref16 = config.rightMessage) != null ? ref16 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref17 = config.lowerMessage) != null ? ref17 : "Navigate with the arrow keys.", this.minTime = (ref18 = config.minTime) != null ? ref18 : (DEBUG ? 5 : 45), this.feedback = (ref19 = config.feedback) != null ? ref19 : true;
+      this.initial = 0;
+      this.tree = [[1, 5, 9, 13], [2], [3, 4], [], [], [6], [7, 8], [], [], [10], [11, 12], [], [], [14], [15, 16], [], []];
+      this.transition = [
+        {
+          '0': 1,
+          '1': 5,
+          '2': 9,
+          '3': 13
+        }, {
+          '0': 2
+        }, {
+          '1': 3,
+          '3': 4
+        }, {}, {}, {
+          '1': 6
+        }, {
+          '0': 8,
+          '2': 7
+        }, {}, {}, {
+          '2': 10
+        }, {
+          '1': 12,
+          '3': 11
+        }, {}, {}, {
+          '3': 14
+        }, {
+          '0': 15,
+          '2': 16
+        }, {}, {}
+      ];
+      this.layout = [[0, 0], [0, 1], [0, 2], [1, 2], [-1, 2], [1, 0], [2, 0], [2, -1], [2, 1], [0, -1], [0, -2], [-1, -2], [1, -2], [-1, 0], [-2, 0], [-2, 1], [-2, -1]];
       if (leftMessage == null) {
         leftMessage = "Round: " + TRIAL_INDEX + "/" + N_TRIALS;
       }
@@ -152,6 +182,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         rt: [],
         actions: [],
         actionTimes: [],
+        beliefs: [],
+        metaActions: [],
         queries: {
           click: {
             state: {
@@ -244,12 +276,16 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.handleKey = function(s0, a) {
-      var r, ref, s1, s1g;
+      var r, s1, s1g;
       LOG_DEBUG('handleKey', s0, a);
       this.data.actions.push(a);
       this.data.actionTimes.push(Date.now() - this.initTime);
-      this.updatePR(TERM_ACTION);
-      ref = this.getOutcome(s0, a), r = ref[0], s1 = ref[1];
+      if (!this.disableClicks) {
+        this.updatePR(TERM_ACTION);
+        this.disableClicks = true;
+      }
+      s1 = this.transition[s0][a];
+      r = this.stateRewards[s1];
       LOG_DEBUG(s0 + ", " + a + " -> " + r + ", " + s1);
       s1g = this.states[s1];
       return this.player.animate({
@@ -273,6 +309,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.clickState = function(g, s) {
       var r;
+      if (this.disableClicks) {
+        return;
+      }
       LOG_DEBUG("clickState " + s);
       if (this.complete || s === this.initial) {
         return;
@@ -291,14 +330,16 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.updatePR = function(action, r) {
+      var state;
+      state = this.beliefState.slice();
+      this.data.beliefs.push(state);
       this.PR = this.PR.then((function(_this) {
         return function(prevPR) {
           var arg;
           arg = {
-            state: _this.beliefState,
+            state: state,
             action: action
           };
-          console.log('arg', arg);
           return callWebppl('PR', arg).then(function(newPR) {
             return prevPR + newPR;
           });
@@ -372,15 +413,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       }
     };
 
-    MouselabMDP.prototype.getOutcome = function(s0, a) {
-      var r, ref, s1;
-      ref = this.graph[s0][a], r = ref[0], s1 = ref[1];
-      if (this.stateRewards) {
-        r = this.stateRewards[s1];
-      }
-      return [r, s1];
-    };
-
     MouselabMDP.prototype.recordQuery = function(queryType, targetType, target) {
       this.canvas.renderAll();
       LOG_DEBUG("recordQuery " + queryType + " " + targetType + " " + target);
@@ -389,27 +421,13 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
-      var callback, globalStore, head, info, msg, penalty, redGreenSpan, showCriticism, start;
+      var head, info, msg, penalty, redGreenSpan, showCriticism;
       this.PR.then((function(_this) {
         return function(pr) {
           console.log("total PR = " + pr);
           return _this.arrive(s1);
         };
       })(this));
-      return;
-      start = getTime();
-      callback = function(s, val) {
-        return console.log("webppl returned " + val + " in " + (getTime() - start) + " ms");
-      };
-      globalStore = {
-        states: this.PRstates,
-        actions: this.PRactions
-      };
-      console.log('gs', globalStore);
-      webppl.run(code, callback, {
-        initialStore: globalStore
-      });
-      this.arrive(s1);
       return;
       if (!this.feedback) {
         $('#mdp-feedback').css({
@@ -531,17 +549,15 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.arrive = function(s) {
       var a, keys;
-      this.PRstates = [];
-      this.PRactions = [];
       this.PR = new Promise(function(resolve) {
         return resolve(0);
       });
       LOG_DEBUG('arrive', s);
       this.data.path.push(s);
-      if (this.graph[s]) {
+      if (this.transition[s]) {
         keys = (function() {
           var j, len, ref, results;
-          ref = Object.keys(this.graph[s]);
+          ref = Object.keys(this.transition[s]);
           results = [];
           for (j = 0, len = ref.length; j < len; j++) {
             a = ref[j];
@@ -638,53 +654,55 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.buildMap = function() {
-      var a, actions, height, location, r, ref, ref1, ref2, results, s, s0, s1, width, x, y;
-      ref = (function(_this) {
-        return function() {
-          var ref, xs, ys;
+      (function(_this) {
+        return (function() {
+          var height, minx, miny, ref, width, xs, ys;
           ref = _.unzip(_.values(_this.layout)), xs = ref[0], ys = ref[1];
-          return [(_.max(xs)) + 1, (_.max(ys)) + 1];
-        };
-      })(this)(), width = ref[0], height = ref[1];
-      this.canvasElement.attr({
-        width: width * SIZE,
-        height: height * SIZE
-      });
+          minx = _.min(xs);
+          miny = _.min(ys);
+          xs = xs.map(function(x) {
+            return x - minx;
+          });
+          ys = ys.map(function(y) {
+            return y - miny;
+          });
+          _this.layout = _.zip(xs, ys);
+          width = (_.max(xs)) + 1;
+          height = (_.max(ys)) + 1;
+          return _this.canvasElement.attr({
+            width: width * SIZE,
+            height: height * SIZE
+          });
+        });
+      })(this)();
       this.canvas = new fabric.Canvas('mouselab-canvas', {
         selection: false
       });
-      this.states = {};
+      this.states = [];
       this.beliefState = [];
-      ref1 = this.layout;
-      for (s in ref1) {
-        location = ref1[s];
-        this.beliefState[s] = UNKNOWN;
-        x = location[0], y = location[1];
-        this.states[s] = this.draw(new State(s, x, y, {
-          fill: '#bbb',
-          label: this.stateDisplay === 'always' ? this.getStateLabel(s) : ''
-        }));
-      }
+      this.layout.forEach((function(_this) {
+        return function(loc, idx) {
+          var x, y;
+          _this.beliefState.push(UNKNOWN);
+          x = loc[0], y = loc[1];
+          return _this.states.push(_this.draw(new State(idx, x, y, {
+            fill: '#bbb',
+            label: ''
+          })));
+        };
+      })(this));
       this.beliefState[0] = 0;
-      LOG_DEBUG('@graph', this.graph);
-      LOG_DEBUG('@states', this.states);
-      ref2 = this.graph;
-      results = [];
-      for (s0 in ref2) {
-        actions = ref2[s0];
-        results.push((function() {
-          var ref3, results1;
-          results1 = [];
-          for (a in actions) {
-            ref3 = actions[a], r = ref3[0], s1 = ref3[1];
-            results1.push(this.draw(new Edge(this.states[s0], r, this.states[s1], {
-              label: this.edgeDisplay === 'always' ? this.getEdgeLabel(s0, r, s1) : ''
-            })));
-          }
-          return results1;
-        }).call(this));
-      }
-      return results;
+      this.data.beliefs.push(this.beliefState);
+      LOG_INFO('@states', this.states);
+      return this.tree.forEach((function(_this) {
+        return function(s1s, s0) {
+          return s1s.forEach(function(s1) {
+            return _this.draw(new Edge(_this.states[s0], 0, _this.states[s1], {
+              label: ''
+            }));
+          });
+        };
+      })(this));
     };
 
     MouselabMDP.prototype.endTrial = function() {
