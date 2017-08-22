@@ -68,7 +68,7 @@ var inferWeights = function() {
   var stateActions = [[env.initialState, 1]]
   Infer({model() {
     // Sample weights and create Q function and softmax Q policy.
-    var weights = repeat(4, function() {gaussian(0, 2)});
+    var weights = repeat(5, function() {gaussian(0, 2)});
     var Q = makeQ_meta(weights);
     var policy = softmaxQPolicy(Q, 1);
     var sigma = gamma(1, 1); // sd of empirical Q distribution
@@ -113,7 +113,7 @@ console.log(result)
 var weights = result.value.weights;
 run(maxQPolicy(makeQ_meta(weights)), 1000, 'SMC')
 
-run(maxQPolicy(makeQ_meta([29.36747, -3.78976, 30.0, 16.27864, -0.22261])), 1000, 'Python')
+// run(maxQPolicy(makeQ_meta([29.36747, -3.78976, 30.0, 16.27864, -0.22261])), 1000, 'Python')
 
 
 
