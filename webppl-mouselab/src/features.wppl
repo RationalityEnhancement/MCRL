@@ -117,7 +117,7 @@ var makeQ_meta = function(weights) {
   return Q_meta  
 };
 
-var Q_meta = makeQ_meta([20.27524, -0.86362, 27.71059, 16.14729]);
+var Q_meta = makeQ_meta([20.27524, -0.86362, 27.71059, 16.14729, 0]);
 
 
 var V_meta = function(state) {

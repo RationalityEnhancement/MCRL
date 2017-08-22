@@ -78,13 +78,13 @@ startWebppl = () ->
   return callWebppl
 
 
-# Example usage
 callWebppl = startWebppl()
 
-p1 = callWebppl 'flip'
-p1.then (v) -> console.log "flip returned #{v}"
-p2 = callWebppl 'sampleMean',
-  mu: 0
-  sigma: 1
-  nSample: 1000
-p2.then (v) -> console.log "sampleMean returned #{v}"
+# Example usage
+# p1 = callWebppl 'flip'
+# p1.then (v) -> console.log "flip returned #{v}"
+# p2 = callWebppl 'sampleMean',
+#   mu: 0
+#   sigma: 1
+#   nSample: 1000
+# p2.then (v) -> console.log "sampleMean returned #{v}"

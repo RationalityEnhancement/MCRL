@@ -84,10 +84,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     obj
 
   KEYS = _.mapObject
-    up: 'uparrow'
-    down: 'downarrow',
-    right: 'rightarrow',
-    left: 'leftarrow',
+    2: 'uparrow'
+    0: 'downarrow',
+    1: 'rightarrow',
+    3: 'leftarrow',
     jsPsych.pluginAPI.convertKeyCharacterToKeyCode
 
 
@@ -99,8 +99,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     constructor: (config) ->
       {
         @display  # html display element
+
         @graph  # defines transition and reward functions
         @layout  # defines position of states
+        @tree=null
         @initial  # initial state of player
 
         @stateLabels=null  # object mapping from state names to labels
@@ -117,7 +119,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @keys=KEYS  # mapping from actions to keycodes
         @trialIndex=TRIAL_INDEX  # number of trial (starts from 1)
         @playerImage='static/images/plane.png'
-        SIZE=120  # determines the size of states, text, etc...
+        SIZE=110  # determines the size of states, text, etc...
 
         leftMessage=null
         centerMessage='&nbsp;'
@@ -127,6 +129,62 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @minTime=(if DEBUG then 5 else 45)
         @feedback=true
       } = config
+
+      @initial = 0
+      @tree =  [ 
+         [ 1, 5, 9, 13 ],
+         [ 2 ],
+         [ 3, 4 ],
+         [],
+         [],
+         [ 6 ],
+         [ 7, 8 ],
+         [],
+         [],
+         [ 10 ],
+         [ 11, 12 ],
+         [],
+         [],
+         [ 14 ],
+         [ 15, 16 ],
+         [],
+         [] ]
+      @transition = [
+       { '0': 1, '1': 5, '2': 9, '3': 13 },
+       { '0': 2 },
+       { '1': 3, '3': 4 },
+       {},
+       {},
+       { '1': 6 },
+       { '0': 8, '2': 7 },
+       {},
+       {},
+       { '2': 10 },
+       { '1': 12, '3': 11 },
+       {},
+       {},
+       { '3': 14 },
+       { '0': 15, '2': 16 },
+       {},
+       {} ]
+      @layout =    [ [ 0, 0 ],
+         [ 0, 1 ],
+         [ 0, 2 ],
+         [ 1, 2 ],
+         [ -1, 2 ],
+         [ 1, 0 ],
+         [ 2, 0 ],
+         [ 2, -1 ],
+         [ 2, 1 ],
+         [ 0, -1 ],
+         [ 0, -2 ],
+         [ -1, -2 ],
+         [ 1, -2 ],
+         [ -1, 0 ],
+         [ -2, 0 ],
+         [ -2, 1 ],
+         [ -2, -1 ] ]
+        
 
       if not leftMessage?
         leftMessage = "Round: #{TRIAL_INDEX}/#{N_TRIALS}"
@@ -155,6 +213,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         rt: []
         actions: []
         actionTimes: []
+        beliefs: []
+        metaActions: []
         queries: {
           click: {
             state: {'target': [], 'time': []}
@@ -241,10 +301,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       LOG_DEBUG 'handleKey', s0, a
       @data.actions.push a
       @data.actionTimes.push (Date.now() - @initTime)
-      @updatePR TERM_ACTION
-
-
-      [r, s1] = @getOutcome s0, a
+      unless @disableClicks
+        @updatePR TERM_ACTION
+        @disableClicks = true
+      s1 = @transition[s0][a]
+      r = @stateRewards[s1]
       LOG_DEBUG "#{s0}, #{a} -> #{r}, #{s1}"
 
       s1g = @states[s1]
@@ -261,6 +322,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Called when a state is clicked on.
     clickState: (g, s) =>
+      if @disableClicks
+        return
       LOG_DEBUG "clickState #{s}"
       if @complete or s is @initial
         return
@@ -272,9 +335,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         delay 0, => @updatePR (parseInt s), r
 
     updatePR: (action, r) ->
+      state = @beliefState.slice()
+      @data.beliefs.push state
       @PR = @PR.then (prevPR) =>
-        arg = {state: @beliefState, action: action}
-        console.log 'arg', arg
+        arg = {state, action}
         callWebppl('PR', arg).then (newPR) ->
           prevPR + newPR
 
@@ -335,11 +399,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     #   else
     #     @graph[s0][a]
 
-    getOutcome: (s0, a) =>
-      [r, s1] = @graph[s0][a]
-      if @stateRewards
-        r = @stateRewards[s1]
-      return [r, s1]
+    # getOutcome: (s0, a) =>
+    #   return 1
+    #   [r, s1] = @graph[s0][a]
+    #   if @stateRewards
+    #     r = @stateRewards[s1]
+    #   return [r, s1]
 
     recordQuery: (queryType, targetType, target) =>
       @canvas.renderAll()
@@ -355,18 +420,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         console.log "total PR = #{pr}"
         @arrive s1
       return 
-
-
-
-      start = getTime()
-      callback = (s, val) -> console.log "webppl returned #{val} in #{getTime() - start} ms"
-      globalStore =
-        states: @PRstates
-        actions: @PRactions
-      console.log 'gs', globalStore
-      webppl.run code, callback, initialStore: globalStore
-      @arrive s1
-      return
 
       if not @feedback
         $('#mdp-feedback').css(display: 'none')
@@ -492,15 +545,13 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Called when the player arrives in a new state.
     arrive: (s) =>
-      @PRstates = []
-      @PRactions = []
       @PR = new Promise (resolve) -> resolve(0)
       LOG_DEBUG 'arrive', s
       @data.path.push s
 
       # Get available actions.
-      if @graph[s]
-        keys = (@keys[a] for a in (Object.keys @graph[s]))
+      if @transition[s]
+        keys = (@keys[a] for a in (Object.keys @transition[s]))
       else
         keys = []
       if not keys.length
@@ -577,30 +628,49 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Constructs the visual display.
     buildMap: =>
-      # Resize canvas.
-      [width, height] = do =>
+      do =>
         [xs, ys] = _.unzip (_.values @layout)
-        [(_.max xs) + 1, (_.max ys) + 1]
-      @canvasElement.attr(width: width * SIZE, height: height * SIZE)
+
+        minx = _.min xs
+        miny = _.min ys
+
+        xs = xs.map((x) -> x - minx)
+        ys = ys.map((y) -> (y - miny))
+
+        @layout = _.zip xs, ys
+
+        width = (_.max xs) + 1
+        height = (_.max ys) + 1
+
+        @canvasElement.attr(width: width * SIZE, height: height * SIZE)
+
       @canvas = new fabric.Canvas 'mouselab-canvas', selection: false
 
-      @states = {}
+      @states = []
       @beliefState = []
-      for s, location of @layout
-        @beliefState[s] = UNKNOWN
-        [x, y] = location
-        @states[s] = @draw new State s, x, y,
+      @layout.forEach (loc, idx) =>
+        @beliefState.push UNKNOWN
+        [x, y] = loc
+        @states.push @draw new State idx, x, y,
           fill: '#bbb'
-          label: if @stateDisplay is 'always' then (@getStateLabel s) else ''
+          # label: if @stateDisplay is 'always' then (@getStateLabel s) else ''
+          label: ''
       @beliefState[0] = 0
+      @data.beliefs.push @beliefState
 
-      LOG_DEBUG '@graph', @graph
-      LOG_DEBUG '@states', @states
+      # LOG_DEBUG '@graph', @graph
+      LOG_INFO '@states', @states
 
-      for s0, actions of @graph
-        for a, [r, s1] of actions
-          @draw new Edge @states[s0], r, @states[s1],
-            label: if @edgeDisplay is 'always' then @getEdgeLabel s0, r, s1 else ''
+      @tree.forEach (s1s, s0) =>
+        s1s.forEach (s1) =>
+          @draw new Edge @states[s0], 0, @states[s1],
+            # label: if @edgeDisplay is 'always' then @getEdgeLabel s0, r, s1 else ''
+            label: ''
+
+      # for s0, actions of @graph
+      #   for a, [r, s1] of actions
+      #     @draw new Edge @states[s0], r, @states[s1],
+      #       label: if @edgeDisplay is 'always' then @getEdgeLabel s0, r, s1 else ''
 
 
 
