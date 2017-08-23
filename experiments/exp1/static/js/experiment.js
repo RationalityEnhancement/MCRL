@@ -499,7 +499,7 @@ initializeExperiment = function() {
         return save_data();
       }
     },
-    on_data_2: function(data) {
+    on_data_update: function(data) {
       console.log('data', data);
       return psiturk.recordTrialData(data);
     }

@@ -744,7 +744,7 @@ initializeExperiment = ->
 
         save_data()
 
-    on_data_2: (data) ->
+    on_data_update: (data) ->
       console.log 'data', data
       psiturk.recordTrialData data
       
