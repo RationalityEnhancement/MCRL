@@ -432,12 +432,13 @@ initializeExperiment = ->
         location you visit will add or subtract money to your account</b>, and
         your task is to earn as much money as possible. <b>To find out how much
         money you earn or lose in a location, you have to click on it.</b> You
-        can uncover the value of as many or as few locations as you wish.
+        can uncover the value of as many or as few locations as you wish before the first flight.
+        But once you move the airplane to a new location, you can no longer collect any additional information.
 
         #{img('task_images/Slide1.png')}
-
+        
         To navigate the airplane, use the arrows (the example above is non-interactive).
-        You can uncover the value of a location at any time. Click "Next" to proceed.
+        Click "Next" to proceed.
       """
 
       markdown """
