@@ -336,7 +336,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     updatePR: (action, r) ->
       state = @beliefState.slice()
-      @data.beliefs.push state
       @PR = @PR.then (prevPR) =>
         arg = {state, action}
         callWebppl('PR', arg).then (newPR) ->
@@ -344,6 +343,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       unless action is TERM_ACTION
         @beliefState[action] = r
+        @data.beliefs.push @beliefState.slice()
 
     mouseoverState: (g, s) =>
       LOG_DEBUG "mouseoverState #{s}"
@@ -656,7 +656,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
           # label: if @stateDisplay is 'always' then (@getStateLabel s) else ''
           label: ''
       @beliefState[0] = 0
-      @data.beliefs.push @beliefState
+      @data.beliefs.push @beliefState.slice()
 
       # LOG_DEBUG '@graph', @graph
       LOG_INFO '@states', @states

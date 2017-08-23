@@ -332,7 +332,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     MouselabMDP.prototype.updatePR = function(action, r) {
       var state;
       state = this.beliefState.slice();
-      this.data.beliefs.push(state);
       this.PR = this.PR.then((function(_this) {
         return function(prevPR) {
           var arg;
@@ -346,7 +345,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         };
       })(this));
       if (action !== TERM_ACTION) {
-        return this.beliefState[action] = r;
+        this.beliefState[action] = r;
+        return this.data.beliefs.push(this.beliefState.slice());
       }
     };
 
@@ -692,7 +692,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         };
       })(this));
       this.beliefState[0] = 0;
-      this.data.beliefs.push(this.beliefState);
+      this.data.beliefs.push(this.beliefState.slice());
       LOG_INFO('@states', this.states);
       return this.tree.forEach((function(_this) {
         return function(s1s, s0) {
