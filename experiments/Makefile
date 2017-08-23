@@ -4,8 +4,8 @@ all:
 
 deploy: exp1
 	bin/templater.py exp1 -v variables.yml
-	# bin/deploy_experiment.py deploy
-	# rm -r deploy
+	bin/deploy_experiment.py deploy
+	rm -r deploy
 
 e2a: exp1
 	bin/templater.py exp1 -v stage1.yml
