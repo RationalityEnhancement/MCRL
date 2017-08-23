@@ -431,9 +431,10 @@ initializeExperiment = ->
         your way there, you will visit two intermediate locations. <b>Every
         location you visit will add or subtract money to your account</b>, and
         your task is to earn as much money as possible. <b>To find out how much
-        money you earn or lose in a location, you have to click on it.</b> You
-        can uncover the value of as many or as few locations as you wish before the first flight.
-        But once you move the airplane to a new location, you can no longer collect any additional information.
+        money you earn or lose in a location, you have to click on it.</b>
+
+        You can uncover the value of as many or as few locations as you wish before the first flight.
+        But <b>once you move the airplane to a new location, you can no longer collect any additional information.</b>
 
         #{img('task_images/Slide1.png')}
         
@@ -608,37 +609,48 @@ initializeExperiment = ->
     questions: ['If you would like a reminder email, you can optionally enter it here.']
     button: 'Submit HIT'
 
-  finish = new Block
-    type: 'button-response'
-    stimulus: -> 
-      if STAGE1
-        markdown """
-          # You've completed Stage 1
+  if STAGE1
+    finish = new Block
+        type: 'button-response'
+        stimulus: ->     
+            markdown """
+            # You've completed Stage 1
 
-          Remember to come back #{text.return_window()} to complete Stage 2.
-          The HIT will be titled "Part 2 of two-part decision-making
-          experiment". **Note:** The official base pay on mTurk will be $0.01;
-          you'll receive the $1 base pay for Stage 2 as part of your bonus 
-          (in addition to the bonus you earn).
+            Remember to come back #{text.return_window()} to complete Stage 2.
+            The HIT will be titled "Part 2 of two-part decision-making
+            experiment". **Note:** The official base pay on mTurk will be $0.01;
+            you'll receive the $1 base pay for Stage 2 as part of your bonus 
+            (in addition to the bonus you earn).
 
-          So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
-          You will receive this bonus, along with the additional bonus you earn 
-          in Stage 2 when you complete the second HIT. If you don't complete
-          the second HIT, you give up the bonus you have already earned.
-        """
-      else 
-        markdown """
-          # You've completed the HIT
+            So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
+            You will receive this bonus, along with the additional bonus you earn 
+            in Stage 2 when you complete the second HIT. If you don't complete
+            the second HIT, you give up the bonus you have already earned.
+            """
+        is_html: true
+        choices: ['Submit HIT']
+        button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'            
+  else
+    finish = new Block
+        type: 'survey-text'
+        preamble: ->
+            markdown """
+            # You've completed the HIT
 
-          Thanks again for participating. We hope you had fun!
+            Thanks for participating. We hope you had fun! Based on your
+            performance, you will be awarded a bonus of
+            **$#{calculateBonus().toFixed(2)}**.
 
-          Based on your performance, you will be
-          awarded a bonus of **$#{calculateBonus().toFixed(2)}**.
-        """
-    is_html: true
-    choices: ['Submit HIT']
-    button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
+            Please briefly answer the questions below before you submit the HIT.
+            """
 
+        questions: [
+            'How did you go about planning the route of the airplane?'
+            'Did you learn anything about how to plan better?'
+        ]
+        rows: [4,4]
+        button: 'Submit HIT'            
+    
 
   ppl = new Block
     type: 'webppl'
@@ -653,7 +665,7 @@ initializeExperiment = ->
       # check_code
       train
       # test
-      # finish
+      finish
       # ppl
     ]
   else
