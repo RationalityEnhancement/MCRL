@@ -404,25 +404,33 @@ initializeExperiment = function() {
     questions: ['If you would like a reminder email, you can optionally enter it here.'],
     button: 'Submit HIT'
   });
-  finish = new Block({
-    type: 'button-response',
-    stimulus: function() {
-      if (STAGE1) {
+  if (STAGE1) {
+    finish = new Block({
+      type: 'button-response',
+      stimulus: function() {
         return markdown("# You've completed Stage 1\n\nRemember to come back " + (text.return_window()) + " to complete Stage 2.\nThe HIT will be titled \"Part 2 of two-part decision-making\nexperiment\". **Note:** The official base pay on mTurk will be $0.01;\nyou'll receive the $1 base pay for Stage 2 as part of your bonus \n(in addition to the bonus you earn).\n\nSo far, you've earned a bonus of **$" + (calculateBonus().toFixed(2)) + "**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the second HIT. If you don't complete\nthe second HIT, you give up the bonus you have already earned.");
-      } else {
-        return markdown("# You've completed the HIT\n\nThanks again for participating. We hope you had fun!\n\nBased on your performance, you will be\nawarded a bonus of **$" + (calculateBonus().toFixed(2)) + "**.");
-      }
-    },
-    is_html: true,
-    choices: ['Submit HIT'],
-    button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
-  });
+      },
+      is_html: true,
+      choices: ['Submit HIT'],
+      button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
+    });
+  } else {
+    finish = new Block({
+      type: 'survey-text',
+      preamble: function() {
+        return markdown("# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance, you will be awarded a bonus of\n**$" + (calculateBonus().toFixed(2)) + "**.\n\nPlease briefly answer the questions below before you submit the HIT.");
+      },
+      questions: ['How did you go about planning the route of the airplane?', 'Did you learn anything about how to plan better?'],
+      rows: [4, 4],
+      button: 'Submit HIT'
+    });
+  }
   ppl = new Block({
     type: 'webppl',
     code: 'globalStore.display_element.html(JSON.stringify(flip()))'
   });
   if (DEBUG) {
-    experiment_timeline = [train];
+    experiment_timeline = [train, finish];
   } else {
     experiment_timeline = (function() {
       var tl;
