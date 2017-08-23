@@ -17,9 +17,26 @@ var children = function(node) {
 };
 
 
+var vals = function(mu,sigma) {
+  // Temporarily hardcoding the values...
+  // map(function(x) {mu + x * sigma}, [-2, -1, 1, 2])
+  // [-15, -5, 5, 15]
+  [-20.0, -12.0, -4.0, 4.0, 12.0, 20.0]
+};
+
+var probs = function() {
+  // [0.159,  0.341,  0.341,  0.159]
+  [0.055, 0.157, 0.288, 0.288, 0.157, 0.055]
+};
+
+globalStore.cost = -1
+globalStore.reward = Categorical({vs: vals(1, 2),
+                                  ps: probs()});
+
 // The true reward at a given state. They are memoized, allowing one to
 // condition on certain outcomes in an outer inference
 // e.g. run() in main.wppl
+// var truth = [0.0, -15.0, 5.0, 5.0, 15.0, 15.0, 5.0, -5.0, 5.0, -15.0, 5.0, -15.0, 15.0, 5.0, -5.0, -5.0, 5.0];
 var nodeReward = mem(function(node) {
   node == INITIAL_NODE ? 0 : sample(globalStore.reward)
 });
@@ -150,7 +167,9 @@ var enumPolicy = function(opts) {
 
 var maxQPolicy = function(Q) {
   var policy = function(state) {
-    maxWith(function(a) {Q(state, a)}, actions(state))[0]
+    // maxWith(f, xs) returns [x, f(x)] such that f(x) is maximized.
+    var actVal = maxWith(function(a) {Q(state, a)}, actions(state))
+    return actVal[0]
   };
   return policy
 };
@@ -176,7 +195,6 @@ var simulate = function(policy, initialState) {
   var rec = function(acc) {
     var state = _.last(acc.states);
     if (state == TERM_STATE) return acc
-    // if (_.isEmpty(actions(state))) return acc
     else {
       var action = policy(state);
       var newState = transition(state, action);

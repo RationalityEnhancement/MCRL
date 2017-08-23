@@ -1,30 +1,29 @@
 var L = webpplMouselab;
 var round = function(x, p) {Math.round(x * Math.pow(10, p)) / Math.pow(10, p)}
 
-var vals = function(mu,sigma) {
-  // Temporarily hardcoding the values...
-  // map(function(x) {mu + x * sigma}, [-2, -1, 1, 2])
-  [-15, -5, 5, 15]
-};
-var probs = function() {
-  [0.159,  0.341,  0.341,  0.159]
-};
-globalStore.cost = -1
-globalStore.reward = Categorical({vs: vals(1, 2),
-                                  ps: probs()});
+// var vals = function(mu,sigma) {
+//   // Temporarily hardcoding the values...
+//   // map(function(x) {mu + x * sigma}, [-2, -1, 1, 2])
+//   // [-15, -5, 5, 15]
+//   [-20.0, -12.0, -4.0, 4.0, 12.0, 20.0]
+// };
+
+
+// var probs = function() {
+//   // [0.159,  0.341,  0.341,  0.159]
+//   [0.055, 0.157, 0.288, 0.288, 0.157, 0.055]
+// };
+// globalStore.cost = -1
+// globalStore.reward = Categorical({vs: vals(1, 2),
+//                                   ps: probs()});
 
 // Run 10 rollouts of the given policy, return average total reward.
 var run = function(policy, samples, name) {
   var result = timeit(function() {
     return Infer({model() {
-      // Uncomment below to use a ground truth reward distribution. The policy
-      // doesn't use this information because the condition statement happens 
-      // outside of its own inference.
-      // var truth = [0, -5, 15, -5, 15, -5, 5, 5, 5, -5, -5, -15, 5, -5, -15, 15, -5]
-      // map(function(i) {condition(nodeReward(i) == truth[i])}, _.range(truth))
       simulate(policy);
     }, 
-    method: 'forward', samples: samples || 10,
+    method: 'rejection', samples: samples || 10,
       // method: 'enumerate'  // integrate out all possible outcomes (slow!)
     });
   });
@@ -55,80 +54,41 @@ var testParams = function(mu, sigma) {
   run(policy, 1000, 'N('+mu+', '+sigma+')')
 };
 
-var cumsum = function (xs) {
-  var acf = function (n, acc) {
-    acc.concat((acc.length > 0 ? _.last(acc) : 0) + n)
-  }
-  reduce(acf, [], xs.reverse());
-}
 
-// Work-in-progress learning Q function by Monte Carlo regression.
-var inferWeights = function() {
-  // This should be a list of human stateAction pairs.
-  var stateActions = [[env.initialState, 1]]
-  Infer({model() {
-    // Sample weights and create Q function and softmax Q policy.
-    var weights = repeat(5, function() {gaussian(0, 2)});
-    var Q = makeQ_meta(weights);
-    var policy = softmaxQPolicy(Q, 1);
-    var sigma = gamma(1, 1); // sd of empirical Q distribution
 
-    // Observe 5 rollouts for the sampled weights.
-    repeat(5, function() {
-      // Sample an empirical state and action, then execute it.
-      var sa = uniformDraw(stateActions);
-      var state = sa[0], action = sa[1];
-      var newState = transition(state, action);
-      var r = reward(state, action);
 
-      // Follow the softmaxQ policy after that initial action.
-      var rollout = simulate(policy, newState);
-      var trueQs = cumsum(rollout.rewards).reverse();
+// var result = timeit(function() {
+//   sample(inferWeights())
+// });
+// console.log(result)
 
-      // Observe the empirical Q for the sampled state and action.
-      // This could be repeated to upweight the importance of the
-      // empirical state actions in the regression.
-      var predictQ = Q(state, action);
-      observe(Gaussian({mu: r + trueQs[0], sigma}), predictQ)
+// var weights = result.value.weights;
+// // // var weights = [ -0.034821394751660226, 4.177078845688222, 1.216868835535616, 6.726366072163112, -1.1604972774449753 ];
+// run(maxQPolicy(makeQ_meta(weights)), 10000, 'SMC')
+// run(maxQPolicy(makeQ_meta([-4.5318, -0.47478, 30.0, 30.0, -9.20915])), 10000, 'BO')
 
-      // Observe the empirical Qs for the remainder of the rollout.
-      map(function(i) {
-        var predictQ = Q(rollout.states[i], rollout.actions[i]);
-        observe(Gaussian({mu: trueQs[i], sigma}), predictQ);
-      }, _.range(trueQs.length))
-    });
-    return {weights, sigma}
-  },
-  // method: 'SMC', particles: 100, rejuvSteps: 1
-  method: 'SMC', particles: 10000
-  // method: 'MCMC', kernel: 'HMC', samples: 1000, onlyMAP: true
+var state = L.updateList(env.initialState, 1, 5)
+timeit(function() {
+  // calculatePR({state: env.initialState, action: 1})
+  VPI_full(state)
 })
-};
-
-
-var result = timeit(function() {
-  sample(inferWeights())
-});
-console.log(result)
-var weights = result.value.weights;
-run(maxQPolicy(makeQ_meta(weights)), 1000, 'SMC')
-
-// run(maxQPolicy(makeQ_meta([29.36747, -3.78976, 30.0, 16.27864, -0.22261])), 1000, 'Python')
 
 
 
+// run(maxQPolicy(makeQ_meta([-4.5318, -0.47478, 30.0, 30.0, -9.20915])), 1)
 
 
 
-// var state = [0, -5, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN];
-// var state = env.initialState
+// var state = [0, 5, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN];
+// // var state = env.initialState;
 // console.log([
-//   Q_meta(env.initialState, 1),
+//   globalStore.cost,
 //   VOC_1(state, 2),
 //   VPI_action(state, 2),
 //   VPI_full(state),
 //   termValue(state)
 // ])
+
 
 
 // var infer = function() {
