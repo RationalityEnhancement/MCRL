@@ -4,21 +4,13 @@ function VPI=valueOfPerfectInformationBernoulli(alpha,beta,r_correct,r_wrong)
 %beta: beta parameter of the Bernoulli distribtion over the probability of the light being on
 %c: index of the action about which perfect information is being obtained
 
-if not(exist('r_correct','var'))
-    r_correct=1;
-end
-
-if not(exist('r_wrong','var'))
-    r_correct=-1;
-end
-
 %E_correct=[alpha,beta]/(alpha+beta);
 %[max_val,max_pos]=max(E_correct);
 
 EV_original_preference =...
-    @(p) (alpha>beta)*(p*r_correct+(1-p)*r_wrong)+... %if on seems more likely than off
-    (beta>alpha)*((1-p)*r_correct+p*r_wrong)+... %if off seems more likely than on
-    (alpha==beta)*(0.5*r_correct+0.5*r_wrong); %if both seem equally likely
+    @(p) (alpha>beta)*(p*r_correct+(1-p)*r_wrong)+... %
+    (beta>alpha)*((1-p)*r_correct+p*r_wrong)+...
+    (alpha==beta)*(0.5*r_correct+0.5*r_wrong);
 
 
 VPI = integral(@(x) betapdf(x,alpha,beta).*... %probability of p
