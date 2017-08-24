@@ -2,7 +2,8 @@ function VPI=valueOfPerfectInformationBernoulli(alpha,beta,r_correct,r_wrong)
 %alpha: alpha parameter of the Bernoulli distributions over the
 %probability of the light being on
 %beta: beta parameter of the Bernoulli distribtion over the probability of the light being on
-%c: index of the action about which perfect information is being obtained
+%r_correct: reward for making an correct prediction
+%r_wrong: reward for making an incorrect prediction
 
 if not(exist('r_correct','var'))
     r_correct=1;
