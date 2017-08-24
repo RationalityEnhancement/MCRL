@@ -420,8 +420,8 @@ initializeExperiment = function() {
       preamble: function() {
         return markdown("# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance, you will be awarded a bonus of\n**$" + (calculateBonus().toFixed(2)) + "**.\n\nPlease briefly answer the questions below before you submit the HIT.");
       },
-      questions: ['How did you go about planning the route of the airplane?', 'Did you learn anything about how to plan better?'],
-      rows: [4, 4],
+      questions: ['How did you go about planning the route of the airplane?', 'Did you learn anything about how to plan better?', 'How old are you?', 'Which gender do you identify with?'],
+      rows: [4, 4, 1, 1],
       button: 'Submit HIT'
     });
   }
