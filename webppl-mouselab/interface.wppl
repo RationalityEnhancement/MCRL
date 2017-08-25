@@ -1,0 +1,11 @@
+
+
+
+
+
+var loop = function(request) {
+  (request == 'probs' ?
+   loop(callAsync(globalStore.toJS, probs())) :
+   loop(callAsync(globalStore.toJS, 'none'))
+  )
+loop('initialize')

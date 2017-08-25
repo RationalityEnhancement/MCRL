@@ -3,7 +3,7 @@ import os
 
 class Compensator(object):
     """Tools for compensating MTurk workers."""
-    def __init__(self, use_sandbox=False, stdout_log=False, verbose=True,
+    def __init__(self, use_sandbox=False, stdout_log=False, verbose=1,
                  verify_mturk_ssl=True, aws_key=None, aws_secret_key=None, ):
 
         self.verbose = verbose
@@ -60,11 +60,11 @@ class Compensator(object):
         r = self.request('ApproveAssignment',
                          AssignmentId=assignment_id)
         if r.valid:
-            self._log('Approved assignment {}'.format(assignment_id))
+            self._log(2, 'Approved assignment {}'.format(assignment_id))
         elif r.lookup('CurrentState') == 'Approved':
-            self._log('Already approved {}'.format(assignment_id))
+            self._log(2, 'Already approved {}'.format(assignment_id))
         else:
-            self._log('Error approving {}'.format(assignment_id))
+            self._log(1, 'Error approving {}'.format(assignment_id))
             return r
 
     def grant_bonus(self, worker_id, assignment_id, bonus, repeat=False):
@@ -77,7 +77,7 @@ class Compensator(object):
             previous = self.request('GetBonusPayments',
                                     AssignmentId=assignment_id)
             if int(previous.lookup('NumResults')) > 0:
-                self._log('Skipping previously bonused worker {}'.format(worker_id))
+                self._log(2, 'Skipping previously bonused worker {}'.format(worker_id))
                 return
         r = self.request('GrantBonus',
                          WorkerId=worker_id,
@@ -85,9 +85,9 @@ class Compensator(object):
                          BonusAmount={'Amount': bonus, 'CurrencyCode': 'USD'},
                          Reason='Performance bonus')
         if r.valid:
-            self._log('Bonused ${} to worker {}'.format(bonus, worker_id))
+            self._log(2, 'Bonused ${} to worker {}'.format(bonus, worker_id))
         else:
-            self._log('Error assigning bonus {} to worker {}, assignment {}'
+            self._log(1, 'Error assigning bonus {} to worker {}, assignment {}'
                      .format(bonus, worker_id, assignment_id))
             return r
 
@@ -97,8 +97,8 @@ class Compensator(object):
             self.approve(row.assignment_id)
             self.grant_bonus(row.worker_id, row.assignment_id, row.bonus)
 
-    def _log(self, *msg):
-        if self.verbose:
+    def _log(self, verb, *msg):
+        if self.verbose >= verb:
             print('Compensator:', *msg)
 
 # ============================================= #
@@ -282,11 +282,13 @@ if __name__ == '__main__':
         help='Version code e.g. 1A.0'
     )
     args = parser.parse_args()
-    comp = Compensator()
+    comp = Compensator(verbose=2)
     identifiers = pd.read_csv('data/human_raw/{}/identifiers.csv'.format(args.version))
     pdf = pd.read_csv('data/human/{}/participants.csv'.format(args.version))
     pdf = pdf.join(identifiers.set_index('pid'))
     for i, row in pdf.iterrows():
         comp.approve(row.assignment_id)
+        if args.version == '2.2B':
+            row.bonus += 1
         if row.bonus > 0:
             comp.grant_bonus(row.worker_id, row.assignment_id, round(row.bonus, 2))

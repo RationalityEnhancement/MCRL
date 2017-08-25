@@ -21,6 +21,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
   SIZE = undefined
   DEMO_SPEED = 1000
   MOVE_SPEED = 500
+  UNKNOWN = '__'
+  TERM_ACTION = '__TERM_ACTION__'
 
 
   fabric.Object::originX = fabric.Object::originY = 'center'
@@ -82,10 +84,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     obj
 
   KEYS = _.mapObject
-    up: 'uparrow'
-    down: 'downarrow',
-    right: 'rightarrow',
-    left: 'leftarrow',
+    2: 'uparrow'
+    0: 'downarrow',
+    1: 'rightarrow',
+    3: 'leftarrow',
     jsPsych.pluginAPI.convertKeyCharacterToKeyCode
 
 
@@ -97,8 +99,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     constructor: (config) ->
       {
         @display  # html display element
+
         @graph  # defines transition and reward functions
         @layout  # defines position of states
+        @tree=null
         @initial  # initial state of player
 
         @stateLabels=null  # object mapping from state names to labels
@@ -115,7 +119,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @keys=KEYS  # mapping from actions to keycodes
         @trialIndex=TRIAL_INDEX  # number of trial (starts from 1)
         @playerImage='static/images/plane.png'
-        SIZE=120  # determines the size of states, text, etc...
+        SIZE=110  # determines the size of states, text, etc...
 
         leftMessage=null
         centerMessage='&nbsp;'
@@ -125,6 +129,62 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @minTime=(if DEBUG then 5 else 45)
         @feedback=true
       } = config
+
+      @initial = 0
+      @tree =  [ 
+         [ 1, 5, 9, 13 ],
+         [ 2 ],
+         [ 3, 4 ],
+         [],
+         [],
+         [ 6 ],
+         [ 7, 8 ],
+         [],
+         [],
+         [ 10 ],
+         [ 11, 12 ],
+         [],
+         [],
+         [ 14 ],
+         [ 15, 16 ],
+         [],
+         [] ]
+      @transition = [
+       { '0': 1, '1': 5, '2': 9, '3': 13 },
+       { '0': 2 },
+       { '1': 3, '3': 4 },
+       {},
+       {},
+       { '1': 6 },
+       { '0': 8, '2': 7 },
+       {},
+       {},
+       { '2': 10 },
+       { '1': 12, '3': 11 },
+       {},
+       {},
+       { '3': 14 },
+       { '0': 15, '2': 16 },
+       {},
+       {} ]
+      @layout =    [ [ 0, 0 ],
+         [ 0, 1 ],
+         [ 0, 2 ],
+         [ 1, 2 ],
+         [ -1, 2 ],
+         [ 1, 0 ],
+         [ 2, 0 ],
+         [ 2, -1 ],
+         [ 2, 1 ],
+         [ 0, -1 ],
+         [ 0, -2 ],
+         [ -1, -2 ],
+         [ 1, -2 ],
+         [ -1, 0 ],
+         [ -2, 0 ],
+         [ -2, 1 ],
+         [ -2, -1 ] ]
+        
 
       if not leftMessage?
         leftMessage = "Round: #{TRIAL_INDEX}/#{N_TRIALS}"
@@ -153,6 +213,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         rt: []
         actions: []
         actionTimes: []
+        beliefs: []
+        metaActions: []
         queries: {
           click: {
             state: {'target': [], 'time': []}
@@ -199,7 +261,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         id: 'mouselab-msg-bottom'
         html: lowerMessage or '&nbsp'
       ).appendTo @display
-      
+
       mdp = this
       LOG_INFO 'new MouselabMDP', this
 
@@ -211,7 +273,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         </div>
       </div>
       """
-
 
     runDemo: () =>
       @feedback = false
@@ -232,20 +293,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             do interval.stop
             # window.clearInterval ID
 
-      # act = () =>
-      #   if ifvisible.now()
-      #     console.log 'foo'
-      #     a = actions[i]
-      #     if a.is_click
-      #       @clickState @states[a.state], a.state
-      #     else
-      #       s = _.last @data.path
-      #       @handleKey s, a.move
-      #     i += 1
-      #     if i is actions.length
-      #       window.clearInterval ID
 
-      # ID = window.setInterval act, DEMO_SPEED
     # ---------- Responding to user input ---------- #
 
     # Called when a valid action is initiated via a key press.
@@ -253,8 +301,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       LOG_DEBUG 'handleKey', s0, a
       @data.actions.push a
       @data.actionTimes.push (Date.now() - @initTime)
-
-      [r, s1] = @getOutcome s0, a
+      unless @disableClicks
+        @updatePR TERM_ACTION
+        @disableClicks = true
+      s1 = @transition[s0][a]
+      r = @stateRewards[s1]
       LOG_DEBUG "#{s0}, #{a} -> #{r}, #{s1}"
 
       s1g = @states[s1]
@@ -271,14 +322,28 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Called when a state is clicked on.
     clickState: (g, s) =>
+      if @disableClicks
+        return
       LOG_DEBUG "clickState #{s}"
       if @complete or s is @initial
         return
-      registerClick s
       if @stateLabels and @stateDisplay is 'click' and not g.label.text
         @addScore -@stateClickCost
-        g.setLabel (@getStateLabel s)
+        r = @getStateLabel s
+        g.setLabel r
         @recordQuery 'click', 'state', s
+        delay 0, => @updatePR (parseInt s), r
+
+    updatePR: (action, r) ->
+      state = @beliefState.slice()
+      @PR = @PR.then (prevPR) =>
+        arg = {state, action}
+        callWebppl('PR', arg).then (newPR) ->
+          prevPR + newPR
+
+      unless action is TERM_ACTION
+        @beliefState[action] = r
+        @data.beliefs.push @beliefState.slice()
 
     mouseoverState: (g, s) =>
       LOG_DEBUG "mouseoverState #{s}"
@@ -334,11 +399,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     #   else
     #     @graph[s0][a]
 
-    getOutcome: (s0, a) =>
-      [r, s1] = @graph[s0][a]
-      if @stateRewards
-        r = @stateRewards[s1]
-      return [r, s1]
+    # getOutcome: (s0, a) =>
+    #   return 1
+    #   [r, s1] = @graph[s0][a]
+    #   if @stateRewards
+    #     r = @stateRewards[s1]
+    #   return [r, s1]
 
     recordQuery: (queryType, targetType, target) =>
       @canvas.renderAll()
@@ -348,20 +414,29 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @data.queries[queryType][targetType].time.push Date.now() - @initTime
 
     displayFeedback: (a, s1) =>
+      # @arrive s1
+      # return
+      @PR.then (pr) =>
+        console.log "total PR = #{pr}"
+        @arrive s1
+      return 
+
       if not @feedback
         $('#mdp-feedback').css(display: 'none')
         @arrive s1
+        return
 
-      result = registerMove a
+      
       result.delay = Math.round result.delay  
       console.log 'feedback', result
     
-      showCriticism = result.delay>1
+      showCriticism = result.delay>=1
       if PARAMS.PR_type is 'none'
         result.delay = switch PARAMS.info_cost
           when 0.01 then [null, 4, 0, 1][@data.actions.length]
           when 1.00 then [null, 3, 0, 1][@data.actions.length]
           when 2.50 then [null, 15, 0, 3][@data.actions.length]
+          when 1.0001 then [null, 2, 0, 1][@data.actions.length]
             
       @data.delays.push result.delay
       @data.planned_too_little.push result.planned_too_little
@@ -371,6 +446,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             
       redGreenSpan = (txt, val) ->
         "<span style='color: #{redGreen val}; font-weight: bold;'>#{txt}</span>"
+
+
       
       if PARAMS.message
           if PARAMS.PR_type is 'objectLevel'                
@@ -391,8 +468,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                 else
                   if result.planned_too_much and showCriticism
                       head = redGreenSpan "You gathered too much information.", -1                    
-                  else                      
-                      head = redGreenSpan "You gathered the right amount of information.", 1
+                  else
+                      if !result.planned_too_much & !result.planned_too_little        
+                        head = redGreenSpan "You gathered the right amount of information.", 1
                       
                       if result.information_used_correctly and showCriticism
                         head += redGreenSpan " But you didn't prioritize the most important locations.", -1
@@ -455,7 +533,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             @freeze = false
             $('#mdp-feedback').css(display: 'none')
             @arrive s1
-          ), (if DEBUG then 1000 else result.delay * 1000)
+          ), (if false then 1000 else result.delay * 1000)
       else
         $('#mdp-feedback').css(display: 'none')
         @arrive s1
@@ -467,12 +545,13 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Called when the player arrives in a new state.
     arrive: (s) =>
+      @PR = new Promise (resolve) -> resolve(0)
       LOG_DEBUG 'arrive', s
       @data.path.push s
 
       # Get available actions.
-      if @graph[s]
-        keys = (@keys[a] for a in (Object.keys @graph[s]))
+      if @transition[s]
+        keys = (@keys[a] for a in (Object.keys @transition[s]))
       else
         keys = []
       if not keys.length
@@ -503,7 +582,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     run: =>
       LOG_DEBUG 'run'
-      meta_MDP.init @trial_i
+      # meta_MDP.init @trial_i
       do @buildMap
       do @startTimer
       fabric.Image.fromURL @playerImage, ((img) =>
@@ -549,27 +628,49 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Constructs the visual display.
     buildMap: =>
-      # Resize canvas.
-      [width, height] = do =>
+      do =>
         [xs, ys] = _.unzip (_.values @layout)
-        [(_.max xs) + 1, (_.max ys) + 1]
-      @canvasElement.attr(width: width * SIZE, height: height * SIZE)
+
+        minx = _.min xs
+        miny = _.min ys
+
+        xs = xs.map((x) -> x - minx)
+        ys = ys.map((y) -> (y - miny))
+
+        @layout = _.zip xs, ys
+
+        width = (_.max xs) + 1
+        height = (_.max ys) + 1
+
+        @canvasElement.attr(width: width * SIZE, height: height * SIZE)
+
       @canvas = new fabric.Canvas 'mouselab-canvas', selection: false
 
-      @states = {}
-      for s, location of @layout
-        [x, y] = location
-        @states[s] = @draw new State s, x, y,
+      @states = []
+      @beliefState = []
+      @layout.forEach (loc, idx) =>
+        @beliefState.push UNKNOWN
+        [x, y] = loc
+        @states.push @draw new State idx, x, y,
           fill: '#bbb'
-          label: if @stateDisplay is 'always' then (@getStateLabel s) else ''
+          # label: if @stateDisplay is 'always' then (@getStateLabel s) else ''
+          label: ''
+      @beliefState[0] = 0
+      @data.beliefs.push @beliefState.slice()
 
-      LOG_DEBUG '@graph', @graph
-      LOG_DEBUG '@states', @states
+      # LOG_DEBUG '@graph', @graph
+      LOG_INFO '@states', @states
 
-      for s0, actions of @graph
-        for a, [r, s1] of actions
-          @draw new Edge @states[s0], r, @states[s1],
-            label: if @edgeDisplay is 'always' then @getEdgeLabel s0, r, s1 else ''
+      @tree.forEach (s1s, s0) =>
+        s1s.forEach (s1) =>
+          @draw new Edge @states[s0], 0, @states[s1],
+            # label: if @edgeDisplay is 'always' then @getEdgeLabel s0, r, s1 else ''
+            label: ''
+
+      # for s0, actions of @graph
+      #   for a, [r, s1] of actions
+      #     @draw new Edge @states[s0], r, @states[s1],
+      #       label: if @edgeDisplay is 'always' then @getEdgeLabel s0, r, s1 else ''
 
 
 
@@ -582,7 +683,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       # else
       SCORE += @data.score
       @lowerMessage.html """
-        So far, you've earned a bonus of $#{calculateBonus()}
+        So far, you've earned a bonus of $#{calculateBonus().toFixed(2)}
         <br>
         <b>Press any key to continue.</b><e
       """

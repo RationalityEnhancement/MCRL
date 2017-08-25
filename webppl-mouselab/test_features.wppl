@@ -1,0 +1,183 @@
+// ========== DEMOS ========== //
+
+var first_click_demo = function(args) {
+  console.log('\n=== Consider clicking on a depth-1 node ===')
+
+  console.log('observationValue of acting without observation')
+  termValue(initialState)
+
+  console.log('\nmyopic VOC click depth 1')
+  expectedObservationValue([0,
+   [[_O_, [[___, [[___, []], [___, []]]]]],
+    [___, [[___, [[___, []], [___, []]]]]],
+    [___, [[___, [[___, []], [___, []]]]]],
+    [___, [[___, [[___, []], [___, []]]]]]]])
+  VOC1(initialState, 1)
+
+  // console.log('\nVPI action click depth 1')
+  // expectedObservationValue([0,
+  //  [[_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+  //   [___, [[___, [[___, []], [___, []]]]]],
+  //   [___, [[___, [[___, []], [___, []]]]]],
+  //   [___, [[___, [[___, []], [___, []]]]]]]])
+
+  console.log('\nVPI full')
+  expectedObservationValue([0,
+   [[_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]]]])
+  VPIfull(initialState)
+
+  return null
+};
+
+var second_click_demo = function(args) {
+  console.log('\n=== Value of a depth-1 node is 2, consider clicking another depth-1 node ===')
+
+  console.log('observationValue of acting without observation')
+  expectedObservationValue([0,
+   [[ 2 , [[___, [[___, []], [___, []]]]]],
+    [___, [[___, [[___, []], [___, []]]]]],
+    [___, [[___, [[___, []], [___, []]]]]],
+    [___, [[___, [[___, []], [___, []]]]]]]])
+  
+  console.log('\nmyopic VOC click another depth 1')
+  expectedObservationValue([0,
+   [[ 2 , [[___, [[___, []], [___, []]]]]],
+    [_O_, [[___, [[___, []], [___, []]]]]],
+    [___, [[___, [[___, []], [___, []]]]]],
+    [___, [[___, [[___, []], [___, []]]]]]]])
+
+  console.log('\nVPI action click another depth 1')
+  expectedObservationValue([0,
+   [[ 2 , [[___, [[___, []], [___, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [___, [[___, [[___, []], [___, []]]]]],
+    [___, [[___, [[___, []], [___, []]]]]]]])
+
+  console.log('\nVPI full')
+  expectedObservationValue([0,
+   [[ 2 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]]]])    
+};
+
+var vpi_demo = function(args) {
+  console.log('\n=== VPI full for clicking all depth-1 nodes ===')
+  expectedObservationValue([0,
+   [[_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]]]])
+
+  expectedObservationValue([0,
+   [[ 1 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]]]])
+
+  expectedObservationValue([0,
+   [[ 1 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 2 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]]]])
+
+  expectedObservationValue([0,
+   [[ 1 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 2 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 0 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]]]])
+
+  expectedObservationValue([0,
+   [[ 1 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 2 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 0 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 5 , [[_O_, [[_O_, []], [_O_, []]]]]]]])
+
+  expectedObservationValue([0,
+   [[ 5 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]]]])
+
+  expectedObservationValue([0,
+   [[ 5 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 0 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]]]])
+
+  expectedObservationValue([0,
+   [[ 5 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 0 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 2 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [_O_, [[_O_, [[_O_, []], [_O_, []]]]]]]])
+
+  expectedObservationValue([0,
+   [[ 5 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 0 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 2 , [[_O_, [[_O_, []], [_O_, []]]]]],
+    [ 1 , [[_O_, [[_O_, []], [_O_, []]]]]]]])
+};
+
+
+var compare_voc_demo = function() {
+    console.log('child')
+    expectedObservationValue([0,
+     [[_O_ , [[___, [[___, []], [___, []]]]]],
+      [___, [[___, [[___, []], [___, []]]]]],
+      [___, [[___, [[___, []], [___, []]]]]],
+      [___, [[___, [[___, []], [___, []]]]]]]])
+
+    console.log('leaf')
+    expectedObservationValue([0,
+     [[___, [[___, [[___, []], [_O_, []]]]]],
+      [___, [[___, [[___, []], [___, []]]]]],
+      [___, [[___, [[___, []], [___, []]]]]],
+      [___, [[___, [[___, []], [___, []]]]]]]])
+};
+
+first_click_demo();
+// second_click_demo()
+// vpi_demo()
+// compare_voc_demo()
+null
+
+/* OUTPUT: 
+
+=== Consider clicking on a depth-1 node ===
+observationValue of acting without observation
+observationValue: 2.77   time: 13
+
+myopic VOC click depth 1
+observationValue: 3.44   time: 3
+
+VPI action click depth 1
+observationValue: 4.6   time: 16
+
+VPI full
+observationValue: 7.19   time: 848
+
+=== Value of a depth-1 node is 2, consider clicking another depth-1 node ===
+observationValue of acting without observation
+observationValue: 3.84   time: 1
+
+myopic VOC click another depth 1
+observationValue: 4.18   time: 0
+
+VPI action click another depth 1
+observationValue: 5.09   time: 2
+
+VPI full
+observationValue: 7.33   time: 517
+
+=== VPI full for clicking all depth-1 nodes ===
+observationValue: 7.19   time: 1
+observationValue: 7.05   time: 521
+observationValue: 7.2   time: 300
+observationValue: 6.9   time: 196
+observationValue: 8.55   time: 134
+8.552446461387799
+[Finished in 4.2s]
+*/

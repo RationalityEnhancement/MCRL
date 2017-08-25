@@ -1,0 +1,210 @@
+// Defines the mouselab meta-MDP and policies for solving it.
+
+var utils = webpplMouselab;
+var TERM_ACTION = '__TERM_ACTION__';
+var TERM_STATE = '__TERM_STATE__';
+var UNKNOWN = '__';
+var INITIAL_NODE = 0
+
+// ============================== //
+// ========= Object MDP ========= //
+// ============================== //
+var env = utils.buildEnv();
+var tree = env.tree;
+var nodes = _.range(tree.length);
+var children = function(node) {
+  tree[node]
+};
+
+
+var vals = function(mu,sigma) {
+  // Temporarily hardcoding the values...
+  // map(function(x) {mu + x * sigma}, [-2, -1, 1, 2])
+  // [-15, -5, 5, 15]
+  [-20.0, -12.0, -4.0, 4.0, 12.0, 20.0]
+};
+
+var probs = function() {
+  // [0.159,  0.341,  0.341,  0.159]
+  [0.055, 0.157, 0.288, 0.288, 0.157, 0.055]
+};
+
+globalStore.cost = -1
+globalStore.reward = Categorical({vs: vals(1, 2),
+                                  ps: probs()});
+
+// The true reward at a given state. They are memoized, allowing one to
+// condition on certain outcomes in an outer inference
+// e.g. run() in main.wppl
+// var truth = [0.0, -15.0, 5.0, 5.0, 15.0, 15.0, 5.0, -5.0, 5.0, -15.0, 5.0, -15.0, 15.0, 5.0, -5.0, -5.0, 5.0];
+var nodeReward = mem(function(node) {
+  node == INITIAL_NODE ? 0 : sample(globalStore.reward)
+});
+
+// The expected reward at a node from the agent's perspective.
+var expectedNodeReward = function(state, node) {
+  state[node] == UNKNOWN ?
+  expectation(globalStore.reward) :
+  state[node]
+};
+
+// Like a Q function, the expected value of reaching a node.
+// Includes reward at that node plus expected value of the node.
+var nodeQuality = dp.cache(function(state, node) {
+  var best_child_val = (
+    children(node).length == 0 ?
+    0 :
+    _.max(map(function(child) {nodeQuality(state, child)},
+              children(node)))
+  );
+  return expectedNodeReward(state, node) + best_child_val
+}); 
+
+
+// ============================ //
+// ========= Meta MDP ========= //
+// ============================ //
+
+// For now, the agent deterministially receives the expected
+// termination reward when it terminates. Alternatievly,
+// this function could sample from the distribution of returns
+// when following the path with highest expected value.
+var termReward = function(state) {
+  var expectedReward = nodeQuality(state, INITIAL_NODE);
+  return expectedReward
+};
+
+// Observing nodes and terminating observation.
+var transition = function(state, action) {
+  if (state == TERM_STATE) error('transition from term ' + action);
+  if (action == TERM_ACTION) return TERM_STATE;
+  if (state[action] != UNKNOWN) {
+    console.log(actions(state));
+    error('observing state twice\n' + JSON.stringify(state)+' '+action);
+  }
+  return utils.updateList(state, action, nodeReward(action));
+};
+
+// Cost of observation and reward for terminating.
+var reward = function(state, action) {
+  (action == TERM_ACTION ?
+   termReward(state) :
+   globalStore.cost)
+};
+
+// The agent can observe an unobserved node or terminate observation.
+var unobservedNodes = function(state) {
+  filter(function(node) {state[node] == UNKNOWN}, nodes)
+};
+var numObserved = function(state) {
+  filter(function(node) {state[node] != UNKNOWN}, nodes).length - 1
+};
+var actions = function(state) {
+  unobservedNodes(state).concat([TERM_ACTION])
+};
+
+
+// ============================ //
+// ========= Policies ========= //
+// ============================ //
+
+var randPolicy = function() {
+  var policy = function(state) {
+    return uniformDraw(actions(state));
+  };
+  return policy
+};
+
+var fixedNumPolicy = function(nObs) {
+  var numObserved = function(state) {
+    sum(map(function(n) {n != UNKNOWN},
+            _.values(state)))
+  };
+  var policy = function(state) {
+    if (numObserved(state) >= nObs) return TERM_ACTION;
+    else {
+      var options = unobservedNodes(state);
+      return options.length ? uniformDraw(options) : TERM_ACTION
+    }
+  };
+  return policy
+};
+
+// Enumerates all possible sequences of actions and outcomes, exactly
+// computing the optimal policy. It is too slow to run on the full Mouselab
+// environment.
+var enumPolicy = function(opts) {
+  var params = extend({
+    maxExecutions: Infinity,
+    myActions: actions
+  }, opts);
+  var myActions = params.myActions
+
+  var actionAndValue = dp.cache(function(state) {
+    var Q = function(action) {
+      expectation(Infer({model() {
+        var newState = transition(state, action);
+        reward(state, action) + V(newState)
+      }, method: 'enumerate'}))
+    };
+    if (myActions(state).length == 0) error('no actions');
+    var result = maxWith(Q, myActions(state));
+    if (result[0] == -Infinity) error('problem!\n'+myActions(state));
+    return result;
+  });
+
+  var V = utils.cache(function(state) {
+    state == TERM_STATE ? 0 : actionAndValue(state)[1]
+  }, env);
+
+  var policy = function(state) {
+    var a = actionAndValue(state)[0]
+    return a
+  };
+  return policy
+  
+};
+
+var maxQPolicy = function(Q) {
+  var policy = function(state) {
+    // maxWith(f, xs) returns [x, f(x)] such that f(x) is maximized.
+    var actVal = maxWith(function(a) {Q(state, a)}, actions(state))
+    return actVal[0]
+  };
+  return policy
+};
+
+// Takes an action with probability proportional to 
+// exp(alpha * Q(state, action))
+var softmaxQPolicy = function(Q, alpha) {
+  var alpha = alpha || 1
+  var policy = function(state) {
+    var a = uniformDraw(actions(state));
+    factor(alpha * Q(state, a))
+    return a
+  };
+  return policy
+};
+
+// ============================ //
+// ========= Simulate ========= //
+// ============================ //
+
+var simulate = function(policy, initialState) {
+  var initialState = initialState || env.initialState
+  var rec = function(acc) {
+    var state = _.last(acc.states);
+    if (state == TERM_STATE) return acc
+    else {
+      var action = policy(state);
+      var newState = transition(state, action);
+      var r = reward(state, action);
+      return rec({
+        states: acc.states.concat([newState]),
+        rewards: acc.rewards.concat([r]),
+        actions: acc.actions.concat([action])
+      })
+    }
+  };
+  return rec({states: [initialState], rewards: [], actions: []})
+};

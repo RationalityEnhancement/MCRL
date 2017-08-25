@@ -1,4 +1,4 @@
-DEBUG = yes
+DEBUG = false
 
 if DEBUG
   console.log """
@@ -6,8 +6,9 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  console.log 'FOOBAR'
-  # condition = 2
+  condition = 0
+  workerId = ['debugFRED']
+
   
 else
   console.log """
@@ -18,10 +19,13 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 2
+  condition = 0
+  workerId = ['debugFRED']
   # counterbalance = 0
 
 
+_.mapObject = mapObject
+_.compose = _.flowRight
 #SHOW_PARTICIPANT_DATA = '0/108'
 SHOW_PARTICIPANT_DATA = false
 ###
@@ -31,16 +35,20 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-experiment_nr = 3
+experiment_nr = 0.98  # pilot experiment with low-cost and i.i.d. rewards
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
   when 0.6 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','none'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,2.50]}
   when 0.9 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased','none','object_level'], messageTypes: ['full'],infoCosts: [0.01,1.00,2.50]}    
-  when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,2.50]}
+  when 0.95 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['none'],infoCosts: [1.0001]}
+  when 0.96 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased'], messageTypes: ['full'],infoCosts: [1.0001]}
+  when 0.97 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['none'],infoCosts: [1.00]} 
+  when 0.98 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['none'],infoCosts: [1.00]} 
+  when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,1.0001]}
   when 2 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.00]}
   when 3 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','demonstration'], messageTypes: ['full'],infoCosts: [1.00]}        
-  when 4 then IVs = IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['featureBased'], messageTypes: ['full'],infoCosts: [1.00]}
+  when 4 then IVs = IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['full'],infoCosts: [1.00]}
   #when 4 then IVs = {IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.00]}}
   else console.log "Invalid experiment_nr!" 
         
@@ -53,6 +61,8 @@ nrConditions = switch experiment_nr
     when 0 then 6
     when 0.6 then 6
     when 0.9 then 6
+    when 0.95 then 1
+    when 0.96 then 1
     when 1 then 3 * 3
     else nrDelays * nrMessages * nrInfoCosts
 
@@ -74,8 +84,7 @@ for PRType in IVs.PRTypes
                 conditions.messageType.push(message)
                 conditions.infoCost.push(infoCost)
                 conditions.frequencyOfFB.push(frequency)
-        
-  
+          
 
 PARAMS =
   PR_type: conditions.PRType[condition % nrConditions]
@@ -84,13 +93,13 @@ PARAMS =
   message:  conditions.messageType[condition % nrConditions]
   frequencyOfFB: conditions.frequencyOfFB[condition% nrConditions]
   condition: condition
-  bonus_rate: 0.005
-  delay_hours: 18
-  delay_window: 8
+  bonus_rate: 0.01
+  delay_hours: 24
+  delay_window: 4
 
 if experiment_nr is 4
-  STAGE1 = false
-  STAGE2 = true
+  STAGE1 = true
+  STAGE2 = false
   RETURN_TIME = new Date (getTime() + 1000 * 60 * 60 * PARAMS.delay_hours)
 
 # if DEBUG
@@ -98,10 +107,11 @@ if experiment_nr is 4
   # PARAMS.info_cost = 2.50
   # PARAMS.PR_type = 'featureBased'
 
-console.log 'PARAMS', PARAMS
+# console.log 'PARAMS', PARAMS
 COST_LEVEL =
   switch PARAMS.info_cost
     when 0.01 then 'low'
     when 1.00 then 'med'
     when 2.50 then 'high'
+    when 1.0001 then 'high'
     else throw new Error('bad info_cost')

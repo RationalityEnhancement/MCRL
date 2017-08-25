@@ -1,5 +1,9 @@
- 
-savedir = '~/Desktop/Tom_Griffiths/MCRL/experiments/data/stimuli/exp1/0.6/';
+%1. Import data
+import_data2%_exp1A2
+
+%2. Extract state-action sequences.
+trial_properties = ['../../experiments/data/trial_properties_high_cost_condition.mat']; %['trial_properties_',cost_str,'_cost_condition']
+savedir = '../../experiments/data/stimuli/exp1/1A.2/';
 if ~exist(savedir,'dir')
    mkdir(savedir) 
 end
@@ -9,14 +13,16 @@ PR_types = unique(PR_type);
 for p = 1:length(unique(PR_type))
     PR_str = PR_types{p};
 for x = unique(info_cost)'
-    if x == min(unique(info_cost))
+    if length(length(unique(info_cost))) == 1
+        cost_str = '';
+    elseif x == min(unique(info_cost))
         cost_str = 'low';
     elseif x == max(unique(info_cost))
         cost_str = 'high';
     else
         cost_str = 'medium';
     end
-    load(['trial_properties_',cost_str,'_cost_condition'])
+    load(trial_properties)
     idx1 = [data.info_cost1] == x;
     for i = 1:length(data)
         idx2(i) = strcmp(data(i).PR_type1,PR_str);

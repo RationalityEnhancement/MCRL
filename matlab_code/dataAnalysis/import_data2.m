@@ -15,9 +15,9 @@ if strcmp(getenv('USER'),'paulkrueger')
 elseif strcmp(getenv('USER'), 'priyamdas')
     filename = 'C:\Users\piichan\Documents\Berkeley\CoCoSci Lab\mcrl\MCRL\';
 else
-    filename = '~/Dropbox/PhD/Metacognitive RL/';
+    filename = '~/Dropbox/PhD/Metacognitive RL/MCRL/';
 end
-filename = [filename,'experiments/data/human/1B.0/trials.csv'];
+filename = [filename,'experiments/data/human/1B.2/trials.csv'];
 delimiter = ',';
 startRow = 2;
 
@@ -34,7 +34,7 @@ startRow = 2;
 %	column10: double (%f)
 %   column11: double (%f)
 % For more information, see the TEXTSCAN documentation.
-formatSpec = '%f%f%f%q%q%f%f%q%f%f%f%q%q%q%q%[^\n\r]';
+formatSpec = '%f%f%f%q%q%f%f%q%f%f%q%q%q%q%[^\n\r]';
 
 %% Open the text file.
 fileID = fopen(filename,'r');
@@ -64,12 +64,12 @@ trial_index = dataArray{:, 6};
 trial_i = dataArray{:, 7};
 delays = dataArray{:, 8};
 score = dataArray{:, 9};
-relative_score = dataArray{:, 10};
-n_click = dataArray{:, 11};
-clicks = dataArray{:, 12};
-click_times = dataArray{:, 13};
-path = dataArray{:, 14};
-action_times = dataArray{:, 15};
+% relative_score = dataArray{:, 10};
+n_click = dataArray{:, 10};
+clicks = dataArray{:, 11};
+click_times = dataArray{:, 12};
+path = dataArray{:, 13};
+action_times = dataArray{:, 14};
 
 
 %% Clear temporary variables
@@ -88,6 +88,10 @@ for i = 1:length(index)
 end
 
 %%
+if ~exist('nr_trials','var')
+    nr_trials = max(trial_index);
+end
+
 s = 0;
 for i = unique(pid)'
     s = s + 1;
@@ -101,7 +105,7 @@ for i = unique(pid)'
     data(s).trialID = trial_i(idx);
     data(s).delays = delays(idx);
     data(s).score = score(idx);
-    data(s).relative_score = relative_score(idx);
+%     data(s).relative_score = relative_score(idx);
     data(s).n_click = n_click(idx);
     data(s).clicks = clicks(idx);
     data(s).click_times = click_times(idx);
@@ -113,6 +117,7 @@ for i = unique(pid)'
     data(s).clicks1 = clicks1(idx);
     data(s).clicks2 = clicks2(idx);
     data(s).clicks3 = clicks3(idx);
+    data(s).trial_i = trial_i(idx);
     
     for j = 1:nr_trials
         data(s).click_locations_before_first_move{data(s).trialID(j)+1} = data(s).clicks1{j};

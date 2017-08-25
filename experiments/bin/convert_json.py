@@ -68,7 +68,12 @@ def mat_to_standard():
                 try:
                     actions[d] = [round(a['reward'], 2), a['state']]
                 except:
-                    import ipdb, time; ipdb.set_trace(); time.sleep(0.5)
+                    if a['reward'] == '_NaN_':
+                        print('Error: reward is NaN. Exiting')
+                        exit(1)
+                    else:
+                        raise
+                    # import ipdb, time; ipdb.set_trace(); time.sleep(0.5)
             graph[name] = actions
 
             x, y = s['location']
@@ -103,6 +108,8 @@ def mat_to_standard():
         with open(infile) as f:
             print('reading', infile)
             data = json.load(f)
+            if len(data) == 1:
+                data = data[0]
         
         trials = [parse_trial(t, i) for i, t in enumerate(data)]
 

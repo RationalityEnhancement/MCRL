@@ -10,7 +10,6 @@ Demonstrates the jsych-mdp plugin
 
 # Globals.
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
-
 isIE = false || !!document.documentMode
 TRIALS = undefined
 TEST_TRIALS = undefined
@@ -20,9 +19,10 @@ N_TEST = 6
 N_TRAIN = 10
 N_TRIALS = 16
 SCORE = 0
+STRUCTURE = undefined
 calculateBonus = undefined
 
-
+train = undefined
 
 # if 'hidden' in document
 #   document.addEventListener("visibilitychange", onchange);
@@ -68,10 +68,12 @@ $(window).on 'load', ->
 
   delay 300, ->
     if SHOW_PARTICIPANT_DATA
-      expData = loadJson "static/json/data/1B.0/stimuli/#{COST_LEVEL}_cost.json"
-    else    
-      expData = loadJson "static/json/#{COST_LEVEL}_cost.json"
-    
+      TRIALS = loadJson "static/json/data/1B.0/stimuli/#{COST_LEVEL}_cost.json"
+    else
+      TRIALS = loadJson "static/json/#{COST_LEVEL}_cost.json"
+      STRUCTURE = loadJson "static/json/structure.json"
+      console.log 'STRUCTURE', STRUCTURE
+      console.log 'TRIALS', TRIALS
     condition_nr = condition % nrConditions
     # PARAMS=
     #   PR_type: conditions.PRType[condition_nr]
@@ -82,14 +84,16 @@ $(window).on 'load', ->
     #   condition: condition_nr
     #   start_time: new Date
     
-    TRIALS = expData.blocks.standard
     idx = _.shuffle (_.range N_TRIALS)
     train_idx = idx[...N_TRAIN]
     TEST_IDX = idx[N_TRAIN...]    
     TRAIN_TRIALS = (TRIALS[i] for i in train_idx)
     TEST_TRIALS = (TRIALS[i] for i in TEST_IDX)
 
-    psiturk.recordUnstructuredData 'params', PARAMS
+    if DEBUG
+      TRAIN_TRIALS = TRIALS
+
+    # psiturk.recordUnstructuredData 'params', PARAMS
     psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
     psiturk.recordUnstructuredData 'condition_nr', condition_nr
 
@@ -143,8 +147,10 @@ initializeExperiment = ->
 
     return_window: ->
       cutoff = new Date (RETURN_TIME.getTime() + 1000 * 60 * 60 * PARAMS.delay_window)
+      tomorrow = if RETURN_TIME.getDate() > (new Date).getDate() then 'tomorrow' else ''
       return """
-        <b>tomorrow between #{format_time RETURN_TIME}
+        <b>#{tomorrow}
+        between #{format_time RETURN_TIME}
         and #{format_time cutoff}</b>
       """
 
@@ -184,8 +190,6 @@ initializeExperiment = ->
 
               <b> In the first #{N_TRAIN} rounds, an expert will demonstrate optimal flight planning.</b> In the remaining #{N_TEST}
               rounds, you will make your own choices.
-
-                <font color="red">Do <b>NOT</b> switch to a different tab while a demonstration is running. If you do, you won't be able to continue the HIT when you return.</font>
               """
             ]
         else if PARAMS.message == "simple"
@@ -304,10 +308,17 @@ initializeExperiment = ->
           return true
       return false
 
+  foobar = _.extend STRUCTURE, {type: 'mouselab-mdp', _init: -> @trialCount = 0}
+  console.log 'foobar', foobar
+  foobar =
+    type: 'mouselab-mdp'
+    _init: -> @trialCount = 0
   class MDPBlock extends Block
     type: 'mouselab-mdp'
-    # playerImage: 'static/images/spider.png'
-    _init: -> @trialCount = 0
+    _init: -> 
+      _.extend(this, STRUCTURE)
+      @trialCount = 0
+
 
 
   #  ============================== #
@@ -322,56 +333,60 @@ initializeExperiment = ->
     type: 'secret-code'
     code: 'elephant'
 
-  check_returning = new Block
-    type: 'text'
-    text: ->
-      worker_id = workerId[0]
-      # worker_id = 'test_worker'
-      # worker_id = 'A34SCRE20A7XV5'
-      stage1 = (loadJson 'static/json/stage1.json')[worker_id]
-      if stage1?
-        console.log 'stage1.return_time', stage1.return_time
-        return_time = new Date stage1.return_time
+  check_returning = do ->
+    console.log 'worker', uniqueId
+    worker_id = uniqueId.split(':')[0]
+    stage1 = (loadJson 'static/json/stage1.json')[worker_id]
+    if stage1?
+      console.log 'stage1.return_time', stage1.return_time
+      return_time = new Date stage1.return_time
+      console.log 'return_time', return_time
 
-        if getTime() > return_time
-          # Redefine test trials to match breakdown established in stage 1.
-          TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
-          SCORE += stage1.score
+      if getTime() > return_time
+        # Redefine test trials to match breakdown established in stage 1.
+        TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
+        SCORE += stage1.score
 
-          return markdown """
+        return new Block
+          type: 'button-response'
+          is_html: true
+          choices: ['Continue']
+          button_html: '<button id="return-continue" class="btn btn-primary btn-lg">%choice%</button>'
+          stimulus: -> markdown """
             # Welcome back
 
             Thanks for returning to complete Stage 2! Your current bonus is
             **$#{calculateBonus().toFixed(2)}**. In this stage you'll have #{N_TEST} rounds to
-            increase your bonus. Unlike in Stage 1, there will be no feedback
-            messages or delays.
+            increase your bonus.
 
             Before you begin, you will review the instructions and take another
             quiz.
-
-            Press **space** to continue.
           """
-        else
-          return markdown """
+      else
+        return new Block
+          type: 'text'
+          cont_key: [null]
+          text: -> markdown """
             # Stage 2 not ready yet
 
             You need to wait #{PARAMS.delay_hours} hours after completing Stage 1 before
             you can begin Stage 2. You can begin the HIT at
-            #{format_time(return_time)} on #{format_date(date)}
-
-            Please return the HIT and come back later.
+            #{format_time(return_time)} on #{format_date(return_time)}
           """
-      else
-        markdown """
+          # **If you return the HIT, you may not be able to take it again later.**
+          # Please leave the HIT open until it is time for you to complete Stage 2.
+    else
+      return new Block
+        type: 'text'
+        cont_key: [null]
+        text: -> markdown """
           # Stage 1 not completed
 
           We can't find you in our database. This is the second part of a two-part
-          experiment. If you did not complete the first stage yesterday, please
-          return this HIT. If you did complete Stage 1 yesterday, please email
-          cocosci.turk@gmail.com and include the secret code you received
-          when you completed that HIT.
+          experiment. If you did not complete the first stage, please
+          return this HIT. If you did complete Stage 1, please email
+          cocosci.turk@gmail.com to report the error.
         """
-
 
   retention_instruction = new Block
     type: 'button-response'
@@ -380,15 +395,15 @@ initializeExperiment = ->
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
     stimulus: ->
       markdown """
-      # You are beginning a two-day experiment
+      # You are beginning a two-part experiment
 
       This experiment has two stages which you will complete in separate HITs.
       The total base payment for both hits is $1.75, plus a **performance-dependent
       bonus** of up to $3.50 ($2.50 is a typical bonus).
 
       Stage 1 takes about 15 minutes, and you will receive $0.75 when you
-      complete it. You will complete Stage 2 in a second HIT, which will be
-      posted tomorrow. You can begin the second HIT any time between #{text.return_window()}.
+      complete it. You will complete Stage 2 in a second HIT.
+      You can begin the second HIT #{text.return_window()}.
       If you do not begin the HIT within this time frame, you will not receive the
       second base payment or any bonus.
 
@@ -416,13 +431,15 @@ initializeExperiment = ->
         your way there, you will visit two intermediate locations. <b>Every
         location you visit will add or subtract money to your account</b>, and
         your task is to earn as much money as possible. <b>To find out how much
-        money you earn or lose in a location, you have to click on it.</b> You
-        can uncover the value of as many or as few locations as you wish.
+        money you earn or lose in a location, you have to click on it.</b>
+
+        You can uncover the value of as many or as few locations as you wish before the first flight.
+        But <b>once you move the airplane to a new location, you can no longer collect any additional information.</b>
 
         #{img('task_images/Slide1.png')}
-
+        
         To navigate the airplane, use the arrows (the example above is non-interactive).
-        You can uncover the value of a location at any time. Click "Next" to proceed.
+        Click "Next" to proceed.
       """
 
       markdown """
@@ -456,8 +473,8 @@ initializeExperiment = ->
            won’t be able to proceed to the next round before the countdown has
            finished, but you can take as much time as you like afterwards.
         2. </b>You will earn <u>real money</u> for your flights.</b>
-           Specifically, for every $10 you earn in the game, we will add 5
-           cents to your bonus. Please note that each and every one of the
+           Specifically, for every $1 you earn in the game, we will add 1
+           cent to your bonus. Please note that each and every one of the
            #{N_TRIALS} rounds counts towards your bonus.
 
         #{img('task_images/Slide3.png')}
@@ -485,7 +502,7 @@ initializeExperiment = ->
       ['$0.01', '$0.05', '$1.00', '$2.50']
       ['At most 1', 'At most 5', 'At most 10', 'At most 15', 'As many or as few as I wish']
       ['1% of my best score on any round'
-       '5 cents for every $10 I earn in each round'
+       '1 cent for every $1 I earn in each round'
        '10% of my best score on any round'
        '10% of my score on a random round']
     ] .concat (if STAGE2 then []
@@ -504,13 +521,12 @@ initializeExperiment = ->
       'True'
       fmtMoney PARAMS.info_cost
       'As many or as few as I wish'
-      '5 cents for every $10 I earn in each round'
+      '1 cent for every $1 I earn in each round'
       'All of the above.'
     ]
     on_mistake: (data) ->
       alert """You got at least one question wrong. We'll send you back to the
                instructions and then you can try again."""
-
 
   instruct_loop = new Block
     timeline: [instructions, quiz]
@@ -531,6 +547,8 @@ initializeExperiment = ->
     leftMessage: -> "Round: #{TRIAL_INDEX}/#{N_TRAIN}"
     demonstrate: PARAMS.PR_type is "demonstration"   
     timeline: TRAIN_TRIALS
+
+  console.log 'train', train
   
   test = new Block
     leftMessage: -> 
@@ -566,6 +584,8 @@ initializeExperiment = ->
         feedback: false
         timeline: TEST_TRIALS
       return tl
+
+  console.log 'test', test
     
       
         
@@ -576,54 +596,79 @@ initializeExperiment = ->
 
         So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
         You will receive this bonus, along with the additional bonus you earn 
-        in Stage 2 when you complete the HIT tomorrow. If you don't complete
-        the HIT tomorrow, you will give up the bonus you have earned.
+        in Stage 2 when you complete the second HIT. If you don't complete
+        the second HIT, you will give up the bonus you have earned.
 
-        The HIT for Stage 2 will have the title "Day 2 of two-day decsion-making experiment"
+        The HIT for Stage 2 will have the title "Part 2 of two-part decision-making experiment"
         Remember, you must begin the HIT #{text.return_window()}.
+        **Note:** The official base pay on mTurk will be $0.01;
+        you'll receive the $1 base pay for Stage 2 as part of your bonus 
+        (in addition to the bonus you earn).
       """
+
     questions: ['If you would like a reminder email, you can optionally enter it here.']
     button: 'Submit HIT'
 
-  finish = new Block
-    type: 'button-response'
-    stimulus: -> 
-      if STAGE1
-        markdown """
-          # You've completed Stage 1
+  if STAGE1
+    finish = new Block
+        type: 'button-response'
+        stimulus: ->     
+            markdown """
+            # You've completed Stage 1
 
-          Remember to come back #{text.return_window()} to complete Stage 2.
-          The HIT will have the same title as this HIT: <# TITLE #>
+            Remember to come back #{text.return_window()} to complete Stage 2.
+            The HIT will be titled "Part 2 of two-part decision-making
+            experiment". **Note:** The official base pay on mTurk will be $0.01;
+            you'll receive the $1 base pay for Stage 2 as part of your bonus 
+            (in addition to the bonus you earn).
 
-          So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
-          You will receive this bonus, along with the additional bonus you earn 
-          in Stage 2 when you complete the HIT tomorrow. If you don't complete
-          the HIT tomorrow, you give up the bonus you have earned.
-        """
-      else 
-        markdown """
-          # You've completed the HIT
+            So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
+            You will receive this bonus, along with the additional bonus you earn 
+            in Stage 2 when you complete the second HIT. If you don't complete
+            the second HIT, you give up the bonus you have already earned.
+            """
+        is_html: true
+        choices: ['Submit HIT']
+        button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'            
+  else
+    finish = new Block
+        type: 'survey-text'
+        preamble: ->
+            markdown """
+            # You've completed the HIT
 
-          Thanks again for participating. We hope you had fun!
+            Thanks for participating. We hope you had fun! Based on your
+            performance, you will be awarded a bonus of
+            **$#{calculateBonus().toFixed(2)}**.
 
-          Based on your performance, you will be
-          awarded a bonus of **$#{calculateBonus().toFixed(2)}**.
-        """
-    is_html: true
-    choices: ['Submit HIT']
-    button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
+            Please briefly answer the questions below before you submit the HIT.
+            """
 
+        questions: [
+            'How did you go about planning the route of the airplane?'
+            'Did you learn anything about how to plan better?'
+            'How old are you?'
+            'Which gender do you identify with?' 
+        ]
+        rows: [4,4,1,1]
+        button: 'Submit HIT'            
+    
 
+  ppl = new Block
+    type: 'webppl'
+    code: 'globalStore.display_element.html(JSON.stringify(flip()))'
+    
   if DEBUG
     experiment_timeline = [
-      # ask_email
-      # retention_instruction
+      # train
+      # test
       # check_returning
       # retention_instruction
       # check_code
       train
-      test
+      # test
       finish
+      # ppl
     ]
   else
     experiment_timeline = do ->
@@ -699,14 +744,16 @@ initializeExperiment = ->
     # show_progress_bar: true
 
     on_finish: ->
+      completion_data =
+        score: SCORE
+        bonus: calculateBonus()
+        return_time: RETURN_TIME?.getTime()
+        test_idx: TEST_IDX
       if DEBUG
         jsPsych.data.displayData()
+        console.log 'completion_data', completion_data
       else
-        completion_data =
-          score: SCORE
-          bonus: calculateBonus()
-          return_time: RETURN_TIME
-          test_idx: TEST_IDX
+
         psiturk.recordUnstructuredData 'completed', completion_data
 
         save_data()

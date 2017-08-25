@@ -102,6 +102,20 @@ For example, `hit create 12 1.00 0.5` creates 12 hits paying $1 each with a time
 
 You can go ahead and press `y` to continue.
 
+## Extending the HIT
+
+It is advisable to start by posting a small number of assignments don't allow for more than 30 assignments to be completed at the same time to avoid the risk of overloading the server. To do this, you can automatically extend the HIT so that there are always 30 assignments available until less than 30 assignments are missing by running
+
+```
+   bin/extend_hit.py HIT_ID 30 N
+```
+from the `experiments` directory where HIT_ID is the ID of the HIT and N is the total number of assignments. For this command to work, your AWS access key and secret key have to be included in your `~/.bash_profile` file like this:
+
+```
+   export AWS_ACCESS_KEY_ID=ABCDE12345
+   export AWS_SECRET_ACCESS_KEY=ABCDE12345
+```
+
 ## Downloading the data
 
 After you've run your experiment, you can download your data to your local computer with the following command:

@@ -1,0 +1,49 @@
+PR_type,bonus,bonus_rate,completed,condition,delay_hours,delay_window,feedback,frequencyOfFB,info_cost,message,pid,score,test_idx,version
+none,1.01,0.005,True,1,18,8,False,after_each_move,1.0001,none,0,202.0,"[13, 6, 9, 15, 8, 3]",1A.2
+none,0.0,0.005,False,2,18,8,False,after_each_move,1.0001,none,1,,,1A.2
+none,0.67,0.005,True,2,18,8,False,after_each_move,1.0001,none,2,134.0,"[11, 8, 7, 13, 14, 4]",1A.2
+none,0.71,0.005,True,1,18,8,False,after_each_move,1.0001,none,3,141.0,"[9, 4, 10, 11, 3, 5]",1A.2
+none,0.0,0.005,False,1,18,8,False,after_each_move,1.0001,none,4,,,1A.2
+none,1.02,0.005,True,2,18,8,False,after_each_move,1.0001,none,5,205.0,"[12, 14, 1, 4, 5, 0]",1A.2
+none,0.95,0.005,True,0,18,8,False,after_each_move,1.0001,none,6,189.0,"[10, 1, 11, 8, 4, 6]",1A.2
+none,0.43,0.005,True,2,18,8,False,after_each_move,1.0001,none,7,86.0,"[1, 14, 8, 4, 10, 2]",1A.2
+none,0.99,0.005,True,1,18,8,False,after_each_move,1.0001,none,8,198.0,"[0, 14, 12, 11, 8, 7]",1A.2
+none,0.0,0.005,False,2,18,8,False,after_each_move,1.0001,none,9,,,1A.2
+none,0.0,0.005,False,2,18,8,False,after_each_move,1.0001,none,10,,,1A.2
+none,0.39,0.005,True,1,18,8,False,after_each_move,1.0001,none,11,77.0,"[7, 12, 3, 2, 1, 10]",1A.2
+none,0.71,0.005,True,0,18,8,False,after_each_move,1.0001,none,12,142.0,"[7, 11, 6, 12, 15, 2]",1A.2
+none,0.96,0.005,True,0,18,8,False,after_each_move,1.0001,none,13,192.0,"[6, 3, 5, 0, 7, 9]",1A.2
+none,0.78,0.005,True,0,18,8,False,after_each_move,1.0001,none,14,155.0,"[1, 3, 2, 11, 12, 0]",1A.2
+none,0.0,0.005,False,0,18,8,False,after_each_move,1.0001,none,15,,,1A.2
+none,1.0,0.005,True,1,18,8,False,after_each_move,1.0001,none,16,200.0,"[7, 1, 5, 12, 2, 9]",1A.2
+none,0.76,0.005,True,2,18,8,False,after_each_move,1.0001,none,17,152.0,"[8, 11, 7, 12, 15, 13]",1A.2
+none,1.03,0.005,True,2,18,8,False,after_each_move,1.0001,none,18,207.0,"[9, 1, 7, 5, 11, 8]",1A.2
+none,0.99,0.005,True,0,18,8,False,after_each_move,1.0001,none,19,198.0,"[11, 10, 1, 13, 3, 8]",1A.2
+none,0.89,0.005,True,0,18,8,False,after_each_move,1.0001,none,20,177.0,"[10, 5, 14, 0, 15, 2]",1A.2
+none,0.64,0.005,True,2,18,8,False,after_each_move,1.0001,none,21,127.0,"[4, 3, 7, 8, 14, 15]",1A.2
+none,0.99,0.005,True,0,18,8,False,after_each_move,1.0001,none,22,197.0,"[0, 4, 1, 2, 15, 12]",1A.2
+none,0.58,0.005,True,2,18,8,False,after_each_move,1.0001,none,23,116.0,"[15, 0, 10, 1, 5, 3]",1A.2
+none,0.96,0.005,True,2,18,8,False,after_each_move,1.0001,none,24,191.0,"[10, 13, 8, 14, 5, 12]",1A.2
+none,0.98,0.005,True,0,18,8,False,after_each_move,1.0001,none,25,195.0,"[8, 12, 7, 10, 4, 14]",1A.2
+none,0.77,0.005,True,1,18,8,False,after_each_move,1.0001,none,26,154.0,"[6, 9, 14, 4, 7, 1]",1A.2
+none,0.0,0.005,False,0,18,8,False,after_each_move,1.0001,none,27,,,1A.2
+none,0.9,0.005,True,0,18,8,False,after_each_move,1.0001,none,28,180.0,"[2, 9, 15, 0, 4, 6]",1A.2
+none,0.86,0.005,True,2,18,8,False,after_each_move,1.0001,none,29,172.0,"[8, 4, 13, 9, 10, 1]",1A.2
+none,0.58,0.005,True,1,18,8,False,after_each_move,1.0001,none,30,116.0,"[8, 13, 12, 11, 2, 6]",1A.2
+none,0.85,0.005,True,1,18,8,False,after_each_move,1.0001,none,31,169.0,"[1, 0, 4, 15, 5, 8]",1A.2
+none,0.67,0.005,True,1,18,8,False,after_each_move,1.0001,none,32,133.0,"[14, 1, 3, 9, 15, 6]",1A.2
+none,0.93,0.005,True,2,18,8,False,after_each_move,1.0001,none,33,185.0,"[4, 9, 8, 1, 13, 12]",1A.2
+none,0.0,0.005,False,1,18,8,False,after_each_move,1.0001,none,34,,,1A.2
+none,0.87,0.005,True,0,18,8,False,after_each_move,1.0001,none,35,173.0,"[4, 6, 8, 14, 1, 11]",1A.2
+none,0.88,0.005,True,2,18,8,False,after_each_move,1.0001,none,36,175.0,"[2, 6, 4, 11, 9, 8]",1A.2
+none,0.72,0.005,True,0,18,8,False,after_each_move,1.0001,none,37,143.0,"[9, 15, 2, 8, 6, 13]",1A.2
+none,0.85,0.005,True,0,18,8,False,after_each_move,1.0001,none,38,169.0,"[2, 15, 6, 4, 3, 8]",1A.2
+none,0.74,0.005,True,2,18,8,False,after_each_move,1.0001,none,39,147.0,"[11, 7, 15, 0, 8, 5]",1A.2
+none,1.03,0.005,True,2,18,8,False,after_each_move,1.0001,none,40,206.0,"[1, 10, 14, 11, 3, 13]",1A.2
+none,1.01,0.005,True,1,18,8,False,after_each_move,1.0001,none,41,202.0,"[7, 13, 11, 6, 14, 1]",1A.2
+none,0.66,0.005,True,2,18,8,False,after_each_move,1.0001,none,42,132.0,"[1, 6, 12, 13, 11, 8]",1A.2
+none,0.47,0.005,True,1,18,8,False,after_each_move,1.0001,none,43,94.0,"[11, 2, 14, 8, 13, 3]",1A.2
+none,0.92,0.005,True,0,18,8,False,after_each_move,1.0001,none,44,183.0,"[0, 5, 8, 10, 1, 3]",1A.2
+none,1.02,0.005,True,1,18,8,False,after_each_move,1.0001,none,45,203.0,"[15, 7, 13, 10, 9, 2]",1A.2
+none,0.83,0.005,True,1,18,8,False,after_each_move,1.0001,none,46,166.0,"[11, 7, 15, 13, 14, 4]",1A.2
+none,0.6,0.005,True,0,18,8,False,after_each_move,1.0001,none,47,120.0,"[15, 11, 7, 13, 9, 0]",1A.2

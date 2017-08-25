@@ -1,4 +1,4 @@
-classdef MouselabMDPMetaMDPNIPS < MDP
+classdef MouselabMDPMetaMDP < MDP
     
     properties
         min_payoff;

@@ -4,6 +4,11 @@
 nr_episodes_evaluation=1;
 addpath('../MatlabTools/')
 
+experiment_name = '1A';
+version = 1;
+
+fast_VOC_approximation = false;
+
 %{
 load PilotExperiment
 nr_trials=numel(experiment);
@@ -43,12 +48,15 @@ name='test_cost';
 %}
 
 costs=[0.01,1,2.50];
+%costs=[0.01,1,1.0001];
 environment={'low_cost_condition','medium_cost_condition','high_cost_condition'};
-names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallActions'};
+%names={'low_cost_VPIallActions','medium_cost_VPIallActions','high_cost_VPIallActions'};
+names={'low_cost_exactVOC1','medium_cost_exactVOC1','high_cost_exactVOC1'};
 
 
 root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/';    
 nb_iter=100;
+%nb_iter=50;
 
 %scaling_factor=2*16/12;
 clear R_total_no_obs
@@ -79,9 +87,10 @@ for c=1:numel(costs)
     
     temp=load([root_dir,'results/BO/BO_c',int2str(100*costs(c)),'n',int2str(nb_iter),names{c},'.mat']);
     
-    learned_policy=@(state,mdp) deterministicPolicy(state,mdp,temp.BO.w_hat);
+    learned_policy=@(state,mdp) deterministicPolicy(state,mdp,temp.BO.w_hat,fast_VOC_approximation);
     no_observation_policy= @(state,mdp) noObservationPolicy(state,mdp);
     
+    satisficing_policy = @(state,mdp) satisficingPolicy(state,mdp);
     
     for t=1:nr_trials
         [R_total,problems{t,c},states{t,c},chosen_actions{t,c},indices(t,c)]=...
@@ -105,9 +114,9 @@ end
 
 score_pi_no_obs = R_total_no_obs;
 
-csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/score_pi_star.csv',ER_hat)
-csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star.csv',avg_nr_observations)
-csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/score_pi_no_obs.csv',R_total_no_obs)
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/score_pi_star',experiment_name,'.',version,'.csv'],ER_hat)
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star',experiment_name,'.',version,'.csv'],avg_nr_observations)
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/score_pi_no_obs',experiment_name,'.',version,'.csv'],R_total_no_obs)
 
 %% Evaluate performance of no-observation policy across all environments
 costs=[0.01,1.60,2.80];
@@ -164,7 +173,9 @@ saveas(fig,'/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/results/RelativeScoreP
 [mean(relative_performace_pi_star);mean(relative_performance_pi_no_obs)]
 
 %% 
-clear
+keep experiment_name version
+
+fast_VOC_approximation = false;
 
 addpath('..')
 addpath('../MatlabTools/')
@@ -174,9 +185,11 @@ nb_iter=[100];
 
 conditions={'lowCost','mediumCost','highCost'};
 
-max_score=csvread('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/optimal.csv');
-min_score=csvread('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/worst.csv');
+max_score=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
+min_score=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
 
+suffix = '_exactVOC1';
+%suffix = '_VPIallActions';
 
 for c=1:length(conditions)
     
@@ -184,7 +197,7 @@ for c=1:length(conditions)
     
     if strcmp(condition,'lowCost')
         root_dir='~/Dropbox/PhD/Metacognitive RL/MCRL/'
-        name='low_cost';%'learnedOnTestDistributionWithCost';
+        name=['low_cost',suffix];%'learnedOnTestDistributionWithCost';
         load low_cost_condition
         %costs=[0.01];
         cost=0.01;
@@ -193,7 +206,7 @@ for c=1:length(conditions)
     
     if strcmp(condition,'mediumCost')
         
-        name='medium_cost';%'learnedOnTestDistributionWithCost';
+        name=['medium_cost',suffix];%'learnedOnTestDistributionWithCost';
         load medium_cost_condition
         %costs=[0.25,0.50,0.75,1];
         cost=1.00;
@@ -202,7 +215,7 @@ for c=1:length(conditions)
     
     if strcmp(condition,'highCost')
         
-        name='high_cost';%'learnedOnTestDistributionWithCost';
+        name=['high_cost',suffix];%'learnedOnTestDistributionWithCost';
         load high_cost_condition
         costs=[1.50,2,2.50,3];
         cost=2.50;
@@ -216,10 +229,10 @@ for c=1:length(conditions)
     %for c=1:length(costs)
     %    cost=costs(c);
     try
-        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(1)),name,'_VPIallActions.mat'] %_VPIallActions
+        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(1)),name,'.mat'] %_VPIallActions
         temp=load(path_to_file)
     catch
-        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(2)),name,'_VPIallActions.mat'] %_VPIallActions
+        path_to_file=[root_dir,'results/BO/BO_c',int2str(100*cost),'n',int2str(nb_iter(2)),name,'.mat'] %_VPIallActions
         temp=load(path_to_file)
     end
     
@@ -228,7 +241,7 @@ for c=1:length(conditions)
     
     meta_MDP=MouselabMDPMetaMDPNIPS(false,'none',4.5,10.6,experiment,cost);
     
-    learned_policy=@(state,mdp) deterministicPolicy(state,mdp,policy_weights_by_cost(:,c));
+    learned_policy=@(state,mdp) deterministicPolicy(state,mdp,policy_weights_by_cost(:,c),fast_VOC_approximation);
     
     for t=1:nr_trials
         [result.R_total(t,c),result.problems{t,c},result.states{t,c},result.chosen_actions{t,c},indices(t,c)]=...
@@ -249,9 +262,9 @@ end
 
 nr_observations_by_cost=mean(nr_observations)
 
-csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/score_pi_star.csv',ER_policy_by_cost)
-csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/rel_score_pi_star.csv',rel_ER_by_cost)
-csvwrite('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star.csv',nr_observations_by_cost)
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/score_pi_star_',experiment_name,'.',version,'.csv'],ER_policy_by_cost)
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.',version,'.csv'],rel_ER_by_cost)
+csvwrite(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star_',experiment_name,'.',version,'.csv'],nr_observations_by_cost)
 
 save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/results/behavior_of_learned_policy.mat','result') 
 save('/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/selected_computations.mat','selected_computations')

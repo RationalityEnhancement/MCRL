@@ -1,0 +1,5 @@
+action_times,actions,beliefs,correct,delays,information_used_correctly,meta_actions,path,planned_too_little,planned_too_much,queries,questions,responses,rt,score,time_elapsed,trial_index,trial_i,trial_type,view_history,pid
+,,,,,,,,,,,,,87749,,87751,,,instructions,"[{""page_index"":0,""viewing_time"":40344},{""page_index"":1,""viewing_time"":26324},{""page_index"":2,""viewing_time"":21079}]",0
+,,,,,,,,,,,,,40847,,40851,,,instructions,"[{""page_index"":0,""viewing_time"":8648},{""page_index"":1,""viewing_time"":8961},{""page_index"":2,""viewing_time"":23232}]",1
+,,,,,,,,,,,,,76144,,76146,,,instructions,"[{""page_index"":0,""viewing_time"":41346},{""page_index"":1,""viewing_time"":20966},{""page_index"":2,""viewing_time"":13832}]",2
+,,,,,,,,,,,,,22937,,123035,,,instructions,"[{""page_index"":0,""viewing_time"":12885},{""page_index"":1,""viewing_time"":9512},{""page_index"":2,""viewing_time"":540}]",2
