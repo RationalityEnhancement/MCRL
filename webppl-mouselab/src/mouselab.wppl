@@ -6,118 +6,123 @@ var TERM_STATE = '__TERM_STATE__';
 var UNKNOWN = '__';
 var INITIAL_NODE = 0
 
-// ============================== //
-// ========= Object MDP ========= //
-// ============================== //
-var env = utils.buildEnv();
-var tree = env.tree;
-var nodes = _.range(tree.length);
-var children = function(node) {
-  tree[node]
-};
-
-
-var vals = function(mu,sigma) {
-  // Temporarily hardcoding the values...
-  // map(function(x) {mu + x * sigma}, [-2, -1, 1, 2])
-  // [-15, -5, 5, 15]
-  // [-20.0, -12.0, -4.0, 4.0, 12.0, 20.0]
-  [1,2,3,4,5,6,7,8,9]
-};
-
-var probs = function() {
-  // [0.159,  0.341,  0.341,  0.159]
-  repeat(9, function(x) {1})
-  // [0.055, 0.157, 0.288, 0.288, 0.157, 0.055]
-};
-
-globalStore.cost = -1
-globalStore.reward = Categorical({vs: vals(1, 2),
-                                  ps: probs()});
-
-// The true reward at a given state. They are memoized, allowing one to
-// condition on certain outcomes in an outer inference
-// e.g. run() in main.wppl
-// var truth = [0.0, -15.0, 5.0, 5.0, 15.0, 15.0, 5.0, -5.0, 5.0, -15.0, 5.0, -15.0, 15.0, 5.0, -5.0, -5.0, 5.0];
-var nodeReward = mem(function(node) {
-  node == INITIAL_NODE ? 0 : sample(globalStore.reward)
-});
-
-// The expected reward at a node from the agent's perspective.
-var expectedNodeReward = function(state, node) {
-  state[node] == UNKNOWN ?
-  expectation(globalStore.reward) :
-  state[node]
-};
-
-// Like a Q function, the expected value of reaching a node.
-// Includes reward at that node plus expected value of the node.
-var nodeQuality = dp.cache(function(state, node) {
-  var best_child_val = (
-    children(node).length == 0 ?
-    0 :
-    _.max(map(function(child) {nodeQuality(state, child)},
-              children(node)))
-  );
-  return expectedNodeReward(state, node) + best_child_val
-}); 
-
-
-// ============================ //
-// ========= Meta MDP ========= //
-// ============================ //
-
-// For now, the agent deterministially receives the expected
-// termination reward when it terminates. Alternatievly,
-// this function could sample from the distribution of returns
-// when following the path with highest expected value.
-var termReward = function(state) {
-  var expectedReward = nodeQuality(state, INITIAL_NODE);
-  return expectedReward
-};
-
-// Observing nodes and terminating observation.
-var transition = function(state, action) {
-  if (state == TERM_STATE) error('transition from term ' + action);
-  if (action == TERM_ACTION) return TERM_STATE;
-  if (state[action] != UNKNOWN) {
-    console.log(actions(state));
-    error('observing state twice\n' + JSON.stringify(state)+' '+action);
-  }
-  return utils.updateList(state, action, nodeReward(action));
-};
-
-// Cost of observation and reward for terminating.
-var reward = function(state, action) {
-  (action == TERM_ACTION ?
-   termReward(state) :
-   globalStore.cost)
-};
-
 // The agent can observe an unobserved node or terminate observation.
-var unobservedNodes = function(state) {
-  filter(function(node) {state[node] == UNKNOWN}, nodes)
+
+
+
+
+// Defines a set of mouselab problems with the same structure.
+// Returns a function `makeEnv(trueRewards)` that returns a mouselab
+// problem with the given structure and the true hidden rewards
+// in trueRewards
+var mouselabProblem = function(reward, cost) {
+
+  // ============================== //
+  // ========= Object MDP ========= //
+  // ============================== //
+  var objectEnv = utils.buildEnv();
+  var tree = objectEnv.tree;
+  var nodes = _.range(tree.length);
+
+  // The expected reward at a node from the agent's perspective.
+  var expectedNodeReward = function(state, node) {
+    state[node] == UNKNOWN ?
+    expectation(reward) :
+    state[node]
+  };
+
+  var children = function(node) {
+    tree[node]
+  };
+
+  var unobservedNodes = function(state) {
+    filter(function(node) {state[node] == UNKNOWN}, nodes)
+  };
+  var numObserved = function(state) {
+    filter(function(node) {state[node] != UNKNOWN}, nodes).length - 1
+  };
+  var actions = function(state) {
+    unobservedNodes(state).concat([TERM_ACTION])
+  };
+
+  // Like a Q function, the expected value of reaching a node.
+  // Includes reward at that node plus expected value of the node.
+  var nodeQuality = dp.cache(function(state, node) {
+    var best_child_val = (
+      children(node).length == 0 ?
+      0 :
+      _.max(map(function(child) {nodeQuality(state, child)},
+                children(node)))
+    );
+    return expectedNodeReward(state, node) + best_child_val
+  }); 
+
+  // For now, the agent deterministially receives the expected
+  // termination reward when it terminates. Alternatievly,
+  // this function could sample from the distribution of returns
+  // when following the path with highest expected value.
+  var termReward = function(state) {
+    var expectedReward = nodeQuality(state, INITIAL_NODE);
+    return expectedReward
+  };
+
+  // ============================ //
+  // ========= Meta MDP ========= //
+  // ============================ //
+  var makeEnv = function(trueRewards) {
+
+    // The true reward at a given state.
+    var truth = trueRewards || [0].concat(repeat(tree.length-1, 
+                                                 function() {sample(reward)}))
+    var nodeReward = function(node) {
+      return truth[node]
+    };
+
+    // Observing nodes and terminating observation.
+    var transition = function(state, action) {
+      if (state == TERM_STATE) error('transition from term ' + action);
+      if (action == TERM_ACTION) return TERM_STATE;
+      if (state[action] != UNKNOWN) {
+        error('observing state twice\n' + JSON.stringify(state)+' '+action);
+      }
+      return utils.updateList(state, action, nodeReward(action));
+    };
+
+    // Cost of observation and reward for terminating.
+    var reward = function(state, action) {
+      (action == TERM_ACTION ?
+       termReward(state) :
+       cost)
+    };
+
+    return {
+      initialState: objectEnv.initialState,
+      reward,
+      transition,
+      actions
+    }
+  };
+  return makeEnv
 };
-var numObserved = function(state) {
-  filter(function(node) {state[node] != UNKNOWN}, nodes).length - 1
-};
-var actions = function(state) {
-  unobservedNodes(state).concat([TERM_ACTION])
-};
+
+
+
+
 
 
 // ============================ //
 // ========= Policies ========= //
 // ============================ //
 
-var randPolicy = function() {
+var randPolicy = function(env) {
   var policy = function(state) {
+    var actions = env.actions;
     return uniformDraw(actions(state));
   };
   return policy
 };
 
-var fixedNumPolicy = function(nObs) {
+var fixedNumPolicy = function(env, nObs) {
   var numObserved = function(state) {
     sum(map(function(n) {n != UNKNOWN},
             _.values(state)))
@@ -167,9 +172,10 @@ var enumPolicy = function(opts) {
   
 };
 
-var maxQPolicy = function(Q) {
+var maxQPolicy = function(env, Q) {
   var policy = function(state) {
     // maxWith(f, xs) returns [x, f(x)] such that f(x) is maximized.
+    var actions = env.actions;
     var actVal = maxWith(function(a) {Q(state, a)}, actions(state))
     return actVal[0]
   };
@@ -178,9 +184,10 @@ var maxQPolicy = function(Q) {
 
 // Takes an action with probability proportional to 
 // exp(alpha * Q(state, action))
-var softmaxQPolicy = function(Q, alpha) {
+var softmaxQPolicy = function(env, Q, alpha) {
   var alpha = alpha || 1
   var policy = function(state) {
+    var actions = env.actions;
     var a = uniformDraw(actions(state));
     factor(alpha * Q(state, a))
     return a
@@ -188,17 +195,30 @@ var softmaxQPolicy = function(Q, alpha) {
   return policy
 };
 
+
 // ============================ //
 // ========= Simulate ========= //
 // ============================ //
 
-var simulate = function(policy, initialState) {
-  var initialState = initialState || env.initialState
+var REWARD = Categorical({vs: [-20.0, -12.0, -4.0, 4.0, 12.0, 20.0],
+                          ps: [0.055, 0.157, 0.288, 0.288, 0.157, 0.055]});
+var COST = -1
+var makeEnv = mouselabProblem(REWARD, COST)
+var ENV = makeEnv();
+
+
+var simulate = function(policy, trueRewards, initialState, initialAction) {
+  var env = makeEnv(trueRewards);
+  var transition = env.transition;
+  var reward = env.reward;
+  var initialState = initialState || env.initialState;
   var rec = function(acc) {
     var state = _.last(acc.states);
     if (state == TERM_STATE) return acc
     else {
-      var action = policy(state);
+      var action = (initialAction != undefined && acc.actions.length == 0 ?
+                    initialAction : policy(state))
+      if (action == -Infinity) error('Bad action.')
       var newState = transition(state, action);
       var r = reward(state, action);
       return rec({
