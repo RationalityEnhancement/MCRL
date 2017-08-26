@@ -1,0 +1,16 @@
+hs = ones(numel(costs),2);
+ps = ones(numel(costs),2);
+for c=1:numel(costs)
+    %Compare BSARSA and BO
+    bs = squeeze(results.samples(c,2,:));
+    bo = squeeze(results.samples(c,5,:));
+    mg = squeeze(results.samples(c,4,:));
+    [h1,p1,ci1,stats1] = ttest2(bs,bo);
+    [h2,p2,ci2,stats2] = ttest2(mg,bo);
+    hs(c,1) = h1;
+    hs(c,2) = h2;
+        ps(c,1) = p1;
+   ps(c,2) = h2;
+    ps
+end
+    

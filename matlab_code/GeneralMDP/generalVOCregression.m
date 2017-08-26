@@ -1,12 +1,5 @@
 addpath('./MatlabTools/')
 addpath('../')
-
-nr_arms= 2;
-nr_balls = 6;
-cost = 0.01;
-
-exact
-
 load(['../results/', num2str(nr_arms),'lightbulb_problem.mat'])
 
 states = nlightbulb_mdp.states;

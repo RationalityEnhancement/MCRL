@@ -1,6 +1,7 @@
 addpath('./MatlabTools/')
 
-costs=logspace(-3,-1,10);
+costs=logspace(-3,-1/4,15);
+% costs=0.0001;
 
 load ../results/lightbulb_problem
 nr_states=size(lightbulb_mdp(1).states,1);
@@ -30,15 +31,15 @@ for c=1:numel(costs)
 %         b(i) = max(st)/sum(st);
         
         t = sum(st);
-        mvoc = 1/(t*(t+1))*(st(1)*max(st(1)+1,st(2)) + st(2)*max(st(1),st(2)+1));
-        voc1(i) = mvoc-max(st)/sum(st)-cost;
+        mvoc = 1/(t*(t+1))*(st(1)*(max(st(1)+1,st(2))-min(st(1)+1,st(2))) + st(2)*(max(st(1),st(2)+1)-min(st(1),st(2)+1)));
+        voc1(i) = mvoc-max(st)/sum(st)-cost+min(st)/sum(st);
         
 %         voc2(i) = nvoc(3,st,cost);
         
 %         vpi(i) = 1 - max(st)/sum(st);
         vpi(i) = valueOfPerfectInformationBernoulli(st(1),st(2));
         
-        voc30(i) = Q_star(i) - max(st)/sum(st);
+        voc30(i) = Q_star(i) - max(st)/sum(st)+min(st)/sum(st);
     end
 
     X = cat(2,vpi,voc1,bias); feature_names={'VPI','VOC_1','1'};
@@ -48,11 +49,11 @@ for c=1:numel(costs)
     scatter(voc_hat,voc30);
     title(num2str(stats(1)));
     
-    sign_disagreement=find(sign(voc_hat).*sign(voc30)==-1)
-    numel(sign_disagreement)/numel(voc30)    
-    max(voc30(sign_disagreement))
+    sign_disagreement=find(sign(voc_hat).*sign(voc30)==-1);
+    numel(sign_disagreement)/numel(voc30);
+    max(voc30(sign_disagreement));
     
-    E_guess=max(S,[],2)./sum(S,2);
+    E_guess=max(S,[],2)./sum(S,2) - min(S,[],2)./sum(S,2);
     
     
     %% Plot fit to Q-function

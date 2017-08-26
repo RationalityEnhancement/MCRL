@@ -1,6 +1,6 @@
 function nv=nvoc(nTrials,init,cost)
 rewardCorrect = 1;
-rewardIncorrect = 0;
+rewardIncorrect = -1;
 discount = 1;
 s = nTrials*(nTrials+1)/2; % size of state space
 S = nan(s+1,2); % the states
