@@ -1,5 +1,5 @@
 % Get the state-action pair using the X-value in VOC vs VOC_hat plot
-in = -0.1918;
+in = 0.2538;
 [A,c] = min(abs(voc_hat - in));
 [i,j] = find(state_action == c)
 

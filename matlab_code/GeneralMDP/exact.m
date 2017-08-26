@@ -10,9 +10,9 @@ constantArm = -1;
 rewardIncorrect = 0;
 discount = 1;
 
-% nr_arms= 3;
-% nr_balls = 6;
-% cost = 0.01;
+nr_arms= 2;
+nr_balls = 15;
+cost = 0.0001;
 %% Call Python Script 
 
 commandStr = ['python ./GeneralMDP/generate_state_matrices.py ',...

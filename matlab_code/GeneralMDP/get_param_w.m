@@ -18,8 +18,7 @@ w = squeeze(matws(i_mu,i_sig,i_rep,:));
 
 %% Check result
 h=6;
-c = 1;
-costs = 0.01;
+c = 7;
 mdp=generalMDP(nr_actions,gamma,nr_features,costs(c),h); 
 for s=1:nr_states
     st = nlightbulb_problem(c).mdp.states(s,:);

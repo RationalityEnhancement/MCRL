@@ -10,7 +10,7 @@ if not(exist('r_correct','var'))
 end
 
 if not(exist('r_wrong','var'))
-    r_correct=-1;
+    r_wrong=-1;
 end
 
 %E_correct=[alpha,beta]/(alpha+beta);
