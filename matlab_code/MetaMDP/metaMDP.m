@@ -3,7 +3,7 @@ classdef metaMDP < MDP
     properties
         action_features = [];
         rewardCorrect = 1;
-        rewardIncorrect = 0;
+        rewardIncorrect = -1;
         cost = 0.001;
         discount = 1;
         
@@ -75,7 +75,7 @@ classdef metaMDP < MDP
                 end
                 %}
                 
-                r = max(s)/sum(s);
+                r = (max(s)-min(s))/sum(s);
                 
                 s_next = [-1,-1];
             end 

@@ -61,6 +61,7 @@ sigma0=0.1;
 glm0=BayesianGLM(nr_features,sigma0);
 glm0.mu_n=mu0(:);
 
+%change to using MouselabMDPMetaMDPNIPS.QFeatures
 feature_extractor=@(s,c,meta_MDP) [meta_MDP.extractStateActionFeatures(s,c); meta_MDP.cost_per_click*c.is_computation];
 
 %load MouselabMDPMetaMDPTestFeb-17-2017

@@ -2,6 +2,8 @@
 %regression
 clear,close all,clc
 
+
+
 addpath('../MatlabTools/') %change to your directory for MatlabTools
 addpath('../metaMDP/')
 addpath('../Supervised/')
@@ -9,7 +11,7 @@ addpath('../')
 
 
 load ../../results/lightbulb_fit.mat
-
+S = lightbulb_problem(1).mdp.states;
 nr_actions=2;
 nr_states=2;
 gamma=1;
@@ -19,23 +21,43 @@ selected_features=[1;2;4];
 
 nr_features=numel(selected_features);
 
-costs=logspace(-3,-1,10);%0.01;%
+costs=logspace(-3,-1/4,15);%0.01;%
+% costs = 0.0001;
+c = 7;
+
+% mus=[[1;1;1],[0;1;1],[1;0;1],[1;1;0],[0;0;1],[0;1;0],[1;0;0],[0;0;0],[0.5;0.5;0.5]];
+% sigmas = 0.1:0.1:0.3;
+mus = [0;0;1];
+sigmas = 0.2;
+rep = 1;
+
+matws = zeros(size(mus,2),numel(sigmas),rep,3);
+matr = zeros(size(mus,2),numel(sigmas),rep);
+matm = zeros(size(mus,2),numel(sigmas),rep);
+% mate = zeros(size(mus,2),numel(sigmas),rep);
+
+for m=1:size(mus,2)
+    for sig=1:numel(sigmas)
+        disp(num2str(mus(:,m)))
+        disp(num2str(sigmas(sig)))
+        for z=1:rep
 
 for c=1:numel(costs)
+% for c=7:10
     
     mdp=metaMDP(nr_actions,gamma,nr_features,costs(c));
     
-    nr_episodes=5000;
+    nr_episodes=1000;
     
     fexr=@(s,a,mdp) feature_extractor(s,a,mdp,selected_features);
     
     
     mdp.action_features=1:nr_features;
     
-    sigma0=1;
+    sigma0=sigmas(sig);
     glm=BayesianGLM(nr_features,sigma0);
-    glm.mu_0=[1;1;1];
-    glm.mu_n=[1;1;1];
+    glm.mu_0=mus(:,m);
+    glm.mu_n=mus(:,m);
     [glm,avg_MSE,R_total]=BayesianSARSAQ(mdp,fexr,nr_episodes,glm);
     
     figure(),
@@ -70,7 +92,9 @@ for c=1:numel(costs)
     Q_hat(:,2)=F(:,3);
     V_hat=max(Q_hat,[],2);
     
-    R2(c)=corr(Q_hat(valid_states,1),lightbulb_problem(c).fit.Q_star(valid_states,1))
+    qh = Q_hat(valid_states,1);
+    qs = lightbulb_problem(c).fit.Q_star(valid_states,1);
+    R2(c)=corr(Q_hat(valid_states,1),lightbulb_problem(c).fit.Q_star(valid_states,1));
     
     lightbulb_problem(c).w_BSARSA=w;
     lightbulb_problem(c).Q_hat_BSARSA=Q_hat;
@@ -95,5 +119,14 @@ for c=1:numel(costs)
     end
     
     lightbulb_problem(c).approximate_PRs=approximate_PR;
+% end
+    matws(m,sig,z,:) = w;
+    matm(m,sig,z) = immse(qh(:),qs(:));
+    matr(m,sig,z) = corr(qh(:),qs(:))^2;
+%     esim
+%     mate(m,sig,z) = er;
+        end
+    end
+    end
 end
 save('../../results/lightbulb_fit_.mat','lightbulb_problem')

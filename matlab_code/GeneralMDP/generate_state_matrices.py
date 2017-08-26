@@ -68,7 +68,7 @@ def states(n_balls,n_arms,rewardCorrect=1.0,cost=-1,constantArm=-1):
     for i in range(n_states):
         if np.sum(S[i]) >= 2*n_arms+n_balls:
             T1[i,-1] = np.ones(n_arms)
-            R[i,:] = R[i,-1]
+            R[i,:-1] = R[i,-1]-cost
 
     # The terminal state always goes back to itself
     t = np.zeros((n_states+1,n_arms))

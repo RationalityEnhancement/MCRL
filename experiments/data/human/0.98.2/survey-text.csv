@@ -1,0 +1,4 @@
+action_times,actions,beliefs,correct,delays,information_used_correctly,meta_actions,path,planned_too_little,planned_too_much,queries,questions,responses,rt,score,time_elapsed,trial_index,trial_i,trial_type,view_history,pid
+,,,,,,,,,,,,"{""Q0"":""by chance"",""Q1"":""no, i felt like paying the $ was a waste""}",42712,,1243031,,,survey-text,,0
+,,,,,,,,,,,,"{""Q0"":""I clicked on the first four that were around me. I usually went to the route with the highest number in the circle to try and guarantee a profit."",""Q1"":""Not really, I think I went by luck for most of the exercise.""}",26948,,1066057,,,survey-text,,1
+,,,,,,,,,,,,"{""Q0"":""I looked for the 12 and 20 dollar bonuses, and if I couldn't find one, I tried to minimize my loses."",""Q1"":""I learned that flying involves a lot of luck and sometimes there is no way to come out ahead.""}",84939,,1051515,,,survey-text,,2

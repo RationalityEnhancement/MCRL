@@ -647,8 +647,10 @@ initializeExperiment = ->
         questions: [
             'How did you go about planning the route of the airplane?'
             'Did you learn anything about how to plan better?'
+            'How old are you?'
+            'Which gender do you identify with?' 
         ]
-        rows: [4,4]
+        rows: [4,4,1,1]
         button: 'Submit HIT'            
     
 
