@@ -195,7 +195,7 @@ class GenerativeModel(Distribution):
         else:
             return self._sample()
 
-    def expectation(self, n=100000):
+    def expectation(self, n=10000):
         return self.sample(n).mean()
       
 

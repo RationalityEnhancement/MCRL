@@ -28,6 +28,13 @@ class Policy(Component):
         super().attach(agent)
 
 
+class FunctionPolicy(Policy):
+    def __init__(self, policy):
+        super().__init__()
+        self.policy = policy
+
+    def act(self, state):
+        return self.policy(state)
 
 class RandomPolicy(Policy):
     """Chooses actions randomly."""
@@ -66,7 +73,8 @@ class MouselabPolicy(Policy):
             else:
                 return np.dot(self.theta, self.env.action_features(a))
 
-        return max(self.env.actions(state), key=Q)
+        action = max(self.env.actions(state), key=Q)
+        return action
 
 
 class MaxQSamplePolicy(Policy):
