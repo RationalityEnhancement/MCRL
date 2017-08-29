@@ -25,7 +25,7 @@ for k=1:length(dat)
         if length(clicks) < 2
             continue
         end
-        if ~ismember(clicks(1), target) %check that first click is one of the inner four
+        if ~ismember(clicks(1), target) %check that first click is in t
             continue
         else
             for c = 2:length(clicks)
@@ -48,11 +48,11 @@ for k=1:length(dat)
                         end
                         break
                     else
-                        break %break because the previous click had a negative value
+                        break
                     end
-                else % this means the participant clicked in the inner four again
+                else
                     if prev_click_val >= 0
-                        break %break because participant already found a positive value, but continued to click in the inner four
+                        break
                     end
                 end
             end
