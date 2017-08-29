@@ -26,21 +26,25 @@ def sort_tree(env, state):
 
 def solve(env, hash_state=None, actions=None):
     """Returns Q, V, pi, and computation data for an mdp environment."""
-    if hash_state is None:
+    if hash_state == 'sort_tree':
         hash_state = lambda state: sort_tree(env, state)
     if actions is None:
         actions = env.actions
+
     info = {  # track number of times each function is called
         'q': 0,
         'v': 0
     }
     
-    def hash_key(args, kwargs):
-        s = args[0]
-        if s is None:
-            return s
-        else:
-            return hash_state(args[0])
+    if hash_state is not None:
+        def hash_key(args, kwargs):
+            s = args[0]
+            if s is None:
+                return s
+            else:
+                return hash_state(args[0])
+    else:
+        hash_key = None
 
     @memoize
     def Q(s, a):
