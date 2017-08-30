@@ -49,6 +49,9 @@ class MetaBanditEnv(object):
         best_arm = max(self.p_win(state, a) for a in self._arms)
         return max(best_arm, self.constant)
 
+    def VOC_1(self, state, action):
+        return sum(p * self.expected_term_reward(s1)
+                   for p, s1, r in self.results(state, action))
 
 
 
