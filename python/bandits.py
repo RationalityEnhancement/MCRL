@@ -1,4 +1,6 @@
-from toolz import concat
+from toolz import concat, memoize, reduce
+from scipy.stats import beta
+import numpy as np
 
 class MetaBanditEnv(object):
     """Metalevel Bernoulli problem."""
@@ -24,8 +26,24 @@ class MetaBanditEnv(object):
         else:
             return self._actions
 
-    # def get_idx(self, arm):
-    #     return slice(arm*2, arm*2 + 2)
+    def action_features(self, action, state):
+
+        if action == self.term_action:
+            return np.array([
+                0,
+                0,
+                0,
+                0,
+                self.expected_term_reward(state)
+            ])
+
+        return np.array([
+            self.cost,
+            self.myopic_voc(action, state),
+            self.vpi_action(action, state),
+            self.vpi(state),
+            self.expected_term_reward(state)
+        ])
 
     def p_win(self, state, arm):
         a, b = state[arm]
@@ -46,12 +64,30 @@ class MetaBanditEnv(object):
             yield (1 - p, tuple(s), self.cost)
 
     def expected_term_reward(self, state):
-        best_arm = max(self.p_win(state, a) for a in self._arms)
-        return max(best_arm, self.constant)
+        best_value = max(self.p_win(state, a) for a in self._arms)
+        return max(best_value, self.constant)
 
-    def VOC_1(self, state, action):
+    def myopic_voc(self, action, state):
         return sum(p * self.expected_term_reward(s1)
                    for p, s1, r in self.results(state, action))
 
+    def vpi(self, state):
+        samples = (beta_samples(a,b) for a, b in state)
+        return reduce(np.maximum, samples).mean()
 
+    def vpi_action(self, action, state):
+        def value(act):
+            return self.p_win(state, act)
+        best_arm = max(self._arms, key=value)
+        if action == best_arm:
+            others = (act for act in self._arms if act != action)
+            competing_value = max(map(value, others))
+        else:
+            competing_value = value(best_arm)
+        a, b = state[action]
+        print('competing_value', competing_value)
+        return np.maximum(beta_samples(a, b), competing_value).mean()
 
+# @memoize
+def beta_samples(a, b, n=100000):
+    return beta(a, b).rvs(n)
