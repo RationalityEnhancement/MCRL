@@ -4,15 +4,17 @@ class MetaBanditEnv(object):
     """Metalevel Bernoulli problem."""
     term_state = 'term_state'
 
-    def __init__(self, n_arm=2, max_obs=10, cost=0):
+    def __init__(self, n_arm=2, max_obs=10, cost=0, constant=-1):
         super().__init__()
         self.n_arm = n_arm
         self.cost = -abs(cost)
         self.init = ((1, 1),) * n_arm
+        self.constant = constant
         self._arms = range(n_arm)
         self._actions = range(n_arm + 1)
         self.term_action = self._actions[-1]
         self._max_sum = max_obs + sum(concat(self.init))
+
 
     def actions(self, state):
         if state is self.term_state:
@@ -44,7 +46,8 @@ class MetaBanditEnv(object):
             yield (1 - p, tuple(s), self.cost)
 
     def expected_term_reward(self, state):
-        return max(self.p_win(state, a) for a in self._arms)
+        best_arm = max(self.p_win(state, a) for a in self._arms)
+        return max(best_arm, self.constant)
 
 
 

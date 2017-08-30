@@ -21,7 +21,24 @@ def logged(condition=lambda r: True):
         return wrapper
     return decorator
 
+class Labeler(object):
+    """Assigns unique integer labels."""
+    def __init__(self, init=()):
+        self._labels = {}
+        self._xs = []
+        for x in init:
+            self.label(x)
 
+    def label(self, x):
+        if x not in self._labels:
+            self._labels[x] = len(self._labels)
+            self._xs.append(x)
+        return self._labels[x]
+
+    def unlabel(self, label):
+        return self._xs[label]
+
+    __call__ = label
 
 def clear_screen():
     print(chr(27) + "[2J")
