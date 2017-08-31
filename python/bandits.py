@@ -17,6 +17,22 @@ class MetaBanditEnv(object):
         self.term_action = self._actions[-1]
         self._max_sum = max_obs + sum(concat(self.init))
 
+    def _reset(self):
+        self._state = [[1, 1],] * self.n_arm
+        return self._state
+
+    def _step(self, action):
+        if action == self.term_action:
+            return self.term_state, self.expected_term_reward(self._state), True, {}
+        else:
+            arm = action
+            p = self.p_win(self._state, arm)
+            if np.random.rand() < p:
+                self._state[arm][0] += 1
+            else:
+                self._state[arm][1] += 1
+            return self._state, self.cost, False, {}
+
 
     def actions(self, state):
         if state is self.term_state:
@@ -27,7 +43,6 @@ class MetaBanditEnv(object):
             return self._actions
 
     def action_features(self, action, state):
-
         if action == self.term_action:
             return np.array([
                 0,
@@ -62,19 +77,25 @@ class MetaBanditEnv(object):
             yield (p, tuple(s), self.cost)
             s[arm] = (a, b + 1)
             yield (1 - p, tuple(s), self.cost)
-
+    
+    @memoize
     def expected_term_reward(self, state):
         best_value = max(self.p_win(state, a) for a in self._arms)
         return max(best_value, self.constant)
-
+    
+    @memoize
     def myopic_voc(self, action, state):
-        return sum(p * self.expected_term_reward(s1)
-                   for p, s1, r in self.results(state, action))
-
+        val = sum(p * self.expected_term_reward(s1)
+                  for p, s1, r in self.results(state, action))
+        return val - self.expected_term_reward(state)
+    
+    @memoize
     def vpi(self, state):
         samples = (beta_samples(a,b) for a, b in state)
-        return reduce(np.maximum, samples).mean()
-
+        val = reduce(np.maximum, samples).mean()
+        return val - self.expected_term_reward(state)
+    
+    @memoize
     def vpi_action(self, action, state):
         def value(act):
             return self.p_win(state, act)
@@ -86,8 +107,8 @@ class MetaBanditEnv(object):
             competing_value = value(best_arm)
         a, b = state[action]
         print('competing_value', competing_value)
-        return np.maximum(beta_samples(a, b), competing_value).mean()
+        val = np.maximum(beta_samples(a, b), competing_value).mean()
+        return val - self.expected_term_reward(state)
 
-# @memoize
 def beta_samples(a, b, n=100000):
     return beta(a, b).rvs(n)
