@@ -12,12 +12,14 @@ rewardIncorrect = 0;
 discount = 1;
 
 nr_arms= 2;
-nr_balls = 15;
-costs = logspace(-5,-1,10);
+nr_balls = 8;
+costs = 10^-4;
+% costs = logspace(-5,-1,10);
 % method_ers = zeros(numel(costs),5);
 % method_sterrs = zeros(numel(costs),5);
 
-for c=1:numel(costs)
+% for c=1:numel(costs)
+for c=1:1
     cost = costs(c)
 tic 
  general_backwardsInduction %update for reward
