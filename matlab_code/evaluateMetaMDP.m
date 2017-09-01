@@ -16,9 +16,9 @@ for j=1:reps
 
         I = find(S(:, 1) == st(1) & S(:, 2) == st(2));
         vpi = X(I,1);
-        voc1 = X(I,2);
+        voi1 = X(I,2);
         
-        f_obs = [vpi, voc1];
+        f_obs = [vpi, voi1, co];
         
         if f_obs*w > 0
             r = r - co;
@@ -38,6 +38,6 @@ for j=1:reps
     reward = reward + r;
 end
 ER_hat = reward/reps;
-result.features={'VPI','VOC','E[R|act,b]'};
+result.features={'VPI','VOC','cost'};
 result.cost_per_click=co;
 end

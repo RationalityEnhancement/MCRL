@@ -3,13 +3,13 @@ co = nlightbulb_problem.mdp.cost;
 pols = zeros(n(1)-1,5);
 [m0, pols(:,1)] = max(nlightbulb_problem.mdp.Q_star(1:n(1)-1,:),[],2);
 [m1, pols(:,2)] = max(nlightbulb_problem.fit.Q_hat,[],2);
-[m2, pols(:,3)] = max(nlightbulb_problem.bsarsa.Q_hat_BSARSA(1:n(1)-1,:),[],2);
-pols(:,4) = nlightbulb_problem.fit.pi_meta(1:n(1)-1);
-pols(:,5) = nlightbulb_problem.BO.pi_BO(1:n(1)-1);
+% [m2, pols(:,3)] = max(nlightbulb_problem.bsarsa.Q_hat_BSARSA(1:n(1)-1,:),[],2);
+% pols(:,4) = nlightbulb_problem.fit.pi_meta(1:n(1)-1);
+% pols(:,5) = nlightbulb_problem.BO.pi_BO(1:n(1)-1);
 
 reps=5000;
 samples = zeros(reps,5);
-for p=1:5
+for p=2:2
     reward = 0;
 for j=1:reps
     st = S(1,:);

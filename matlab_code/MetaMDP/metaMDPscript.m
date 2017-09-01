@@ -26,11 +26,11 @@ toc
 cd('../')
 
 tic
-metaMDP_metaGreedy
+    metaMDP_metaGreedy
 toc
 
 tic
- metaMDP_BO
+    metaMDP_BO
 toc
 
 simulate2
