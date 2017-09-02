@@ -21,6 +21,19 @@ def logged(condition=lambda r: True):
         return wrapper
     return decorator
 
+import time
+def timed(method):
+    def dec(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+
+        print('%r %2.2f sec' % (method.__name__, te-ts))
+        return result
+    return dec
+
+
+
 class Labeler(object):
     """Assigns unique integer labels."""
     def __init__(self, init=()):

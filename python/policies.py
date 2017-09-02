@@ -61,8 +61,8 @@ class MaxQPolicy(Policy):
             return np.argmax(q + noise)
 
 
-class MouselabPolicy(Policy):
-    """Just for MouselabEnv."""
+class LiederPolicy(Policy):
+    """The meta-policy of Lieder et al. (2017) AAAI."""
     def __init__(self, theta):
         self.theta = np.array(theta)
     

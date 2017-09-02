@@ -28,6 +28,8 @@ def solve(env, hash_state=None, actions=None):
     """Returns Q, V, pi, and computation data for an mdp environment."""
     if hash_state == 'sort_tree':
         hash_state = lambda state: sort_tree(env, state)
+    elif hash_state == 'sort':
+        hash_state = lambda state: tuple(sorted(state))
     if actions is None:
         actions = env.actions
 

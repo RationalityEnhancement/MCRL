@@ -5,7 +5,7 @@ from toolz.curried import *
 
 
 class MetaTree(object):
-    """MetaMDP for a tree with a discrete reward function."""
+    """MetaMDP for a tree with a discrete b function."""
     unknown = np.inf
     term_state = None
     def __init__(self, branch=2, height=2, outcomes=(0,1), cost=0):

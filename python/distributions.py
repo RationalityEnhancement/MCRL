@@ -3,7 +3,7 @@ from collections import Counter
 import itertools as it
 from toolz.curried import reduce
 import scipy.stats
-from functools import total_ordering, partial
+from functools import total_ordering, partial, lru_cache
 
 
 class Distribution(object):
@@ -42,7 +42,9 @@ class Normal(Distribution):
     def expectation(self):
         return self.mu
 
+    # @lru_cache(maxsize=100000)
     def sample(self, n=None):
+        # print('sample', str(self))
         if n is not None:
             return self.mu + self.sigma * np.random.randn(n)
         else:
@@ -51,7 +53,7 @@ class Normal(Distribution):
     @classmethod
     def fit(cls, samples):
         return cls(*scipy.stats.norm.fit(samples))
-
+        
 
 @total_ordering
 class Categorical(Distribution):
@@ -59,8 +61,8 @@ class Categorical(Distribution):
     def __init__(self, vals, probs=None):
         super().__init__()
         self.vals = tuple(vals)
-        self._vals = np.array(self.vals)  # for use in sample()
-        self._idx = np.arange(len(self.vals))
+        # self._vals = np.array(self.vals)  # for use in sample()
+        # self._idx = np.arange(len(self.vals))
         if probs is None:
             self.probs = tuple(1/len(vals) for _ in range(len(vals)))
         else:
@@ -140,7 +142,6 @@ class PointMass(Categorical):
         return self.vals[0]
 
 
-
 class ScipyDistribution(Distribution):
     """Distribution based on a distribution in scipy.stats,"""
     def sample(self, n=None):
@@ -179,7 +180,6 @@ class GenerativeModel(Distribution):
         if self.kind:
             return '{}{}'.format(self.kind, self.args)
 
-
     def __add__(self, other):
         if hasattr(other, 'sample'):
             def sample(n=None):
@@ -189,11 +189,10 @@ class GenerativeModel(Distribution):
                 return self.sample(n) + other
         return GenerativeModel(sample, kind='add', args=(self, other))
 
+    # @lru_cache(maxsize=100000)
     def sample(self, n=None):
-        if n:
-            return self._sample(n)
-        else:
-            return self._sample()
+        # print('sample', str(self))
+        return self._sample(n)
 
     def expectation(self, n=10000):
         return self.sample(n).mean()
@@ -249,7 +248,6 @@ def cmax(dists, default=__no_default__):
 
 
 
-
 def dmax(dists, default=__no_default__):
     dists = tuple(dists)
     if len(dists) == 1:
@@ -267,7 +265,6 @@ def dmax(dists, default=__no_default__):
 
 def normal_approximation(dist, samples=10000):
     return Normal(scipy.stats.norm.fit(dist.sample(samples)))
-
 
 
 

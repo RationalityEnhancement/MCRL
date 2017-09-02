@@ -37,21 +37,23 @@ class ActionValueFunction(ValueFunction):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    @abstractmethod
     def predict(self, s):
         x = self.features(s)
         return self.model.predict(x)
 
 
+class QFunction(object):
+    """Q(s, a)"""
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-class MyQ(ActionValueFunction):
-    def __init__(self):
-        super().__init__()
-
-    def predict(self, s):
-        return 
+    @abstractmethod
+    def predict(s, a):
+        ...
 
 
+
+      
 
 
 
