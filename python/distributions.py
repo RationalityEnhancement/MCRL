@@ -5,6 +5,7 @@ from toolz.curried import reduce
 import scipy.stats
 from functools import total_ordering, partial, lru_cache
 
+N_SAMPLES = 10000
 
 class Distribution(object):
     """Represents a probability distribution."""
@@ -21,6 +22,7 @@ class Distribution(object):
 class Normal(Distribution):
     """Normal distribution."""
     def __init__(self, mu, sigma):
+        # print('init', id(self) % 100)
         super().__init__()
         self.mu = mu
         self.sigma = sigma
@@ -31,24 +33,33 @@ class Normal(Distribution):
     def __add__(self, other):
         # if isinstance(other, Normal):
         if hasattr(other, 'mu'):
+            # print('add norm')
             return Normal(self.mu + other.mu, 
                           (self.sigma ** 2 + other.sigma ** 2) ** 0.5)
         # if isinstance(other, PointMass):
         if hasattr(other, 'val'):
+            # print('add pointmass')
             return Normal(self.mu + other.val, self.sigma)
         else:
+            # print('add number')
             return Normal(self.mu + other, self.sigma)
 
     def expectation(self):
         return self.mu
 
-    # @lru_cache(maxsize=100000)
+    def copy(self):
+        return Normal(self.mu, self.sigma)
+
+    @lru_cache(maxsize=100000)
     def sample(self, n=None):
-        # print('sample', str(self))
+        # print('sample', id(self) % 1000)
         if n is not None:
             return self.mu + self.sigma * np.random.randn(n)
         else:
             return self.mu + self.sigma * np.random.randn()
+
+    def sample_nocache(self):
+        return self.mu + self.sigma * np.random.randn()
 
     @classmethod
     def fit(cls, samples):
@@ -61,8 +72,8 @@ class Categorical(Distribution):
     def __init__(self, vals, probs=None):
         super().__init__()
         self.vals = tuple(vals)
-        # self._vals = np.array(self.vals)  # for use in sample()
-        # self._idx = np.arange(len(self.vals))
+        self._vals = np.array(self.vals)  # for use in sample()
+        self._idx = np.arange(len(self.vals))
         if probs is None:
             self.probs = tuple(1/len(vals) for _ in range(len(vals)))
         else:
@@ -189,7 +200,7 @@ class GenerativeModel(Distribution):
                 return self.sample(n) + other
         return GenerativeModel(sample, kind='add', args=(self, other))
 
-    # @lru_cache(maxsize=100000)
+    @lru_cache(maxsize=100000)
     def sample(self, n=None):
         # print('sample', str(self))
         return self._sample(n)
@@ -247,7 +258,7 @@ def cmax(dists, default=__no_default__):
         return cross(dists, max)
 
 
-
+@lru_cache(maxsize=None)
 def dmax(dists, default=__no_default__):
     dists = tuple(dists)
     if len(dists) == 1:
@@ -263,8 +274,48 @@ def dmax(dists, default=__no_default__):
 
     return GenerativeModel(sample, kind='dmax', args=dists)
 
+@lru_cache(maxsize=None)
+def smax(dists, default=__no_default__):
+    dists = tuple(dists)
+    if len(dists) == 1:
+        return dists[0]
+    if len(dists) == 0:
+        if default is not __no_default__:
+            return default
+        else:
+            raise ValueError('dmax() arg is an empty sequence')
+
+    return SampleDist(reduce(np.maximum, [d.sample(N_SAMPLES) for d in dists]))
+
 def normal_approximation(dist, samples=10000):
     return Normal(scipy.stats.norm.fit(dist.sample(samples)))
+
+
+
+class SampleDist(Distribution):
+    """A distribution represented by samples."""
+    def __init__(self, samples):
+        super().__init__()
+        self._samples = samples
+        self.len = len(samples) if hasattr(samples, '__len__') else None
+
+    def sample(self, n=None):
+        return self._samples
+
+    def expectation(self):
+        return np.mean(self._samples)
+
+    @lru_cache(10000)
+    def __add__(self, other):
+        if hasattr(other, '_samples'):
+            return SampleDist(self._samples + other._samples)
+        elif hasattr(other, 'sample'):
+            return SampleDist(self._samples + other.sample(self.len))
+        else:
+            return SampleDist(self._samples + other)
+
+
+
 
 
 

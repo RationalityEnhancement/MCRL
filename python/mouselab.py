@@ -19,22 +19,33 @@ class MouselabEnv(gym.Env):
             self.height = height
             self.branch = [self.branch] * self.height
 
+        if hasattr(reward, 'sample'):
+            self.reward = reward if reward is not None else Normal(1, 1)
+            self.iid_rewards = True
+        else:
+            self.iid_rewards = False
         self.cost = - abs(cost)
-        self.reward = reward if reward is not None else Normal(1, 1)
-        self.exact = hasattr(reward, 'vals')
-        self.max = cmax if self.exact else dmax
         self.ground_truth = np.array(ground_truth) if ground_truth is not None else None
-        self.sample_term_reward = False
-
-
         self.tree = self._build_tree()
-        self.init = (0,) + (self.reward,) * (len(self.tree) - 1)
-        self.term_action = len(self.tree)
-        self.reset()
+        
+        self.exact = hasattr(reward, 'vals')
+        if self.exact:
+            assert self.iid_rewards
+            self.max = cmax
+            self.init = (0, *(self.reward,) * (len(self.tree) - 1))
+        else:
+            self.max = smax
+            if self.iid_rewards:
+                self.init = (0, *(self.reward.copy() for _ in range(len(self.tree) - 1)))
+            else:
+                self.init = reward
 
+        self.sample_term_reward = False
         self.action_space = spaces.Discrete(len(self.tree) + 1)
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=len(self.tree))
         self.subtrees = self._get_subtrees()
+        self.term_action = len(self.tree)
+        self.reset()
 
     def _reset(self):
         self._state = self.init
@@ -55,7 +66,7 @@ class MouselabEnv(gym.Env):
             else:
                 reward = self.term_reward().expectation()
             done = True
-        elif self._state[action] is not self.reward:  # already observed
+        elif self._state[action] is not self.init[action]:  # already observed
             reward = 0
             done = False
         else:  # observe a new node
@@ -68,7 +79,7 @@ class MouselabEnv(gym.Env):
         if self.ground_truth is not None:
             result = self.ground_truth[action]
         else:
-            result = self._state[action].sample()
+            result = self._state[action].sample_nocache()
         s = list(self._state)
         s[action] = result
         return tuple(s)
@@ -233,9 +244,9 @@ class MouselabEnv(gym.Env):
                 else:
                     return expectation(state[n])
 
-            return dmax((self.node_value_after_observe(obs, n1, state) + subjective_reward(n1)
-                         for n1 in self.tree[node]),
-                        default=PointMass(0))
+            return self.max((self.node_value_after_observe(obs, n1, state) + subjective_reward(n1)
+                             for n1 in self.tree[node]),
+                            default=PointMass(0))
 
 
 
