@@ -77,6 +77,8 @@ class LiederPolicy(Policy):
         return action
 
 
+
+
 class MaxQSamplePolicy(Policy):
     """Chooses the action with highest sampled Q value."""
     def __init__(self, Q, **kwargs):
@@ -84,7 +86,8 @@ class MaxQSamplePolicy(Policy):
         self.Q = Q
 
     def act(self, state):
-        q, sigma = self.Q.predict(state, return_var=True)
+        q, var = self.Q.predict(state, return_var=True)
+        sigma = var ** 0.5
         q_samples = stats.norm(q, sigma).rvs()
         q = q.flat
         a = np.argmax(q_samples)

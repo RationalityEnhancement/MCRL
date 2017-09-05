@@ -12,7 +12,7 @@ def memo_key(args, kwargs):
 
 class MetaBanditEnv(gym.Env):
     """Metalevel Bernoulli problem."""
-    term_state = 'term_state'
+    term_state = '__term_state__'
 
     def __init__(self, n_arm=2, max_obs=10, cost=0, constant=-1):
         super().__init__()
@@ -79,6 +79,11 @@ class MetaBanditEnv(gym.Env):
         a, b = state[arm]
         return a / (a + b)
 
+    def value(self, state, arm):
+        a, b = state[arm]
+        p = a / (a + b)
+        return (p - 0.5) * 2
+
     def results(self, state, action):
         if action == self.term_action:
             yield (1, self.term_state, self.expected_term_reward(state))
@@ -95,7 +100,7 @@ class MetaBanditEnv(gym.Env):
     
     @memoize(key=memo_key)
     def expected_term_reward(self, state):
-        best_value = max(self.p_win(state, a) for a in self._arms)
+        best_value = max(self.value(state, a) for a in self._arms)
         return max(best_value, self.constant)
     
     @memoize(key=memo_key)

@@ -42,16 +42,42 @@ class ActionValueFunction(ValueFunction):
         return self.model.predict(x)
 
 
-class QFunction(object):
-    """Q(s, a)"""
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+class LiederQ(ActionValueFunction):
+    """The meta-Q function of Lieder et al. (2017) AAAI."""
+    def __init__(self):
+        super().__init__()
+        from models import BayesianRegression
+        self.model = BayesianRegression(5)
 
-    @abstractmethod
-    def predict(s, a):
-        ...
+    def attach(self, agent):
+        super().attach(agent)
+        self.n_actions = len(self.env.actions(self.env.reset()))
 
+    def finish_episode(self, trace):
+        m = self.memory
+        X = []
+        y = []
+        for s, a, r in zip(m.states, m.actions, m.returns):
+            if s != self.env.term_state:
+                X.append(self.env.action_features(a, s))
+                y.append(r)
+        self.model.fit(np.stack(X), np.array(y))
 
+    def predictAction(self, s, a):
+        return self.model.predict(self.env.action_features(a, s),
+                                  return_var=True)
+    
+    def predict(self, s, return_var=False):
+        action_qs = np.full(self.n_actions, -np.inf)
+        variance = np.zeros(self.n_actions)
+        for a in self.env.actions(s):
+            q, var = self.predictAction(s, a)
+            action_qs[a] = q
+            variance[a] = var
+        if return_var:
+            return action_qs, variance
+        else:
+            return action_qs
 
       
 
