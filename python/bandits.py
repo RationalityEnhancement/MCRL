@@ -77,24 +77,24 @@ class MetaBanditEnv(object):
             yield (p, tuple(s), self.cost)
             s[arm] = (a, b + 1)
             yield (1 - p, tuple(s), self.cost)
-    
+
     @memoize
     def expected_term_reward(self, state):
         best_value = max(self.p_win(state, a) for a in self._arms)
         return max(best_value, self.constant)
-    
+
     @memoize
     def myopic_voc(self, action, state):
         val = sum(p * self.expected_term_reward(s1)
                   for p, s1, r in self.results(state, action))
         return val - self.expected_term_reward(state)
-    
+
     @memoize
     def vpi(self, state):
         samples = (beta_samples(a,b) for a, b in state)
         val = reduce(np.maximum, samples).mean()
         return val - self.expected_term_reward(state)
-    
+
     @memoize
     def vpi_action(self, action, state):
         def value(act):
@@ -106,7 +106,7 @@ class MetaBanditEnv(object):
         else:
             competing_value = value(best_arm)
         a, b = state[action]
-        print('competing_value', competing_value)
+        # print('competing_value', competing_value)
         val = np.maximum(beta_samples(a, b), competing_value).mean()
         return val - self.expected_term_reward(state)
 

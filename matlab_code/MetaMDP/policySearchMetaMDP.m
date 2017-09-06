@@ -9,7 +9,7 @@ addpath(genpath(GPO_dir))
 ER_hat=@(w) evaluateMetaMDP([w(:)],c);
 
 x_input_domain = [-2 2; -2 2; -2 2];
-nb_iter=300;
+nb_iter=500;
 %nb_iter=50;
 result_display=true; result_save=true; plot_func=false; plot_point=false;
 d=3;
