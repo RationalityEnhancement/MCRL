@@ -1,12 +1,23 @@
 from toolz import concat, memoize, reduce
+from functools import lru_cache
 from scipy.stats import beta
 import numpy as np
 import gym
 
+
+N_SAMPLE = 10000
+
 def memo_key(args, kwargs):
     """Symmetry breaking hashing."""
     state = args[1]
-    return (tuple(sorted(state)), *args[1:])
+    if len(args) > 2:
+        action = args[2]
+        mask = [0] * len(state)
+        mask[action] = 1
+        state = zip(state, mask)
+        state = ((s, i == action) for i, s in enumerate(state))
+    return sum(map(hash, state))
+    # return tuple(sorted(state))
 
 
 
@@ -25,6 +36,7 @@ class MetaBanditEnv(gym.Env):
         self.term_action = self._actions[-1]
         self._max_sum = max_obs + sum(concat(self.init))
         self._reset()
+        self.n_actions = n_arm + 1
 
     def _reset(self):
         self._state = self.init
@@ -66,13 +78,13 @@ class MetaBanditEnv(gym.Env):
                 0,
                 self.expected_term_reward(state)
             ])
-
+        etr = self.expected_term_reward(state)
         return np.array([
             self.cost,
-            self.myopic_voc(state, action),
-            self.vpi_action(state, action),
-            self.vpi(state),
-            self.expected_term_reward(state)
+            self.myopic_voc(state, action) - etr,
+            self.vpi_action(state, action) - etr,
+            self.vpi(state) - etr,
+            etr
         ])
 
     def p_win(self, state, arm):
@@ -107,33 +119,68 @@ class MetaBanditEnv(gym.Env):
     def myopic_voc(self, state, action):
         val = sum(p * self.expected_term_reward(s1)
                   for p, s1, r in self.results(state, action))
-        return val - self.expected_term_reward(state)
+        return val 
     
     @memoize(key=memo_key)
     def vpi(self, state):
-        samples = (beta_samples(a,b) for a, b in state)
-        val = reduce(np.maximum, samples).mean()
-        return val - self.expected_term_reward(state)
+        abis = tuple((a, b, i) for i, (a, b) in enumerate(state))
+        val = expected_max_betas(abis)
+        # samples = (beta_samples(a,b,i) for i, (a, b) in enumerate(state))
+        # val = reduce(np.maximum, samples).mean()
+        return val 
     
     @memoize(key=memo_key)
     def vpi_action(self, state, action):
-        def value(act):
-            return self.p_win(state, act)
-        best_arm = max(self._arms, key=value)
+        val_acts = sorted((self.p_win(state, a), a) for a in self._arms)
+        best_arm = val_acts[0][1]
+
         if action == best_arm:
-            others = (act for act in self._arms if act != action)
-            competing_value = max(map(value, others))
+            competing_value = val_acts[1][0]
         else:
-            competing_value = value(best_arm)
+            competing_value = val_acts[0][0]
         a, b = state[action]
-        val = np.maximum(beta_samples(a, b), competing_value).mean()
-        return val - self.expected_term_reward(state)
+        val = expected_max_beta_constant(a, b, competing_value)
+        return val 
+    
+    # @memoize(key=memo_key)
+    # def vpi_action(self, state, action):
+    #     value = lambda i: state[i][0] / (state[i][0] + state[i][1])
+    #     best_arm = max(self._arms, key=value)
+    #     arm
+    #     if action == best_arm:
+    #         others = (act for act in self._arms if act != action)
+    #         competing_value = max(map(value, others))
+    #     else:
+    #         competing_value = value(best_arm)
+    #     a, b = state[action]
+    #     val = np.maximum(beta_samples(a, b, 0), competing_value).mean()
+    #     return val - self.expected_term_reward(state)
 
-@memoize
-def _beta_samples(a, b, n):
-    return beta(a, b).rvs(n)
 
-def beta_samples(a, b, n=100000):
-    samples = _beta_samples(a, b, n)
+@lru_cache(None)
+def expected_max_betas(abis):
+    return max_betas(abis).mean()
+
+@lru_cache(None)
+def expected_max_beta_constant(a, b, constant):
+    return np.maximum(_beta_samples(a, b), constant).mean()
+
+@lru_cache(None)
+def max_betas(abis):
+    if len(abis) == 1:
+        return beta_samples(*abis[0])
+    else:
+        # Divide and conquer!
+        split = len(abis) // 2
+        return np.maximum(max_betas(abis[:split]),
+                          max_betas(abis[split:]))
+
+@lru_cache(None)
+def _beta_samples(a, b):
+    return beta(a, b).rvs(N_SAMPLE)
+
+@lru_cache(None)
+def beta_samples(a, b, idx):
+    samples = _beta_samples(a, b).copy()
     np.random.shuffle(samples)
     return samples

@@ -17,21 +17,35 @@ def sort_tree(env, state):
         if not env.tree[i]:
             continue
         c1, c2 = env.tree[i]
-        idx1, idx2 = env.subtrees[c1], env.subtrees[c2]
+        idx1, idx2 = env.subtree_slices[c1], env.subtree_slices[c2]
         
         if not (state[idx1] <= state[idx2]):
             state[idx1], state[idx2] = state[idx2], state[idx1]
     return tuple(state)
 
 
-def solve(env, hash_state=None, actions=None):
+def solve(env, hash_state=None, actions=None, blinkered=False):
     """Returns Q, V, pi, and computation data for an mdp environment."""
-    if hash_state == 'sort_tree':
-        hash_state = lambda state: sort_tree(env, state)
-    elif hash_state == 'sort':
+    if hasattr(env, 'n_arm'):
         hash_state = lambda state: tuple(sorted(state))
+    elif hasattr(env, 'tree'):
+        hash_state = lambda state: sort_tree(env, state)
     if actions is None:
         actions = env.actions
+    if blinkered:
+        if hasattr(env, '_relevant_subtree'):
+            def subset_actions(a):
+                if a == env.term_action:
+                    return ()
+                else:
+                    return (*env._relevant_subtree(a), env.term_action)
+        else:
+            def subset_actions(a):
+                return (a, env.term_action)
+    else:
+        subset_actions = lambda a: None
+
+
 
     info = {  # track number of times each function is called
         'q': 0,
@@ -40,25 +54,37 @@ def solve(env, hash_state=None, actions=None):
     
     if hash_state is not None:
         def hash_key(args, kwargs):
-            s = args[0]
-            if s is None:
-                return s
+            state = args[0]
+            if state is None:
+                return state
             else:
-                return hash_state(args[0])
+                if kwargs:
+                    # Embed the action subset into the state.
+                    action_subset = kwargs['action_subset']
+                    mask = [0] * len(state)
+                    for a in action_subset:
+                        mask[a] = 1
+                    state = tuple(zip(state, mask))
+                return hash_state(state)
     else:
         hash_key = None
 
     @memoize
     def Q(s, a):
+        # print('Q', s, a)
         info['q'] += 1
-        return sum(p * (r + V(s1)) for p, s1, r in env.results(s, a))
+        action_subset = subset_actions(a)
+        return sum(p * (r + V(s1, action_subset)) for p, s1, r in env.results(s, a))
 
     @memoize(key=hash_key)
-    def V(s):
+    def V(s, action_subset=None):
         if s is None:
             return 0
         info['v'] += 1
-        return max((Q(s, a) for a in actions(s)), default=0)
+        acts = actions(s)
+        if action_subset is not None:
+            acts = tuple(a for a in acts if a in action_subset)
+        return max((Q(s, a) for a in acts), default=0)
     
     @memoize
     def pi(s):
