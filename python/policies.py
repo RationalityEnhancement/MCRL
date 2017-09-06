@@ -65,6 +65,9 @@ class LiederPolicy(Policy):
     """The meta-policy of Lieder et al. (2017) AAAI."""
     def __init__(self, theta):
         self.theta = np.array(theta)
+
+    def start_episode(self, state):
+        self.q_predictions = []
     
     def act(self, state):
         def Q(a):
@@ -73,8 +76,11 @@ class LiederPolicy(Policy):
             else:
                 return np.dot(self.theta, self.env.action_features(a))
 
+        # val, action = max((Q(a), a) for a in self.env.actions(state))
+        # self.q_predictions.append(val)
         action = max(self.env.actions(state), key=Q)
         return action
+
 
 
 
