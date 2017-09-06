@@ -38,7 +38,7 @@ class FunctionPolicy(Policy):
 
 class RandomPolicy(Policy):
     """Chooses actions randomly."""
-    
+
     def act(self, state):
         return self.env.action_space.sample()
 
@@ -114,9 +114,9 @@ class ActorCritic(Policy):
         self.actor_lambda = actor_lambda
         self.actor_lr = actor_lr
 
-        self._actor_discount = np.array([(self.discount * self.actor_lambda) ** i 
+        self._actor_discount = np.array([(self.discount * self.actor_lambda) ** i
                                          for i in range(5000)])
-    
+
 
         self.memory = deque(maxlen=100)
         self.batch_size = 20
@@ -228,9 +228,9 @@ class Astar(Policy):
         boredom = - 0.1 * self.history[obs]
         score = node.reward + value + boredom
         return - score
-    
+
     def make_plan(self, state, expansions=5000):
-        
+
         Node = namedtuple('Node', ('state', 'path', 'reward', 'done'))
         eval_node = self.eval_node
         start = Node(self.env._state, [], 0, False)
@@ -258,7 +258,7 @@ class Astar(Policy):
                     best_finished = min((best_finished, node1), key=eval_node)
                 else:
                     frontier.push(node1)
-                    
+
         for i in range(expansions):
             self.save('frontier', [n[1].state for n in frontier])
             if frontier:
@@ -276,7 +276,7 @@ class Astar(Policy):
         # plan = min(choices, key=eval_node(noisy=True))
         # self.log(
         #     i,
-        #     len(plan.path), 
+        #     len(plan.path),
         #     -round(eval_node(plan, noisy=False), 2),
         #     plan.done,
         # )
@@ -295,9 +295,9 @@ class GeneralizedAdvantageEstimation(Policy):
         self.actor_lr = actor_lr
         self.critic_lr = critic_lr
 
-        self._actor_discount = np.array([(self.discount * self.actor_lambda) ** i 
+        self._actor_discount = np.array([(self.discount * self.actor_lambda) ** i
                                          for i in range(5000)])
-        self._critic_discount = np.array([(self.discount * self.critic_lambda) ** i 
+        self._critic_discount = np.array([(self.discount * self.critic_lambda) ** i
                                           for i in range(5000)])
 
         self._memory = deque(maxlen=100)
@@ -493,7 +493,7 @@ class ValSearchPolicy(Policy):
                     best_finished = min((best_finished, node1), key=eval_node)
                 else:
                     frontier.push(node1)
-                    
+
         for i in range(expansions):
             if frontier:
                 expand(frontier.pop())
@@ -510,10 +510,9 @@ class ValSearchPolicy(Policy):
         # plan = min(choices, key=eval_node(noisy=True))
         self.log(
             i,
-            len(plan.path), 
+            len(plan.path),
             -round(eval_node(plan, noisy=False), 2),
             plan.done,
         )
         # self._trace['paths'].append(plan.path)
         return plan.path
-

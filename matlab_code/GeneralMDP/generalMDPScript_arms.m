@@ -11,14 +11,19 @@ constantArm = -1;
 rewardIncorrect = 0;
 discount = 1;
 
-nr_arms= 2;
-nr_balls = 15;
-costs = logspace(-5,-1,10);
+nrs_arms= 2:6;
+nr_balls = 8;
+
+% costs = logspace(-5,-1,10);
 % method_ers = zeros(numel(costs),5);
 % method_sterrs = zeros(numel(costs),5);
 
-for c=1:numel(costs)
-    cost = costs(c)
+method_ers = zeros(numel(nrs_arms),5);
+method_sterrs = zeros(numel(nrs_arms),5);
+
+for c=1:numel(nrs_arms)
+    nr_arms=nrs_arms(c);
+    cost = 0.007;
 tic 
  general_backwardsInduction %update for reward
 toc
@@ -37,9 +42,9 @@ tic
  general_metaGreedy
 toc
 
-tic
- general_BO
-toc
+% tic
+%  general_BO
+% toc
 
 gen_simulate
 

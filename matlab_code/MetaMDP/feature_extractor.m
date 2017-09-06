@@ -19,12 +19,18 @@ end
 % 
 % f = f';
 
+if ismember(1,selected_features)
+    vpi = valueOfPerfectInformationBernoulli(st(1),st(2),mdp.rewardCorrect,mdp.rewardIncorrect);
+else
+    vpi=NaN;
+end
+
 if ismember(2,selected_features)
     t = st(1)+ st(2);
-    mvoc = 1/(t*(t+1))*(st(1)*(max(st(1)+1,st(2))-min(st(1)+1,st(2))) + st(2)*(max(st(1),st(2)+1)-min(st(1),st(2)+1)));
-    voc1 = mvoc-max(st)/sum(st)-mdp.cost+min(st)/sum(st);
+    mvoi = 1/(t*(t+1))*(st(1)*(max(st(1)+1,st(2))-min(st(1)+1,st(2))) + st(2)*(max(st(1),st(2)+1)-min(st(1),st(2)+1)));
+    voi1 = mvoi-max(st)/sum(st)-mdp.cost+min(st)/sum(st);
 else
-    voc1=NaN;
+    voi1=NaN;
 end
 
 if ismember(3,selected_features)
@@ -33,16 +39,16 @@ else
     voc2=NaN;
 end
 
-if ismember(1,selected_features)
-    vpi = valueOfPerfectInformationBernoulli(st(1),st(2),mdp.rewardCorrect,mdp.rewardIncorrect);
+if ismember(5,selected_features)
+    cost = mdp.cost;
 else
-    vpi=NaN;
+    voc2=NaN;
 end
 
 if a == 1
-    f = [vpi, voc1, voc2,max(st)/sum(st)-min(st)/sum(st), 1]';
+    f = [vpi, voi1, voc2, max(st)/sum(st)-min(st)/sum(st), cost, 1]';
 elseif a == 2
-    f = [0,0,0,max(st)/sum(st)-min(st)/sum(st),1]';
+    f = [0,0,0,max(st)/sum(st)-min(st)/sum(st),0,1]';
 end
 
 f = f(selected_features,1);
