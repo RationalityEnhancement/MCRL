@@ -47,7 +47,9 @@ class LiederQ(ActionValueFunction):
     def __init__(self):
         super().__init__()
         from models import BayesianRegression
-        self.model = BayesianRegression(5)
+        prior = np.array([1, 0.5, 0, 0.5, 1])
+        precision = np.array([1, 1, 1e5, 1, 1e5])
+        self.model = BayesianRegression(prior, precision)
 
     def attach(self, agent):
         super().attach(agent)
@@ -62,6 +64,7 @@ class LiederQ(ActionValueFunction):
                 X.append(self.env.action_features(a, s))
                 y.append(r)
         self.model.fit(np.stack(X), np.array(y))
+        self.save('w', self.model.weights.get_moments()[0])
 
     def predictAction(self, s, a):
         return self.model.predict(self.env.action_features(a, s),

@@ -1,11 +1,13 @@
 from collections import namedtuple, defaultdict, deque, Counter
 import numpy as np
 import gym
-from toolz import memoize, curry
 from functools import lru_cache
 from gym import spaces
 import itertools as it
 from distributions import *
+
+CACHE_SIZE = int(2**18)
+SMALL_CACHE_SIZE = int(2**16)
 
 class MouselabEnv(gym.Env):
     """MetaMDP for a tree with a discrete unobserved reward function."""
@@ -34,16 +36,19 @@ class MouselabEnv(gym.Env):
             self.max = cmax
             self.init = (0, *(self.reward,) * (len(self.tree) - 1))
         else:
+            # Distributions represented as samples.
             self.max = smax
-            if self.iid_rewards:
-                self.init = (0, *(self.reward.copy() for _ in range(len(self.tree) - 1)))
-            else:
-                self.init = reward
+            self.init = (0, *(self.reward.to_sampledist() for _ in range(len(self.tree) - 1)))
+            # if self.iid_rewards:
+                # self.init = (0, *(self.reward.copy() for _ in range(len(self.tree) - 1)))
+            # else:u
+                # self.init = reward
 
         self.sample_term_reward = False
         self.action_space = spaces.Discrete(len(self.tree) + 1)
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=len(self.tree))
-        self.subtrees = self._get_subtrees()
+        self.subtree = self._get_subtree()
+        self.subtree_slices = self._get_subtree_slices()
         self.term_action = len(self.tree)
         self.reset()
 
@@ -79,7 +84,7 @@ class MouselabEnv(gym.Env):
         if self.ground_truth is not None:
             result = self.ground_truth[action]
         else:
-            result = self._state[action].sample_nocache()
+            result = self._state[action].sample()
         s = list(self._state)
         s[action] = result
         return tuple(s)
@@ -150,13 +155,7 @@ class MouselabEnv(gym.Env):
             self.expected_term_reward(state)
         ])
 
-    def subtree(self, node):
-        # return state[self.subtrees[node]]
-        def gen(n):
-            yield n
-            for n1 in self.tree[n]:
-                yield from gen(n1)
-        return tuple(gen(node))
+
 
     def term_reward(self, state=None):
         state = state if state is not None else self._state
@@ -171,8 +170,7 @@ class MouselabEnv(gym.Env):
                     key=lambda n1: self.node_quality(n1, state).expectation())
             yield n
 
-    # @lru_cache(maxsize=100000)
-    @memoize
+    @lru_cache(CACHE_SIZE)
     def expected_term_reward(self, state):
         return self.term_reward(state).expectation()
 
@@ -194,40 +192,36 @@ class MouselabEnv(gym.Env):
         state = state if state is not None else self._state
         return self.node_value_to(node, state) + self.node_value(node, state)
 
-    # @lru_cache(maxsize=100000)
-    @memoize
+    @lru_cache(CACHE_SIZE)
     def myopic_voc(self, action, state):
         return (self.node_value_after_observe((action,), 0, state).expectation()
                 - self.expected_term_reward(state)
                 )
 
-    # @lru_cache(maxsize=100000)
-    @memoize
+    @lru_cache(CACHE_SIZE)
     def vpi_action(self, action, state):
         obs = self._relevant_subtree(action)
         return (self.node_value_after_observe(obs, 0, state).expectation()
                 - self.expected_term_reward(state)
                 )
 
-    # @lru_cache(maxsize=100000)
-    @memoize
+    @lru_cache(CACHE_SIZE)
     def vpi(self, state):
-        obs = self.subtree(0)
+        obs = self.subtree[0]
         return (self.node_value_after_observe(obs, 0, state).expectation()
                 - self.expected_term_reward(state)
                 )
 
     def unclicked(self, state):
         return sum(1 for x in state if hasattr(x, 'sample'))
-
-    @memoize
+    
+    @lru_cache(None) 
     def _relevant_subtree(self, node):
-        trees = [self.subtree(n1) for n1 in self.tree[0]]
+        trees = [self.subtree[n1] for n1 in self.tree[0]]
         for t in trees:
             if node in t:
                 return tuple(t)
         assert False
-
 
     def node_value_after_observe(self, obs, node, state):
         """A distribution over the expected value of node, after making an observation.
@@ -235,28 +229,13 @@ class MouselabEnv(gym.Env):
         obs can be a single node, a list of nodes, or 'all'
         """
         if self.exact:
-            obs_tree = self.to_tree(state, node, obs)
-            return exact_node_value_after_observe(self.reward, obs_tree)
+            obs_tree = self.to_obs_tree(state, node, obs, sort=True)
+            return exact_node_value_after_observe(obs_tree)
         else:
-            def subjective_reward(n):
-                if obs == 'all' or n in obs:
-                    return state[n]
-                else:
-                    return expectation(state[n])
-
-            return self.max((self.node_value_after_observe(obs, n1, state) + subjective_reward(n1)
-                             for n1 in self.tree[node]),
-                            default=PointMass(0))
-
-
-
-    # @memoize
-    # def node_value_after_observe(self, obs, node, state):
-    #     """A distribution over the expected value of node, after making an observation.
-        
-    #     obs can be a single node, a list of nodes, or 'all'
-    #     """
-
+            obs_flat = self.to_obs_flat(state, node, obs)
+            return flat_node_value_after_observe(obs_flat)
+            # obs_tree = self.to_obs_tree(state, node, obs)
+            # return node_value_after_observe(obs_tree)
 
     def path_to(self, node, start=0):
         path = [start]
@@ -286,7 +265,7 @@ class MouselabEnv(gym.Env):
 
         return rec([start])
 
-    def _get_subtrees(self):
+    def _get_subtree_slices(self):
         slices = [0] * len(self.tree)
         def get_end(n):
             end = max((get_end(n1) for n1 in self.tree[n]), default=n+1)
@@ -294,6 +273,13 @@ class MouselabEnv(gym.Env):
             return end
         get_end(0)
         return slices
+
+    def _get_subtree(self):
+        def gen(n):
+            yield n
+            for n1 in self.tree[n]:
+                yield from gen(n1)
+        return [tuple(gen(n)) for n in range(len(self.tree))]
 
 
     def _build_tree(self):
@@ -318,7 +304,7 @@ class MouselabEnv(gym.Env):
                 expand(next_i, d+1)
 
         expand(next(ids), 0)
-        return T
+        return tuple(map(tuple, T))
 
     def _render(self, mode='notebook', close=False):
         if close:
@@ -353,42 +339,72 @@ class MouselabEnv(gym.Env):
         display(dot)
 
 
-    def to_tree(self, state, n, obs=()):
-        val = 'obs' if (hasattr(state[n], 'sample') and n in obs) else state[n]
-        children = tuple(self.to_tree(state, c, obs) for c in self.tree[n])
-        return (val, children)
+    def to_obs_tree(self, state, node, obs=(), sort=False):
+        maybe_sort = sorted if sort else lambda x: x
+        def rec(n):
+            subjective_reward = state[n] if n in obs else expectation(state[n])
+            children = tuple(maybe_sort(rec(c) for c in self.tree[n]))
+            return (subjective_reward, children)
+        return rec(node)
+
+    def to_obs_flat(self, state, node, obs=(), sort=False):
+        return tuple(state[n] if n in obs else expectation(state[n])
+                     for n in range(len(state)))
+
+def flat_hash_key(args, kwargs):
+    obs, node, state, tree = args
+    pass
+
+def sort_tree(env, state):
+    """Breaks symmetry between belief states.
+    
+    This is done by enforcing that the knowldge about states at each
+    depth be sorted by [0, 1, UNKNOWN]
+    """
+    state = list(state)
+    for i in range(len(env.tree) - 1, -1, -1):
+        if not env.tree[i]:
+            continue
+        c1, c2 = env.tree[i]
+        idx1, idx2 = env.subtree_slices[c1], env.subtree_slices[c2]
+        
+        if not (state[idx1] <= state[idx2]):
+            state[idx1], state[idx2] = state[idx2], state[idx1]
+    return tuple(state)
+
+@lru_cache(SMALL_CACHE_SIZE)
+def flat_node_value_after_observe(obs_flat):
+    if len(obs_flat) == 1:
+        return PointMass(0)    
+    c1 = 1
+    c2 = len(obs_flat) // 2 + 1
+    return smax((flat_node_value_after_observe(obs_flat[c1:c2]) + obs_flat[c1],
+                 flat_node_value_after_observe(obs_flat[c2:]) + obs_flat[c2]))    
 
 
-@memoize
-def exact_node_value_after_observe(reward, obs_tree):
+@lru_cache(None)
+def exact_node_value_after_observe(obs_tree):
     """A distribution over the expected value of node, after making an observation.
     
     `obs` can be a single node, a list of nodes, or 'all'
     """
-    def subjective_reward(x):
-        if x == 'obs':
-            return reward
-        else:
-            return expectation(x)
-    rec = exact_node_value_after_observe
-    return cmax((rec(reward, c) + subjective_reward(c[0])
-                 for c in obs_tree[1]),
-                default=PointMass(0))
-# @memoize
-# def node_value_after_observe(_max, reward, obs_tree):
+    children = tuple(exact_node_value_after_observe(c) + c[0] for c in obs_tree[1])
+    return cmax(children, default=PointMass(0))
+
+# @lru_cache(CACHE_SIZE)
+# def node_value_after_observe(obs_tree):
 #     """A distribution over the expected value of node, after making an observation.
     
 #     `obs` can be a single node, a list of nodes, or 'all'
 #     """
-#     def subjective_reward(x):
-#         if x == 'obs':
-#             return reward
-#         else:
-#             return expectation(x)
+#     children = tuple(node_value_after_observe(c) + c[0] for c in obs_tree[1])
+#     return smax(children, default=PointMass(0))
 
+from toolz import memoize
 
-
-#     rec = node_value_after_observe
-#     return _max((rec(_max, reward, c) + subjective_reward(c[0])
-#                  for c in obs_tree[1]),
-#                 default=PointMass(0))
+@memoize(key=lambda args, kwargs: len(args[0]))
+def tree_max(obs_flat):
+    c1 = 1
+    c2 = len(obs_flat) // 2 + 1
+    return smax((flat_node_value_after_observe(obs_flat[c1:c2]) + obs_flat[c1],
+                 flat_node_value_after_observe(obs_flat[c2:]) + obs_flat[c2]))    

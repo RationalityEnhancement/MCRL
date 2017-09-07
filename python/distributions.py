@@ -1,11 +1,12 @@
 import numpy as np
 from collections import Counter
 import itertools as it
-from toolz.curried import reduce
+from toolz import reduce
 import scipy.stats
 from functools import total_ordering, partial, lru_cache
 
-N_SAMPLES = 10000
+CACHE_SIZE = int(2**20)
+SMALL_CACHE_SIZE = int(2**12)
 
 class Distribution(object):
     """Represents a probability distribution."""
@@ -22,7 +23,6 @@ class Distribution(object):
 class Normal(Distribution):
     """Normal distribution."""
     def __init__(self, mu, sigma):
-        # print('init', id(self) % 100)
         super().__init__()
         self.mu = mu
         self.sigma = sigma
@@ -44,19 +44,65 @@ class Normal(Distribution):
             # print('add number')
             return Normal(self.mu + other, self.sigma)
 
+    def to_sampledist(self, n=10000):
+        d = SampleDist(self.sample(n))
+        d.expectation = lambda *args: self.mu
+        return d
+
+
     def expectation(self):
         return self.mu
 
     def copy(self):
         return Normal(self.mu, self.sigma)
 
-    @lru_cache(maxsize=100000)
+    @lru_cache(maxsize=CACHE_SIZE)
     def sample(self, n=None):
         # print('sample', id(self) % 1000)
         if n is not None:
             return self.mu + self.sigma * np.random.randn(n)
         else:
             return self.mu + self.sigma * np.random.randn()
+
+    def sample_nocache(self):
+        return self.mu + self.sigma * np.random.randn()
+
+    @classmethod
+    def fit(cls, samples):
+        return cls(*scipy.stats.norm.fit(samples))
+        
+class NormalMixture(Distribution):
+    """Normal distribution."""
+    def __init__(self, mu, sigma, weights):
+        super().__init__()
+        self.mu = mu
+        self.sigma = sigma
+        self.weights = weights
+        self.n_mix = len(weights)
+        self._z = scipy.stats.multinomial(1, weights)
+        self._norm = scipy.stats.norm(mu, sigma)
+
+
+    def __repr__(self):
+        return 'NormMix'
+
+    def to_sampledist(self, n=10000):
+        d = SampleDist(self.sample(n))
+        return d
+
+    def expectation(self):
+        return self.mu
+
+    def copy(self):
+        return NormalMixture(self.mu, self.sigma, self.weights)
+
+    def sample(self, n):
+        # print('sample', id(self) % 1000)
+        if n is not None:
+            z = self._z.rvs(n)
+            return (self._norm.rvs((n, self.n_mix)) * z).sum(1)
+        else:
+            assert False
 
     def sample_nocache(self):
         return self.mu + self.sigma * np.random.randn()
@@ -72,8 +118,6 @@ class Categorical(Distribution):
     def __init__(self, vals, probs=None):
         super().__init__()
         self.vals = tuple(vals)
-        self._vals = np.array(self.vals)  # for use in sample()
-        self._idx = np.arange(len(self.vals))
         if probs is None:
             self.probs = tuple(1/len(vals) for _ in range(len(vals)))
         else:
@@ -83,7 +127,6 @@ class Categorical(Distribution):
     def __lt__(self, other):
         # This is for sorting belief states.
         return True
-
 
     def __hash__(self):
         return hash((self.vals, self.probs))
@@ -118,22 +161,28 @@ class Categorical(Distribution):
         vals = tuple(f(v) for v in self.vals)
         return Categorical(vals, self.probs)
 
+    @lru_cache(CACHE_SIZE)
     def expectation(self):
         return sum(p * v for p, v in zip(self.probs, self.vals))
 
     def sample(self, n=None):
+        vals = np.array(self.vals)  # for use in sample()
         if n is not None:
-            i = np.random.choice(self._idx, p=self.probs, size=n)
-            return self._vals[i]
+            i = np.random.choice(len(self.vals), p=self.probs, size=n)
+            return vals[i]
         else:
-            i = np.random.choice(self._idx, p=self.probs)
-            return self._vals[i]
+            i = np.random.choice(len(self.vals), p=self.probs)
+            return vals[i]
 
 
 class PointMass(Categorical):
     """A distribution with all mass on one value."""
     def __init__(self, val):
-        super().__init__([val])
+        super().__init__([val], [1])
+        self._samples = val
+
+    def __hash__(self):
+        return hash(self.vals[0])
 
     def __repr__(self):
         return 'P({})'.format(round(self.vals[0], 2))
@@ -200,7 +249,7 @@ class GenerativeModel(Distribution):
                 return self.sample(n) + other
         return GenerativeModel(sample, kind='add', args=(self, other))
 
-    @lru_cache(maxsize=100000)
+    @lru_cache(maxsize=CACHE_SIZE)
     def sample(self, n=None):
         # print('sample', str(self))
         return self._sample(n)
@@ -245,8 +294,8 @@ def cross(dists, f=None):
 
 __no_default__ = '__no_default___'
 
+@lru_cache(maxsize=None)
 def cmax(dists, default=__no_default__):
-    dists = tuple(dists)
     if len(dists) == 1:
         return dists[0]
     elif len(dists) == 0:
@@ -274,18 +323,20 @@ def dmax(dists, default=__no_default__):
 
     return GenerativeModel(sample, kind='dmax', args=dists)
 
-@lru_cache(maxsize=None)
+@lru_cache(CACHE_SIZE)
 def smax(dists, default=__no_default__):
-    dists = tuple(dists)
-    if len(dists) == 1:
-        return dists[0]
     if len(dists) == 0:
         if default is not __no_default__:
             return default
         else:
             raise ValueError('dmax() arg is an empty sequence')
+    elif len(dists) == 1:
+        return dists[0]
+    elif len(dists) == 2:
+        return SampleDist(np.maximum(dists[0]._samples, dists[1]._samples))
+    else:
+        return SampleDist(reduce(np.maximum, [d._samples for d in dists]))
 
-    return SampleDist(reduce(np.maximum, [d.sample(N_SAMPLES) for d in dists]))
 
 def normal_approximation(dist, samples=10000):
     return Normal(scipy.stats.norm.fit(dist.sample(samples)))
@@ -299,13 +350,17 @@ class SampleDist(Distribution):
         self._samples = samples
         self.len = len(samples) if hasattr(samples, '__len__') else None
 
-    def sample(self, n=None):
-        return self._samples
+    def __repr__(self):
+        return 'SD({})'.format(id(self) % 100)
 
+    def sample(self):
+        return np.random.choice(self._samples)
+
+    @lru_cache(CACHE_SIZE)
     def expectation(self):
         return np.mean(self._samples)
 
-    @lru_cache(10000)
+    @lru_cache(SMALL_CACHE_SIZE)
     def __add__(self, other):
         if hasattr(other, '_samples'):
             return SampleDist(self._samples + other._samples)
@@ -313,10 +368,6 @@ class SampleDist(Distribution):
             return SampleDist(self._samples + other.sample(self.len))
         else:
             return SampleDist(self._samples + other)
-
-
-
-
 
 
 

@@ -6,6 +6,9 @@ from agents import Agent
 from policies import LiederPolicy, FixedPlanPolicy
 from contexttimer import Timer
 
+from toolz import partition_all
+from joblib import Parallel, delayed
+
 __ENVS = None
 __AGENT = Agent()
 
@@ -13,22 +16,22 @@ def eval_one(i):
     __AGENT.register(__ENVS[i])
     return __AGENT.run_episode()['return']
 
-def eval_chunk(i): 
-    
-    __AGENT.register(__ENVS[i])
-    return __AGENT.run_episode()['return']
+def eval_chunk(i):
+    returns = []
+    for env in __CHUNKS[i]:
+        __AGENT.register(env)
+        returns.append(__AGENT.run_episode()['return'])
+    return np.mean(returns)
 
-def get_util(policy, envs, n_jobs=None):
-    if n_jobs is None:
+def get_util(policy, envs, parallel=None):
+    if parallel is None:
         return evaluate(policy, envs).util.mean()
     else:
-        from joblib import Parallel, delayed
-        global __ENVS
         global __CHUNKS
-        __ENVS = envs
+        __CHUNKS = list(partition_all(parallel.n_jobs, envs))
         __AGENT.register(policy)
-        jobs = (delayed(eval_one)(i) for i in range(len(envs)))
-        return np.mean(Parallel(n_jobs=n_jobs)(jobs))
+        jobs = (delayed(eval_chunk)(i) for i in range(len(__CHUNKS)))
+        return np.mean(parallel(jobs))
 
 def evaluate(policy, envs):
     agent = Agent()
@@ -41,8 +44,13 @@ def evaluate(policy, envs):
     return pd.DataFrame(run_env(policy, env) for env in envs)
 
 
-def bo_policy(envs, max_cost=10., normalize_voi=True, n_calls=60, 
+def bo_policy(envs, max_cost=10., normalize_voi=True, n_calls=60, n_random_starts=10,
               verbose=False, return_result=False, n_jobs=None):
+    
+    if n_jobs is not None:
+        parallel = Parallel(n_jobs=n_jobs)
+    else:
+        parallel = None
 
     def x2theta(x):
         assert len(x) == 4
@@ -57,7 +65,7 @@ def bo_policy(envs, max_cost=10., normalize_voi=True, n_calls=60,
         theta = x2theta(x)
         
         with Timer() as t:
-            util = get_util(LiederPolicy(theta), envs, n_jobs)
+            util = get_util(LiederPolicy(theta), envs, parallel)
         if verbose:
             print(theta.round(3), '->', round(util, 3),
                   'in', round(t.elapsed), 'sec')
@@ -65,7 +73,8 @@ def bo_policy(envs, max_cost=10., normalize_voi=True, n_calls=60,
 
     bounds = [ (1., max_cost)] + [ (0., 1.) ] * 3
     with Timer() as t:
-        result = gp_minimize(objective, bounds, n_calls=n_calls, random_state=0)
+        result = gp_minimize(objective, bounds, n_calls=n_calls, 
+                             n_random_starts=n_random_starts, random_state=0)
 
     theta = x2theta(result.x)
     print('BO:', theta.round(3), '->', round(-result.fun, 3),

@@ -38,14 +38,16 @@ from bayespy.inference import VB
 
 class BayesianRegression(object):
     """Bayesian linear regression."""
-    def __init__(self, n_feature, n_iter=1000, tolerance=1e-8):
+    def __init__(self, prior, precision=1e-6, n_iter=1000, tolerance=1e-8):
         super().__init__()
         self.n_iter = n_iter
+        self.prior = prior
+        self.precision = precision
         self.tolerance = tolerance
-        self.weights = GaussianARD(0, 1e-6, shape=(n_feature,))
+        self.weights = GaussianARD(prior, precision, shape=prior.shape)
     
     def fit(self, X, y):
-        self.weights = GaussianARD(0, 1e-6, shape=(X.shape[-1],))
+        self.weights = GaussianARD(self.prior, self.precision, shape=self.prior.shape)
         y_mean = SumMultiply('i,i', self.weights, X)
         precision = Gamma(1, .1)
         y_obs = GaussianARD(y_mean, precision)
