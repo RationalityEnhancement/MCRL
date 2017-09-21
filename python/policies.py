@@ -38,7 +38,7 @@ class FunctionPolicy(Policy):
 
 class RandomPolicy(Policy):
     """Chooses actions randomly."""
-
+    
     def act(self, state):
         return self.env.action_space.sample()
 
@@ -52,22 +52,19 @@ class MaxQPolicy(Policy):
         self.anneal = anneal
 
     def act(self, state, anneal_step=0):
+        q = self.Q.predict(state)
         epsilon = self.epsilon * self.anneal ** anneal_step
         if np.random.rand() < epsilon:
-            return np.random.randint(self.env.n_actions)
+            noise = np.random.random(q.shape) * 1000
         else:
-            q = self.Q.predict(state)
             noise = np.random.random(q.shape) * .001
-            return np.argmax(q + noise)
-
+        return np.argmax(q + noise)
 
 class LiederPolicy(Policy):
     """The meta-policy of Lieder et al. (2017) AAAI."""
-    def __init__(self, theta):
+    def __init__(self, theta, bad_max=False):
         self.theta = np.array(theta)
-
-    def start_episode(self, state):
-        self.q_predictions = []
+        self.bad_max = bad_max
     
     def act(self, state):
         def Q(a):
@@ -75,13 +72,11 @@ class LiederPolicy(Policy):
                 return self.env.expected_term_reward(self.env._state)
             else:
                 return np.dot(self.theta, self.env.action_features(a))
-
-        # val, action = max((Q(a), a) for a in self.env.actions(state))
-        # self.q_predictions.append(val)
-        action = max(self.env.actions(state), key=Q)
+        if self.bad_max:
+            val, action = max((Q(a), a) for a in self.env.actions(state))
+        else:
+            action = max(self.env.actions(state), key=Q)
         return action
-
-
 
 
 
@@ -114,9 +109,9 @@ class ActorCritic(Policy):
         self.actor_lambda = actor_lambda
         self.actor_lr = actor_lr
 
-        self._actor_discount = np.array([(self.discount * self.actor_lambda) ** i
+        self._actor_discount = np.array([(self.discount * self.actor_lambda) ** i 
                                          for i in range(5000)])
-
+    
 
         self.memory = deque(maxlen=100)
         self.batch_size = 20
@@ -228,9 +223,9 @@ class Astar(Policy):
         boredom = - 0.1 * self.history[obs]
         score = node.reward + value + boredom
         return - score
-
+    
     def make_plan(self, state, expansions=5000):
-
+        
         Node = namedtuple('Node', ('state', 'path', 'reward', 'done'))
         eval_node = self.eval_node
         start = Node(self.env._state, [], 0, False)
@@ -258,7 +253,7 @@ class Astar(Policy):
                     best_finished = min((best_finished, node1), key=eval_node)
                 else:
                     frontier.push(node1)
-
+                    
         for i in range(expansions):
             self.save('frontier', [n[1].state for n in frontier])
             if frontier:
@@ -276,7 +271,7 @@ class Astar(Policy):
         # plan = min(choices, key=eval_node(noisy=True))
         # self.log(
         #     i,
-        #     len(plan.path),
+        #     len(plan.path), 
         #     -round(eval_node(plan, noisy=False), 2),
         #     plan.done,
         # )
@@ -295,9 +290,9 @@ class GeneralizedAdvantageEstimation(Policy):
         self.actor_lr = actor_lr
         self.critic_lr = critic_lr
 
-        self._actor_discount = np.array([(self.discount * self.actor_lambda) ** i
+        self._actor_discount = np.array([(self.discount * self.actor_lambda) ** i 
                                          for i in range(5000)])
-        self._critic_discount = np.array([(self.discount * self.critic_lambda) ** i
+        self._critic_discount = np.array([(self.discount * self.critic_lambda) ** i 
                                           for i in range(5000)])
 
         self._memory = deque(maxlen=100)
@@ -486,14 +481,14 @@ class ValSearchPolicy(Policy):
                 self.node_history.append(
                     {'path': node1.path,
                      'r': node1.reward,
-                     'b': self.env._observe(node1.state)[-1]    ,
+                     'b': self.env._observe(node1.state)[-1],
                      'v': -eval_node(node1)})
                 reward_to_state[s1] = node1.reward
                 if done:
                     best_finished = min((best_finished, node1), key=eval_node)
                 else:
                     frontier.push(node1)
-
+                    
         for i in range(expansions):
             if frontier:
                 expand(frontier.pop())
@@ -510,9 +505,10 @@ class ValSearchPolicy(Policy):
         # plan = min(choices, key=eval_node(noisy=True))
         self.log(
             i,
-            len(plan.path),
+            len(plan.path), 
             -round(eval_node(plan, noisy=False), 2),
             plan.done,
         )
         # self._trace['paths'].append(plan.path)
         return plan.path
+

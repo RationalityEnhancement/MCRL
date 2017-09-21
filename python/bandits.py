@@ -9,6 +9,7 @@ N_SAMPLE = 10000
 
 def memo_key(args, kwargs):
     """Symmetry breaking hashing."""
+    env = args[0]
     state = args[1]
     if len(args) > 2:
         action = args[2]
@@ -17,7 +18,7 @@ def memo_key(args, kwargs):
         state = zip(state, mask)
         state = ((s, i == action) for i, s in enumerate(state))
     return sum(map(hash, state))
-    # return tuple(sorted(state))
+    # return (env, tuple(sorted(state)))
 
 
 
@@ -94,7 +95,7 @@ class MetaBanditEnv(gym.Env):
     def value(self, state, arm):
         a, b = state[arm]
         p = a / (a + b)
-        return (p - 0.5) * 2
+        return p
 
     def results(self, state, action):
         if action == self.term_action:

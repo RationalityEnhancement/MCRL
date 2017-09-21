@@ -1,5 +1,6 @@
 from IPython.display import clear_output
 import itertools as it
+import numpy as np
 
 def join(*args, sep=' '):
     return sep.join(map(str, args))
@@ -33,6 +34,9 @@ def timed(method):
     return dec
 
 
+
+def cum_returns(rewards):
+    return np.flip(np.cumsum(np.flip(rewards, 0)), 0)
 
 class Labeler(object):
     """Assigns unique integer labels."""

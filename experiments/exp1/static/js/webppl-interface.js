@@ -14,7 +14,6 @@ startWebppl = function() {
     return resolveWebppl = resolve;
   });
   callWebppl = function(kind, arg) {
-    console.log('callWebppl', kind, arg);
     return webpplPromise.then(function(runWebppl) {
       resultPromise = new Promise(function(resolve) {
         return resolveResult = resolve;

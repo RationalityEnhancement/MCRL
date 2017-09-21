@@ -40,7 +40,6 @@ startWebppl = () ->
     resolveWebppl = resolve
 
   callWebppl = (kind, arg) ->
-    console.log 'callWebppl', kind, arg
     # We have to wait until webppl is available to make another request.
     # Because promises can be chained, you can call callWebppl many times
     # before the first result is resolved. The queue of requests is

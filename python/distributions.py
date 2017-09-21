@@ -5,8 +5,9 @@ from toolz import reduce
 import scipy.stats
 from functools import total_ordering, partial, lru_cache
 
-CACHE_SIZE = int(2**20)
-SMALL_CACHE_SIZE = int(2**12)
+LARGE_CACHE_SIZE = int(2**20)
+CACHE_SIZE = int(2**14)
+SMALL_CACHE_SIZE = int(2**16)
 
 class Distribution(object):
     """Represents a probability distribution."""
@@ -56,7 +57,6 @@ class Normal(Distribution):
     def copy(self):
         return Normal(self.mu, self.sigma)
 
-    @lru_cache(maxsize=CACHE_SIZE)
     def sample(self, n=None):
         # print('sample', id(self) % 1000)
         if n is not None:
@@ -75,19 +75,20 @@ class NormalMixture(Distribution):
     """Normal distribution."""
     def __init__(self, mu, sigma, weights):
         super().__init__()
-        self.mu = mu
-        self.sigma = sigma
-        self.weights = weights
+        self.mu = np.array(mu)
+        self.sigma = np.array(sigma)
+        self.weights = np.array(weights)
         self.n_mix = len(weights)
         self._z = scipy.stats.multinomial(1, weights)
         self._norm = scipy.stats.norm(mu, sigma)
-
 
     def __repr__(self):
         return 'NormMix'
 
     def to_sampledist(self, n=10000):
         d = SampleDist(self.sample(n))
+        ev = self.mu @ self.weights
+        d.expectation = lambda *args: ev
         return d
 
     def expectation(self):
@@ -122,14 +123,15 @@ class Categorical(Distribution):
             self.probs = tuple(1/len(vals) for _ in range(len(vals)))
         else:
             self.probs = tuple(probs)
-        # assert abs(sum(self.probs) - 1) < .000001, sum(self.probs)
+
+        self._hash = hash((self.vals, self.probs))
 
     def __lt__(self, other):
         # This is for sorting belief states.
         return True
 
     def __hash__(self):
-        return hash((self.vals, self.probs))
+        return self._hash
 
     def __eq__(self, other):
         return hasattr(other, 'sample')
@@ -161,7 +163,7 @@ class Categorical(Distribution):
         vals = tuple(f(v) for v in self.vals)
         return Categorical(vals, self.probs)
 
-    @lru_cache(CACHE_SIZE)
+    @lru_cache(LARGE_CACHE_SIZE)
     def expectation(self):
         return sum(p * v for p, v in zip(self.probs, self.vals))
 
@@ -179,7 +181,7 @@ class PointMass(Categorical):
     """A distribution with all mass on one value."""
     def __init__(self, val):
         super().__init__([val], [1])
-        self._samples = val
+        self._samples = [val]
 
     def __hash__(self):
         return hash(self.vals[0])
@@ -258,11 +260,19 @@ class GenerativeModel(Distribution):
         return self.sample(n).mean()
       
 
+@lru_cache(maxsize=CACHE_SIZE)
 def expectation(val):
-    try:
+    if isinstance(val, Distribution):
         return val.expectation()
-    except AttributeError:
+    else:
         return val
+
+
+# def expectation(val):
+#     try:
+#         return val.expectation()
+#     except AttributeError:
+#         return val
 
 def sample(val):
     try:
@@ -323,8 +333,9 @@ def dmax(dists, default=__no_default__):
 
     return GenerativeModel(sample, kind='dmax', args=dists)
 
-@lru_cache(CACHE_SIZE)
+# @lru_cache(CACHE_SIZE)
 def smax(dists, default=__no_default__):
+    # print('smax', dists)
     if len(dists) == 0:
         if default is not __no_default__:
             return default
@@ -333,8 +344,12 @@ def smax(dists, default=__no_default__):
     elif len(dists) == 1:
         return dists[0]
     elif len(dists) == 2:
-        return SampleDist(np.maximum(dists[0]._samples, dists[1]._samples))
+        a, b = dists[0]._samples, dists[1]._samples
+        if a[0] == b[0]:  # the same samples
+            b = np.random.permutation(b)
+        return SampleDist(np.maximum(a, b))
     else:
+        raise NotImplementedError()
         return SampleDist(reduce(np.maximum, [d._samples for d in dists]))
 
 
@@ -351,12 +366,11 @@ class SampleDist(Distribution):
         self.len = len(samples) if hasattr(samples, '__len__') else None
 
     def __repr__(self):
-        return 'SD({})'.format(id(self) % 100)
+        return 'SD({})'.format(id(self) % 1000)
 
     def sample(self):
         return np.random.choice(self._samples)
 
-    @lru_cache(CACHE_SIZE)
     def expectation(self):
         return np.mean(self._samples)
 

@@ -24,7 +24,7 @@ def sort_tree(env, state):
     return tuple(state)
 
 
-def solve(env, hash_state=None, actions=None, blinkered=False):
+def solve(env, hash_state=None, actions=None, blinkered=None):
     """Returns Q, V, pi, and computation data for an mdp environment."""
     if hasattr(env, 'n_arm'):
         hash_state = lambda state: tuple(sorted(state))
@@ -32,16 +32,27 @@ def solve(env, hash_state=None, actions=None, blinkered=False):
         hash_state = lambda state: sort_tree(env, state)
     if actions is None:
         actions = env.actions
-    if blinkered:
-        if hasattr(env, '_relevant_subtree'):
-            def subset_actions(a):
-                if a == env.term_action:
-                    return ()
-                else:
-                    return (*env._relevant_subtree(a), env.term_action)
-        else:
-            def subset_actions(a):
-                return (a, env.term_action)
+    if blinkered == 'recursive':
+        def subset_actions(a):
+            if a == env.term_action:
+                return ()
+            return (*env.subtree[a][1:], *env.path_to(a)[:-1], env.term_action)
+    elif blinkered == 'children':
+        def subset_actions(a):
+            if a == env.term_action:
+                return ()
+            return (*env.subtree[a][1:], env.term_action)
+    elif blinkered == 'branch':
+        assert hasattr(env, '_relevant_subtree')
+        def subset_actions(a):
+            if a == env.term_action:
+                return ()
+            else:
+                return (*env._relevant_subtree(a), env.term_action)
+    elif blinkered:
+        def subset_actions(a):
+            return (a, env.term_action)
+        
     else:
         subset_actions = lambda a: None
 
@@ -51,7 +62,6 @@ def solve(env, hash_state=None, actions=None, blinkered=False):
         'q': 0,
         'v': 0
     }
-    
     if hash_state is not None:
         def hash_key(args, kwargs):
             state = args[0]
@@ -59,6 +69,9 @@ def solve(env, hash_state=None, actions=None, blinkered=False):
                 return state
             else:
                 if kwargs:
+                 # Blinkered approximation. Hash key is insensitive
+                    # to states that can't be acted on, except for the
+                    # best expected value
                     # Embed the action subset into the state.
                     action_subset = kwargs['action_subset']
                     mask = [0] * len(state)
@@ -91,3 +104,6 @@ def solve(env, hash_state=None, actions=None, blinkered=False):
         return max(actions(s), key=lambda a: Q(s, a))
     
     return Q, V, pi, info
+
+
+

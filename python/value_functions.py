@@ -42,48 +42,62 @@ class ActionValueFunction(ValueFunction):
         return self.model.predict(x)
 
 
+# class LiederQ(ActionValueFunction):
+#     """The meta-Q function of Lieder et al. (2017) AAAI."""
+#     def __init__(self):
+#         super().__init__()
+#         from models import BayesianRegression
+#         prior = np.array([1, 0.5, 0, 0.5, 1])
+#         precision = np.array([1, 1, 1e5, 1, 1e5])
+#         self.model = BayesianRegression(prior, precision)
+
+#     def attach(self, agent):
+#         super().attach(agent)
+#         self.n_actions = len(self.env.actions(self.env.reset()))
+
+#     def finish_episode(self, trace):
+#         m = self.memory
+#         X = []
+#         y = []
+#         for s, a, r in zip(m.states, m.actions, m.returns):
+#             if s != self.env.term_state:
+#                 X.append(self.env.action_features(a, s))
+#                 y.append(r)
+#         self.model.fit(np.stack(X), np.array(y))
+#         self.save('w', self.model.weights.get_moments()[0])
+
+#     def predictAction(self, s, a):
+#         return self.model.predict(self.env.action_features(a, s),
+#                                   return_var=True)
+    
+#     def predict(self, s, return_var=False):
+#         action_qs = np.full(self.n_actions, -np.inf)
+#         variance = np.zeros(self.n_actions)
+#         for a in self.env.actions(s):
+#             q, var = self.predictAction(s, a)
+#             action_qs[a] = q
+#             variance[a] = var
+#         if return_var:
+#             return action_qs, variance
+#         else:
+#             return action_qs
+
 class LiederQ(ActionValueFunction):
     """The meta-Q function of Lieder et al. (2017) AAAI."""
-    def __init__(self):
-        super().__init__()
-        from models import BayesianRegression
-        prior = np.array([1, 0.5, 0, 0.5, 1])
-        precision = np.array([1, 1, 1e5, 1, 1e5])
-        self.model = BayesianRegression(prior, precision)
-
-    def attach(self, agent):
-        super().attach(agent)
-        self.n_actions = len(self.env.actions(self.env.reset()))
-
-    def finish_episode(self, trace):
-        m = self.memory
-        X = []
-        y = []
-        for s, a, r in zip(m.states, m.actions, m.returns):
-            if s != self.env.term_state:
-                X.append(self.env.action_features(a, s))
-                y.append(r)
-        self.model.fit(np.stack(X), np.array(y))
-        self.save('w', self.model.weights.get_moments()[0])
-
-    def predictAction(self, s, a):
-        return self.model.predict(self.env.action_features(a, s),
-                                  return_var=True)
+    def __init__(self, theta):
+        self.theta = np.array(theta)
     
-    def predict(self, s, return_var=False):
-        action_qs = np.full(self.n_actions, -np.inf)
-        variance = np.zeros(self.n_actions)
-        for a in self.env.actions(s):
-            q, var = self.predictAction(s, a)
-            action_qs[a] = q
-            variance[a] = var
-        if return_var:
-            return action_qs, variance
+    def predictOne(self, state, action):
+        if action == self.env.term_action:
+            return self.env.expected_term_reward(state)
         else:
-            return action_qs
+            return np.dot(self.theta, self.env.action_features(action))
 
-      
-
+    def predict(self, state):
+        qs = np.full(self.agent.env.action_space.n, -np.inf)
+        for a in self.env.actions(state):
+            qs[a] = self.predictOne(state, a)
+        return qs
 
 
 class NeuralQ(ActionValueFunction):
@@ -130,6 +144,9 @@ class LinearQ(ActionValueFunction):
         x = self.features(s)
         return self.model.predict(x)
 
+    def finish_episode(self, trace):
+        pass
+
 # class LinearQ(ActionValueFunction):
 #     """Learns a linear Q function by SGD."""
 #     def __init__(self, **kwargs):
@@ -160,7 +177,6 @@ class StateValueFunction(ValueFunction):
         super().__init__(**kwargs)
 
 
-from models import BayesianRegression
 class BayesianRegressionV(StateValueFunction):
     """Learns a linear V function by SGD."""
     def __init__(self, **kwargs):
@@ -168,6 +184,7 @@ class BayesianRegressionV(StateValueFunction):
         self.model = None
 
     def attach(self, agent):
+        from models import BayesianRegression
         super().attach(agent)
         self.model = BayesianRegression(np.zeros(self.state_size), sigma_w=10)
 
