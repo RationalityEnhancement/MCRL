@@ -168,10 +168,7 @@ class Component(ABC):
         pass
 
     def start_episode(self, state):
-        """This function is run when an episode begins, starting at state.
-
-        This can be used to e.g. to initialize episode-specific memory as necessary
-        for n-step TD learning."""
+        """This function is run when an episode begins, starting at state."""
         pass
 
     def finish_episode(self, trace):
@@ -220,16 +217,13 @@ class Component(ABC):
 
 class Memory(object):
     """Remembers past experiences."""
-    # Memory = namedtuple('Memory', ['states', 'rewards', 'returns'])
     def __init__(self, size=100000):
-        # self.experiences = deque(maxlen=size)
         self.states = deque(maxlen=size)
         self.actions = deque(maxlen=size)
         self.rewards = deque(maxlen=size)
         self.returns = deque(maxlen=size)
 
     def add(self, trace):
-        # TODO this wastes RAM
         self.states.extend(trace['states'])
         self.actions.extend(trace['actions'])
         self.actions.append(None)

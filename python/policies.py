@@ -60,11 +60,11 @@ class MaxQPolicy(Policy):
             noise = np.random.random(q.shape) * .001
         return np.argmax(q + noise)
 
+
 class LiederPolicy(Policy):
     """The meta-policy of Lieder et al. (2017) AAAI."""
     def __init__(self, theta, bad_max=False):
         self.theta = np.array(theta)
-        self.bad_max = bad_max
     
     def act(self, state):
         def Q(a):
@@ -72,31 +72,30 @@ class LiederPolicy(Policy):
                 return self.env.expected_term_reward(self.env._state)
             else:
                 return np.dot(self.theta, self.env.action_features(a))
-        if self.bad_max:
-            val, action = max((Q(a), a) for a in self.env.actions(state))
-        else:
-            action = max(self.env.actions(state), key=Q)
+        action = max(self.env.actions(state), key=Q)
         return action
 
 
 
 class MaxQSamplePolicy(Policy):
-    """Chooses the action with highest sampled Q value."""
+    """Chooses the action with highest sampled Q value.
+
+    `Q.predict` must have the kwarg `return_var`."""
     def __init__(self, Q, **kwargs):
         super().__init__(**kwargs)
         self.Q = Q
+        self.save_regret = True
 
     def act(self, state):
         q, var = self.Q.predict(state, return_var=True)
         sigma = var ** 0.5
-        q_samples = stats.norm(q, sigma).rvs()
-        q = q.flat
+        q_samples = q + np.random.randn() * sigma
         a = np.argmax(q_samples)
-        a1 = np.argmax(q)
-        self.save('max', a == a1)
-        self.save('regret', q[a1] - q[a])
-        if a == self.env.term_action:
-            self.save('final', state)
+        if self.save_regret:
+            q = q.flat
+            a1 = np.argmax(q)
+            self.save('max', a == a1)
+            self.save('regret', q[a1] - q[a])
         return a
 
 
@@ -194,94 +193,11 @@ class ActorCritic(Policy):
         self.critic.fit(state, value_target, epochs=1, verbose=0)
 
 
-class Astar(Policy):
-    """A* search finds the shortest path to a goal."""
-    def __init__(self, heuristic):
-        assert 0  # this implementation is incorrect
-        super().__init__()
-        self.heuristic = heuristic
-        self.plan = iter(())
-
-    def start_episode(self, state):
-        self.history = Counter()
-        self.model = Model(self.env)
-
-    def act(self, state):
-        # return self.env.action_space.sample()
-        self.history[state] += 1
-        try:
-            return next(self.plan)
-        except StopIteration:
-            self.plan = iter(self.make_plan(state))
-            return next(self.plan)
-
-    def eval_node(self, node):
-        if not node.path:
-            return np.inf  # the empty plan has infinite cost
-        obs = self.env._observe(node.state)
-        value = 0 if node.done else self.heuristic(self.env, obs)
-        boredom = - 0.1 * self.history[obs]
-        score = node.reward + value + boredom
-        return - score
-    
-    def make_plan(self, state, expansions=5000):
-        
-        Node = namedtuple('Node', ('state', 'path', 'reward', 'done'))
-        eval_node = self.eval_node
-        start = Node(self.env._state, [], 0, False)
-        frontier = PriorityQueue(key=eval_node)
-        frontier.push(start)
-        reward_to_state = defaultdict(lambda: -np.inf)
-        # import IPython; IPython.embed()
-        best_finished = start
-
-        def expand(node):
-            # print(node.state, node.reward, self.rts[node.state], V(env._observe(node.state)))
-            # time.sleep(0.1)
-            nonlocal best_finished
-            # best_finished = min((best_finished, node), key=eval_node)
-            s0, p0, r0, _ = node
-            for a, s1, r, done in self.model.options(s0):
-                node1 = Node(s1, p0 + [a], r0 + r, done)
-                if node1.reward <= reward_to_state[s1]:
-                    # print('abandon')
-                    pass
-                    continue  # cannot be better than an existing node
-                # self.save('node', node)
-                reward_to_state[s1] = node1.reward
-                if done:
-                    best_finished = min((best_finished, node1), key=eval_node)
-                else:
-                    frontier.push(node1)
-                    
-        for i in range(expansions):
-            self.save('frontier', [n[1].state for n in frontier])
-            if frontier:
-                expand(frontier.pop())
-            else:
-                break
-
-        if frontier:
-            # plan = min(best_finished, frontier.pop(), key=eval_node)
-            plan = frontier.pop()
-            raise RuntimeError('No plan found.')
-        else:
-            plan = best_finished
-        # choices = concat([completed, map(get(1), take(100, frontier))])
-        # plan = min(choices, key=eval_node(noisy=True))
-        # self.log(
-        #     i,
-        #     len(plan.path), 
-        #     -round(eval_node(plan, noisy=False), 2),
-        #     plan.done,
-        # )
-        # self._trace['paths'].append(plan.path)
-        self.save('plan', plan)
-        return plan.path
-
-
 class GeneralizedAdvantageEstimation(Policy):
-    """docstring for GeneralizedAdvantageEstimation"""
+    """A variance-reducing extension of Advantage Actor Critic.
+
+    https://arxiv.org/abs/1506.02438
+    """
     def __init__(self, actor_lr=0.001, critic_lr= 0.005, discount=.99, actor_lambda=1, critic_lambda=1, **kwargs):
         super().__init__()
         self.discount = discount
@@ -512,3 +428,88 @@ class ValSearchPolicy(Policy):
         # self._trace['paths'].append(plan.path)
         return plan.path
 
+
+class Astar(Policy):
+    """A* search finds the shortest path to a goal."""
+    def __init__(self, heuristic):
+        assert 0  # this implementation is incorrect
+        super().__init__()
+        self.heuristic = heuristic
+        self.plan = iter(())
+
+    def start_episode(self, state):
+        self.history = Counter()
+        self.model = Model(self.env)
+
+    def act(self, state):
+        # return self.env.action_space.sample()
+        self.history[state] += 1
+        try:
+            return next(self.plan)
+        except StopIteration:
+            self.plan = iter(self.make_plan(state))
+            return next(self.plan)
+
+    def eval_node(self, node):
+        if not node.path:
+            return np.inf  # the empty plan has infinite cost
+        obs = self.env._observe(node.state)
+        value = 0 if node.done else self.heuristic(self.env, obs)
+        boredom = - 0.1 * self.history[obs]
+        score = node.reward + value + boredom
+        return - score
+    
+    def make_plan(self, state, expansions=5000):
+        
+        Node = namedtuple('Node', ('state', 'path', 'reward', 'done'))
+        eval_node = self.eval_node
+        start = Node(self.env._state, [], 0, False)
+        frontier = PriorityQueue(key=eval_node)
+        frontier.push(start)
+        reward_to_state = defaultdict(lambda: -np.inf)
+        # import IPython; IPython.embed()
+        best_finished = start
+
+        def expand(node):
+            # print(node.state, node.reward, self.rts[node.state], V(env._observe(node.state)))
+            # time.sleep(0.1)
+            nonlocal best_finished
+            # best_finished = min((best_finished, node), key=eval_node)
+            s0, p0, r0, _ = node
+            for a, s1, r, done in self.model.options(s0):
+                node1 = Node(s1, p0 + [a], r0 + r, done)
+                if node1.reward <= reward_to_state[s1]:
+                    # print('abandon')
+                    pass
+                    continue  # cannot be better than an existing node
+                # self.save('node', node)
+                reward_to_state[s1] = node1.reward
+                if done:
+                    best_finished = min((best_finished, node1), key=eval_node)
+                else:
+                    frontier.push(node1)
+                    
+        for i in range(expansions):
+            self.save('frontier', [n[1].state for n in frontier])
+            if frontier:
+                expand(frontier.pop())
+            else:
+                break
+
+        if frontier:
+            # plan = min(best_finished, frontier.pop(), key=eval_node)
+            plan = frontier.pop()
+            raise RuntimeError('No plan found.')
+        else:
+            plan = best_finished
+        # choices = concat([completed, map(get(1), take(100, frontier))])
+        # plan = min(choices, key=eval_node(noisy=True))
+        # self.log(
+        #     i,
+        #     len(plan.path), 
+        #     -round(eval_node(plan, noisy=False), 2),
+        #     plan.done,
+        # )
+        # self._trace['paths'].append(plan.path)
+        self.save('plan', plan)
+        return plan.path

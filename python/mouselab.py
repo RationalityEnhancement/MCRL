@@ -15,7 +15,8 @@ class MouselabEnv(gym.Env):
     """MetaMDP for a tree with a discrete unobserved reward function."""
     metadata = {'render.modes': ['human', 'array']}
     term_state = '__term_state__'
-    def __init__(self, branch=2, height=2, reward=None, cost=0, ground_truth=None):
+    def __init__(self, branch=2, height=2, reward=None, cost=0, 
+                 ground_truth=None, expand_only=True):
         self.branch = branch
         if hasattr(self.branch, '__len__'):
             self.height = len(self.branch)
