@@ -18,6 +18,8 @@ class MouselabEnv(gym.Env):
     def __init__(self, branch=2, height=2, reward=None, cost=0, 
                  ground_truth=None, expand_only=True):
         self.branch = branch
+        self._binary = branch == 2
+
         if hasattr(self.branch, '__len__'):
             self.height = len(self.branch)
         else:
@@ -238,14 +240,18 @@ class MouselabEnv(gym.Env):
         
         obs can be a single node, a list of nodes, or 'all'
         """
-        if self.exact:
-            obs_tree = self.to_obs_flat(state, node, obs)
-            return exact_flat_node_value_after_observe(obs_tree)
-        else:
+        if self._binary:
             obs_flat = self.to_obs_flat(state, node, obs)
-            return flat_node_value_after_observe(obs_flat)
-            # obs_tree = self.to_obs_tree(state, node, obs)
-            # return node_value_after_observe(obs_tree)
+            if self.exact:
+                return exact_flat_node_value_after_observe(obs_flat)
+            else:
+                return flat_node_value_after_observe(obs_flat)
+        else:
+            obs_tree = self.to_obs_tree(state, node, obs)
+            if self.exact:
+                return exact_node_value_after_observe(obs_tree)
+            else:
+                return node_value_after_observe(obs_tree)
 
     @memoize
     def path_to(self, node, start=0):
@@ -395,6 +401,15 @@ def flat_node_value_after_observe(obs_flat):
     return smax((flat_node_value_after_observe(obs_flat[c1:c2]) + obs_flat[c1],
                  flat_node_value_after_observe(obs_flat[c2:]) + obs_flat[c2]))    
 
+@lru_cache(SMALL_CACHE_SIZE)
+def node_value_after_observe(obs_tree):
+    """A distribution over the expected value of node, after making an observation.
+    
+    `obs` can be a single node, a list of nodes, or 'all'
+    """
+    children = tuple(node_value_after_observe(c) + c[0] for c in obs_tree[1])
+    return smax(children, default=ZERO)
+
 
 @lru_cache(None)
 def exact_node_value_after_observe(obs_tree):
@@ -415,14 +430,6 @@ def exact_flat_node_value_after_observe(obs_flat):
                  exact_flat_node_value_after_observe(obs_flat[c2:]) + obs_flat[c2]))    
 
 
-# @lru_cache(CACHE_SIZE)
-# def node_value_after_observe(obs_tree):
-#     """A distribution over the expected value of node, after making an observation.
-    
-#     `obs` can be a single node, a list of nodes, or 'all'
-#     """
-#     children = tuple(node_value_after_observe(c) + c[0] for c in obs_tree[1])
-#     return smax(children, default=ZERO)
 
 
 @memoize(key=lambda args, kwargs: len(args[0]))
