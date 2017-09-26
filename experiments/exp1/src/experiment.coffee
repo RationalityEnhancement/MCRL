@@ -70,7 +70,7 @@ $(window).on 'load', ->
     if SHOW_PARTICIPANT_DATA
       TRIALS = loadJson "static/json/data/1B.0/stimuli/#{COST_LEVEL}_cost.json"
     else
-      TRIALS = loadJson "static/json/#{COST_LEVEL}_cost.json"
+      TRIALS = loadJson "static/json/rewards.json"
       STRUCTURE = loadJson "static/json/structure.json"
       console.log 'STRUCTURE', STRUCTURE
       console.log 'TRIALS', TRIALS
@@ -663,7 +663,6 @@ initializeExperiment = ->
       # train
       # test
       # check_returning
-      # retention_instruction
       # check_code
       train
       # test

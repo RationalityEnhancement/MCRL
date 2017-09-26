@@ -8,10 +8,10 @@ addpath(genpath(GPO_dir))
 % Direct Policy Search
 ER_hat=@(w) evaluateGeneralMDP([w(:)],nr_arms,nr_balls);
 
-x_input_domain = [-1 1; -1 1];
-nb_iter=350;
+x_input_domain = [-1 1; -1 1;-1 1; -1 1];
+nb_iter=550;
 result_display=true; result_save=true; plot_func=false; plot_point=false;
-d=2;
+d=4;
 
 cd(GPO_dir)
 [x, fx, X_sample, F_sample, result] = ...

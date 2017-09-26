@@ -1,6 +1,6 @@
 function [ER_hat,result]=evaluateGeneralMDP(w,nr_arms,nr_balls)
 load(['../../../results/', num2str(nr_arms),'lightbulb_fit.mat'])
-reps = 3000;
+reps = 500;
 horizon = nr_balls+1;
 reward = 0;
 X = nlightbulb_problem.fit.features;
@@ -15,7 +15,7 @@ for j=1:reps
 
 %         I = find(S(:, 1) == st(1) & S(:, 2) == st(2));
         I = find(all(repmat(st,size(S,1),1)==S,2));
-        f_obs = X(nr_arms*(I-1)+(1:nr_arms),1:2);
+        f_obs = X(nr_arms*(I-1)+(1:nr_arms),1:4);
 
         st_m = reshape(st,2,nr_arms)';
 %         voc1 = zeros(nr_arms,1);
@@ -48,6 +48,6 @@ for j=1:reps
     reward = reward + r;
 end
 ER_hat = reward/reps;
-result.features={'VPI','VOC','E[R|act,b]'};
+result.features={'VPI','VOC','VPI_all','cost'};
 result.cost_per_click=co;
 end

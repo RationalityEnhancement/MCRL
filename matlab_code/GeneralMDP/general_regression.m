@@ -24,6 +24,8 @@ Q_star=getQFromV(nlightbulb_mdp.v_star,nlightbulb_mdp.T,nlightbulb_mdp.R);
 voc1 = zeros(nr_states,nr_arms);
 vpi = zeros(nr_states,nr_arms);
 voc = zeros(nr_states,nr_arms);
+vpi_all = zeros(nr_states,nr_arms);
+com = zeros(nr_states,nr_arms);
 ers = zeros(nr_states,nr_arms);
 bias = ones(nr_states*nr_arms,1);
 state_action = zeros(nr_states,nr_arms);
@@ -34,12 +36,15 @@ for k=1:numel(valid_states)
     st = S(i,:);  
     st_m = reshape(st,2,nr_arms)';
     er = max( st_m(:,1) ./ sum(st_m,2));
+    vamb = VPI_all_MultiArmBernoulli(st_m(:,1),st_m(:,2));
     for j=1:nr_arms
         count = count +1;
         state_action(i,j) = count;
+        com(i,j) = cost;
+        vpi_all(i,j) = vamb;
         ers(i,j) = er;
         vpi(i,j) = valueOfPerfectInformationMultiArmBernoulli(st_m(:,1),st_m(:,2),j);
-        voc1(i,j) = VOC1MultiArmBernoulli(st_m(:,1),st_m(:,2),j,cost);
+        voc1(i,j) = VOC1MultiArmBernoulli(st_m(:,1),st_m(:,2),j,cost) + cost;
         voc(i,j) = Q_star(i,j) - cost - er;
     end
 end
@@ -48,10 +53,12 @@ end
 
 vpiv = vpi(valid_states,:)';
 voc1v = voc1(valid_states,:)';
+comv = com(valid_states,:)';
+vpi_allv = vpi_all(valid_states,:)';
 ersv = ers(valid_states,:)';
 bias_size = nr_arms*n_vstates;
-X = cat(2,voc1v(:),vpiv(:),bias(1:bias_size));
-feature_names={'VOC1','VPI','1'};
+X = cat(2,voc1v(:),vpiv(:),vpi_allv(:),comv(:),bias(1:bias_size));
+feature_names={'VOC1','VPI','VPI_all','cost','1'};
 
 voc_valid_states = voc(valid_states,:)';
 voc_valid_states = voc_valid_states(:);

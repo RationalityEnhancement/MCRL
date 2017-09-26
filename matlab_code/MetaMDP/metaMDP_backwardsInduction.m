@@ -1,11 +1,12 @@
 for c=1:numel(costs)
     cost = costs(c);
-    s = nTrials*(nTrials+1)/2; % size of state space
-    S = nan(s+1,2); % the states
-    R = nan(s+1,2); % rewards
-    P1 = zeros(s+1); % transition matrix for action 1
-    P2 = zeros(s+1); % transition matrix for action 2 (goes to terminal state)
-    min_trial = nan(s+1,1); % the minimum possible trial number for a given state
+    nr_states = nTrials*(nTrials+1)/2; % size of state space
+    S = nan(nr_states+1,2); % the states
+    R = nan(nr_states+1,2); % rewards
+    P1 = zeros(nr_states+1); % transition matrix for action 1
+    P2 = zeros(nr_states+1); % transition matrix for action 2 (goes to terminal state)
+    min_trial = nan(nr_states+1,1); % the minimum possible trial number for a given state
+    nr_states = nr_states + 1;
     
     s = 0; % state index
     for t = 1:nTrials
@@ -35,8 +36,7 @@ for c=1:numel(costs)
             R(j,1) = R(j,2) - cost;
         end
     end
-    
-    
+      
     [values, policy] = mdp_finite_horizon (P, R, discount, nTrials);
     
     lightbulb_mdp(c).v_star=values(:,1);

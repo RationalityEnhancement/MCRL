@@ -336,10 +336,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     updatePR: (action, r) ->
       state = @beliefState.slice()
-      @PR = @PR.then (prevPR) =>
+      @PRdata = @PRdata.then (data) ->
         arg = {state, action}
-        callWebppl('PR', arg).then (newPR) ->
-          prevPR + newPR
+        callWebppl('getQV', arg).then (qv) ->
+          newData = _.extend(qv, arg)
+          console.log('PR info', newData)
+          data.concat([newData])
 
       unless action is TERM_ACTION
         @beliefState[action] = r
@@ -416,8 +418,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     displayFeedback: (a, s1) =>
       # @arrive s1
       # return
-      @PR.then (pr) =>
-        console.log "total PR = #{pr}"
+      @PRdata.then (data) =>
+        console.log "PRdata = #{JSON.stringify(data, 2)}"
         @arrive s1
         
         result = getFeedback 
@@ -548,7 +550,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     # Called when the player arrives in a new state.
     arrive: (s) =>
-      @PR = new Promise (resolve) -> resolve(0)
+      @PRdata = new Promise (resolve) -> resolve([])
       LOG_DEBUG 'arrive', s
       @data.path.push s
 

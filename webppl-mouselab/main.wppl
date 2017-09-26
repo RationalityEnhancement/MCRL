@@ -23,14 +23,11 @@ var run = function(policy, samples, name) {
     return Infer({model() {
       simulate(policy);
     }, 
-    method: 'rejection', samples: samples || 10,
+    method: 'forward', samples: samples || 10,
       // method: 'enumerate'  // integrate out all possible outcomes (slow!)
     });
   });
   var avgUtil = expectation(Infer({model() {
-    sum(sample(result.value).rewards)}
-  }));
-  var varUtil = expectation(Infer({model() {
     sum(sample(result.value).rewards)}
   }));
   var avgNumObs = expectation(Infer({model() {
@@ -54,8 +51,14 @@ var testParams = function(mu, sigma) {
   run(policy, 1000, 'N('+mu+', '+sigma+')')
 };
 
-
-
+var evalPolicyWeights = function() {
+  // var weights = JSON.parse(argv.weights)
+  var weights = [ -0.034821394751660226, 4.177078845688222, 1.216868835535616, 6.726366072163112, -1.1604972774449753 ];
+  console.log('weights', weights)
+  var Q = makeQ_meta(weights);
+  var policy = maxQPolicy(Q);
+  run(policy, 100, 'result')
+};
 
 // var result = timeit(function() {
 //   sample(inferWeights())
@@ -63,23 +66,21 @@ var testParams = function(mu, sigma) {
 // console.log(result)
 
 // var weights = result.value.weights;
-// // // var weights = [ -0.034821394751660226, 4.177078845688222, 1.216868835535616, 6.726366072163112, -1.1604972774449753 ];
 // run(maxQPolicy(makeQ_meta(weights)), 10000, 'SMC')
 // run(maxQPolicy(makeQ_meta([-4.5318, -0.47478, 30.0, 30.0, -9.20915])), 10000, 'BO')
 
-var state = L.updateList(env.initialState, 1, 5)
-timeit(function() {
-  // calculatePR({state: env.initialState, action: 1})
-  VPI_full(state)
-})
+// var state = L.updateList(env.initialState, 1, 5)
+// timeit(function() {
+//   // calculatePR({state: env.initialState, action: 1})
+//   VPI_full(state)
+// })
 
-
+evalPolicyWeights()
 
 // run(maxQPolicy(makeQ_meta([-4.5318, -0.47478, 30.0, 30.0, -9.20915])), 1)
 
 
 
-// var state = [0, 5, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN];
 // // var state = env.initialState;
 // console.log([
 //   globalStore.cost,

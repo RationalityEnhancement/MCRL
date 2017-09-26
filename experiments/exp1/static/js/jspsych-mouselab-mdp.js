@@ -332,18 +332,19 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     MouselabMDP.prototype.updatePR = function(action, r) {
       var state;
       state = this.beliefState.slice();
-      this.PR = this.PR.then((function(_this) {
-        return function(prevPR) {
-          var arg;
-          arg = {
-            state: state,
-            action: action
-          };
-          return callWebppl('PR', arg).then(function(newPR) {
-            return prevPR + newPR;
-          });
+      this.PRdata = this.PRdata.then(function(data) {
+        var arg;
+        arg = {
+          state: state,
+          action: action
         };
-      })(this));
+        return callWebppl('getQV', arg).then(function(qv) {
+          var newData;
+          newData = _.extend(qv, arg);
+          console.log('PR info', newData);
+          return data.concat([newData]);
+        });
+      });
       if (action !== TERM_ACTION) {
         this.beliefState[action] = r;
         return this.data.beliefs.push(this.beliefState.slice());
@@ -422,9 +423,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
       var head, info, msg, penalty, redGreenSpan, showCriticism;
-      this.PR.then((function(_this) {
-        return function(pr) {
-          console.log("total PR = " + pr);
+      this.PRdata.then((function(_this) {
+        return function(data) {
+          console.log("PRdata = " + (JSON.stringify(data, 2)));
           return _this.arrive(s1);
         };
       })(this));
@@ -549,8 +550,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     MouselabMDP.prototype.arrive = function(s) {
       var a, keys;
-      this.PR = new Promise(function(resolve) {
-        return resolve(0);
+      this.PRdata = new Promise(function(resolve) {
+        return resolve([]);
       });
       LOG_DEBUG('arrive', s);
       this.data.path.push(s);

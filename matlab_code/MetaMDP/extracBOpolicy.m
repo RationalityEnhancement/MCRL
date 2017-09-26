@@ -7,7 +7,7 @@ for i=1:nr_states
     vpi = X(i,1);
     voc1 = X(i,2);
 
-    f_obs = [vpi, voc1];
+    f_obs = [vpi, voc1, co];
     if f_obs*w_BO' > 0
         pi_BO(i) = 1;
     end

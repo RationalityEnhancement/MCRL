@@ -17,6 +17,13 @@ FUNCTIONS = """
   },
   PR(arg) {
     calculatePR(arg)
+  },
+  getQV(arg) {
+    return {
+      Qs: map(function(action) {Q_meta(arg.state, action)}, actions(arg.state)),
+      Q: Q_meta(arg.state, arg.action),
+      V: V_meta(arg.state)
+    }
   }
 }
 """
@@ -40,7 +47,6 @@ startWebppl = () ->
     resolveWebppl = resolve
 
   callWebppl = (kind, arg) ->
-    console.log 'callWebppl', kind, arg
     # We have to wait until webppl is available to make another request.
     # Because promises can be chained, you can call callWebppl many times
     # before the first result is resolved. The queue of requests is

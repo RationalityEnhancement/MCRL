@@ -17,7 +17,7 @@ costs = logspace(-5,-1,10);
 % method_ers = zeros(numel(costs),5);
 % method_sterrs = zeros(numel(costs),5);
 
-for c=3:3
+for c=1:numel(costs)
     cost = costs(c)
 tic 
  general_backwardsInduction %update for reward
@@ -38,7 +38,7 @@ tic
 toc
 
 tic
-general_BO
+ general_BO
 toc
 
 gen_simulate

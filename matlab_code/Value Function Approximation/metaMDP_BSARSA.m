@@ -1,26 +1,23 @@
 %evaluate and tune Bayesian-SARSAQ with the features identified by linear
 %regression
-clear,close all,clc
+% clear,close all,clc
 
 addpath('../MatlabTools/') %change to your directory for MatlabTools
 addpath('../metaMDP/')
 addpath('../Supervised/')
 addpath('../')
 
-
-load ../../results/lightbulb_fit.mat
 S = lightbulb_problem(1).mdp.states;
 nr_actions=2;
-nr_states=2;
 gamma=1;
 
-feature_names={'VPI','VOC_1','VOC_2','E[R|guess,b]','1'};
-selected_features=[1;2;4];
+feature_names={'VPI','VOI_1','VOC_2','E[R|guess,b]','cost','1'};
+selected_features=[1;2;4;5];
 
 nr_features=numel(selected_features);
 
 costs=logspace(-3,-1/4,15);
-mu = [0;0;1];
+mu = [0;0;1;0];
 sigma0 = 0.2;
 
 
@@ -41,8 +38,6 @@ for c=1:numel(costs)
     w=glm.mu_n;
     
     %plot the corresponding fit to the Q-function
-    nr_states=size(lightbulb_problem(c).mdp.states,1);
-    
     for s=1:nr_states
         F(s,:)=fexr(lightbulb_problem(c).mdp.states(s,:),1,mdp);
     end
