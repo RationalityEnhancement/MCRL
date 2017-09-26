@@ -419,6 +419,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @PR.then (pr) =>
         console.log "total PR = #{pr}"
         @arrive s1
+        
+        result = getFeedback 
+        
       return 
 
       if not @feedback
