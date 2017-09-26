@@ -17,6 +17,13 @@ FUNCTIONS = """
   },
   PR(arg) {
     calculatePR(arg)
+  },
+  getQV(arg) {
+    return {
+      Qs: map(function(action) {Q_meta(arg.state, action)}, actions(arg.state)),
+      Q: Q_meta(arg.state, arg.action),
+      V: V_meta(arg.state)
+    }
   }
 }
 """
