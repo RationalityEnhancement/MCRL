@@ -172,9 +172,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.invKeys = _.invert(this.keys);
       this.data = {
         delays: [],
-        planned_too_little: [],
-        planned_too_much: [],
-        information_used_correctly: [],
+        plannedTooLittle: [],
+        plannedTooMuch: [],
+        informationUsedCorrectly: [],
         trial_i: this.trial_i,
         trialIndex: this.trialIndex,
         score: 0,
@@ -288,23 +288,25 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       r = this.stateRewards[s1];
       LOG_DEBUG(s0 + ", " + a + " -> " + r + ", " + s1);
       s1g = this.states[s1];
-      return this.player.animate({
-        left: s1g.left,
-        top: s1g.top
-      }, {
-        duration: MOVE_SPEED,
-        onChange: this.canvas.renderAll.bind(this.canvas),
-        onComplete: (function(_this) {
-          return function() {
-            _this.addScore(r);
-            if (_this.feedback) {
-              return _this.displayFeedback(a, s1);
-            } else {
-              return _this.arrive(s1);
+      return this.PRdata.then((function(_this) {
+        return function() {
+          return _this.player.animate({
+            left: s1g.left,
+            top: s1g.top
+          }, {
+            duration: MOVE_SPEED,
+            onChange: _this.canvas.renderAll.bind(_this.canvas),
+            onComplete: function() {
+              _this.addScore(r);
+              if (s0 === _this.init) {
+                return _this.displayFeedback(a, s1);
+              } else {
+                return _this.arrive(s1);
+              }
             }
-          };
-        })(this)
-      });
+          });
+        };
+      })(this));
     };
 
     MouselabMDP.prototype.clickState = function(g, s) {
@@ -427,129 +429,137 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.displayFeedback = function(a, s1) {
-      var head, info, msg, penalty, redGreenSpan, showCriticism;
-      this.PRdata.then((function(_this) {
-        return function(data) {
-          return _this.arrive(s1);
-        };
-      })(this));
-      return;
       if (!this.feedback) {
+        console.log('no feedback');
         $('#mdp-feedback').css({
           display: 'none'
         });
         this.arrive(s1);
         return;
       }
-      result.delay = Math.round(result.delay);
-      console.log('feedback', result);
-      showCriticism = result.delay >= 1;
-      if (PARAMS.PR_type === 'none') {
-        result.delay = (function() {
-          switch (PARAMS.info_cost) {
-            case 0.01:
-              return [null, 4, 0, 1][this.data.actions.length];
-            case 1.00:
-              return [null, 3, 0, 1][this.data.actions.length];
-            case 2.50:
-              return [null, 15, 0, 3][this.data.actions.length];
-            case 1.0001:
-              return [null, 2, 0, 1][this.data.actions.length];
+      return this.PRdata.then((function(_this) {
+        return function(PRdata) {
+          var head, info, msg, penalty, redGreenSpan, result, showCriticism;
+          result = {
+            plannedTooMuch: PRdata.slice(0, -1).some(function(d) {
+              return d.Q < _.last(d.Qs) + 0.01;
+            }),
+            plannedTooLittle: PRdata.slice(-1).some(function(d) {
+              return d.Q < d.V + 0.01;
+            }),
+            informationUsedCorrectly: true,
+            delay: _.round(_.sum(PRdata.map(function(d) {
+              return d.V - d.Q;
+            })))
+          };
+          console.log('feedback', result);
+          showCriticism = result.delay >= 1;
+          if (PARAMS.PR_type === 'none') {
+            result.delay = (function() {
+              switch (PARAMS.info_cost) {
+                case 0.01:
+                  return [null, 4, 0, 1][this.data.actions.length];
+                case 1.00:
+                  return [null, 3, 0, 1][this.data.actions.length];
+                case 2.50:
+                  return [null, 15, 0, 3][this.data.actions.length];
+                case 1.0001:
+                  return [null, 2, 0, 1][this.data.actions.length];
+              }
+            }).call(_this);
           }
-        }).call(this);
-      }
-      this.data.delays.push(result.delay);
-      this.data.planned_too_little.push(result.planned_too_little);
-      this.data.planned_too_much.push(result.planned_too_much);
-      this.data.information_used_correctly.push(result.information_used_correctly);
-      redGreenSpan = function(txt, val) {
-        return "<span style='color: " + (redGreen(val)) + "; font-weight: bold;'>" + txt + "</span>";
-      };
-      if (PARAMS.message) {
-        if (PARAMS.PR_type === 'objectLevel') {
-          if (a === result.optimal_action.direction) {
-            head = redGreenSpan("You chose the best possible move.", 1);
-          } else {
-            head = redGreenSpan("Bad move! You should have moved " + result.optimal_action.direction + ".", -1);
-          }
-        } else {
-          if (PARAMS.message === 'full') {
-            if (result.planned_too_little && showCriticism) {
-              if (result.planned_too_much && showCriticism) {
-                head = redGreenSpan("You gathered the wrong information.", -1);
+          _this.data.delays.push(result.delay);
+          _this.data.plannedTooLittle.push(result.plannedTooLittle);
+          _this.data.plannedTooMuch.push(result.plannedTooMuch);
+          _this.data.informationUsedCorrectly.push(result.informationUsedCorrectly);
+          redGreenSpan = function(txt, val) {
+            return "<span style='color: " + (redGreen(val)) + "; font-weight: bold;'>" + txt + "</span>";
+          };
+          if (PARAMS.message) {
+            if (PARAMS.PR_type === 'objectLevel') {
+              if (a === result.optimal_action.direction) {
+                head = redGreenSpan("You chose the best possible move.", 1);
               } else {
-                head = redGreenSpan("You gathered too little information.", -1);
+                head = redGreenSpan("Bad move! You should have moved " + result.optimal_action.direction + ".", -1);
               }
             } else {
-              if (result.planned_too_much && showCriticism) {
-                head = redGreenSpan("You gathered too much information.", -1);
-              } else {
-                if (!result.planned_too_much & !result.planned_too_little) {
-                  head = redGreenSpan("You gathered the right amount of information.", 1);
+              if (PARAMS.message === 'full') {
+                if (result.plannedTooLittle && showCriticism) {
+                  if (result.plannedTooMuch && showCriticism) {
+                    head = redGreenSpan("You gathered the wrong information.", -1);
+                  } else {
+                    head = redGreenSpan("You gathered too little information.", -1);
+                  }
+                } else {
+                  if (result.plannedTooMuch && showCriticism) {
+                    head = redGreenSpan("You gathered too much information.", -1);
+                  } else {
+                    if (!result.plannedTooMuch & !result.plannedTooLittle) {
+                      head = redGreenSpan("You gathered the right amount of information.", 1);
+                    }
+                    if (result.informationUsedCorrectly && showCriticism) {
+                      head += redGreenSpan(" But you didn't prioritize the most important locations.", -1);
+                    }
+                  }
                 }
-                if (result.information_used_correctly && showCriticism) {
-                  head += redGreenSpan(" But you didn't prioritize the most important locations.", -1);
+              }
+              if (PARAMS.message === 'simple') {
+                head = '';
+              }
+              if (PARAMS.message === 'none') {
+                if (result.delay === 1) {
+                  head = "Please wait 1 second.";
+                } else {
+                  head = "Please wait " + result.delay + " seconds.";
                 }
               }
             }
           }
-          if (PARAMS.message === 'simple') {
-            head = '';
+          if (PARAMS.PR_type === "none") {
+            penalty = result.delay ? "<p>Please wait " + result.delay + " seconds.</p>" : void 0;
+          } else {
+            penalty = result.delay ? redGreenSpan("<p>" + result.delay + " second penalty!</p>", -1) : void 0;
+          }
+          info = (function() {
+            if (PARAMS.message === 'full') {
+              return "Given the information you collected, your decision was " + (result.informationUsedCorrectly ? redGreenSpan('optimal.', 1) : redGreenSpan('suboptimal.', -1));
+            } else {
+              return '';
+            }
+          })();
+          if ((PARAMS.message === 'full' || PARAMS.message === 'simple') && PARAMS.PR_type !== 'objectLevel') {
+            msg = "<h3>" + head + "</h3>            \n<b>" + penalty + "</b>                        \n" + info;
+          }
+          if (PARAMS.PR_type === 'objectLevel') {
+            msg = "<h3>" + head + "</h3>             \n<b>" + penalty + "</b> ";
           }
           if (PARAMS.message === 'none') {
-            if (result.delay === 1) {
-              head = "Please wait 1 second.";
-            } else {
-              head = "Please wait " + result.delay + " seconds.";
-            }
+            msg = "<h3>" + head + "</h3>";
           }
-        }
-      }
-      if (PARAMS.PR_type === "none") {
-        penalty = result.delay ? "<p>Please wait " + result.delay + " seconds.</p>" : void 0;
-      } else {
-        penalty = result.delay ? redGreenSpan("<p>" + result.delay + " second penalty!</p>", -1) : void 0;
-      }
-      info = (function() {
-        if (PARAMS.message === 'full') {
-          return "Given the information you collected, your decision was " + (result.information_used_correctly ? redGreenSpan('optimal.', 1) : redGreenSpan('suboptimal.', -1));
-        } else {
-          return '';
-        }
-      })();
-      if ((PARAMS.message === 'full' || PARAMS.message === 'simple') && PARAMS.PR_type !== 'objectLevel') {
-        msg = "<h3>" + head + "</h3>            \n<b>" + penalty + "</b>                        \n" + info;
-      }
-      if (PARAMS.PR_type === 'objectLevel') {
-        msg = "<h3>" + head + "</h3>             \n<b>" + penalty + "</b> ";
-      }
-      if (PARAMS.message === 'none') {
-        msg = "<h3>" + head + "</h3>";
-      }
-      if (!PARAMS.message) {
-        msg = "Please wait " + result.delay + " seconds.";
-      }
-      if (this.feedback && result.delay >= 1) {
-        this.freeze = true;
-        $('#mdp-feedback').css({
-          display: 'block'
-        });
-        $('#mdp-feedback-content').html(msg);
-        return setTimeout(((function(_this) {
-          return function() {
-            _this.freeze = false;
+          if (!PARAMS.message) {
+            msg = "Please wait " + result.delay + " seconds.";
+          }
+          if (_this.feedback && result.delay >= 1) {
+            _this.freeze = true;
+            $('#mdp-feedback').css({
+              display: 'block'
+            });
+            $('#mdp-feedback-content').html(msg);
+            return setTimeout((function() {
+              _this.freeze = false;
+              $('#mdp-feedback').css({
+                display: 'none'
+              });
+              return _this.arrive(s1);
+            }), (false ? 1000 : result.delay * 1000));
+          } else {
             $('#mdp-feedback').css({
               display: 'none'
             });
             return _this.arrive(s1);
-          };
-        })(this)), (false ? 1000 : result.delay * 1000));
-      } else {
-        $('#mdp-feedback').css({
-          display: 'none'
-        });
-        return this.arrive(s1);
-      }
+          }
+        };
+      })(this));
     };
 
     MouselabMDP.prototype.arrive = function(s) {

@@ -15,7 +15,8 @@ var INITIAL_NODE = 0
 // Returns a function `makeEnv(trueRewards)` that returns a mouselab
 // problem with the given structure and the true hidden rewards
 // in trueRewards
-var mouselabProblem = function(reward, cost) {
+var mouselabProblem = function(params) {
+  console.log('mouselab', params)
 
   // ============================== //
   // ========= Object MDP ========= //
@@ -27,7 +28,7 @@ var mouselabProblem = function(reward, cost) {
   // The expected reward at a node from the agent's perspective.
   var expectedNodeReward = function(state, node) {
     state[node] == UNKNOWN ?
-    expectation(reward) :
+    expectation(params.reward) :
     state[node]
   };
 
@@ -73,7 +74,7 @@ var mouselabProblem = function(reward, cost) {
 
     // The true reward at a given state.
     var truth = trueRewards || [0].concat(repeat(tree.length-1, 
-                                                 function() {sample(reward)}))
+                                                 function() {sample(params.reward)}))
     var nodeReward = function(node) {
       return truth[node]
     };
@@ -92,7 +93,7 @@ var mouselabProblem = function(reward, cost) {
     var reward = function(state, action) {
       (action == TERM_ACTION ?
        termReward(state) :
-       cost)
+       params)
     };
 
     return {
@@ -196,37 +197,35 @@ var softmaxQPolicy = function(env, Q, alpha) {
 };
 
 
-// ============================ //
-// ========= Simulate ========= //
-// ============================ //
+// // ============================ //
+// // ========= Simulate ========= //
+// // ============================ //
 
-var REWARD = Categorical({vs: [-20.0, -12.0, -4.0, 4.0, 12.0, 20.0],
-                          ps: [0.055, 0.157, 0.288, 0.288, 0.157, 0.055]});
-var COST = -1
-var makeEnv = mouselabProblem(REWARD, COST)
-var ENV = makeEnv();
+// var REWARD = Categorical({vs: [-20.0, -12.0, -4.0, 4.0, 12.0, 20.0],
+//                           ps: [0.055, 0.157, 0.288, 0.288, 0.157, 0.055]});
+// var COST = -1
 
 
-var simulate = function(policy, trueRewards, initialState, initialAction) {
-  var env = makeEnv(trueRewards);
-  var transition = env.transition;
-  var reward = env.reward;
-  var initialState = initialState || env.initialState;
-  var rec = function(acc) {
-    var state = _.last(acc.states);
-    if (state == TERM_STATE) return acc
-    else {
-      var action = (initialAction != undefined && acc.actions.length == 0 ?
-                    initialAction : policy(state))
-      if (action == -Infinity) error('Bad action.')
-      var newState = transition(state, action);
-      var r = reward(state, action);
-      return rec({
-        states: acc.states.concat([newState]),
-        rewards: acc.rewards.concat([r]),
-        actions: acc.actions.concat([action])
-      })
-    }
-  };
-  return rec({states: [initialState], rewards: [], actions: []})
-};
+// var simulate = function(policy, trueRewards, initialState, initialAction) {
+//   var env = makeEnv(trueRewards);
+//   var transition = env.transition;
+//   var reward = env.reward;
+//   var initialState = initialState || env.initialState;
+//   var rec = function(acc) {
+//     var state = _.last(acc.states);
+//     if (state == TERM_STATE) return acc
+//     else {
+//       var action = (initialAction != undefined && acc.actions.length == 0 ?
+//                     initialAction : policy(state))
+//       if (action == -Infinity) error('Bad action.')
+//       var newState = transition(state, action);
+//       var r = reward(state, action);
+//       return rec({
+//         states: acc.states.concat([newState]),
+//         rewards: acc.rewards.concat([r]),
+//         actions: acc.actions.concat([action])
+//       })
+//     }
+//   };
+//   return rec({states: [initialState], rewards: [], actions: []})
+// };

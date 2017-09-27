@@ -203,9 +203,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @invKeys = _.invert @keys
       @data =
         delays: []
-        planned_too_little: []
-        planned_too_much: []
-        information_used_correctly: []
+        plannedTooLittle: []
+        plannedTooMuch: []
+        informationUsedCorrectly: []
         trial_i: @trial_i
         trialIndex: @trialIndex
         score: 0
@@ -309,16 +309,15 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       LOG_DEBUG "#{s0}, #{a} -> #{r}, #{s1}"
 
       s1g = @states[s1]
-      @player.animate {left: s1g.left, top: s1g.top},
+      @PRdata.then => @player.animate {left: s1g.left, top: s1g.top},
           duration: MOVE_SPEED
           onChange: @canvas.renderAll.bind(@canvas)
           onComplete: =>
             @addScore r
-            if @feedback
+            if s0 is @init
               @displayFeedback a, s1
             else
               @arrive s1
-            # @arrive s1
 
     # Called when a state is clicked on.
     clickState: (g, s) =>
@@ -416,130 +415,131 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       # @data["#{queryType}_#{targetType}_#{target}"]
       @data.queries[queryType][targetType].target.push target
       @data.queries[queryType][targetType].time.push Date.now() - @initTime
+    
 
     displayFeedback: (a, s1) =>
-      # @arrive s1
-      # return
-      @PRdata.then (data) =>
-        @arrive s1
-      return 
-
       if not @feedback
+        console.log 'no feedback'
         $('#mdp-feedback').css(display: 'none')
         @arrive s1
         return
 
-      
-      result.delay = Math.round result.delay  
-      console.log 'feedback', result
-    
-      showCriticism = result.delay>=1
-      if PARAMS.PR_type is 'none'
-        result.delay = switch PARAMS.info_cost
-          when 0.01 then [null, 4, 0, 1][@data.actions.length]
-          when 1.00 then [null, 3, 0, 1][@data.actions.length]
-          when 2.50 then [null, 15, 0, 3][@data.actions.length]
-          when 1.0001 then [null, 2, 0, 1][@data.actions.length]
-            
-      @data.delays.push result.delay
-      @data.planned_too_little.push result.planned_too_little
-      @data.planned_too_much.push result.planned_too_much
-      @data.information_used_correctly.push result.information_used_correctly
+      @PRdata.then (PRdata) =>
+        result =
+          plannedTooMuch: PRdata.slice(0, -1).some (d) =>
+            d.Q < _.last(d.Qs) + 0.01
+          plannedTooLittle: PRdata.slice(-1).some (d) =>
+            d.Q < d.V + 0.01
+          informationUsedCorrectly: true  # todo
+          delay: _.round _.sum PRdata.map (d) =>
+            d.V - d.Q
 
-            
-      redGreenSpan = (txt, val) ->
-        "<span style='color: #{redGreen val}; font-weight: bold;'>#{txt}</span>"
+        console.log 'feedback', result
+        showCriticism = result.delay>=1
+        if PARAMS.PR_type is 'none'
+          result.delay = switch PARAMS.info_cost
+            when 0.01 then [null, 4, 0, 1][@data.actions.length]
+            when 1.00 then [null, 3, 0, 1][@data.actions.length]
+            when 2.50 then [null, 15, 0, 3][@data.actions.length]
+            when 1.0001 then [null, 2, 0, 1][@data.actions.length]
+              
+        @data.delays.push result.delay
+        @data.plannedTooLittle.push result.plannedTooLittle
+        @data.plannedTooMuch.push result.plannedTooMuch
+        @data.informationUsedCorrectly.push result.informationUsedCorrectly
 
+        redGreenSpan = (txt, val) ->
+          "<span style='color: #{redGreen val}; font-weight: bold;'>#{txt}</span>"
 
-      
-      if PARAMS.message
-          if PARAMS.PR_type is 'objectLevel'                
-                #if the move was optimal, say so
-                if a is result.optimal_action.direction
-                    head = redGreenSpan "You chose the best possible move.", 1            
-                else
-                    head = redGreenSpan "Bad move! You should have moved #{result.optimal_action.direction}.", -1            
-                
-                #if the move was sub-optimal point out the optimal move
-          else            
-              if PARAMS.message is 'full'
-                if result.planned_too_little and showCriticism
-                  if result.planned_too_much and showCriticism
-                      head = redGreenSpan "You gathered the wrong information.", -1            
+        if PARAMS.message
+            if PARAMS.PR_type is 'objectLevel'                
+                  #if the move was optimal, say so
+                  if a is result.optimal_action.direction
+                      head = redGreenSpan "You chose the best possible move.", 1            
                   else
-                      head = redGreenSpan "You gathered too little information.", -1            
-                else
-                  if result.planned_too_much and showCriticism
-                      head = redGreenSpan "You gathered too much information.", -1                    
-                  else
-                      if !result.planned_too_much & !result.planned_too_little        
-                        head = redGreenSpan "You gathered the right amount of information.", 1
-                      
-                      if result.information_used_correctly and showCriticism
-                        head += redGreenSpan " But you didn't prioritize the most important locations.", -1
-                        
-              if PARAMS.message is 'simple'
-                    head =''
-                    #if result.PR_type is 'none'
-                    #    head = ''
-                    #else
-                    #    head = redGreenSpan "Poor planning!", -1                    
-              if PARAMS.message is 'none'
-                    if result.delay is 1
-                        head = "Please wait 1 second."
+                      head = redGreenSpan "Bad move! You should have moved #{result.optimal_action.direction}.", -1            
+                  
+                  #if the move was sub-optimal point out the optimal move
+            else            
+                if PARAMS.message is 'full'
+                  if result.plannedTooLittle and showCriticism
+                    if result.plannedTooMuch and showCriticism
+                        head = redGreenSpan "You gathered the wrong information.", -1            
                     else
-                        head = "Please wait "+result.delay+" seconds."
-        
-        if PARAMS.PR_type is "none"
-            penalty = if result.delay then "<p>Please wait #{result.delay} seconds.</p>"
+                        head = redGreenSpan "You gathered too little information.", -1            
+                  else
+                    if result.plannedTooMuch and showCriticism
+                        head = redGreenSpan "You gathered too much information.", -1                    
+                    else
+                        if !result.plannedTooMuch & !result.plannedTooLittle        
+                          head = redGreenSpan "You gathered the right amount of information.", 1
+                        
+                        if result.informationUsedCorrectly and showCriticism
+                          head += redGreenSpan " But you didn't prioritize the most important locations.", -1
+                          
+                if PARAMS.message is 'simple'
+                      head =''
+                      #if result.PR_type is 'none'
+                      #    head = ''
+                      #else
+                      #    head = redGreenSpan "Poor planning!", -1                    
+                if PARAMS.message is 'none'
+                      if result.delay is 1
+                          head = "Please wait 1 second."
+                      else
+                          head = "Please wait "+result.delay+" seconds."
+          
+          if PARAMS.PR_type is "none"
+              penalty = if result.delay then "<p>Please wait #{result.delay} seconds.</p>"
+          else
+              penalty = if result.delay then redGreenSpan "<p>#{result.delay} second penalty!</p>", -1
+          
+          info = do ->
+            if PARAMS.message is 'full'
+              "Given the information you collected, your decision was " + \
+              if result.informationUsedCorrectly
+                redGreenSpan 'optimal.', 1
+              else
+                redGreenSpan 'suboptimal.', -1
+            else ''
+          
+          if (PARAMS.message is 'full' or PARAMS.message is 'simple') and PARAMS.PR_type != 'objectLevel'
+              msg = """
+              <h3>#{head}</h3>            
+              <b>#{penalty}</b>                        
+              #{info}
+              """
+          if PARAMS.PR_type is 'objectLevel'
+               msg = """
+              <h3>#{head}</h3>             
+              <b>#{penalty}</b> 
+               """
+          
+          if PARAMS.message is 'none'
+              msg = """
+              <h3>#{head}</h3>
+              """
+        if !PARAMS.message
+          msg = "Please wait "+result.delay+" seconds."  
+
+        if @feedback and result.delay>=1        
+            @freeze = true
+            $('#mdp-feedback').css display: 'block'
+            $('#mdp-feedback-content')
+              # .css
+              #   'background-color': if mistake then RED else GREEN
+              #   color: 'white'
+              .html msg
+
+            setTimeout (=>
+              @freeze = false
+              $('#mdp-feedback').css(display: 'none')
+              @arrive s1
+            ), (if false then 1000 else result.delay * 1000)
         else
-            penalty = if result.delay then redGreenSpan "<p>#{result.delay} second penalty!</p>", -1
-        
-        info = do ->
-          if PARAMS.message is 'full'
-            "Given the information you collected, your decision was " + \
-            if result.information_used_correctly
-              redGreenSpan 'optimal.', 1
-            else
-              redGreenSpan 'suboptimal.', -1
-          else ''
-        
-        if (PARAMS.message is 'full' or PARAMS.message is 'simple') and PARAMS.PR_type != 'objectLevel'
-            msg = """
-            <h3>#{head}</h3>            
-            <b>#{penalty}</b>                        
-            #{info}
-            """
-        if PARAMS.PR_type is 'objectLevel'
-             msg = """
-            <h3>#{head}</h3>             
-            <b>#{penalty}</b> 
-             """
-        
-        if PARAMS.message is 'none'
-            msg = """
-            <h3>#{head}</h3>
-            """
-      if !PARAMS.message
-        msg = "Please wait "+result.delay+" seconds."  
-
-      if @feedback and result.delay>=1        
-          @freeze = true
-          $('#mdp-feedback').css display: 'block'
-          $('#mdp-feedback-content')
-            # .css
-            #   'background-color': if mistake then RED else GREEN
-            #   color: 'white'
-            .html msg
-
-          setTimeout (=>
-            @freeze = false
-            $('#mdp-feedback').css(display: 'none')
-            @arrive s1
-          ), (if false then 1000 else result.delay * 1000)
-      else
-        $('#mdp-feedback').css(display: 'none')
-        @arrive s1
+          $('#mdp-feedback').css(display: 'none')
+          @arrive s1
+      
 
 
 

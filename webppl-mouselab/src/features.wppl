@@ -8,6 +8,11 @@
 
 var OBSERVE = '__OBSERVE__';
 
+globalStore.reward = Categorical({vs: [-20.0, -12.0, -4.0, 4.0, 12.0, 20.0],
+                          ps: [0.055, 0.157, 0.288, 0.288, 0.157, 0.055]});
+
+var env = mouselabProblem({reward: globalStore.reward, cost: 0})();
+var actions = env.actions
 /* The subjective reward function returns a sample from the
    distribution of the expected reward of the root of the given tree.
    that is about to be observed, the expected observationValue will be
@@ -93,7 +98,7 @@ var VOC_1 = function(state, action) {
 
 var VPI_full = cache(function(state) {
   // console.log('VPI_full')
-  expectedObservationValue(obsTree(state, nodes)) - termValue(state)
+  expectedObservationValue(obsTree(state, _.range(state.length))) - termValue(state)
 });
 
 var VPI_action = function(state, action) {
@@ -184,24 +189,23 @@ var makeQ_meta = function(weights) {
         VPI_full(state),
         termValue(state)
       ]
-      // console.log(features)
       return dot(weights, features)
     }
   });
   return Q_meta  
 };
 
-var Q_meta = makeQ_meta([-0.034821394751660226, 4.177078845688222, 1.216868835535616, 6.726366072163112, -1.1604972774449753]);
+// var Q_meta = makeQ_meta([-0.034821394751660226, 4.177078845688222, 1.216868835535616, 6.726366072163112, -1.1604972774449753]);
 
 
-var V_meta = function(state) {
-  var best = maxWith(function(action) {Q_meta(state, action)},
-                     actions(state))
-  console.log('best action', best[0], 'value', best[1])
-  return best[1]
-};
+// var V_meta = function(state) {
+//   var best = maxWith(function(action) {Q_meta(state, action)},
+//                      actions(state))
+//   console.log('best action', best[0], 'value', best[1])
+//   return best[1]
+// };
 
-var calculatePR = function(arg) {
-  console.log('calculatePR', arg)
-  Q_meta(arg.state, arg.action) - V_meta(arg.state)
-}
+// var calculatePR = function(arg) {
+//   console.log('calculatePR', arg)
+//   Q_meta(arg.state, arg.action) - V_meta(arg.state)
+// }

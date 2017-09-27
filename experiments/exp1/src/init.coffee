@@ -19,7 +19,7 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 0
+  condition = 4
   workerId = ['debugFRED']
   # counterbalance = 0
 
@@ -102,10 +102,10 @@ if experiment_nr is 4
   STAGE2 = false
   RETURN_TIME = new Date (getTime() + 1000 * 60 * 60 * PARAMS.delay_hours)
 
-# if DEBUG
-  # PARAMS.message = 'full'
-  # PARAMS.info_cost = 2.50
-  # PARAMS.PR_type = 'featureBased'
+if DEBUG
+  PARAMS.message = 'full'
+  PARAMS.PR_type = 'featureBased'
+  PARAMS.info_cost = 1.00
 
 # console.log 'PARAMS', PARAMS
 COST_LEVEL =

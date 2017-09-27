@@ -13,7 +13,7 @@ if (DEBUG) {
 
 if (mode === "{{ mode }}") {
   DEMO = true;
-  condition = 0;
+  condition = 4;
   workerId = ['debugFRED'];
 }
 
@@ -203,6 +203,12 @@ if (experiment_nr === 4) {
   STAGE1 = true;
   STAGE2 = false;
   RETURN_TIME = new Date(getTime() + 1000 * 60 * 60 * PARAMS.delay_hours);
+}
+
+if (DEBUG) {
+  PARAMS.message = 'full';
+  PARAMS.PR_type = 'featureBased';
+  PARAMS.info_cost = 1.00;
 }
 
 COST_LEVEL = (function() {
