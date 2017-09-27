@@ -1,0 +1,183 @@
+/* The meta-bandit problem.
+
+Fred Callaway 
+fredcallaway@berkeley.edu
+25/08/17
+
+In the meta-bandit problem, the agent can "simulate" pulling the arms
+to inform its final decision to actually pull one of the arms, at which
+point the episode ends. There is optionally a cost for simulating. The
+horizon is finite.
+
+Based on the Bernoulli metalevel probability model of Hay et al. (2012)
+https://people.eecs.berkeley.edu/~russell/papers/uai12-meta.pdf
+*/
+
+var OBSERVATION_COST = -10e-5;
+var TERM_ACTION = 'TERM_ACTION';
+var TERM_BELIEF = 'TERM_BELIEF';
+
+var N_ARM = 2;
+var ARMS = _.range(N_ARM);
+
+// ================================ //
+// ========= Meta bandits ========= //  
+// ================================ //
+
+// Belief state is a beta distribution for the probability of each
+// arm giving a reward.
+var priorBelief = repeat(N_ARM, function() {
+    [1, 1]
+});
+
+var expectedReward = function(belief, arm){
+  var alpha = belief[arm][0];  // the number of 1s observed
+  var beta = belief[arm][1];
+  return alpha / (alpha + beta)
+};
+
+var sampleReward = function(belief, arm){
+  bernoulli(expectedReward(belief, arm)) ? 1 : 0
+};
+
+var updateBelief = function(belief, arm, r){
+  mapIndexed(function(i, x) {
+    arm == i ? [x[0] + r, x[1] + (1-r)] : x
+  }, belief)
+};
+
+// Reward for terminating and actually pulling an arm.
+var terminateReward = function(belief) {
+  var actVal = maxWith(function(arm) {expectedReward(belief, arm)}, ARMS);
+  var action = actVal[0];
+  var reward = actVal[1];  // expected reward
+  // var reward = sampleReward(belief, action)  // sample reward
+  // if (verbose) console.log('terminate', action, '->', reward);
+  return reward
+};
+
+// Simulate pulling an arm or actually pull the expeceted best arm.
+var actions = ARMS.concat([TERM_ACTION])
+
+// Returns new belief state and a reward for executing a meta-action
+// in a given belief state.
+var getOutcome = function(belief, action) {
+  if (action == TERM_ACTION) {
+    return {belief: TERM_BELIEF,
+            reward: terminateReward(belief)}
+  } else {
+    var arm = action;
+    var reward = sampleReward(belief, arm);
+    // if (verbose) console.log('observe', action, '->', r);
+    return {belief: updateBelief(belief, action, reward),
+            reward: OBSERVATION_COST}
+  }
+};
+
+// Performa a single rollout of the meta-bandit problem.
+var simulate = function(policy, timeLimit) {
+
+  var sampleSequence = function(timeLeft, belief, acc) {
+    if (timeLeft == 0 || belief == TERM_BELIEF) {
+      return acc;
+    }
+    var action = policy(belief, timeLeft);
+    var outcome = getOutcome(belief, action);
+
+    sampleSequence(timeLeft-1,
+                   outcome.belief,
+                   {actions: acc.actions.concat([action]),
+                    reward: acc.reward + outcome.reward})
+  };
+  var acc = {actions: [], reward: 0};
+  return sampleSequence(timeLimit, priorBelief, acc);
+};
+
+
+
+
+// ============================ //
+// ========= Policies ========= //
+// ============================ //
+
+var randPolicy = function() {
+  var policy = function() {
+    uniformDraw(actions)
+  }
+  policy
+};
+
+
+// Uses dynamic programming to find the optimal policy. Optionally, you can
+// limit it's lookAhead. Setting lookAhead = 2 yields the myopic greedy agent.
+var solve = function(params) {
+  var params = extend({lookAhead: Infinity}, params);
+
+  var Q = dp.cache(function(belief, action, horizon) {
+    expectation(Infer({method: 'enumerate', model() {
+      var outcome = getOutcome(belief, action);
+      return outcome.reward + V(outcome.belief, horizon-1);
+    }}))
+  });
+
+  var V = dp.cache(function(belief, horizon) {
+    if (horizon <= 0 || belief == TERM_BELIEF) return 0;
+    var action = policy(belief, horizon);
+    return Q(belief, action, horizon)
+  });
+
+  var policy = dp.cache(function(belief, timeLeft) {
+    if (timeLeft == 1) return TERM_ACTION;
+    else {
+      var horizon = Math.min(timeLeft, params.lookAhead);
+      maxWith(function(action) {Q(belief, action, horizon)}, actions)[0]
+    }
+  });
+  // return policy
+  return {Q, V, policy}
+};
+
+var enumerate = function() {
+  var policy = solve({lookAhead: Infinity}).policy;
+  expectation(Infer({model() {
+    simulate(policy, 15).reward
+  }, method: 'enumerate'}))
+};
+
+var get_v = function() {
+  var V = solve({lookAhead: Infinity}).V;
+  V(priorBelief, 16)
+};
+
+var parseInt = function(x) {
+  return _.parseInt(x)
+};
+
+var readCSV = function() {
+  var lines = webpplCsv.readCSV("../matlab_code/GeneralMDP/states210.csv");
+  var parseLine = function(line) {
+    var x = map(parseInt, line);
+
+  };
+}
+// var write_q = function() {
+//   // var states = 
+//   // console.log(states.slice(3, 6))
+//   // console.log(map(map(parseInt, states[0]))
+// };
+
+// write_q()
+
+console.log('v', timeit(get_v))
+
+// var run = function() {
+//   var rewards = repeat(500, function() {
+//     simulate(null, exactPolicy(), 5).reward
+//   });
+//   return [listMean(rewards), listStdev(rewards)]
+// };
+
+// console.log(timeit(run))
+// console.log(timeit(function() {
+//   simulate(trueState, exactPolicy(), 4)
+// }))

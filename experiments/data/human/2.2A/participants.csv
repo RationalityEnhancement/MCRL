@@ -1,0 +1,2 @@
+PR_type,bonus,bonus_rate,completed,condition,delay_hours,delay_window,feedback,frequencyOfFB,info_cost,message,pid,return_time,score,test_idx,version
+none,1.96,0.005,True,0,2,4,False,after_each_move,1,full,0,1502382635593,391,"[6, 4, 5, 9, 10, 1]",2.2A

@@ -1,0 +1,9 @@
+action_times,actions,button_pressed,correct,delays,information_used_correctly,path,planned_too_little,planned_too_much,queries,questions,responses,rt,score,stimulus,time_elapsed,trial_index,trial_i,trial_type,view_history,pid
+,,,,,,,,,,,,39020,,,48208,,,instructions,"[{""page_index"":0,""viewing_time"":8813},{""page_index"":1,""viewing_time"":23398},{""page_index"":2,""viewing_time"":6808}]",0
+,,,,,,,,,,,,58460,,,73193,,,instructions,"[{""page_index"":0,""viewing_time"":28715},{""page_index"":1,""viewing_time"":20063},{""page_index"":2,""viewing_time"":9681}]",0
+,,,,,,,,,,,,10653,,,12750,,,instructions,"[{""page_index"":0,""viewing_time"":6180},{""page_index"":1,""viewing_time"":3279},{""page_index"":2,""viewing_time"":1193}]",1
+,,,,,,,,,,,,261058,,,296298,,,instructions,"[{""page_index"":0,""viewing_time"":242762},{""page_index"":1,""viewing_time"":12377},{""page_index"":2,""viewing_time"":5919}]",1
+,,,,,,,,,,,,96286,,,99279,,,instructions,"[{""page_index"":0,""viewing_time"":42960},{""page_index"":1,""viewing_time"":26236},{""page_index"":2,""viewing_time"":27089}]",2
+,,,,,,,,,,,,38053,,,164631,,,instructions,"[{""page_index"":0,""viewing_time"":8274},{""page_index"":1,""viewing_time"":20710},{""page_index"":2,""viewing_time"":9068}]",2
+,,,,,,,,,,,,113075,,,305794,,,instructions,"[{""page_index"":0,""viewing_time"":32090},{""page_index"":1,""viewing_time"":67349},{""page_index"":2,""viewing_time"":13636}]",2
+,,,,,,,,,,,,29179,,,355321,,,instructions,"[{""page_index"":0,""viewing_time"":14750},{""page_index"":1,""viewing_time"":8186},{""page_index"":2,""viewing_time"":6243}]",2
