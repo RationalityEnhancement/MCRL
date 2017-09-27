@@ -345,6 +345,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           return data.concat([newData]);
         });
       });
+      this.PRdata["catch"]((function(_this) {
+        return function(reason) {
+          return console.log('WEBPPL ERROR: ' + reason);
+        };
+      })(this));
       if (action !== TERM_ACTION) {
         this.beliefState[action] = r;
         return this.data.beliefs.push(this.beliefState.slice());
@@ -425,7 +430,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       var head, info, msg, penalty, redGreenSpan, showCriticism;
       this.PRdata.then((function(_this) {
         return function(data) {
-          console.log("PRdata = " + (JSON.stringify(data, 2)));
           return _this.arrive(s1);
         };
       })(this));

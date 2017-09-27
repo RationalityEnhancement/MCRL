@@ -342,6 +342,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
           newData = _.extend(qv, arg)
           console.log('PR info', newData)
           data.concat([newData])
+      @PRdata.catch (reason) =>
+        console.log('WEBPPL ERROR: ' + reason)
 
       unless action is TERM_ACTION
         @beliefState[action] = r
@@ -419,7 +421,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       # @arrive s1
       # return
       @PRdata.then (data) =>
-        console.log "PRdata = #{JSON.stringify(data, 2)}"
         @arrive s1
       return 
 

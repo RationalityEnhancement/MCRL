@@ -5,7 +5,8 @@
 FUNCTIONS = """
 {
   initialize() {
-    null
+    globalStore.Q_meta = makeQ_meta(globalStore.weights);
+
   },
   flip() {
     flip()
@@ -19,10 +20,12 @@ FUNCTIONS = """
     calculatePR(arg)
   },
   getQV(arg) {
+    var Q_meta = globalStore.Q_meta
+    var Qs = map(function(action) {Q_meta(arg.state, action)}, actions(arg.state));
     return {
-      Qs: map(function(action) {Q_meta(arg.state, action)}, actions(arg.state)),
+      Qs,
       Q: Q_meta(arg.state, arg.action),
-      V: V_meta(arg.state)
+      V: _.max(Qs)
     }
   }
 }
@@ -65,6 +68,9 @@ startWebppl = () ->
     _return2js: (result, callback) ->
       resolveResult result
       resolveWebppl callback
+    cost: PARAMS.info_cost
+    weights: [1, 1, 0, 0, 1]
+
 
   code = """
   var loop = function(request) {
