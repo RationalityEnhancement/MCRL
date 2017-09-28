@@ -439,14 +439,15 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       state = @beliefState.slice()
         
       @PRdata = @PRdata.then (data) ->
+        arg = {state, action}    
         if PARAMS.PR_type is 'objectLevel'
-            console.log('Computing object-level PRs has yet to be implemented.')
-        else
-            arg = {state, action}
+            newData = _.extend(this.objectLevelPRs[0][s0][s1], arg)
+            data.concat([newData])
+        else            
             callWebppl('getQV', arg).then (qv) ->
                 newData = _.extend(qv, arg)
                 console.log('PR info', newData)
-                data.concat([newData])
+                data.concat([newData])        
             
       @PRdata.catch (reason) =>
         console.log('WEBPPL ERROR: ' + reason)

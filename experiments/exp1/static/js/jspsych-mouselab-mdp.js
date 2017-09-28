@@ -428,16 +428,16 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       var state;
       state = this.beliefState.slice();
       this.PRdata = this.PRdata.then(function(data) {
-        var arg;
+        var arg, newData;
+        arg = {
+          state: state,
+          action: action
+        };
         if (PARAMS.PR_type === 'objectLevel') {
-          return console.log('Computing object-level PRs has yet to be implemented.');
+          newData = _.extend(this.objectLevelPRs[0][s0][s1], arg);
+          return data.concat([newData]);
         } else {
-          arg = {
-            state: state,
-            action: action
-          };
           return callWebppl('getQV', arg).then(function(qv) {
-            var newData;
             newData = _.extend(qv, arg);
             console.log('PR info', newData);
             return data.concat([newData]);
