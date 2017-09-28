@@ -40,6 +40,47 @@ jsPsych.plugins['mouselab-mdp'] = do ->
   # ========= Helpers ========= #
   # =========================== #
 
+  `chooseAction = function(belief){
+        
+        var avg_reward = 0 //todo: update this value
+        
+        var paths = [[1,2,3],[1,2,4],[5,6,7],[5,6,8],[9,10,11],[9,10,12],[13,14,15],[13,14,16]]
+        var actions_by_state = {
+             "1": "0",
+             "5": "1",
+             "9": "2",
+            "13": "3"                                  
+        };
+        
+        //score all paths
+        var pathReturns = new Array(paths.length)
+        for (var p=0; p<paths.length; p++){
+                pathReturns[p]=0
+                for (var n=0; n<paths[p].length;n++){
+                        if (belief.state[paths[p][n]]=="__"){
+                            pathReturns[p]+=avg_reward
+                        }
+                        else{
+                            pathReturns[p]+=belief.state[paths[p][n]]
+                        }
+                }
+         }
+        pathReturns = pathReturns.map(function(x){return x.toFixed(2)})
+
+        //find the optimal path according to the current belief
+        var best_paths = new Array()
+        var best_actions = new Array()
+        var best_path_indices = argmax(pathReturns)
+        for (var p = 0; p < best_path_indices.length; p++){
+                best_paths.push(paths[best_path_indices[p]])
+                
+                //find the first action of the corresponding policy
+                var first_state = best_paths[p][0]                
+                best_actions.push(actions_by_state[first_state])
+        }
+                        
+        return best_actions
+}`
   angle = (x1, y1, x2, y2) ->
     x = x2 - x1
     y = y2 - y1
@@ -314,7 +355,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
           onChange: @canvas.renderAll.bind(@canvas)
           onComplete: =>
             @addScore r
-            if s0 is @init
+            if s0 is @initial
               @displayFeedback a, s1
             else
               @arrive s1
@@ -430,7 +471,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             d.Q < _.last(d.Qs) + 0.01
           plannedTooLittle: PRdata.slice(-1).some (d) =>
             d.Q < d.V + 0.01
-          informationUsedCorrectly: true  # todo
+          informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]),a)  # todo
           delay: _.round _.sum PRdata.map (d) =>
             d.V - d.Q
 
