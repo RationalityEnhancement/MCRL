@@ -36,6 +36,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
   else
     OPTIMAL = (loadJson 'static/json/optimal_policy.json')[COST_LEVEL]
 
+  #if PARAMS.PR_type is 'objectLevel'
+  #OBJECT_LEVEL_PRs = loadObjectLevelPRs()
+        
   # =========================== #
   # ========= Helpers ========= #
   # =========================== #
@@ -80,7 +83,64 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         }
                         
         return best_actions
-}`
+  }`
+
+  `function bestMove(location,objectLevelPRs){
+    //bestMove(s) returns the best move available in state s
+    //location is 0 for the initial location and increases from there in the order of DFS 
+    //step is 1 for the first move, 2 for the second move, and 3 for the third move    
+    
+    var step_by_location = [1,2,3,4,4,2,3,4,4,2,3,4,4,2,3,4,4]    
+    var step = step_by_location[location]
+        
+    var maxOLPR=_.max(objectLevelPRs[step-1][location])
+    var bestNextState = _.indexOf(objectLevelPRs[step-1][location],maxOLPR)
+            
+    /* 
+    var available_moves = getMoves(meta_MDP.locations[state.s])
+    
+    for (m in available_moves){
+        if (available_moves[m].move.next_state == best_next_state_id){
+            var best_move = available_moves[m]
+        }
+    }
+    */    
+    
+    return {direction : getAction(location,bestNextState)}
+            
+  }`
+
+  `function getAction(from,to){
+      var actionByNextState = {
+        1: 0,
+        2: 0,
+        3: 1,
+        4: 3,
+        5: 1,
+        6: 1,
+        7: 2,
+        8: 0,
+        9: 2,
+       10: 2,
+       11: 1,
+       12: 3,
+       13: 3,
+       14: 3,
+       15: 0,
+       16: 2
+      }
+
+      return actionByNextState[to]
+  }`
+
+
+  `function loadObjectLevelPRs(){
+    var PR_json = loadJson("static/json/ObjectLevelPRs_"+COST_LEVEL+".json")
+    var object_level_PRs=PR_json
+
+    return object_level_PRs
+  }`
+
   angle = (x1, y1, x2, y2) ->
     x = x2 - x1
     y = y2 - y1
@@ -156,6 +216,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @demonstrate=false
 
         @stateRewards=null
+        @objectLevelPRs=[]
         
         @keys=KEYS  # mapping from actions to keycodes
         @trialIndex=TRIAL_INDEX  # number of trial (starts from 1)
@@ -356,7 +417,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
           onComplete: =>
             @addScore r
             if s0 is @initial
-              @displayFeedback a, s1
+              @displayFeedback a, s1, s0
             else
               @arrive s1
 
@@ -376,12 +437,17 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     updatePR: (action, r) ->
       state = @beliefState.slice()
+        
       @PRdata = @PRdata.then (data) ->
-        arg = {state, action}
-        callWebppl('getQV', arg).then (qv) ->
-          newData = _.extend(qv, arg)
-          console.log('PR info', newData)
-          data.concat([newData])
+        if PARAMS.PR_type is 'objectLevel'
+            console.log('Computing object-level PRs has yet to be implemented.')
+        else
+            arg = {state, action}
+            callWebppl('getQV', arg).then (qv) ->
+                newData = _.extend(qv, arg)
+                console.log('PR info', newData)
+                data.concat([newData])
+            
       @PRdata.catch (reason) =>
         console.log('WEBPPL ERROR: ' + reason)
 
@@ -458,7 +524,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @data.queries[queryType][targetType].time.push Date.now() - @initTime
     
 
-    displayFeedback: (a, s1) =>
+    displayFeedback: (a, s1, s0) =>
       if not @feedback
         console.log 'no feedback'
         $('#mdp-feedback').css(display: 'none')
@@ -474,6 +540,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
           informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]),a)  # todo
           delay: _.round _.sum PRdata.map (d) =>
             d.V - d.Q
+          optimalAction: bestMove(s0,this.objectLevelPRs)   #{direction: "0"}
 
         console.log 'feedback', result
         showCriticism = result.delay>=1
@@ -898,7 +965,14 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       if trialConfig._block
         trialConfig._block.trialCount += 1
       TRIAL_INDEX += 1
-
+                
+      OBJECT_LEVEL_PRs = loadObjectLevelPRs()
+      
+      if trial.trial_i is null
+        trial.trial_i = 0        
+      
+      trial.objectLevelPRs = OBJECT_LEVEL_PRs[trial.trial_i]
+         
   return plugin
 
 # ---

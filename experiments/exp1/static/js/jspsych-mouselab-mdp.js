@@ -87,7 +87,59 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         }
                         
         return best_actions
-};
+  };
+  function bestMove(location,objectLevelPRs){
+    //bestMove(s) returns the best move available in state s
+    //location is 0 for the initial location and increases from there in the order of DFS 
+    //step is 1 for the first move, 2 for the second move, and 3 for the third move    
+    
+    var step_by_location = [1,2,3,4,4,2,3,4,4,2,3,4,4,2,3,4,4]    
+    var step = step_by_location[location]
+        
+    var maxOLPR=_.max(objectLevelPRs[step-1][location])
+    var bestNextState = _.indexOf(objectLevelPRs[step-1][location],maxOLPR)
+            
+    /* 
+    var available_moves = getMoves(meta_MDP.locations[state.s])
+    
+    for (m in available_moves){
+        if (available_moves[m].move.next_state == best_next_state_id){
+            var best_move = available_moves[m]
+        }
+    }
+    */    
+    
+    return {direction : getAction(location,bestNextState)}
+            
+  };
+  function getAction(from,to){
+      var actionByNextState = {
+        1: 0,
+        2: 0,
+        3: 1,
+        4: 3,
+        5: 1,
+        6: 1,
+        7: 2,
+        8: 0,
+        9: 2,
+       10: 2,
+       11: 1,
+       12: 3,
+       13: 3,
+       14: 3,
+       15: 0,
+       16: 2
+      }
+
+      return actionByNextState[to]
+  };
+  function loadObjectLevelPRs(){
+    var PR_json = loadJson("static/json/ObjectLevelPRs_"+COST_LEVEL+".json")
+    var object_level_PRs=PR_json
+
+    return object_level_PRs
+  };
   angle = function(x1, y1, x2, y2) {
     var ang, x, y;
     x = x2 - x1;
@@ -164,8 +216,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.clickState = bind(this.clickState, this);
       this.handleKey = bind(this.handleKey, this);
       this.runDemo = bind(this.runDemo, this);
-      var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage, timeMsg;
-      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.tree = (ref = config.tree) != null ? ref : null, this.initial = config.initial, this.stateLabels = (ref1 = config.stateLabels) != null ? ref1 : null, this.stateDisplay = (ref2 = config.stateDisplay) != null ? ref2 : 'never', this.stateClickCost = (ref3 = config.stateClickCost) != null ? ref3 : PARAMS.info_cost, this.edgeLabels = (ref4 = config.edgeLabels) != null ? ref4 : 'reward', this.edgeDisplay = (ref5 = config.edgeDisplay) != null ? ref5 : 'always', this.edgeClickCost = (ref6 = config.edgeClickCost) != null ? ref6 : 0, this.trial_i = (ref7 = config.trial_i) != null ? ref7 : null, this.demonstrate = (ref8 = config.demonstrate) != null ? ref8 : false, this.stateRewards = (ref9 = config.stateRewards) != null ? ref9 : null, this.keys = (ref10 = config.keys) != null ? ref10 : KEYS, this.trialIndex = (ref11 = config.trialIndex) != null ? ref11 : TRIAL_INDEX, this.playerImage = (ref12 = config.playerImage) != null ? ref12 : 'static/images/plane.png', SIZE = (ref13 = config.SIZE) != null ? ref13 : 110, leftMessage = (ref14 = config.leftMessage) != null ? ref14 : null, centerMessage = (ref15 = config.centerMessage) != null ? ref15 : '&nbsp;', rightMessage = (ref16 = config.rightMessage) != null ? ref16 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref17 = config.lowerMessage) != null ? ref17 : "Navigate with the arrow keys.", this.minTime = (ref18 = config.minTime) != null ? ref18 : (DEBUG ? 5 : 45), this.feedback = (ref19 = config.feedback) != null ? ref19 : true;
+      var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref20, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage, timeMsg;
+      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.tree = (ref = config.tree) != null ? ref : null, this.initial = config.initial, this.stateLabels = (ref1 = config.stateLabels) != null ? ref1 : null, this.stateDisplay = (ref2 = config.stateDisplay) != null ? ref2 : 'never', this.stateClickCost = (ref3 = config.stateClickCost) != null ? ref3 : PARAMS.info_cost, this.edgeLabels = (ref4 = config.edgeLabels) != null ? ref4 : 'reward', this.edgeDisplay = (ref5 = config.edgeDisplay) != null ? ref5 : 'always', this.edgeClickCost = (ref6 = config.edgeClickCost) != null ? ref6 : 0, this.trial_i = (ref7 = config.trial_i) != null ? ref7 : null, this.demonstrate = (ref8 = config.demonstrate) != null ? ref8 : false, this.stateRewards = (ref9 = config.stateRewards) != null ? ref9 : null, this.objectLevelPRs = (ref10 = config.objectLevelPRs) != null ? ref10 : [], this.keys = (ref11 = config.keys) != null ? ref11 : KEYS, this.trialIndex = (ref12 = config.trialIndex) != null ? ref12 : TRIAL_INDEX, this.playerImage = (ref13 = config.playerImage) != null ? ref13 : 'static/images/plane.png', SIZE = (ref14 = config.SIZE) != null ? ref14 : 110, leftMessage = (ref15 = config.leftMessage) != null ? ref15 : null, centerMessage = (ref16 = config.centerMessage) != null ? ref16 : '&nbsp;', rightMessage = (ref17 = config.rightMessage) != null ? ref17 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref18 = config.lowerMessage) != null ? ref18 : "Navigate with the arrow keys.", this.minTime = (ref19 = config.minTime) != null ? ref19 : (DEBUG ? 5 : 45), this.feedback = (ref20 = config.feedback) != null ? ref20 : true;
       this.initial = 0;
       this.tree = [[1, 5, 9, 13], [2], [3, 4], [], [], [6], [7, 8], [], [], [10], [11, 12], [], [], [14], [15, 16], [], []];
       this.transition = [
@@ -340,7 +392,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             onComplete: function() {
               _this.addScore(r);
               if (s0 === _this.initial) {
-                return _this.displayFeedback(a, s1);
+                return _this.displayFeedback(a, s1, s0);
               } else {
                 return _this.arrive(s1);
               }
@@ -377,16 +429,20 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       state = this.beliefState.slice();
       this.PRdata = this.PRdata.then(function(data) {
         var arg;
-        arg = {
-          state: state,
-          action: action
-        };
-        return callWebppl('getQV', arg).then(function(qv) {
-          var newData;
-          newData = _.extend(qv, arg);
-          console.log('PR info', newData);
-          return data.concat([newData]);
-        });
+        if (PARAMS.PR_type === 'objectLevel') {
+          return console.log('Computing object-level PRs has yet to be implemented.');
+        } else {
+          arg = {
+            state: state,
+            action: action
+          };
+          return callWebppl('getQV', arg).then(function(qv) {
+            var newData;
+            newData = _.extend(qv, arg);
+            console.log('PR info', newData);
+            return data.concat([newData]);
+          });
+        }
       });
       this.PRdata["catch"]((function(_this) {
         return function(reason) {
@@ -469,7 +525,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       return this.data.queries[queryType][targetType].time.push(Date.now() - this.initTime);
     };
 
-    MouselabMDP.prototype.displayFeedback = function(a, s1) {
+    MouselabMDP.prototype.displayFeedback = function(a, s1, s0) {
       if (!this.feedback) {
         console.log('no feedback');
         $('#mdp-feedback').css({
@@ -491,7 +547,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a),
             delay: _.round(_.sum(PRdata.map(function(d) {
               return d.V - d.Q;
-            })))
+            }))),
+            optimalAction: bestMove(s0, _this.objectLevelPRs)
           };
           console.log('feedback', result);
           showCriticism = result.delay >= 1;
@@ -954,7 +1011,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
   })(fabric.Text);
   plugin = {
     trial: function(display_element, trialConfig) {
-      var trial;
+      var OBJECT_LEVEL_PRs, trial;
       trialConfig = jsPsych.pluginAPI.evaluateFunctionParameters(trialConfig);
       trialConfig.display = display_element;
       console.log('trialConfig', trialConfig);
@@ -964,7 +1021,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       if (trialConfig._block) {
         trialConfig._block.trialCount += 1;
       }
-      return TRIAL_INDEX += 1;
+      TRIAL_INDEX += 1;
+      OBJECT_LEVEL_PRs = loadObjectLevelPRs();
+      if (trial.trial_i === null) {
+        trial.trial_i = 0;
+      }
+      return trial.objectLevelPRs = OBJECT_LEVEL_PRs[trial.trial_i];
     }
   };
   return plugin;
