@@ -93,7 +93,7 @@ $(window).on 'load', ->
     if DEBUG
       TRAIN_TRIALS = TRIALS
 
-    # psiturk.recordUnstructuredData 'params', PARAMS
+    psiturk.recordUnstructuredData 'params', PARAMS
     psiturk.recordUnstructuredData 'experiment_nr', experiment_nr
     psiturk.recordUnstructuredData 'condition_nr', condition_nr
 
