@@ -261,7 +261,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       }
       console.log('TRIAL NUMBER', this.trial_i);
       checkObj(this);
-      this.initial = "" + this.initial;
       this.invKeys = _.invert(this.keys);
       this.data = {
         delays: [],
@@ -375,6 +374,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.data.actionTimes.push(Date.now() - this.initTime);
       if (!this.disableClicks) {
         this.updatePR(TERM_ACTION);
+        this.data.metaActions.push(TERM_ACTION);
         this.disableClicks = true;
       }
       s1 = this.transition[s0][a];
@@ -416,6 +416,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         r = this.getStateLabel(s);
         g.setLabel(r);
         this.recordQuery('click', 'state', s);
+        this.data.metaActions.push(s);
         return delay(0, (function(_this) {
           return function() {
             return _this.updatePR(parseInt(s), r);
@@ -537,6 +538,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       return this.PRdata.then((function(_this) {
         return function(PRdata) {
           var head, info, msg, penalty, redGreenSpan, result, showCriticism;
+          _this.data.PRdata = PRdata;
           result = {
             plannedTooMuch: PRdata.slice(0, -1).some(function(d) {
               return d.Q < _.last(d.Qs) + 0.01;

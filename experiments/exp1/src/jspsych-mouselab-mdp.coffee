@@ -301,7 +301,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       console.log 'TRIAL NUMBER', @trial_i
       # _.extend this, config
       checkObj this
-      @initial = "#{@initial}"
       @invKeys = _.invert @keys
       @data =
         delays: []
@@ -405,6 +404,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @data.actionTimes.push (Date.now() - @initTime)
       unless @disableClicks
         @updatePR TERM_ACTION
+        @data.metaActions.push TERM_ACTION
         @disableClicks = true
       s1 = @transition[s0][a]
       r = @stateRewards[s1]
@@ -433,6 +433,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         r = @getStateLabel s
         g.setLabel r
         @recordQuery 'click', 'state', s
+        @data.metaActions.push s
         delay 0, => @updatePR (parseInt s), r
 
     updatePR: (action, r) ->
@@ -533,6 +534,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         return
 
       @PRdata.then (PRdata) =>
+        @data.PRdata = PRdata
         result =
           plannedTooMuch: PRdata.slice(0, -1).some (d) =>
             d.Q < _.last(d.Qs) + 0.01
