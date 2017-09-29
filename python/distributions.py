@@ -19,7 +19,7 @@ class Distribution(object):
 
     def sample(self, n=None):
         raise NotImplementedError()
-    
+
 
 class Normal(Distribution):
     """Normal distribution."""
@@ -35,7 +35,7 @@ class Normal(Distribution):
         # if isinstance(other, Normal):
         if hasattr(other, 'mu'):
             # print('add norm')
-            return Normal(self.mu + other.mu, 
+            return Normal(self.mu + other.mu,
                           (self.sigma ** 2 + other.sigma ** 2) ** 0.5)
         # if isinstance(other, PointMass):
         if hasattr(other, 'val'):
@@ -50,6 +50,13 @@ class Normal(Distribution):
         d.expectation = lambda *args: self.mu
         return d
 
+    def to_discrete(self, n=10):
+        d = scipy.stats.norm(self.mu, self.sigma)
+        vals = np.linspace(-2*self.sigma+self.mu, 2*self.sigma+self.mu, n)
+        delta = vals[1] - vals[0]
+        bins = np.array((-np.inf, *(vals[1:] - delta/2), np.inf))
+        probs = np.diff(d.cdf(bins))
+        return Categorical(vals, probs)
 
     def expectation(self):
         return self.mu
@@ -70,7 +77,7 @@ class Normal(Distribution):
     @classmethod
     def fit(cls, samples):
         return cls(*scipy.stats.norm.fit(samples))
-        
+
 class NormalMixture(Distribution):
     """Normal distribution."""
     def __init__(self, mu, sigma, weights):
@@ -111,7 +118,7 @@ class NormalMixture(Distribution):
     @classmethod
     def fit(cls, samples):
         return cls(*scipy.stats.norm.fit(samples))
-        
+
 
 @total_ordering
 class Categorical(Distribution):
@@ -228,7 +235,7 @@ class Beta(ScipyDistribution):
             return Beta(self.alpha + 1, self.beta)
         else:
             return Beta(self.alpha, self.beta + 1)
-      
+
 
 class GenerativeModel(Distribution):
     """Distribution represented by a generative model."""
@@ -258,7 +265,7 @@ class GenerativeModel(Distribution):
 
     def expectation(self, n=10000):
         return self.sample(n).mean()
-      
+
 
 @lru_cache(maxsize=CACHE_SIZE)
 def expectation(val):
@@ -382,8 +389,3 @@ class SampleDist(Distribution):
             return SampleDist(self._samples + other.sample(self.len))
         else:
             return SampleDist(self._samples + other)
-
-
-
-
-      
