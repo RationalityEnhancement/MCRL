@@ -113,7 +113,9 @@ if DEBUG
 COST_LEVEL =
   switch PARAMS.info_cost
     when 0.01 then 'low'
+    when 0.25 then 'low'
     when 1.00 then 'med'
     when 2.50 then 'high'
+    when 4.00 then 'high'
     when 1.0001 then 'high'
     else throw new Error('bad info_cost')
