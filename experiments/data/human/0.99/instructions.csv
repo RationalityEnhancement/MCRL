@@ -1,0 +1,5 @@
+p_rdata,action_times,actions,beliefs,correct,delays,information_used_correctly,meta_actions,path,planned_too_little,planned_too_much,queries,questions,responses,rt,score,time_elapsed,trial_index,trial_i,trial_type,view_history,pid
+,,,,,,,,,,,,,,277422,,277427,,,instructions,"[{""page_index"":0,""viewing_time"":73247},{""page_index"":1,""viewing_time"":80339},{""page_index"":2,""viewing_time"":60013},{""page_index"":1,""viewing_time"":26988},{""page_index"":0,""viewing_time"":29968},{""page_index"":1,""viewing_time"":1094},{""page_index"":2,""viewing_time"":5769}]",0
+,,,,,,,,,,,,,,7131,,331030,,,instructions,"[{""page_index"":0,""viewing_time"":5295},{""page_index"":1,""viewing_time"":1269},{""page_index"":2,""viewing_time"":565}]",0
+,,,,,,,,,,,,,,53681,,427807,,,instructions,"[{""page_index"":0,""viewing_time"":38986},{""page_index"":1,""viewing_time"":13463},{""page_index"":2,""viewing_time"":1231}]",0
+,,,,,,,,,,,,,,34521,,34522,,,instructions,"[{""page_index"":0,""viewing_time"":14120},{""page_index"":1,""viewing_time"":12478},{""page_index"":2,""viewing_time"":7922}]",1

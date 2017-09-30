@@ -1,0 +1,3 @@
+p_rdata,action_times,actions,beliefs,correct,delays,information_used_correctly,meta_actions,path,planned_too_little,planned_too_much,queries,questions,responses,rt,score,time_elapsed,trial_index,trial_i,trial_type,view_history,pid
+,,,,,,,,,,,,,"{""Q0"":""Randomly. No matter what I did I saw no difference. "",""Q1"":""I saw no difference."",""Q2"":""27"",""Q3"":""Male""}",63914,,1387111,,,survey-text,,0
+,,,,,,,,,,,,,"{""Q0"":""Mostly just went with luck and didn't look over all the options, but tried to maximize profit where possible."",""Q1"":""Not really."",""Q2"":""34"",""Q3"":""Female""}",43768,,901552,,,survey-text,,1
