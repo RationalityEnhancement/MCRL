@@ -231,9 +231,13 @@ COST_LEVEL = (function() {
   switch (PARAMS.info_cost) {
     case 0.01:
       return 'low';
+    case 0.25:
+      return 'low';
     case 1.00:
       return 'med';
     case 2.50:
+      return 'high';
+    case 4.00:
       return 'high';
     case 1.0001:
       return 'high';
