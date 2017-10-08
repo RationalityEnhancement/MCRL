@@ -6,6 +6,7 @@ from gym import spaces
 import itertools as it
 from distributions import cmax, smax, expectation, Normal, PointMass
 from toolz import memoize
+import random
 
 CACHE_SIZE = int(2**16)
 SMALL_CACHE_SIZE = int(2**14)
@@ -16,7 +17,7 @@ class MouselabEnv(gym.Env):
     metadata = {'render.modes': ['human', 'array']}
     term_state = '__term_state__'
     def __init__(self, branch=2, height=2, reward=None, cost=0, 
-                 ground_truth=None, expand_only=True):
+                 ground_truth=None, expand_only=True, initial_states=None):
         self.branch = branch
         self._binary = branch == 2
 
@@ -35,6 +36,7 @@ class MouselabEnv(gym.Env):
         self.ground_truth = np.array(ground_truth) if ground_truth is not None else None
         self.tree = self._build_tree()
         
+        self.initial_states = initial_states
         self.exact = hasattr(reward, 'vals')
         if self.exact:
             assert self.iid_rewards
@@ -59,7 +61,10 @@ class MouselabEnv(gym.Env):
         self.reset()
 
     def _reset(self):
-        self._state = self.init
+        if self.initial_states:
+            self._state = random.choice(self.initial_states)
+        else:
+            self._state = self.init
         return self.features(self._state)
 
     def _step(self, action):
