@@ -24,12 +24,28 @@ def sort_tree(env, state):
     return tuple(state)
 
 
+def hash_tree(env, state):
+    """Breaks symmetry between belief states.
+    
+    This is done by enforcing that the knowldge about states at each
+    depth be sorted by [0, 1, UNKNOWN]
+    """
+    if state == '__term_state__':
+        return hash(state)
+    def rec(n):
+        x = hash(state[n])
+        childs =  sum(rec(c) for c in env.tree[n])
+        return hash(str(x + childs))
+
+    return rec(0)
+
 def solve(env, hash_state=None, actions=None, blinkered=None):
     """Returns Q, V, pi, and computation data for an mdp environment."""
     if hasattr(env, 'n_arm'):
         hash_state = lambda state: tuple(sorted(state))
     elif hasattr(env, 'tree'):
-        hash_state = lambda state: sort_tree(env, state)
+        # hash_state = lambda state: sort_tree(env, state)
+        hash_state = lambda state: hash_tree(env, state)
     if actions is None:
         actions = env.actions
     if blinkered == 'recursive':
