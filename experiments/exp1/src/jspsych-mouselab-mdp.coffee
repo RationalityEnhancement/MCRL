@@ -535,12 +535,13 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       @PRdata.then (PRdata) =>
         @data.PRdata = PRdata
+        threshold = 0.56
         result =
           plannedTooMuch: PRdata.slice(0, -1).some (d) =>
-            d.Q < _.last(d.Qs) + 0.01
+            d.Q < _.last(d.Qs) + threshold
           plannedTooLittle: PRdata.slice(-1).some (d) =>
-            d.Q < d.V + 0.01
-          informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]),a)  # todo
+            d.Q < d.V + threshold
+          informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]),a)
           delay: _.round _.sum PRdata.map (d) =>
             d.V - d.Q
           optimalAction: bestMove(s0,this.objectLevelPRs)   #{direction: "0"}
