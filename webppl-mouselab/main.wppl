@@ -76,11 +76,11 @@ var evalPolicyWeights = function() {
 // })
 
 
-globalStore.cost = -1
-var env = mouselabProblem({reward: globalStore.reward, cost: globalStore.cost})();
+// globalStore.cost = -1
+// var env = mouselabProblem({reward: globalStore.reward, cost: globalStore.cost})();
 
-var Q_meta = makeQ_meta([1,1,0,0,1]);
-Q_meta(env.initialState, 1)
+// var Q_meta = makeQ_meta([1,1,0,0,1]);
+// Q_meta(env.initialState, 1)
 
 
 

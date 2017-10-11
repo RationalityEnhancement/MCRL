@@ -183,6 +183,7 @@ var makeQ_meta = function(weights) {
     }
     else {
       var features = [
+        1,
         globalStore.cost,
         VOC_1(state, action),
         VPI_action(state, action),

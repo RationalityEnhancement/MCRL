@@ -1,4 +1,4 @@
-DEBUG = false
+DEBUG = true
 
 if DEBUG
   console.log """
@@ -98,6 +98,9 @@ PARAMS =
   bonus_rate: 0.01
   delay_hours: 24
   delay_window: 4
+
+PARAMS.q_weights = loadJson('static/json/q_weights.json')[PARAMS.info_cost.toFixed(2)]
+
 
 if experiment_nr is 4
   STAGE1 = true

@@ -6,21 +6,9 @@ FUNCTIONS = """
 {
   initialize() {
     globalStore.Q_meta = makeQ_meta(globalStore.weights);
-
-  },
-  flip() {
-    flip()
-  },
-  sampleMean(param) {
-    expectation(Infer({model() {
-      gaussian(param.mu, param.sigma)
-    }, method:'forward', samples:param.nSample}))
-  },
-  PR(arg) {
-    calculatePR(arg)
   },
   getQV(arg) {
-    var Q_meta = globalStore.Q_meta
+    var Q_meta = globalStore.Q_meta;
     var Qs = map(function(action) {Q_meta(arg.state, action)}, actions(arg.state));
     return {
       Qs,
@@ -69,7 +57,7 @@ startWebppl = () ->
       resolveResult result
       resolveWebppl callback
     cost: PARAMS.info_cost
-    weights: [1, 1, 0, 0, 1]
+    weights: PARAMS.q_weights
 
 
   code = """
