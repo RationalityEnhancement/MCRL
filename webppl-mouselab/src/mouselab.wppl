@@ -93,7 +93,7 @@ var mouselabProblem = function(params) {
     var reward = function(state, action) {
       (action == TERM_ACTION ?
        termReward(state) :
-       params)
+       params.cost)
     };
 
     return {

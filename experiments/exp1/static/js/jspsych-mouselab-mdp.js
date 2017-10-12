@@ -438,8 +438,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           newData = _.extend(this.objectLevelPRs[0][s0][s1], arg);
           return data.concat([newData]);
         } else {
-          return callWebppl('getQV', arg).then(function(qv) {
-            newData = _.extend(qv, arg);
+          return callWebppl('getPRinfo', arg).then(function(info) {
+            newData = _.extend(info, arg);
             console.log('PR info', newData);
             return data.concat([newData]);
           });
@@ -541,10 +541,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           _this.data.PRdata = PRdata;
           result = {
             plannedTooMuch: PRdata.slice(0, -1).some(function(d) {
-              return d.Q < _.last(d.Qs) + 0.01;
+              return d.bestAction === TERM_ACTION;
             }),
             plannedTooLittle: PRdata.slice(-1).some(function(d) {
-              return d.Q < d.V + 0.01;
+              return d.Q < d.V - 1;
             }),
             informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a),
             delay: _.round(_.sum(PRdata.map(function(d) {
@@ -553,7 +553,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             optimalAction: bestMove(s0, _this.objectLevelPRs)
           };
           console.log('feedback', result);
-          showCriticism = result.delay >= 1;
+          showCriticism = result.delay >= 2 * _this.data.PRdata.length;
           if (PARAMS.PR_type === 'none') {
             result.delay = (function() {
               switch (PARAMS.info_cost) {
@@ -639,7 +639,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           if (!PARAMS.message) {
             msg = "Please wait " + result.delay + " seconds.";
           }
-          if (_this.feedback && result.delay >= 1) {
+          if (_this.feedback && result.delay >= 2 * _this.data.PRdata.length) {
             _this.freeze = true;
             $('#mdp-feedback').css({
               display: 'block'

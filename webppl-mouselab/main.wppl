@@ -60,6 +60,19 @@ var evalPolicyWeights = function() {
   run(policy, 100, 'result')
 };
 
+
+var PRinfo = makePRinfo([0.1634283077172673,
+                         2.004429571617946,
+                         -0.4840571944907661,
+                         0.11101666806487959,
+                         0.632190859367936,
+                         0.9886360506389685]);
+globalStore.cost = -1.;
+PRinfo({
+  state: env.initialState,
+  action: 1
+});
+
 // var result = timeit(function() {
 //   sample(inferWeights())
 // });

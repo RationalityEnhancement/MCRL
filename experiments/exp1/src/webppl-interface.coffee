@@ -1,20 +1,15 @@
 
-# These are all the functions available to the 
+# These are all the functions available to the
 # callWebppl interface. This could be defined
 # in a less hacky way.
 FUNCTIONS = """
 {
   initialize() {
-    globalStore.Q_meta = makeQ_meta(globalStore.weights);
+    globalStore.PRinfo = makePRinfo(globalStore.weights);
   },
-  getQV(arg) {
-    var Q_meta = globalStore.Q_meta;
-    var Qs = map(function(action) {Q_meta(arg.state, action)}, actions(arg.state));
-    return {
-      Qs,
-      Q: Q_meta(arg.state, arg.action),
-      V: _.max(Qs)
-    }
+  getPRinfo(arg) {
+    var PRinfo = globalStore.PRinfo;
+    return PRinfo(arg)
   }
 }
 """
@@ -56,7 +51,7 @@ startWebppl = () ->
     _return2js: (result, callback) ->
       resolveResult result
       resolveWebppl callback
-    cost: PARAMS.info_cost
+    cost: - Math.abs(PARAMS.info_cost)
     weights: PARAMS.q_weights
 
 

@@ -445,8 +445,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             newData = _.extend(this.objectLevelPRs[0][s0][s1], arg)
             data.concat([newData])
         else            
-            callWebppl('getQV', arg).then (qv) ->
-                newData = _.extend(qv, arg)
+            callWebppl('getPRinfo', arg).then (info) ->
+                newData = _.extend(info, arg)
                 console.log('PR info', newData)
                 data.concat([newData])        
             
@@ -537,16 +537,17 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @data.PRdata = PRdata
         result =
           plannedTooMuch: PRdata.slice(0, -1).some (d) =>
-            d.Q < _.last(d.Qs) + 0.01
+            # d.Q < d.Qs[TERM_ACTION] + 0.01
+            d.bestAction is TERM_ACTION
           plannedTooLittle: PRdata.slice(-1).some (d) =>
-            d.Q < d.V + 0.01
-          informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]),a)  # todo
+            d.Q < d.V - 1
+          informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a)  # todo
           delay: _.round _.sum PRdata.map (d) =>
             d.V - d.Q
-          optimalAction: bestMove(s0,this.objectLevelPRs)   #{direction: "0"}
+          optimalAction: bestMove(s0,this.objectLevelPRs)   # {direction: "0"}
 
         console.log 'feedback', result
-        showCriticism = result.delay>=1
+        showCriticism = result.delay >= 2 * @data.PRdata.length
         if PARAMS.PR_type is 'none'
           result.delay = switch PARAMS.info_cost
             when 0.01 then [null, 4, 0, 1][@data.actions.length]
@@ -633,7 +634,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         if !PARAMS.message
           msg = "Please wait "+result.delay+" seconds."  
 
-        if @feedback and result.delay>=1        
+        if @feedback and result.delay >= 2 * @data.PRdata.length     
             @freeze = true
             $('#mdp-feedback').css display: 'block'
             $('#mdp-feedback-content')
