@@ -535,6 +535,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       @PRdata.then (PRdata) =>
         @data.PRdata = PRdata
+        threshold = 0.56
         result =
           plannedTooMuch: PRdata.slice(0, -1).some (d) =>
             # d.Q < d.Qs[TERM_ACTION] + 0.01

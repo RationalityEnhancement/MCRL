@@ -15,6 +15,9 @@ dat = data;
 %% Click inner until positive, then try that arm
 target = [2, 3, 4, 5];
 relevant_trials = 0;
+stopped = 0;
+other_leaf = 0;
+center = 0;
 
 for k=1:length(dat)
     all_trials = dat(k).clicks1;
@@ -44,7 +47,31 @@ for k=1:length(dat)
                             arm = [9, 16, 17];
                         end
                         if ismember(click, arm) 
-                            relevant_trials = relevant_trials + 1;
+                            prev_click_val = rewards(click);
+                            if c+1 <= length(clicks)
+                                click = clicks(c+1);
+                                click_val = rewards(click);
+                                if click ~= min(arm) && click_val < 0 %clicked on a leaf that was negative
+                                    if c == length(clicks)
+                                        stopped = stopped + 1;
+                                    elseif clicks(c+1) ~= min(arm)
+                                        other_leaf = other_leaf + 1;
+                                    else
+                                        center = center + 1;
+                                    end
+                                end
+                                if (ismember(click, arm) && (prev_click_val >= 0))
+                                    %should check whether they clicked
+                                    %leaves or center. if they clicked a                                  
+                                    %leaf, do they click the other leaf if
+                                    %negative?
+                                    relevant_trials = relevant_trials + 1; %if the first arm value was positive and they clicked in the arm again
+                                elseif (~ismember(click, arm) && (prev_click_val < 0))
+                                    relevant_trials = relevant_trials + 1; %if the first arm value was negative, they didn't click in the arm again
+                                else
+                                    break
+                                end
+                            end
                         end
                         break
                     else
@@ -60,7 +87,9 @@ for k=1:length(dat)
     end
 end
 
-percentage_of_inner_til_positive = (relevant_trials/(length(dat)* nr_trials)) * 100;
+p_of_inner_til_positive = (relevant_trials/(length(dat)* nr_trials)) * 100;
+p_click_arm_til_positive = ((other_leaf + center)/(length(dat)* nr_trials)) * 100;
+p_stop = (stopped/(length(dat)* nr_trials)) * 100; %percentage that stopped after negative click in arm
 
 %% Click inner 4, then middle of best
 target = [2, 3, 4, 5];

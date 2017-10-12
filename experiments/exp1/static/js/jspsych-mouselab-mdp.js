@@ -537,8 +537,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       }
       return this.PRdata.then((function(_this) {
         return function(PRdata) {
-          var head, info, msg, penalty, redGreenSpan, result, showCriticism;
+          var head, info, msg, penalty, redGreenSpan, result, showCriticism, threshold;
           _this.data.PRdata = PRdata;
+          threshold = 0.56;
           result = {
             plannedTooMuch: PRdata.slice(0, -1).some(function(d) {
               return d.bestAction === TERM_ACTION;
