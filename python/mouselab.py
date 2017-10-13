@@ -62,9 +62,8 @@ class MouselabEnv(gym.Env):
 
     def _reset(self):
         if self.initial_states:
-            self._state = random.choice(self.initial_states)
-        else:
-            self._state = self.init
+            self.init = random.choice(self.initial_states)
+        self._state = self.init
         return self.features(self._state)
 
     def _step(self, action):
@@ -361,13 +360,15 @@ class MouselabEnv(gym.Env):
         display(dot)
 
 
-    def to_obs_tree(self, state, node, obs=(), sort=False):
+    # @lru_cache(None)
+    def to_obs_tree(self, state, node, obs=(), sort=True):
         maybe_sort = sorted if sort else lambda x: x
         def rec(n):
             subjective_reward = state[n] if n in obs else expectation(state[n])
             children = tuple(maybe_sort(rec(c) for c in self.tree[n]))
             return (subjective_reward, children)
         return rec(node)
+        # return obs_rec(self.tree, state, obs, node)
 
     @lru_cache(CACHE_SIZE)
     def to_obs_flat(self, state, node, obs=(), sort=False):
@@ -435,7 +436,11 @@ def exact_flat_node_value_after_observe(obs_flat):
                  exact_flat_node_value_after_observe(obs_flat[c2:]) + obs_flat[c2]))    
 
 
-
+# @lru_cache(None)
+def obs_rec(tree, state, obs, n):
+    subjective_reward = state[n] if n in obs else expectation(state[n])
+    children = tuple(obs_rec(tree, state, obs, c) for c in tree[n])
+    return (subjective_reward, children)
 
 @memoize(key=lambda args, kwargs: len(args[0]))
 def tree_max(obs_flat):

@@ -76,7 +76,6 @@ class LiederPolicy(Policy):
         return action
 
 
-
 class MaxQSamplePolicy(Policy):
     """Chooses the action with highest sampled Q value.
 

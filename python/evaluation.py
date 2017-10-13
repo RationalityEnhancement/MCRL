@@ -42,7 +42,7 @@ def get_util(policy, envs, parallel=None, return_mean=True):
     else:
         np.random.randint(1000) # cycle the random number generator
         global __CHUNKS
-        chunk_size = len(envs) // parallel.n_jobs
+        `_size = len(envs) // parallel.n_jobs
         __CHUNKS = list(partition_all(chunk_size, envs))
         __AGENT.register(policy)
         jobs = (delayed(eval_chunk)(i, return_mean) for i in range(len(__CHUNKS)))
