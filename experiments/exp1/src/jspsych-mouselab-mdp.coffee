@@ -535,20 +535,20 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       @PRdata.then (PRdata) =>
         @data.PRdata = PRdata
-        threshold = 0.56
+        threshold = 0.40#0.56
         result =
           plannedTooMuch: PRdata.slice(0, -1).some (d) =>
             # d.Q < d.Qs[TERM_ACTION] + 0.01
             d.bestAction is TERM_ACTION
           plannedTooLittle: PRdata.slice(-1).some (d) =>
-            d.Q < d.V - 1
+            d.Q < d.V - threshold
           informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a)  # todo
           delay: _.round _.sum PRdata.map (d) =>
             d.V - d.Q
           optimalAction: bestMove(s0,this.objectLevelPRs)   # {direction: "0"}
 
         console.log 'feedback', result
-        showCriticism = result.delay >= 2 * @data.PRdata.length
+        showCriticism = result.delay >= threshold * @data.PRdata.length
         if PARAMS.PR_type is 'none'
           result.delay = switch PARAMS.info_cost
             when 0.01 then [null, 4, 0, 1][@data.actions.length]
@@ -635,7 +635,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         if !PARAMS.message
           msg = "Please wait "+result.delay+" seconds."  
 
-        if @feedback and result.delay >= 2 * @data.PRdata.length     
+        if @feedback and showCriticism     
             @freeze = true
             $('#mdp-feedback').css display: 'block'
             $('#mdp-feedback-content')
