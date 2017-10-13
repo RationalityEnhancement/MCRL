@@ -16,7 +16,7 @@ __ENVS = None
 __AGENT = Agent()
 __CHUNKS = None
 
-def eval_one(i): 
+def eval_one(i):
     __AGENT.register(__ENVS[i])
     return __AGENT.run_episode()['return']
 
@@ -42,7 +42,7 @@ def get_util(policy, envs, parallel=None, return_mean=True):
     else:
         np.random.randint(1000) # cycle the random number generator
         global __CHUNKS
-        `_size = len(envs) // parallel.n_jobs
+        _size = len(envs) // parallel.n_jobs
         __CHUNKS = list(partition_all(chunk_size, envs))
         __AGENT.register(policy)
         jobs = (delayed(eval_chunk)(i, return_mean) for i in range(len(__CHUNKS)))
@@ -91,16 +91,16 @@ def x2theta(x, normalize_voi):
 def bo_policy(envs, max_cost=10., normalize_voi=True, n_calls=60,
               verbose=False, return_result=False, n_jobs=None, q_learning=False,
               **kwargs):
-    
+
     if n_jobs is not None:
         parallel = Parallel(n_jobs=n_jobs)
     else:
         parallel = None
-    
+
     if q_learning:
         def objective(x):
             theta = x2theta(x, normalize_voi)
-            
+
             with Timer() as t:
                 error = get_q_error(theta, envs, parallel)
             if verbose:
@@ -110,7 +110,7 @@ def bo_policy(envs, max_cost=10., normalize_voi=True, n_calls=60,
     else:
         def objective(x):
             theta = x2theta(x, normalize_voi)
-            
+
             with Timer() as t:
                 util = get_util(LiederPolicy(theta), envs, parallel)
             if verbose:
