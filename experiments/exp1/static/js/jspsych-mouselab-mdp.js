@@ -19,7 +19,7 @@ OPTIMAL = void 0;
 TRIAL_INDEX = 1;
 
 jsPsych.plugins['mouselab-mdp'] = (function() {
-  var Arrow, DEMO_SPEED, Edge, KEYS, LOG_DEBUG, LOG_INFO, MOVE_SPEED, MouselabMDP, NULL, PRINT, SIZE, State, TERM_ACTION, Text, UNKNOWN, angle, checkObj, dist, plugin, polarMove, redGreen, round;
+  var Arrow, DEMO_SPEED, Edge, KEYS, LOG_DEBUG, LOG_INFO, MOVE_SPEED, MouselabMDP, NULL, OBJECT_LEVEL_PRs, PRINT, SIZE, State, TERM_ACTION, Text, UNKNOWN, angle, checkObj, dist, plugin, polarMove, redGreen, round;
   PRINT = function() {
     var args;
     args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
@@ -46,6 +46,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     MOVE_SPEED = 300;
   } else {
     OPTIMAL = (loadJson('static/json/optimal_policy.json'))[COST_LEVEL];
+  }
+  if (PARAMS.PR_type === 'objectLevel') {
+    OBJECT_LEVEL_PRs = loadObjectLevelPRs();
   }
   chooseAction = function(belief){
         
@@ -135,7 +138,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       return actionByNextState[to]
   };
   function loadObjectLevelPRs(){
-    var PR_json = loadJson("static/json/ObjectLevelPRs_"+COST_LEVEL+".json")
+    var PR_json = loadJson("static/json/ObjectLevelPRs.json")
     var object_level_PRs=PR_json
 
     return object_level_PRs
@@ -435,7 +438,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           action: action
         };
         if (PARAMS.PR_type === 'objectLevel') {
-          newData = _.extend(this.objectLevelPRs[0][s0][s1], arg);
+          newData = _.extend(OBJECT_LEVEL_PRs[this.trial_i][s0][s1], arg);
           return data.concat([newData]);
         } else {
           return callWebppl('getPRinfo', arg).then(function(info) {
@@ -1014,7 +1017,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
   })(fabric.Text);
   plugin = {
     trial: function(display_element, trialConfig) {
-      var OBJECT_LEVEL_PRs, trial;
+      var trial;
       trialConfig = jsPsych.pluginAPI.evaluateFunctionParameters(trialConfig);
       trialConfig.display = display_element;
       console.log('trialConfig', trialConfig);

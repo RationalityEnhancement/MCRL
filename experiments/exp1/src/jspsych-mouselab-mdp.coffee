@@ -9,6 +9,7 @@ https://github.com/fredcallaway/Mouselab-MDP
 mdp = undefined
 OPTIMAL = undefined
 TRIAL_INDEX = 1
+
 jsPsych.plugins['mouselab-mdp'] = do ->
 
 
@@ -36,8 +37,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
   else
     OPTIMAL = (loadJson 'static/json/optimal_policy.json')[COST_LEVEL]
 
-  #if PARAMS.PR_type is 'objectLevel'
-  #OBJECT_LEVEL_PRs = loadObjectLevelPRs()
+  if PARAMS.PR_type is 'objectLevel'
+    OBJECT_LEVEL_PRs = loadObjectLevelPRs()
         
   # =========================== #
   # ========= Helpers ========= #
@@ -442,7 +443,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @PRdata = @PRdata.then (data) ->
         arg = {state, action}    
         if PARAMS.PR_type is 'objectLevel'
-            newData = _.extend(this.objectLevelPRs[0][s0][s1], arg)
+            #newData = _.extend(@objectLevelPRs[s0][s1], arg)
+            newData = _.extend(OBJECT_LEVEL_PRs[@trial_i][s0][s1], arg)
             data.concat([newData])
         else            
             callWebppl('getPRinfo', arg).then (info) ->
