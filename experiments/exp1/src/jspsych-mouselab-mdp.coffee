@@ -135,7 +135,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
 
   `function loadObjectLevelPRs(){
-    var PR_json = loadJson("static/json/ObjectLevelPRs_"+COST_LEVEL+".json")
+    var PR_json = loadJson("static/json/ObjectLevelPRs.json")
     var object_level_PRs=PR_json
 
     return object_level_PRs
