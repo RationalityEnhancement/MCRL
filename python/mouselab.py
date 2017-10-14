@@ -81,7 +81,8 @@ class MouselabEnv(gym.Env):
             else:
                 reward = self.term_reward().expectation()
             done = True
-        elif self._state[action] is not self.init[action]:  # already observed
+        elif not hasattr(self._state[action], 'sample'):  # already observed
+            assert 0, self._state[action]
             reward = 0
             done = False
         else:  # observe a new node
@@ -190,6 +191,12 @@ class MouselabEnv(gym.Env):
         return max((self.node_value(n1, state) + state[n1]
                     for n1 in self.tree[node]), 
                    default=ZERO, key=expectation)
+
+    def true_Q(self, node):
+        """The object-level Q function."""
+        r = self.ground_truth[node]
+        return r + max((self.true_Q(n1) for n1 in self.tree[node]),
+                    default=0)
 
     def node_value_to(self, node, state=None):
         """A distribution over rewards up to and including the given node."""
@@ -359,16 +366,14 @@ class MouselabEnv(gym.Env):
                 dot.edge(str(x), str(y))
         display(dot)
 
-
-    # @lru_cache(None)
     def to_obs_tree(self, state, node, obs=(), sort=True):
         maybe_sort = sorted if sort else lambda x: x
         def rec(n):
             subjective_reward = state[n] if n in obs else expectation(state[n])
             children = tuple(maybe_sort(rec(c) for c in self.tree[n]))
             return (subjective_reward, children)
-        return rec(node)
         # return obs_rec(self.tree, state, obs, node)
+        return rec(node)
 
     @lru_cache(CACHE_SIZE)
     def to_obs_flat(self, state, node, obs=(), sort=False):
@@ -436,7 +441,6 @@ def exact_flat_node_value_after_observe(obs_flat):
                  exact_flat_node_value_after_observe(obs_flat[c2:]) + obs_flat[c2]))    
 
 
-# @lru_cache(None)
 def obs_rec(tree, state, obs, n):
     subjective_reward = state[n] if n in obs else expectation(state[n])
     children = tuple(obs_rec(tree, state, obs, c) for c in tree[n])
