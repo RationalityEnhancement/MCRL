@@ -223,7 +223,7 @@ class MouselabEnv(gym.Env):
                 )
     
     def vpi_action(self, action, state):
-        obs = (*self.subtree[action][1:], *self.path_to(action))
+        obs = (*self.subtree[action][1:], *self.path_to(action)[1:])
         return (self.node_value_after_observe(obs, 0, state).expectation()
                 - self.expected_term_reward(state)
                 )
