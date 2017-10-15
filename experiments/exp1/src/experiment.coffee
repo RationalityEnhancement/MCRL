@@ -24,6 +24,13 @@ calculateBonus = undefined
 
 train = undefined
 
+### 
+TODO
+- define trial_i
+- object-level PRs
+- demo
+###
+
 # if 'hidden' in document
 #   document.addEventListener("visibilitychange", onchange);
 # else if 'mozHidden' in document

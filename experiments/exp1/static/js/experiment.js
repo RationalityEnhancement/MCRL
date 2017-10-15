@@ -36,6 +36,14 @@ calculateBonus = void 0;
 
 train = void 0;
 
+
+/* 
+TODO
+- define trial_i
+- object-level PRs
+- demo
+ */
+
 if (DEBUG) {
   0;
 }

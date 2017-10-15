@@ -541,12 +541,15 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             # d.Q < d.Qs[TERM_ACTION] + 0.01
             d.bestAction is TERM_ACTION
           plannedTooLittle: PRdata.slice(-1).some (d) =>
+            # action must be TERM_ACTION
             d.Q < d.V - threshold
           informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a)  # todo
           delay: _.round _.sum PRdata.map (d) =>
-            d.V - d.Q
+            if d.action is TERM_ACTION
+              d.V - d.Q
+            else
+              Math.min(1, d.V - d.Q)
           optimalAction: bestMove(s0,this.objectLevelPRs)   # {direction: "0"}
-
         console.log 'feedback', result
         showCriticism = result.delay >= threshold * @data.PRdata.length
         if PARAMS.PR_type is 'none'
