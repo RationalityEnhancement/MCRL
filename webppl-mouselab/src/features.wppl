@@ -43,7 +43,7 @@ var observationValue = dp.cache(function(tree, params) {
       );
       subjectiveReward(tree) + bestChildVal
     }}))
-});  
+});
 
 var expectedObservationValue = function(tree, params) {
   // console.log('EOV', JSON.stringify(tree))
@@ -70,10 +70,10 @@ var stateTree = function(state) {
 }
 
 var actionGroups = [
-  [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4],
-  [5, 6, 7, 8], [5, 6, 7, 8], [5, 6, 7, 8], [5, 6, 7, 8], [5, 6, 7, 8],
-  [9, 10, 11, 12], [9, 10, 11, 12], [9, 10, 11, 12], [9, 10, 11, 12], [9, 10, 11, 12],
-  [13, 14, 15, 16], [13, 14, 15, 16], [13, 14, 15, 16], [13, 14, 15, 16], [13, 14, 15, 16]
+  [], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4],
+  [5, 6, 7, 8], [5, 6, 7, 8], [5, 6, 7, 8], [5, 6, 7, 8],
+  [9, 10, 11, 12], [9, 10, 11, 12], [9, 10, 11, 12], [9, 10, 11, 12],
+  [13, 14, 15, 16], [13, 14, 15, 16], [13, 14, 15, 16], [13, 14, 15, 16]
 ]
 
 var obsTree = function(state, toObserve) {
@@ -87,22 +87,18 @@ var obsTree = function(state, toObserve) {
 // ============================ //
 
 var termValue = cache(function(state) {
-  // console.log('termValue')
   expectedObservationValue(stateTree(state))
 });
 
 var VOC_1 = function(state, action) {
-  // console.log('VOC_1', action)
   expectedObservationValue(obsTree(state, [action])) - termValue(state)
 }
 
 var VPI_full = cache(function(state) {
-  // console.log('VPI_full')
   expectedObservationValue(obsTree(state, _.range(state.length))) - termValue(state)
 });
 
 var VPI_action = function(state, action) {
-  // console.log('VPI_action', action)
   var obs = actionGroups[action];
   expectedObservationValue(obsTree(state, obs)) - termValue(state)
 };
@@ -133,7 +129,6 @@ var makeQ_meta = function(weights) {
     }
     else {
       var features = [
-        1,
         globalStore.cost,
         VOC_1(state, action),
         VPI_action(state, action),
@@ -168,70 +163,3 @@ var makePRinfo = function(weights) {
   };
   return PRinfo
 };
-
-
-// var Q_meta = makeQ_meta([-0.034821394751660226, 4.177078845688222, 1.216868835535616, 6.726366072163112, -1.1604972774449753]);
-
-
-// var V_meta = function(state) {
-//   var best = maxWith(function(action) {Q_meta(state, action)},
-//                      actions(state))
-//   console.log('best action', best[0], 'value', best[1])
-//   return best[1]
-// };
-
-// var calculatePR = function(arg) {
-//   console.log('calculatePR', arg)
-//   Q_meta(arg.state, arg.action) - V_meta(arg.state)
-// }
-
-
-// // Work-in-progress learning Q function by Monte Carlo regression.
-// var inferWeights = function() {
-//   // This should be a list of human stateAction pairs.
-//   var stateActions = [[env.initialState, 1]]
-//   Infer({model() {
-//     // Sample weights and create Q function and softmax Q policy.
-//     var weights = repeat(5, function() {gaussian(0, 2)});
-//     var Q = makeQ_meta(weights);
-//     var policy = softmaxQPolicy(Q, 1);
-//     var sigma = gamma(1, 1); // sd of empirical Q distribution
-
-//     // Observe 5 rollouts for the sampled weights.
-//     console.log('-------------------')
-//     console.log(weights)
-//     var _ = repeat(1, function() {
-//       console.log('start run')
-//       // Sample an empirical state and action, then execute it.
-//       var sa = uniformDraw(stateActions);
-//       var state = sa[0], action = sa[1];
-//       // TODO: Does inference preferentially weight the high-probability transitions?
-//       var newState = transition(state, action);
-//       console.log('outcome', newState[action])
-//       var r = reward(state, action);
-
-//       // Follow the softmaxQ policy after that initial action.
-//       var rollout = simulate(policy, newState);
-//       var trueQs = cumsum(rollout.rewards).reverse();
-
-//       // Observe the empirical Q for the sampled state and action.
-//       // This could be repeated to upweight the importance of the
-//       // empirical state actions in the regression.
-//       var predictQ = Q(state, action);
-//       var trueQ = r + trueQs[0];
-//       observe(Gaussian({mu: trueQ, sigma}), predictQ)
-//       console.log('predict', predictQ, ' observe', trueQ)
-
-//       // Observe the empirical Qs for the remainder of the rollout.
-//       map(function(i) {
-//         var predictQ = Q(rollout.states[i], rollout.actions[i]);
-//         observe(Gaussian({mu: trueQs[i], sigma}), predictQ);
-//       }, _.range(trueQs.length))
-//     });
-//     return {weights, sigma}
-//   },
-//   // method: 'SMC', particles: 100, rejuvSteps: 1
-//   method: 'SMC', particles: 3
-//   // method: 'MCMC', kernel: 'HMC', samples: 1000, onlyMAP: true
-//   })
-// };

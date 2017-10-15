@@ -60,19 +60,29 @@ var evalPolicyWeights = function() {
   run(policy, 100, 'result')
 };
 
-
-var PRinfo = makePRinfo([0.1634283077172673,
-                         2.004429571617946,
-                         -0.4840571944907661,
-                         0.11101666806487959,
-                         0.632190859367936,
-                         0.9886360506389685]);
+var weights = [
+  2.4857394663934516,
+  0.28211991705144657,
+  0.13838972719540021,
+  0.5287532348896062,
+  0.9976719707175685
+];
+var PRinfo = makePRinfo(weights);
+var Q_meta = makeQ_meta(weights)
 globalStore.cost = -1.;
-PRinfo({
-  state: env.initialState,
-  action: 1
-});
 
+var state = [0, "__", "__", "__", "__", -12, "__", "__", "__", "__", "__", "__", "__", "__", "__", "__", "__"];
+var action = 9;
+// PRinfo({
+//   state: state,
+//   action: 1
+// });
+
+
+console.log(Q_meta(state, 1))
+console.log(Q_meta(state, 9))
+
+''
 // var result = timeit(function() {
 //   sample(inferWeights())
 // });
