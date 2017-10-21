@@ -37,9 +37,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
   else
     OPTIMAL = (loadJson 'static/json/optimal_policy.json')[COST_LEVEL]
 
-  if PARAMS.PR_type is 'objectLevel'
-    OBJECT_LEVEL_PRs = loadObjectLevelPRs()
-        
   # =========================== #
   # ========= Helpers ========= #
   # =========================== #
@@ -225,7 +222,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @PRdata=[]
 
         @stateRewards=null
-        @objectLevelPRs=[]
         
         @keys=KEYS  # mapping from actions to keycodes
         @trialIndex=TRIAL_INDEX  # number of trial (starts from 1)
@@ -1000,14 +996,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       if trialConfig._block
         trialConfig._block.trialCount += 1
       TRIAL_INDEX += 1
-                
-      OBJECT_LEVEL_PRs = loadObjectLevelPRs()
-      
-      if trial.trial_id is null
-        trial.trial_id = 0        
-      
-      trial.objectLevelPRs = OBJECT_LEVEL_PRs[trial.trial_id]
-         
+                         
   return plugin
 
 # ---
