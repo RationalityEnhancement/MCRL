@@ -222,6 +222,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @trial_id
         @objectQs
         @demonstrate=false
+        @PRdata=[]
 
         @stateRewards=null
         @objectLevelPRs=[]
@@ -450,15 +451,16 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       state = @beliefState.slice()
       new_location = _.last @data.path
       objectQs = @objectQs    
-        
+                  
       @PRdata = @PRdata.then (data) ->
         arg = {state, action}    
-        if PARAMS.PR_type is 'objectLevel' and action is TERM_ACTION            
-            #newData = _.extend(@objectLevelPRs[s0][s1], arg)
-            #newData = _.extend(OBJECT_LEVEL_PRs[@trial_id][s0][s1], arg)
-            #delay = _.round delay_per_point * Math.max(objectQs) - objectQs[new_location]
-            newData = _.extend({'Q': objectQs[new_location], 'V': _.max(Object.values(objectQs)), 'Qs': objectQs}, arg)
-            data.concat([newData])
+        if PARAMS.PR_type is 'objectLevel'
+            if action is TERM_ACTION            
+                #newData = _.extend(@objectLevelPRs[s0][s1], arg)
+                #newData = _.extend(OBJECT_LEVEL_PRs[@trial_id][s0][s1], arg)
+                #delay = _.round delay_per_point * Math.max(objectQs) - objectQs[new_location]
+                [_.extend({'Q': objectQs[new_location], 'V': _.max(Object.values(objectQs)), 'Qs': objectQs}, arg)]
+                #data.concat([newData])
         else            
             callWebppl('getPRinfo', arg).then (info) ->
                 newData = _.extend(info, arg)
