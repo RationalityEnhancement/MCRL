@@ -537,7 +537,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       @PRdata.then (PRdata) =>
         @data.PRdata = PRdata
-        threshold = 0.40  # 0.56
+        threshold = 3  # 0.56
         
         subject_value_of_1h = 20  # 50 dollars worth of subjective utility per hour
         sec_per_h = 3600
@@ -552,13 +552,18 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             d.Q < d.V - threshold
           informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a)
           delay: _.round delay_per_point * _.sum PRdata.map (d) =>
-            if d.action is TERM_ACTION
-              d.V - d.Q
+            nrPossibleClicks = sum d.state.map (d) => d is "__"
+            if d.V-d.Q > THRESHOLDS[nrPossibleClicks]
+                d.V-d.Q
             else
-              Math.min(1, d.V - d.Q)
+                0                    
+            #if d.action is TERM_ACTION
+            #  d.V - d.Q
+            #else
+            #  Math.min(1, d.V - d.Q)
           optimalAction: bestMove(s0,this.objectLevelPRs)   # {direction: "0"}
         console.log 'feedback', result
-        showCriticism = result.delay >= threshold * @data.PRdata.length
+        showCriticism = result.delay >= threshold
         if PARAMS.PR_type is 'none'
           result.delay = switch PARAMS.info_cost
             when 0.01 then [null, 4, 0, 1][@data.actions.length]

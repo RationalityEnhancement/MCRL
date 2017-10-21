@@ -542,7 +542,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         return function(PRdata) {
           var delay_per_point, head, info, msg, penalty, redGreenSpan, result, sec_per_h, showCriticism, subject_value_of_1h, threshold;
           _this.data.PRdata = PRdata;
-          threshold = 0.40;
+          threshold = 3;
           subject_value_of_1h = 20;
           sec_per_h = 3600;
           delay_per_point = 0.05 / (subject_value_of_1h * N_TRIALS) * sec_per_h;
@@ -555,16 +555,20 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             }),
             informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a),
             delay: _.round(delay_per_point * _.sum(PRdata.map(function(d) {
-              if (d.action === TERM_ACTION) {
+              var nrPossibleClicks;
+              nrPossibleClicks = sum(d.state.map(function(d) {
+                return d === "__";
+              }));
+              if (d.V - d.Q > THRESHOLDS[nrPossibleClicks]) {
                 return d.V - d.Q;
               } else {
-                return Math.min(1, d.V - d.Q);
+                return 0;
               }
             }))),
             optimalAction: bestMove(s0, _this.objectLevelPRs)
           };
           console.log('feedback', result);
-          showCriticism = result.delay >= threshold * _this.data.PRdata.length;
+          showCriticism = result.delay >= threshold;
           if (PARAMS.PR_type === 'none') {
             result.delay = (function() {
               switch (PARAMS.info_cost) {

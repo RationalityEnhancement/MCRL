@@ -12,6 +12,7 @@ Demonstrates the jsych-mdp plugin
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 isIE = false || !!document.documentMode
 TRIALS = undefined
+THRESHOLDS = undefined
 TEST_TRIALS = undefined
 TRAIN_TRIALS = undefined
 TEST_IDX = undefined
@@ -79,6 +80,7 @@ $(window).on 'load', ->
     else
       TRIALS = loadJson "static/json/rewards.json"
       STRUCTURE = loadJson "static/json/structure.json"
+      THRESHOLDS = loadJson "static/json/thresholds_#{COST_LEVEL}_cost.json"    
       console.log 'STRUCTURE', STRUCTURE
       console.log 'TRIALS', TRIALS
     condition_nr = condition % nrConditions
