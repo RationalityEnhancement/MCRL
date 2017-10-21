@@ -13,6 +13,8 @@ psiturk = new PsiTurk uniqueId, adServerLoc, mode
 isIE = false || !!document.documentMode
 TRIALS = undefined
 THRESHOLDS = undefined
+DIRECTIONS = ["down","right","up","left"]
+
 TEST_TRIALS = undefined
 TRAIN_TRIALS = undefined
 TEST_IDX = undefined

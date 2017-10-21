@@ -5,7 +5,7 @@ DEBUG = true;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 4;
+  condition = 7;
   workerId = ['debugFRED'];
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
@@ -225,7 +225,7 @@ if (experiment_nr === 4) {
 
 if (DEBUG) {
   PARAMS.message = 'full';
-  PARAMS.PR_type = 'featureBased';
+  PARAMS.PR_type = 'objectLevel';
   PARAMS.info_cost = 1.00;
 }
 

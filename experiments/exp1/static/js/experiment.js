@@ -6,7 +6,7 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var N_TEST, N_TRAIN, N_TRIALS, SCORE, STRUCTURE, TEST_IDX, TEST_TRIALS, THRESHOLDS, TRAIN_TRIALS, TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk, train,
+var DIRECTIONS, N_TEST, N_TRAIN, N_TRIALS, SCORE, STRUCTURE, TEST_IDX, TEST_TRIALS, THRESHOLDS, TRAIN_TRIALS, TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk, train,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -17,6 +17,8 @@ isIE = false || !!document.documentMode;
 TRIALS = void 0;
 
 THRESHOLDS = void 0;
+
+DIRECTIONS = ["down", "right", "up", "left"];
 
 TEST_TRIALS = void 0;
 

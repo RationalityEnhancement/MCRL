@@ -96,6 +96,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     //location is 0 for the initial location and increases from there in the order of DFS 
     //step is 1 for the first move, 2 for the second move, and 3 for the third move    
     
+    /*
+    
     var step_by_location = [1,2,3,4,4,2,3,4,4,2,3,4,4,2,3,4,4]    
     var step = step_by_location[location]
         
@@ -111,8 +113,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         }
     }
     */    
-    
+      
+    /*    
     return {direction : getAction(location,bestNextState)}
+    */
+    
+    return {direction: argmax(Object.values(objectLevelPRs))}
             
   };
   function getAction(from,to){
@@ -375,12 +381,13 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       LOG_DEBUG('handleKey', s0, a);
       this.data.actions.push(a);
       this.data.actionTimes.push(Date.now() - this.initTime);
+      s1 = this.transition[s0][a];
+      this.data.path.push(s1);
       if (!this.disableClicks) {
         this.updatePR(TERM_ACTION);
         this.data.metaActions.push(TERM_ACTION);
         this.disableClicks = true;
       }
-      s1 = this.transition[s0][a];
       r = this.stateRewards[s1];
       LOG_DEBUG(s0 + ", " + a + " -> " + r + ", " + s1);
       s1g = this.states[s1];
@@ -429,16 +436,22 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     };
 
     MouselabMDP.prototype.updatePR = function(action, r) {
-      var state;
+      var new_location, objectQs, state;
       state = this.beliefState.slice();
+      new_location = _.last(this.data.path);
+      objectQs = this.objectQs;
       this.PRdata = this.PRdata.then(function(data) {
         var arg, newData;
         arg = {
           state: state,
           action: action
         };
-        if (PARAMS.PR_type === 'objectLevel') {
-          newData = _.extend(OBJECT_LEVEL_PRs[this.trial_id][s0][s1], arg);
+        if (PARAMS.PR_type === 'objectLevel' && action === TERM_ACTION) {
+          newData = _.extend({
+            'Q': objectQs[new_location],
+            'V': _.max(Object.values(objectQs)),
+            'Qs': objectQs
+          }, arg);
           return data.concat([newData]);
         } else {
           return callWebppl('getPRinfo', arg).then(function(info) {
@@ -565,7 +578,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
                 return 0;
               }
             }))),
-            optimalAction: bestMove(s0, _this.objectLevelPRs)
+            optimalAction: bestMove(s0, _this.objectQs)
           };
           console.log('feedback', result);
           showCriticism = result.delay >= threshold;
@@ -592,10 +605,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           };
           if (PARAMS.message) {
             if (PARAMS.PR_type === 'objectLevel') {
-              if (a === result.optimal_action.direction) {
+              if (result.optimalAction.direction.includes(parseInt(a))) {
                 head = redGreenSpan("You chose the best possible move.", 1);
               } else {
-                head = redGreenSpan("Bad move! You should have moved " + result.optimal_action.direction + ".", -1);
+                head = redGreenSpan("Bad move! You should have moved " + DIRECTIONS[result.optimalAction.direction[0]] + ".", -1);
               }
             } else {
               if (PARAMS.message === 'full') {
@@ -683,7 +696,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         return resolve([]);
       });
       LOG_DEBUG('arrive', s);
-      this.data.path.push(s);
       if (this.transition[s]) {
         keys = (function() {
           var j, len, ref, results;
