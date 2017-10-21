@@ -219,8 +219,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.clickState = bind(this.clickState, this);
       this.handleKey = bind(this.handleKey, this);
       this.runDemo = bind(this.runDemo, this);
-      var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref20, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage, timeMsg;
-      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.tree = (ref = config.tree) != null ? ref : null, this.initial = config.initial, this.stateLabels = (ref1 = config.stateLabels) != null ? ref1 : null, this.stateDisplay = (ref2 = config.stateDisplay) != null ? ref2 : 'never', this.stateClickCost = (ref3 = config.stateClickCost) != null ? ref3 : PARAMS.info_cost, this.edgeLabels = (ref4 = config.edgeLabels) != null ? ref4 : 'reward', this.edgeDisplay = (ref5 = config.edgeDisplay) != null ? ref5 : 'always', this.edgeClickCost = (ref6 = config.edgeClickCost) != null ? ref6 : 0, this.trial_i = (ref7 = config.trial_i) != null ? ref7 : null, this.demonstrate = (ref8 = config.demonstrate) != null ? ref8 : false, this.stateRewards = (ref9 = config.stateRewards) != null ? ref9 : null, this.objectLevelPRs = (ref10 = config.objectLevelPRs) != null ? ref10 : [], this.keys = (ref11 = config.keys) != null ? ref11 : KEYS, this.trialIndex = (ref12 = config.trialIndex) != null ? ref12 : TRIAL_INDEX, this.playerImage = (ref13 = config.playerImage) != null ? ref13 : 'static/images/plane.png', SIZE = (ref14 = config.SIZE) != null ? ref14 : 110, leftMessage = (ref15 = config.leftMessage) != null ? ref15 : null, centerMessage = (ref16 = config.centerMessage) != null ? ref16 : '&nbsp;', rightMessage = (ref17 = config.rightMessage) != null ? ref17 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref18 = config.lowerMessage) != null ? ref18 : "Navigate with the arrow keys.", this.minTime = (ref19 = config.minTime) != null ? ref19 : (DEBUG ? 5 : 45), this.feedback = (ref20 = config.feedback) != null ? ref20 : true;
+      var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage, timeMsg;
+      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.tree = (ref = config.tree) != null ? ref : null, this.initial = config.initial, this.stateLabels = (ref1 = config.stateLabels) != null ? ref1 : null, this.stateDisplay = (ref2 = config.stateDisplay) != null ? ref2 : 'never', this.stateClickCost = (ref3 = config.stateClickCost) != null ? ref3 : PARAMS.info_cost, this.edgeLabels = (ref4 = config.edgeLabels) != null ? ref4 : 'reward', this.edgeDisplay = (ref5 = config.edgeDisplay) != null ? ref5 : 'always', this.edgeClickCost = (ref6 = config.edgeClickCost) != null ? ref6 : 0, this.trial_id = config.trial_id, this.objectQs = config.objectQs, this.demonstrate = (ref7 = config.demonstrate) != null ? ref7 : false, this.stateRewards = (ref8 = config.stateRewards) != null ? ref8 : null, this.objectLevelPRs = (ref9 = config.objectLevelPRs) != null ? ref9 : [], this.keys = (ref10 = config.keys) != null ? ref10 : KEYS, this.trialIndex = (ref11 = config.trialIndex) != null ? ref11 : TRIAL_INDEX, this.playerImage = (ref12 = config.playerImage) != null ? ref12 : 'static/images/plane.png', SIZE = (ref13 = config.SIZE) != null ? ref13 : 110, leftMessage = (ref14 = config.leftMessage) != null ? ref14 : null, centerMessage = (ref15 = config.centerMessage) != null ? ref15 : '&nbsp;', rightMessage = (ref16 = config.rightMessage) != null ? ref16 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref17 = config.lowerMessage) != null ? ref17 : "Navigate with the arrow keys.", this.minTime = (ref18 = config.minTime) != null ? ref18 : (DEBUG ? 5 : 45), this.feedback = (ref19 = config.feedback) != null ? ref19 : true;
       this.initial = 0;
       this.tree = [[1, 5, 9, 13], [2], [3, 4], [], [], [6], [7, 8], [], [], [10], [11, 12], [], [], [14], [15, 16], [], []];
       this.transition = [
@@ -262,7 +262,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         this.demonstrate = true;
         lowerMessage = "Behavior of participant " + SHOW_PARTICIPANT_DATA;
       }
-      console.log('TRIAL NUMBER', this.trial_i);
+      console.log('TRIAL NUMBER', this.trial_id);
       checkObj(this);
       this.invKeys = _.invert(this.keys);
       this.data = {
@@ -270,7 +270,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         plannedTooLittle: [],
         plannedTooMuch: [],
         informationUsedCorrectly: [],
-        trial_i: this.trial_i,
+        trial_id: this.trial_id,
         trialIndex: this.trialIndex,
         score: 0,
         path: [],
@@ -348,7 +348,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       var actions, i, interval;
       this.feedback = false;
       this.timeLeft = 1;
-      actions = OPTIMAL[this.trial_i];
+      actions = OPTIMAL[this.trial_id];
       i = 0;
       return interval = ifvisible.onEvery(1, (function(_this) {
         return function() {
@@ -438,7 +438,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           action: action
         };
         if (PARAMS.PR_type === 'objectLevel') {
-          newData = _.extend(OBJECT_LEVEL_PRs[this.trial_i][s0][s1], arg);
+          newData = _.extend(OBJECT_LEVEL_PRs[this.trial_id][s0][s1], arg);
           return data.concat([newData]);
         } else {
           return callWebppl('getPRinfo', arg).then(function(info) {
@@ -1040,10 +1040,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       }
       TRIAL_INDEX += 1;
       OBJECT_LEVEL_PRs = loadObjectLevelPRs();
-      if (trial.trial_i === null) {
-        trial.trial_i = 0;
+      if (trial.trial_id === null) {
+        trial.trial_id = 0;
       }
-      return trial.objectLevelPRs = OBJECT_LEVEL_PRs[trial.trial_i];
+      return trial.objectLevelPRs = OBJECT_LEVEL_PRs[trial.trial_id];
     }
   };
   return plugin;

@@ -213,7 +213,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @edgeLabels='reward'  # object mapping from edge names (s0 + '__' + s1) to labels
         @edgeDisplay='always'  # one of 'never', 'hover', 'click', 'always'
         @edgeClickCost=0  # subtracted from score every time an edge is clicked
-        @trial_i=null
+        @trial_id
+        @objectQs
         @demonstrate=false
 
         @stateRewards=null
@@ -299,7 +300,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @demonstrate = true
         lowerMessage = "Behavior of participant #{SHOW_PARTICIPANT_DATA}"
 
-      console.log 'TRIAL NUMBER', @trial_i
+      console.log 'TRIAL NUMBER', @trial_id
       # _.extend this, config
       checkObj this
       @invKeys = _.invert @keys
@@ -308,7 +309,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         plannedTooLittle: []
         plannedTooMuch: []
         informationUsedCorrectly: []
-        trial_i: @trial_i
+        trial_id: @trial_id
         trialIndex: @trialIndex
         score: 0
         path: []
@@ -380,7 +381,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @feedback = false
       @timeLeft = 1
 
-      actions = OPTIMAL[@trial_i]
+      actions = OPTIMAL[@trial_id]
       i = 0
       interval = ifvisible.onEvery 1, =>
         if ifvisible.now()
@@ -444,7 +445,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         arg = {state, action}    
         if PARAMS.PR_type is 'objectLevel'
             #newData = _.extend(@objectLevelPRs[s0][s1], arg)
-            newData = _.extend(OBJECT_LEVEL_PRs[@trial_i][s0][s1], arg)
+            newData = _.extend(OBJECT_LEVEL_PRs[@trial_id][s0][s1], arg)
             data.concat([newData])
         else            
             callWebppl('getPRinfo', arg).then (info) ->
@@ -713,7 +714,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     run: =>
       LOG_DEBUG 'run'
-      # meta_MDP.init @trial_i
+      # meta_MDP.init @trial_id
       do @buildMap
       do @startTimer
       fabric.Image.fromURL @playerImage, ((img) =>
@@ -988,10 +989,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                 
       OBJECT_LEVEL_PRs = loadObjectLevelPRs()
       
-      if trial.trial_i is null
-        trial.trial_i = 0        
+      if trial.trial_id is null
+        trial.trial_id = 0        
       
-      trial.objectLevelPRs = OBJECT_LEVEL_PRs[trial.trial_i]
+      trial.objectLevelPRs = OBJECT_LEVEL_PRs[trial.trial_id]
          
   return plugin
 
