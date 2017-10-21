@@ -563,11 +563,14 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             d.Q < d.V - threshold
           informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a)
           delay: _.round delay_per_point * _.sum PRdata.map (d) =>
-            nrPossibleClicks = sum d.state.map (d) => d is "__"
-            if d.V-d.Q > THRESHOLDS[nrPossibleClicks]
-                d.V-d.Q
-            else
-                0                    
+                if PARAMS.PR_type is 'objectLevel'
+                    d.V-d.Q
+                else
+                    nrPossibleClicks = sum d.state.map (d) => d is "__"
+                    if d.V-d.Q > THRESHOLDS[nrPossibleClicks]
+                        d.V-d.Q
+                    else
+                        0                    
             #if d.action is TERM_ACTION
             #  d.V - d.Q
             #else

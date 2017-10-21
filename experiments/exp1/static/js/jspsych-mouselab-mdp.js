@@ -570,13 +570,17 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a),
             delay: _.round(delay_per_point * _.sum(PRdata.map(function(d) {
               var nrPossibleClicks;
-              nrPossibleClicks = sum(d.state.map(function(d) {
-                return d === "__";
-              }));
-              if (d.V - d.Q > THRESHOLDS[nrPossibleClicks]) {
+              if (PARAMS.PR_type === 'objectLevel') {
                 return d.V - d.Q;
               } else {
-                return 0;
+                nrPossibleClicks = sum(d.state.map(function(d) {
+                  return d === "__";
+                }));
+                if (d.V - d.Q > THRESHOLDS[nrPossibleClicks]) {
+                  return d.V - d.Q;
+                } else {
+                  return 0;
+                }
               }
             }))),
             optimalAction: bestMove(s0, _this.objectQs)
