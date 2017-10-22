@@ -60,7 +60,7 @@ def write_trials(version):
     df.path = df.path.apply(
         lambda x: [1] + literal_eval(x)[1:])
 
-    cols = ('pid info_cost PR_type message trial_index trial_i delays '
+    cols = ('pid info_cost PR_type message trial_index trial_id delays '
             'score n_click clicks click_times path action_times'
             .split())
     file = 'data/human/{}/trials.csv'.format(version)
