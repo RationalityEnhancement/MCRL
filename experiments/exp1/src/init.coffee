@@ -19,7 +19,7 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 4
+  condition = 6
   workerId = ['debugFRED']
   # counterbalance = 0
 
