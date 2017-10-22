@@ -1,4 +1,4 @@
-DEBUG = true
+DEBUG = false
 
 if DEBUG
   console.log """
@@ -6,7 +6,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 4
+  condition = 7
   workerId = ['debugFRED']
 
   
@@ -109,7 +109,7 @@ if experiment_nr is 4
 
 if DEBUG
   PARAMS.message = 'full'
-  PARAMS.PR_type = 'featureBased'
+  PARAMS.PR_type = 'objectLevel'#'featureBased'
   PARAMS.info_cost = 1.00
 
 # console.log 'PARAMS', PARAMS

@@ -6,7 +6,7 @@ Fred Callaway
 
 Demonstrates the jsych-mdp plugin
  */
-var N_TEST, N_TRAIN, N_TRIALS, SCORE, STRUCTURE, TEST_IDX, TEST_TRIALS, TRAIN_TRIALS, TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk, train,
+var DIRECTIONS, N_TEST, N_TRAIN, N_TRIALS, SCORE, STRUCTURE, TEST_IDX, TEST_TRIALS, THRESHOLDS, TRAIN_TRIALS, TRIALS, calculateBonus, createStartButton, delay, initializeExperiment, isIE, psiturk, train,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -15,6 +15,10 @@ psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
 isIE = false || !!document.documentMode;
 
 TRIALS = void 0;
+
+THRESHOLDS = void 0;
+
+DIRECTIONS = ["down", "right", "up", "left"];
 
 TEST_TRIALS = void 0;
 
@@ -71,6 +75,7 @@ $(window).on('load', function() {
     } else {
       TRIALS = loadJson("static/json/rewards.json");
       STRUCTURE = loadJson("static/json/structure.json");
+      THRESHOLDS = loadJson("static/json/thresholds_" + COST_LEVEL + "_cost.json");
       console.log('STRUCTURE', STRUCTURE);
       console.log('TRIALS', TRIALS);
     }

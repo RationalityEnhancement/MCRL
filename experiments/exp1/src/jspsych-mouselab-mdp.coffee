@@ -37,9 +37,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
   else
     OPTIMAL = (loadJson 'static/json/optimal_policy.json')[COST_LEVEL]
 
-  if PARAMS.PR_type is 'objectLevel'
-    OBJECT_LEVEL_PRs = loadObjectLevelPRs()
-        
   # =========================== #
   # ========= Helpers ========= #
   # =========================== #
@@ -91,6 +88,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     //location is 0 for the initial location and increases from there in the order of DFS 
     //step is 1 for the first move, 2 for the second move, and 3 for the third move    
     
+    /*
+    
     var step_by_location = [1,2,3,4,4,2,3,4,4,2,3,4,4,2,3,4,4]    
     var step = step_by_location[location]
         
@@ -106,8 +105,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         }
     }
     */    
-    
+      
+    /*    
     return {direction : getAction(location,bestNextState)}
+    */
+    
+    return {direction: argmax(Object.values(objectLevelPRs))}
             
   }`
 
@@ -213,11 +216,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @edgeLabels='reward'  # object mapping from edge names (s0 + '__' + s1) to labels
         @edgeDisplay='always'  # one of 'never', 'hover', 'click', 'always'
         @edgeClickCost=0  # subtracted from score every time an edge is clicked
-        @trial_i=null
+        @trial_id
+        @objectQs
         @demonstrate=false
+        @PRdata=[]
 
         @stateRewards=null
-        @objectLevelPRs=[]
         
         @keys=KEYS  # mapping from actions to keycodes
         @trialIndex=TRIAL_INDEX  # number of trial (starts from 1)
@@ -299,7 +303,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @demonstrate = true
         lowerMessage = "Behavior of participant #{SHOW_PARTICIPANT_DATA}"
 
-      console.log 'TRIAL NUMBER', @trial_i
+      console.log 'TRIAL NUMBER', @trial_id
       # _.extend this, config
       checkObj this
       @invKeys = _.invert @keys
@@ -308,7 +312,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         plannedTooLittle: []
         plannedTooMuch: []
         informationUsedCorrectly: []
-        trial_i: @trial_i
+        trial_id: @trial_id
         trialIndex: @trialIndex
         score: 0
         path: []
@@ -380,7 +384,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @feedback = false
       @timeLeft = 1
 
-      actions = OPTIMAL[@trial_i]
+      actions = OPTIMAL[@trial_id]
       i = 0
       interval = ifvisible.onEvery 1, =>
         if ifvisible.now()
@@ -403,11 +407,13 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       LOG_DEBUG 'handleKey', s0, a
       @data.actions.push a
       @data.actionTimes.push (Date.now() - @initTime)
+      s1 = @transition[s0][a]
+      @data.path.push s1
+        
       unless @disableClicks
         @updatePR TERM_ACTION
         @data.metaActions.push TERM_ACTION
-        @disableClicks = true
-      s1 = @transition[s0][a]
+        @disableClicks = true      
       r = @stateRewards[s1]
       LOG_DEBUG "#{s0}, #{a} -> #{r}, #{s1}"
 
@@ -439,13 +445,18 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     updatePR: (action, r) ->
       state = @beliefState.slice()
-        
+      new_location = _.last @data.path
+      objectQs = @objectQs    
+                  
       @PRdata = @PRdata.then (data) ->
         arg = {state, action}    
         if PARAMS.PR_type is 'objectLevel'
-            #newData = _.extend(@objectLevelPRs[s0][s1], arg)
-            newData = _.extend(OBJECT_LEVEL_PRs[@trial_i][s0][s1], arg)
-            data.concat([newData])
+            if action is TERM_ACTION            
+                #newData = _.extend(@objectLevelPRs[s0][s1], arg)
+                #newData = _.extend(OBJECT_LEVEL_PRs[@trial_id][s0][s1], arg)
+                #delay = _.round delay_per_point * Math.max(objectQs) - objectQs[new_location]
+                [_.extend({'Q': objectQs[new_location], 'V': _.max(Object.values(objectQs)), 'Qs': objectQs}, arg)]
+                #data.concat([newData])
         else            
             callWebppl('getPRinfo', arg).then (info) ->
                 newData = _.extend(info, arg)
@@ -537,7 +548,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       @PRdata.then (PRdata) =>
         @data.PRdata = PRdata
-        threshold = 0.40  # 0.56
+        threshold = 3  # 0.56
         
         subject_value_of_1h = 20  # 50 dollars worth of subjective utility per hour
         sec_per_h = 3600
@@ -552,13 +563,21 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             d.Q < d.V - threshold
           informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a)
           delay: _.round delay_per_point * _.sum PRdata.map (d) =>
-            if d.action is TERM_ACTION
-              d.V - d.Q
-            else
-              Math.min(1, d.V - d.Q)
-          optimalAction: bestMove(s0,this.objectLevelPRs)   # {direction: "0"}
+                if PARAMS.PR_type is 'objectLevel'
+                    d.V-d.Q
+                else
+                    nrPossibleClicks = sum d.state.map (d) => d is "__"
+                    if d.V-d.Q > THRESHOLDS[nrPossibleClicks]
+                        d.V-d.Q
+                    else
+                        0                    
+            #if d.action is TERM_ACTION
+            #  d.V - d.Q
+            #else
+            #  Math.min(1, d.V - d.Q)
+          optimalAction: bestMove(s0,this.objectQs)   # {direction: "0"}
         console.log 'feedback', result
-        showCriticism = result.delay >= threshold * @data.PRdata.length
+        showCriticism = result.delay >= threshold
         if PARAMS.PR_type is 'none'
           result.delay = switch PARAMS.info_cost
             when 0.01 then [null, 4, 0, 1][@data.actions.length]
@@ -577,10 +596,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         if PARAMS.message
             if PARAMS.PR_type is 'objectLevel'                
                   #if the move was optimal, say so
-                  if a is result.optimal_action.direction
+                  if result.optimalAction.direction.includes parseInt a
                       head = redGreenSpan "You chose the best possible move.", 1            
                   else
-                      head = redGreenSpan "Bad move! You should have moved #{result.optimal_action.direction}.", -1            
+                      head = redGreenSpan "Bad move! You should have moved #{DIRECTIONS[result.optimalAction.direction[0]]}.", -1            
                   
                   #if the move was sub-optimal point out the optimal move
             else            
@@ -673,7 +692,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     arrive: (s) =>
       @PRdata = new Promise (resolve) -> resolve([])
       LOG_DEBUG 'arrive', s
-      @data.path.push s
+      #@data.path.push s
 
       # Get available actions.
       if @transition[s]
@@ -708,7 +727,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     run: =>
       LOG_DEBUG 'run'
-      # meta_MDP.init @trial_i
+      # meta_MDP.init @trial_id
       do @buildMap
       do @startTimer
       fabric.Image.fromURL @playerImage, ((img) =>
@@ -980,14 +999,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       if trialConfig._block
         trialConfig._block.trialCount += 1
       TRIAL_INDEX += 1
-                
-      OBJECT_LEVEL_PRs = loadObjectLevelPRs()
-      
-      if trial.trial_i is null
-        trial.trial_i = 0        
-      
-      trial.objectLevelPRs = OBJECT_LEVEL_PRs[trial.trial_i]
-         
+                         
   return plugin
 
 # ---
