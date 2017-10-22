@@ -556,7 +556,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         return function(PRdata) {
           var delay_per_point, head, info, msg, penalty, redGreenSpan, result, sec_per_h, showCriticism, subject_value_of_1h, threshold;
           _this.data.PRdata = PRdata;
-          threshold = 3;
+          threshold = 2;
           subject_value_of_1h = 20;
           sec_per_h = 3600;
           delay_per_point = 0.05 / (subject_value_of_1h * N_TRIALS) * sec_per_h;
@@ -592,12 +592,16 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
               switch (PARAMS.info_cost) {
                 case 0.01:
                   return [null, 4, 0, 1][this.data.actions.length];
+                case 0.25:
+                  return [null, 4, 0, 1][this.data.actions.length];
                 case 1.00:
                   return [null, 3, 0, 1][this.data.actions.length];
                 case 2.50:
                   return [null, 15, 0, 3][this.data.actions.length];
                 case 1.0001:
                   return [null, 2, 0, 1][this.data.actions.length];
+                case 4.00:
+                  return [null, 15, 0, 3][this.data.actions.length];
               }
             }).call(_this);
           }

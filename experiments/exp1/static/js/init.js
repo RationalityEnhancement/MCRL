@@ -31,7 +31,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
  */
 
-experiment_nr = 1;
+experiment_nr = 1.5;
 
 switch (experiment_nr) {
   case 0:
@@ -114,6 +114,14 @@ switch (experiment_nr) {
       infoCosts: [0.01, 1.00, 1.0001]
     };
     break;
+  case 1.5:
+    IVs = {
+      frequencyOfFB: ['after_each_move'],
+      PRTypes: ['none', 'featureBased', 'objectLevel'],
+      messageTypes: ['full', 'none'],
+      infoCosts: [0.25, 1.00, 4.00]
+    };
+    break;
   case 2:
     IVs = {
       frequencyOfFB: ['after_each_move'],
@@ -131,7 +139,7 @@ switch (experiment_nr) {
     };
     break;
   case 4:
-    IVs = IVs = {
+    IVs = {
       frequencyOfFB: ['after_each_move'],
       PRTypes: ['none'],
       messageTypes: ['full'],
@@ -161,6 +169,8 @@ nrConditions = (function() {
     case 0.96:
       return 1;
     case 1:
+      return 3 * 3;
+    case 1.5:
       return 3 * 3;
     default:
       return nrDelays * nrMessages * nrInfoCosts;
