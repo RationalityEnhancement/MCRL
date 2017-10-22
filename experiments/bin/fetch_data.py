@@ -191,7 +191,6 @@ def main(version, address, username, password):
 
 
 if __name__ == "__main__":
-    parser.add_argument(
     parser = ArgumentParser(
         formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument(
@@ -200,6 +199,7 @@ if __name__ == "__main__":
         help=("Experiment version. This corresponds to the experiment_code_version "
               "parameter in the psiTurk config.txt file that was used when the "
               "data was collected."))
+    parser.add_argument(
         "-a", "--address",
         default="http://cocosci-mcrl.dreamhosters.com/data",
         help="Address from which to fetch data files.")
