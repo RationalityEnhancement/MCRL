@@ -233,7 +233,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         rightMessage='Score: <span id=mouselab-score/>'
         lowerMessage="Navigate with the arrow keys."
 
-        @minTime=(if DEBUG then 5 else 45)
+        @minTime=(if DEBUG then 5 else MIN_TIME)
         @feedback=true
       } = config
 

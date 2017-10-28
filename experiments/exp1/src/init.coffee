@@ -125,3 +125,9 @@ COST_LEVEL =
     when 4.00 then 'high'
     when 1.0001 then 'high'
     else throw new Error('bad info_cost')
+
+MIN_TIME = 
+    switch COST_LEVEL
+        when 'low' then 38
+        when 'med' then 49
+        when 'high' then 39

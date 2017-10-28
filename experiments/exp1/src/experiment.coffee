@@ -479,7 +479,7 @@ initializeExperiment = ->
         # Instructions
 
         There are two more important things to understand:
-        1. You must spend at least 45 seconds on each round. A countdown timer
+        1. You must spend at least #{MIN_TIME} seconds on each round. A countdown timer
            will show you how much more time you must spend on the round. You
            won’t be able to proceed to the next round before the countdown has
            finished, but you can take as much time as you like afterwards.
