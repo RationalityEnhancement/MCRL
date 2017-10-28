@@ -589,11 +589,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             result.delay = (function() {
               switch (PARAMS.info_cost) {
                 case 0.25:
-                  return [null, 14.77, 0, 0][this.data.actions.length];
+                  return [null, 15, 0, 0][this.data.actions.length];
                 case 1.00:
-                  return [null, 16.24, 0, 0][this.data.actions.length];
+                  return [null, 16, 0, 0][this.data.actions.length];
                 case 4.00:
-                  return [null, 4.61, 0, 0][this.data.actions.length];
+                  return [null, 5, 0, 0][this.data.actions.length];
               }
             }).call(_this);
           }
@@ -612,7 +612,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
                 head = redGreenSpan("Bad move! You should have moved " + DIRECTIONS[result.optimalAction.direction[0]] + ".", -1);
               }
             } else {
-              if (PARAMS.message === 'full') {
+              if (PARAMS.PR_type === 'featureBased' && PARAMS.message === 'full') {
                 if (result.plannedTooLittle && showCriticism) {
                   if (result.plannedTooMuch && showCriticism) {
                     head = redGreenSpan("You gathered the wrong information.", -1);

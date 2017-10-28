@@ -581,11 +581,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         if PARAMS.PR_type is 'none'
           result.delay = switch PARAMS.info_cost
             #when 0.01 then [null, 4, 0, 0][@data.actions.length]
-            when 0.25 then [null, 14.77, 0, 0][@data.actions.length]
-            when 1.00 then [null, 16.24, 0, 0][@data.actions.length]
+            when 0.25 then [null, 15, 0, 0][@data.actions.length]
+            when 1.00 then [null, 16, 0, 0][@data.actions.length]
             #when 2.50 then [null, 15, 0, 0][@data.actions.length]
             #when 1.0001 then [null, 2, 0, 0][@data.actions.length]
-            when 4.00 then [null, 4.61, 0, 0][@data.actions.length]
+            when 4.00 then [null, 5, 0, 0][@data.actions.length]
               
         @data.delays.push result.delay
         @data.plannedTooLittle.push result.plannedTooLittle
@@ -605,7 +605,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                   
                   #if the move was sub-optimal point out the optimal move
             else            
-                if PARAMS.message is 'full'
+                if PARAMS.PR_type is 'featureBased' and PARAMS.message is 'full'
                   if result.plannedTooLittle and showCriticism
                     if result.plannedTooMuch and showCriticism
                         head = redGreenSpan "You gathered the wrong information.", -1            
