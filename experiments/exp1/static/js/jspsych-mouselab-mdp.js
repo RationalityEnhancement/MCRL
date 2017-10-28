@@ -620,16 +620,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
                     head = redGreenSpan("You gathered too little information.", -1);
                   }
                 } else {
-                  if (result.plannedTooMuch && showCriticism) {
-                    head = redGreenSpan("You gathered too much information.", -1);
-                  } else {
-                    if (!result.plannedTooMuch & !result.plannedTooLittle) {
-                      head = redGreenSpan("You gathered the right amount of information.", 1);
-                    }
-                    if (result.informationUsedCorrectly && showCriticism) {
-                      head += redGreenSpan(" But you didn't prioritize the most important locations.", -1);
-                    }
-                  }
+                  head = redGreenSpan("You gathered too much or the wrong information.", -1);
                 }
               }
               if (PARAMS.message === 'simple') {
