@@ -550,9 +550,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @data.PRdata = PRdata
         threshold = 2  # don't show a message if the delay is shorter than 2 seconds
         
-        subject_value_of_1h = 20  # 50 dollars worth of subjective utility per hour
-        sec_per_h = 3600
-        delay_per_point = 0.05 / (subject_value_of_1h * N_TRIALS)  * sec_per_h
+        #subject_value_of_1h = 20  # 50 dollars worth of subjective utility per hour
+        #sec_per_h = 3600
+        delay_per_point = 1.5 #0.1 / (subject_value_of_1h * N_TRIALS)  * sec_per_h
         
         result =
           plannedTooMuch: PRdata.slice(0, -1).some (d) =>
@@ -580,12 +580,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         showCriticism = result.delay >= threshold
         if PARAMS.PR_type is 'none'
           result.delay = switch PARAMS.info_cost
-            when 0.01 then [null, 4, 0, 1][@data.actions.length]
-            when 0.25 then [null, 4, 0, 1][@data.actions.length]
-            when 1.00 then [null, 3, 0, 1][@data.actions.length]
-            when 2.50 then [null, 15, 0, 3][@data.actions.length]
-            when 1.0001 then [null, 2, 0, 1][@data.actions.length]
-            when 4.00 then [null, 15, 0, 3][@data.actions.length]
+            #when 0.01 then [null, 4, 0, 0][@data.actions.length]
+            when 0.25 then [null, 14.77, 0, 0][@data.actions.length]
+            when 1.00 then [null, 16.24, 0, 0][@data.actions.length]
+            #when 2.50 then [null, 15, 0, 0][@data.actions.length]
+            #when 1.0001 then [null, 2, 0, 0][@data.actions.length]
+            when 4.00 then [null, 4.61, 0, 0][@data.actions.length]
               
         @data.delays.push result.delay
         @data.plannedTooLittle.push result.plannedTooLittle
