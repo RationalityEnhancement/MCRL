@@ -72,7 +72,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
                         }
                 }
          }
-        pathReturns = pathReturns.map(function(x){return x.toFixed(2)})
+        pathReturns = pathReturns.map(function(x){return parseFloat(x)})
 
         //find the optimal path according to the current belief
         var best_paths = new Array()
