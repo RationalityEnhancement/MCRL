@@ -88,11 +88,11 @@ for PRType in IVs.PRTypes
         for infoCost in IVs.infoCosts      
             for frequency in IVs.frequencyOfFB
                 for time_limit in IVs.time_limits
-                conditions.PRType.push(PRType)
-                conditions.messageType.push(message)
-                conditions.infoCost.push(infoCost)
-                conditions.frequencyOfFB.push(frequency)
-                conditions.time_limit.push(time_limit)
+                    conditions.PRType.push(PRType)
+                    conditions.messageType.push(message)
+                    conditions.infoCost.push(infoCost)
+                    conditions.frequencyOfFB.push(frequency)
+                    conditions.time_limit.push(time_limit)
           
 PARAMS =
   PR_type: conditions.PRType[condition % nrConditions]
