@@ -73,7 +73,7 @@ nrConditions = switch experiment_nr
     when 1.5 then 3*3
     else nrDelays * nrMessages * nrInfoCosts
 
-conditions = {'PRType':[], 'messageType':[], 'infoCost': [], 'frequencyOfFB': []}
+conditions = {'PRType':[], 'messageType':[], 'infoCost': [], 'frequencyOfFB': [],'time_limits': []}
 
 for PRType in IVs.PRTypes
     if experiment_nr <= 1 or experiment_nr == 3
@@ -92,7 +92,7 @@ for PRType in IVs.PRTypes
                     conditions.messageType.push(message)
                     conditions.infoCost.push(infoCost)
                     conditions.frequencyOfFB.push(frequency)
-                    conditions.time_limit.push(time_limit)
+                    conditions.time_limits.push(time_limit)
           
 PARAMS =
   PR_type: conditions.PRType[condition % nrConditions]
@@ -104,7 +104,7 @@ PARAMS =
   bonus_rate: 0.01
   delay_hours: 24
   delay_window: 4
-  time_limit: conditions.time_limit[condition % nrConditions]    
+  time_limit: conditions.time_limits[condition % nrConditions]    
 
 PARAMS.q_weights = loadJson('static/json/q_weights.json')[PARAMS.info_cost.toFixed(2)]
 
@@ -137,4 +137,4 @@ if PARAMS.time_limit
             when 'med' then 49
             when 'high' then 39
 else
-    MIN_TIME = 0
+    MIN_TIME = 1
