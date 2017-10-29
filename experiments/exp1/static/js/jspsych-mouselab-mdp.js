@@ -591,7 +591,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
                 case 0.25:
                   return [null, 15, 0, 0][this.data.actions.length];
                 case 1.00:
-                  return [null, 16, 0, 0][this.data.actions.length];
+                  return [null, 17, 0, 0][this.data.actions.length];
                 case 4.00:
                   return [null, 5, 0, 0][this.data.actions.length];
               }
