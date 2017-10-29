@@ -78,7 +78,7 @@ nrConditions = switch experiment_nr
 conditions = {'PRType':[], 'messageType':[], 'infoCost': [], 'frequencyOfFB': [],'time_limits': []}
 
 for PRType in IVs.PRTypes
-    if experiment_nr <= 1 or experiment_nr == 3
+    if experiment_nr < 2 or experiment_nr == 3
         if PRType is 'none'
             messageTypes = ['none']
         else

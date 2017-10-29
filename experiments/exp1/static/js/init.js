@@ -197,6 +197,8 @@ nrConditions = (function() {
       return 3 * 3;
     case 1.5:
       return 3 * 3;
+    case 1.6:
+      return 3 * 3;
     default:
       return nrDelays * nrMessages * nrInfoCosts;
   }
@@ -213,7 +215,7 @@ conditions = {
 ref = IVs.PRTypes;
 for (i = 0, len = ref.length; i < len; i++) {
   PRType = ref[i];
-  if (experiment_nr <= 1 || experiment_nr === 3) {
+  if (experiment_nr < 2 || experiment_nr === 3) {
     if (PRType === 'none') {
       messageTypes = ['none'];
     } else {
