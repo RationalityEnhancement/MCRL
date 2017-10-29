@@ -72,6 +72,7 @@ nrConditions = switch experiment_nr
     when 0.992 then 2
     when 1 then 3 * 3
     when 1.5 then 3*3
+    when 1.6 then 3*3
     else nrDelays * nrMessages * nrInfoCosts
 
 conditions = {'PRType':[], 'messageType':[], 'infoCost': [], 'frequencyOfFB': [],'time_limits': []}
