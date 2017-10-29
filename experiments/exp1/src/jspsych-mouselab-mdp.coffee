@@ -66,7 +66,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                         }
                 }
          }
-        pathReturns = pathReturns.map(function(x){return x.toFixed(2)})
+        pathReturns = pathReturns.map(function(x){return parseFloat(x)})
 
         //find the optimal path according to the current belief
         var best_paths = new Array()
@@ -233,7 +233,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         rightMessage='Score: <span id=mouselab-score/>'
         lowerMessage="Navigate with the arrow keys."
 
-        @minTime=(if DEBUG then 5 else 45)
+        @minTime=(if DEBUG then 5 else MIN_TIME)
         @feedback=true
       } = config
 
@@ -548,11 +548,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
       @PRdata.then (PRdata) =>
         @data.PRdata = PRdata
-        threshold = 3  # 0.56
+        threshold = 2  # don't show a message if the delay is shorter than 2 seconds
         
-        subject_value_of_1h = 20  # 50 dollars worth of subjective utility per hour
-        sec_per_h = 3600
-        delay_per_point = 0.05 / (subject_value_of_1h * N_TRIALS)  * sec_per_h
+        #subject_value_of_1h = 20  # 50 dollars worth of subjective utility per hour
+        #sec_per_h = 3600
+        delay_per_point = 1.5 #0.1 / (subject_value_of_1h * N_TRIALS)  * sec_per_h
         
         result =
           plannedTooMuch: PRdata.slice(0, -1).some (d) =>
@@ -580,10 +580,12 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         showCriticism = result.delay >= threshold
         if PARAMS.PR_type is 'none'
           result.delay = switch PARAMS.info_cost
-            when 0.01 then [null, 4, 0, 1][@data.actions.length]
-            when 1.00 then [null, 3, 0, 1][@data.actions.length]
-            when 2.50 then [null, 15, 0, 3][@data.actions.length]
-            when 1.0001 then [null, 2, 0, 1][@data.actions.length]
+            #when 0.01 then [null, 4, 0, 0][@data.actions.length]
+            when 0.25 then [null, 15, 0, 0][@data.actions.length]
+            when 1.00 then [null, 16, 0, 0][@data.actions.length]
+            #when 2.50 then [null, 15, 0, 0][@data.actions.length]
+            #when 1.0001 then [null, 2, 0, 0][@data.actions.length]
+            when 4.00 then [null, 5, 0, 0][@data.actions.length]
               
         @data.delays.push result.delay
         @data.plannedTooLittle.push result.plannedTooLittle
@@ -603,21 +605,21 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                   
                   #if the move was sub-optimal point out the optimal move
             else            
-                if PARAMS.message is 'full'
+                if PARAMS.PR_type is 'featureBased' and PARAMS.message is 'full'
                   if result.plannedTooLittle and showCriticism
                     if result.plannedTooMuch and showCriticism
                         head = redGreenSpan "You gathered the wrong information.", -1            
                     else
                         head = redGreenSpan "You gathered too little information.", -1            
                   else
-                    if result.plannedTooMuch and showCriticism
-                        head = redGreenSpan "You gathered too much information.", -1                    
-                    else
-                        if !result.plannedTooMuch & !result.plannedTooLittle        
-                          head = redGreenSpan "You gathered the right amount of information.", 1
+                    head = redGreenSpan "You gathered too much or the wrong information.", -1                    
+                    #if result.plannedTooMuch and showCriticism                    
+                    #else
+                    #    if !result.plannedTooMuch & !result.plannedTooLittle        
+                    #      head = redGreenSpan "You gathered the right amount of information.", 1
                         
-                        if result.informationUsedCorrectly and showCriticism
-                          head += redGreenSpan " But you didn't prioritize the most important locations.", -1
+                    #    if result.informationUsedCorrectly and showCriticism
+                    #      head += redGreenSpan " But you didn't prioritize the most important locations.", -1
                           
                 if PARAMS.message is 'simple'
                       head =''

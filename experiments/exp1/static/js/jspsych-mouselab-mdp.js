@@ -72,7 +72,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
                         }
                 }
          }
-        pathReturns = pathReturns.map(function(x){return x.toFixed(2)})
+        pathReturns = pathReturns.map(function(x){return parseFloat(x)})
 
         //find the optimal path according to the current belief
         var best_paths = new Array()
@@ -223,7 +223,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.handleKey = bind(this.handleKey, this);
       this.runDemo = bind(this.runDemo, this);
       var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage, timeMsg;
-      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.tree = (ref = config.tree) != null ? ref : null, this.initial = config.initial, this.stateLabels = (ref1 = config.stateLabels) != null ? ref1 : null, this.stateDisplay = (ref2 = config.stateDisplay) != null ? ref2 : 'never', this.stateClickCost = (ref3 = config.stateClickCost) != null ? ref3 : PARAMS.info_cost, this.edgeLabels = (ref4 = config.edgeLabels) != null ? ref4 : 'reward', this.edgeDisplay = (ref5 = config.edgeDisplay) != null ? ref5 : 'always', this.edgeClickCost = (ref6 = config.edgeClickCost) != null ? ref6 : 0, this.trial_id = config.trial_id, this.objectQs = config.objectQs, this.demonstrate = (ref7 = config.demonstrate) != null ? ref7 : false, this.PRdata = (ref8 = config.PRdata) != null ? ref8 : [], this.stateRewards = (ref9 = config.stateRewards) != null ? ref9 : null, this.keys = (ref10 = config.keys) != null ? ref10 : KEYS, this.trialIndex = (ref11 = config.trialIndex) != null ? ref11 : TRIAL_INDEX, this.playerImage = (ref12 = config.playerImage) != null ? ref12 : 'static/images/plane.png', SIZE = (ref13 = config.SIZE) != null ? ref13 : 110, leftMessage = (ref14 = config.leftMessage) != null ? ref14 : null, centerMessage = (ref15 = config.centerMessage) != null ? ref15 : '&nbsp;', rightMessage = (ref16 = config.rightMessage) != null ? ref16 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref17 = config.lowerMessage) != null ? ref17 : "Navigate with the arrow keys.", this.minTime = (ref18 = config.minTime) != null ? ref18 : (DEBUG ? 5 : 45), this.feedback = (ref19 = config.feedback) != null ? ref19 : true;
+      this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.tree = (ref = config.tree) != null ? ref : null, this.initial = config.initial, this.stateLabels = (ref1 = config.stateLabels) != null ? ref1 : null, this.stateDisplay = (ref2 = config.stateDisplay) != null ? ref2 : 'never', this.stateClickCost = (ref3 = config.stateClickCost) != null ? ref3 : PARAMS.info_cost, this.edgeLabels = (ref4 = config.edgeLabels) != null ? ref4 : 'reward', this.edgeDisplay = (ref5 = config.edgeDisplay) != null ? ref5 : 'always', this.edgeClickCost = (ref6 = config.edgeClickCost) != null ? ref6 : 0, this.trial_id = config.trial_id, this.objectQs = config.objectQs, this.demonstrate = (ref7 = config.demonstrate) != null ? ref7 : false, this.PRdata = (ref8 = config.PRdata) != null ? ref8 : [], this.stateRewards = (ref9 = config.stateRewards) != null ? ref9 : null, this.keys = (ref10 = config.keys) != null ? ref10 : KEYS, this.trialIndex = (ref11 = config.trialIndex) != null ? ref11 : TRIAL_INDEX, this.playerImage = (ref12 = config.playerImage) != null ? ref12 : 'static/images/plane.png', SIZE = (ref13 = config.SIZE) != null ? ref13 : 110, leftMessage = (ref14 = config.leftMessage) != null ? ref14 : null, centerMessage = (ref15 = config.centerMessage) != null ? ref15 : '&nbsp;', rightMessage = (ref16 = config.rightMessage) != null ? ref16 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref17 = config.lowerMessage) != null ? ref17 : "Navigate with the arrow keys.", this.minTime = (ref18 = config.minTime) != null ? ref18 : (DEBUG ? 5 : MIN_TIME), this.feedback = (ref19 = config.feedback) != null ? ref19 : true;
       this.initial = 0;
       this.tree = [[1, 5, 9, 13], [2], [3, 4], [], [], [6], [7, 8], [], [], [10], [11, 12], [], [], [14], [15, 16], [], []];
       this.transition = [
@@ -554,12 +554,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       }
       return this.PRdata.then((function(_this) {
         return function(PRdata) {
-          var delay_per_point, head, info, msg, penalty, redGreenSpan, result, sec_per_h, showCriticism, subject_value_of_1h, threshold;
+          var delay_per_point, head, info, msg, penalty, redGreenSpan, result, showCriticism, threshold;
           _this.data.PRdata = PRdata;
-          threshold = 3;
-          subject_value_of_1h = 20;
-          sec_per_h = 3600;
-          delay_per_point = 0.05 / (subject_value_of_1h * N_TRIALS) * sec_per_h;
+          threshold = 2;
+          delay_per_point = 1.5;
           result = {
             plannedTooMuch: PRdata.slice(0, -1).some(function(d) {
               return d.bestAction === TERM_ACTION;
@@ -590,14 +588,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           if (PARAMS.PR_type === 'none') {
             result.delay = (function() {
               switch (PARAMS.info_cost) {
-                case 0.01:
-                  return [null, 4, 0, 1][this.data.actions.length];
+                case 0.25:
+                  return [null, 15, 0, 0][this.data.actions.length];
                 case 1.00:
-                  return [null, 3, 0, 1][this.data.actions.length];
-                case 2.50:
-                  return [null, 15, 0, 3][this.data.actions.length];
-                case 1.0001:
-                  return [null, 2, 0, 1][this.data.actions.length];
+                  return [null, 16, 0, 0][this.data.actions.length];
+                case 4.00:
+                  return [null, 5, 0, 0][this.data.actions.length];
               }
             }).call(_this);
           }
@@ -616,7 +612,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
                 head = redGreenSpan("Bad move! You should have moved " + DIRECTIONS[result.optimalAction.direction[0]] + ".", -1);
               }
             } else {
-              if (PARAMS.message === 'full') {
+              if (PARAMS.PR_type === 'featureBased' && PARAMS.message === 'full') {
                 if (result.plannedTooLittle && showCriticism) {
                   if (result.plannedTooMuch && showCriticism) {
                     head = redGreenSpan("You gathered the wrong information.", -1);
@@ -624,16 +620,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
                     head = redGreenSpan("You gathered too little information.", -1);
                   }
                 } else {
-                  if (result.plannedTooMuch && showCriticism) {
-                    head = redGreenSpan("You gathered too much information.", -1);
-                  } else {
-                    if (!result.plannedTooMuch & !result.plannedTooLittle) {
-                      head = redGreenSpan("You gathered the right amount of information.", 1);
-                    }
-                    if (result.informationUsedCorrectly && showCriticism) {
-                      head += redGreenSpan(" But you didn't prioritize the most important locations.", -1);
-                    }
-                  }
+                  head = redGreenSpan("You gathered too much or the wrong information.", -1);
                 }
               }
               if (PARAMS.message === 'simple') {
