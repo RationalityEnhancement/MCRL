@@ -560,10 +560,18 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           delay_per_point = 1.5;
           result = {
             plannedTooMuch: PRdata.slice(0, -1).some(function(d) {
-              return d.bestAction === TERM_ACTION;
+              var nrPossibleClicks;
+              nrPossibleClicks = sum(d.state.map(function(d) {
+                return d === "__";
+              }));
+              return d.Q < d.Qs[TERM_ACTION] - THRESHOLDS[nrPossibleClicks];
             }),
             plannedTooLittle: PRdata.slice(-1).some(function(d) {
-              return d.Q < d.V - threshold;
+              var nrPossibleClicks;
+              nrPossibleClicks = sum(d.state.map(function(d) {
+                return d === "__";
+              }));
+              return d.Q < d.V - THRESHOLDS[nrPossibleClicks];
             }),
             informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a),
             delay: _.round(delay_per_point * _.sum(PRdata.map(function(d) {
@@ -620,7 +628,16 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
                     head = redGreenSpan("You gathered too little information.", -1);
                   }
                 } else {
-                  head = redGreenSpan("You gathered too much or the wrong information.", -1);
+                  if (result.plannedTooMuch && showCriticism) {
+                    head = redGreenSpan("You gathered too much information.", -1);
+                  } else {
+                    if (!result.plannedTooMuch & !result.plannedTooLittle) {
+                      head = redGreenSpan("You gathered the right amount of information.", 1);
+                    }
+                    if (result.informationUsedCorrectly && showCriticism) {
+                      head += redGreenSpan(" But you didn't prioritize the most important locations.", -1);
+                    }
+                  }
                 }
               }
               if (PARAMS.message === 'simple') {
