@@ -5,6 +5,8 @@ import json
 
 from mouselab import MouselabEnv
 from distributions import Normal
+import skopt
+from policies import LiederPolicy
 
 def make_env(cost, ground_truth=False, initial_states=None):
     """Returns a MouselabEnv with branching [4,1,2].
@@ -24,6 +26,17 @@ def make_envs(cost, n=100, ground_truth=None, initial_states=None):
         return [make_env(cost, True, initial_states) for _ in range(n)]
     else:
         return [make_env(cost, False, initial_states)] * n
+
+def filename(cost):
+    c = round(float(cost), 5)
+    return f'data/412_{c}.pkl'
+
+def read_bo_result(cost):
+    return skopt.load(filename(cost))
+
+def read_bo_policy(cost):
+    result = read_bo_result(cost)
+    return LiederPolicy(result.specs['info']['theta'])
 
 def read_state_actions():
     with open('data/state_actions.json') as f:
