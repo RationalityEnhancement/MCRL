@@ -131,7 +131,7 @@ class Categorical(Distribution):
         else:
             self.probs = tuple(probs)
 
-        self._hash = hash((self.vals, self.probs))
+        self._hash = id(self)
 
     def __lt__(self, other):
         # This is for sorting belief states.
@@ -267,11 +267,11 @@ class GenerativeModel(Distribution):
         return self.sample(n).mean()
 
 
-@lru_cache(maxsize=CACHE_SIZE)
+# @lru_cache(maxsize=CACHE_SIZE)
 def expectation(val):
-    if isinstance(val, Distribution):
+    try:
         return val.expectation()
-    else:
+    except AttributeError:
         return val
 
 
@@ -311,7 +311,7 @@ def cross(dists, f=None):
 
 __no_default__ = '__no_default___'
 
-@lru_cache(maxsize=None)
+# @lru_cache(maxsize=None)
 def cmax(dists, default=__no_default__):
     if len(dists) == 1:
         return dists[0]
@@ -324,8 +324,9 @@ def cmax(dists, default=__no_default__):
         return cross(dists, max)
 
 
-@lru_cache(maxsize=None)
+# @lru_cache(maxsize=None)
 def dmax(dists, default=__no_default__):
+    assert 0 
     dists = tuple(dists)
     if len(dists) == 1:
         return dists[0]

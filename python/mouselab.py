@@ -1,12 +1,19 @@
 from collections import namedtuple, defaultdict, deque, Counter
 import numpy as np
 import gym
-from functools import lru_cache
 from gym import spaces
 import itertools as it
 from distributions import cmax, smax, expectation, Normal, PointMass
 from toolz import memoize
 import random
+from contracts import contract
+
+
+NO_CACHE = False
+if NO_CACHE:
+    lru_cache = lambda _: (lambda f: f)
+else:
+    from functools import lru_cache
 
 CACHE_SIZE = int(2**16)
 SMALL_CACHE_SIZE = int(2**14)
@@ -51,7 +58,7 @@ class MouselabEnv(gym.Env):
                 # self.init = (0, *(self.reward.copy() for _ in range(len(self.tree) - 1)))
             # else:u
                 # self.init = reward
-
+        # self.expected_term_reward = self.reward.expectation()
         self.sample_term_reward = False
         self.action_space = spaces.Discrete(len(self.tree) + 1)
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=len(self.tree))
@@ -216,26 +223,30 @@ class MouselabEnv(gym.Env):
         return self.node_value_to(node, state) + self.node_value(node, state)
 
     # @lru_cache(CACHE_SIZE)
-    def myopic_voc(self, action, state):
+    @contract
+    def myopic_voc(self, action, state) -> 'float, >= -0.001':
         return (self.node_value_after_observe((action,), 0, state).expectation()
                 - self.expected_term_reward(state)
                 )
 
     # @lru_cache(CACHE_SIZE)
-    def vpi_branch(self, action, state):
+    @contract
+    def vpi_branch(self, action, state) -> 'float, >= -0.001':
         obs = self._relevant_subtree(action)
         return (self.node_value_after_observe(obs, 0, state).expectation()
                 - self.expected_term_reward(state)
                 )
     
-    def vpi_action(self, action, state):
+    @contract
+    def vpi_action(self, action, state) -> 'float, >= -0.001':
         obs = (*self.subtree[action][1:], *self.path_to(action)[1:])
         return (self.node_value_after_observe(obs, 0, state).expectation()
                 - self.expected_term_reward(state)
                 )
 
     @lru_cache(CACHE_SIZE)
-    def vpi(self, state):
+    @contract
+    def vpi(self, state) -> 'float, >= -0.001':
         obs = self.subtree[0]
         return (self.node_value_after_observe(obs, 0, state).expectation()
                 - self.expected_term_reward(state)
@@ -428,14 +439,21 @@ def node_value_after_observe(obs_tree):
     return smax(children, default=ZERO)
 
 
+
 @lru_cache(None)
-def exact_node_value_after_observe(obs_tree):
+def exact_node_value_after_observe(obs_tree, indent=''):
     """A distribution over the expected value of node, after making an observation.
     
     `obs` can be a single node, a list of nodes, or 'all'
     """
-    children = tuple(exact_node_value_after_observe(c) + c[0] for c in obs_tree[1])
-    return cmax(children, default=ZERO)
+    # print(f'{indent}{obs_tree}')
+    children = tuple(exact_node_value_after_observe(c, indent+'   ') + c[0]
+                     for c in obs_tree[1])
+    # print(f'{indent}{children}')
+    x = cmax(children, default=ZERO)
+    # print(f'{indent}{x}')
+    return x
+
 
 @lru_cache(None)
 def exact_flat_node_value_after_observe(obs_flat):
@@ -444,7 +462,16 @@ def exact_flat_node_value_after_observe(obs_flat):
     c1 = 1
     c2 = len(obs_flat) // 2 + 1
     return cmax((exact_flat_node_value_after_observe(obs_flat[c1:c2]) + obs_flat[c1],
-                 exact_flat_node_value_after_observe(obs_flat[c2:]) + obs_flat[c2]))    
+                 exact_flat_node_value_after_observe(obs_flat[c2:]) + obs_flat[c2]))
+
+# @lru_cache(None)
+# def exact_flat_node_value_after_observe(obs_flat):
+#     if len(obs_flat) == 1:
+#         return ZERO    
+#     c1 = 1
+#     c2 = len(obs_flat) // 2 + 1
+#     return cmax((exact_flat_node_value_after_observe(obs_flat[c1:c2]) + obs_flat[c1],
+#                  exact_flat_node_value_after_observe(obs_flat[c2:]) + obs_flat[c2]))
 
 
 def obs_rec(tree, state, obs, n):
