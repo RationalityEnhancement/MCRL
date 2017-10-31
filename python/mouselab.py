@@ -210,6 +210,14 @@ class MouselabEnv(gym.Env):
         r = self.ground_truth[node]
         return r + min((self.worst_Q(n1) for n1 in self.tree[node]),
                     default=0)
+    
+    def rand_Q(self, node):
+        """The object-level Q function."""
+        r = self.ground_truth[node]
+        lst = [self.rand_Q(n1) for n1 in self.tree[node]]
+        if lst:
+            return r+random.choice(lst)
+        return r 
 
     def node_value_to(self, node, state=None):
         """A distribution over rewards up to and including the given node."""
