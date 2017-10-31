@@ -26,7 +26,7 @@ def make_envs(cost, n=100, ground_truth=None, initial_states=None):
 
 def filename(cost):
     c = round(float(cost), 5)
-    return f'data/412_{c}.pkl'
+    return 'data/412_'+str(c)+'.pkl'
 
 def read_bo_result(cost):
     return skopt.load(filename(cost))
