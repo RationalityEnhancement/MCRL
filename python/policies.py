@@ -8,7 +8,7 @@ np.set_printoptions(precision=3, linewidth=200)
 from scipy import stats
 from tqdm import tqdm, trange, tnrange
 from copy import deepcopy
-
+import random
 from agents import Component, Model
 
 
@@ -38,10 +38,20 @@ class FunctionPolicy(Policy):
 
 class RandomPolicy(Policy):
     """Chooses actions randomly."""
+    def __init__(self):
+        super().__init__()
     
     def act(self, state):
         return self.env.action_space.sample()
-
+    
+class RandomTreePolicy(Policy):
+    """Chooses actions randomly."""
+    def __init__(self):
+        super().__init__()
+    
+    def act(self, state):
+        actions = list(self.env.actions(self.env._state))
+        return random.choice(actions)
 
 class MaxQPolicy(Policy):
     """Chooses the action with highest Q value."""
