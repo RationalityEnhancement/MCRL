@@ -556,11 +556,13 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         
         result =
           plannedTooMuch: PRdata.slice(0, -1).some (d) =>
-            # d.Q < d.Qs[TERM_ACTION] + 0.01
-            d.bestAction is TERM_ACTION
+            nrPossibleClicks = sum d.state.map (d) => d is "__"
+            d.Q < d.Qs[TERM_ACTION] - THRESHOLDS[nrPossibleClicks]
+            #d.bestAction is TERM_ACTION
           plannedTooLittle: PRdata.slice(-1).some (d) =>
             # action must be TERM_ACTION
-            d.Q < d.V - threshold
+            nrPossibleClicks = sum d.state.map (d) => d is "__"
+            d.Q < d.V - THRESHOLDS[nrPossibleClicks]
           informationUsedCorrectly: _.includes(chooseAction(PRdata.slice(-1)[0]), a)
           delay: _.round delay_per_point * _.sum PRdata.map (d) =>
                 if PARAMS.PR_type is 'objectLevel'
@@ -582,7 +584,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
           result.delay = switch PARAMS.info_cost
             #when 0.01 then [null, 4, 0, 0][@data.actions.length]
             when 0.25 then [null, 15, 0, 0][@data.actions.length]
-            when 1.00 then [null, 16, 0, 0][@data.actions.length]
+            when 1.00 then [null, 17, 0, 0][@data.actions.length]
             #when 2.50 then [null, 15, 0, 0][@data.actions.length]
             #when 1.0001 then [null, 2, 0, 0][@data.actions.length]
             when 4.00 then [null, 5, 0, 0][@data.actions.length]
@@ -612,14 +614,15 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                     else
                         head = redGreenSpan "You gathered too little information.", -1            
                   else
-                    head = redGreenSpan "You gathered too much or the wrong information.", -1                    
-                    #if result.plannedTooMuch and showCriticism                    
-                    #else
-                    #    if !result.plannedTooMuch & !result.plannedTooLittle        
-                    #      head = redGreenSpan "You gathered the right amount of information.", 1
+                    #head = redGreenSpan "You gathered too much or the wrong information.", -1                    
+                    if result.plannedTooMuch and showCriticism                    
+                        head = redGreenSpan "You gathered too much information.", -1                    
+                    else
+                        if !result.plannedTooMuch & !result.plannedTooLittle        
+                          head = redGreenSpan "You gathered the right amount of information.", 1
                         
-                    #    if result.informationUsedCorrectly and showCriticism
-                    #      head += redGreenSpan " But you didn't prioritize the most important locations.", -1
+                        if result.informationUsedCorrectly and showCriticism
+                          head += redGreenSpan " But you didn't prioritize the most important locations.", -1
                           
                 if PARAMS.message is 'simple'
                       head =''
