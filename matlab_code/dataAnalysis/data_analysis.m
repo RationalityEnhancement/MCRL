@@ -1,13 +1,14 @@
 %%  Which experiment do you want to analyze?
 experiment_name='1A';
-version = '1';
+version = '2';
 %experiment_name='1B';
 %experiment_name='1C';
 %version = '1';
 
 MCRL_path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
+fig_dir=[MCRL_path,'matlab_code/dataAnalysis/figures/']
 
-eval(['import_data_exp',experiment_name])
+eval(['import_data_exp',experiment_name,'_v',version])
 
 %%
 if strcmp(experiment_name,'1A')
@@ -20,9 +21,11 @@ if strcmp(experiment_name,'1A')
     max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
     min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
     
-    rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.',version,'.csv'])
-    nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star_',experiment_name,'.',version,'.csv'])
-    
+    rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star',experiment_name,'.',version,'.csv']);
+    nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star',experiment_name,'.',version,'.csv']);
+
+    optimal_nr_clicks=mean(nr_observations_pi_star)';
+    optimal_performance=mean(rel_score_pi_star)';    
         
     PR_types = unique(PR_type);
     PR_types=PR_types([2,3,1]);
@@ -31,8 +34,8 @@ if strcmp(experiment_name,'1A')
     
     for i=1:numel(score)
         condition_nr=find(info_costs==info_cost(i));
-        relative_score(i,1)=(score(i)-min_score(trial_i(i)+1,condition_nr))/...
-            (max_score(trial_i(i)+1,condition_nr)-min_score(trial_i(i)+1,condition_nr));
+        relative_score(i,1)=(score(i)-min_score(trial_id(i)+1,condition_nr))/...
+            (max_score(trial_id(i)+1,condition_nr)-min_score(trial_id(i)+1,condition_nr));
     end
     
     trial_numbers = unique(trial_index(2:end));
@@ -50,6 +53,9 @@ if strcmp(experiment_name,'1A')
         [h_action_vs_none(ic),p_action_vs_none(ic),ci_action_vs_none(:,ic),stats_action_vs_none{ic}]=...
             ttest2(relative_score(strcmp(PR_type,'objectLevel') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)),...
             relative_score(strcmp(PR_type,'none') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
+        
+        [h_pi_star_vs_MC_FB(ic),p_pi_star_vs_MC_FB(ic),ci_pi_star_vs_MC_FB,stats_pi_star_vs_MC_FB(ic)]=...
+            ttest(relative_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials))-optimal_performance(ic))
         
         for pr=1:numel(PR_types)
             avg_rel_score_test_block(ic,pr)=mean(relative_score(...
@@ -73,8 +79,9 @@ if strcmp(experiment_name,'1A')
     
     fig_test=figure()
     barwitherr([sem_rel_score_test_block,zeros(3,1)],...
-        [avg_rel_score_test_block,rel_score_pi_star(:)]), hold on
-    set(gca,'XTickLabel',{'$0.01/click','$1.00/click','$2.50/click'},'FontSize',16),
+        [avg_rel_score_test_block,mean(rel_score_pi_star)']), hold on
+    set(gca,'XTickLabel',{['$',num2str(info_costs(1),2),'/click'],...
+        ['$',num2str(info_costs(2),2),'/click'],['$',num2str(info_costs(3),2),'/click']},'FontSize',16),
     xlabel('Time cost','FontSize',18)
     ylabel('Relative performance','FontSize',18)
     %plot([0.5;3.5],repmat(rel_score_pi_star,[2,1]))
@@ -82,16 +89,18 @@ if strcmp(experiment_name,'1A')
     title('Test Block Performance in Exp 1A','FontSize',18)
     saveas(fig_test,'figures/test_block_performance_Exp1A.png')
     
-    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'featureBased') & info_cost==2.50 & trial_index>3),...
-        relative_score(strcmp(PR_type,'none') & info_cost==2.50 & trial_index > 3))
+    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(end) & trial_index>3),...
+        relative_score(strcmp(PR_type,'none') & info_cost==info_costs(end) & trial_index > 3))
     
-    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'featureBased') & info_cost==2.50 & trial_index<=3),...
-        relative_score(strcmp(PR_type,'none') & info_cost==2.50 & trial_index <= 3))
+    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(end) & trial_index<=3),...
+        relative_score(strcmp(PR_type,'none') & info_cost==info_costs(end) & trial_index <= 3))
     
     fig_clicks=figure()
     barwitherr([sem_nr_clicks_test_block,zeros(3,1)],...
-        [avg_nr_clicks_test_block,nr_observations_pi_star']), hold on
-    set(gca,'XTickLabel',{'$0.01/click','$1.00/click','$2.50/click'},'FontSize',16),
+        [avg_nr_clicks_test_block,mean(nr_observations_pi_star)'+0.05]), hold on
+    %ylim([-1,10])
+    set(gca,'XTickLabel',{['$',num2str(info_costs(1),2),'/click'],...
+    ['$',num2str(info_costs(2),2),'/click'],['$',num2str(info_costs(3),2),'/click']},'FontSize',16),
     xlabel('Time cost','FontSize',18)
     ylabel('Number Clicks','FontSize',18)
     %plot([0.5;3.5],repmat(rel_score_pi_star,[2,1]))
@@ -99,11 +108,11 @@ if strcmp(experiment_name,'1A')
     title('Test Block Performance in Exp 1A','FontSize',18)
     saveas(fig_clicks,'figures/test_block_nr_clicks_Exp1A.png')
 
-    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & info_cost==2.50 & trial_index> nr_training_trials),...
-        n_click(strcmp(PR_type,'none') & info_cost==2.50 & trial_index > nr_training_trials))
+    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & info_cost==info_costs(end) & trial_index> nr_training_trials),...
+        n_click(strcmp(PR_type,'none') & info_cost==info_costs(end) & trial_index > nr_training_trials))
     
-    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & info_cost==2.50 & trial_index> nr_training_trials),...
-        n_click(strcmp(PR_type,'objectLevel') & info_cost==2.50 & trial_index > nr_training_trials))
+    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & info_cost==info_costs(end) & trial_index> nr_training_trials),...
+        n_click(strcmp(PR_type,'objectLevel') & info_cost==info_costs(end) & trial_index > nr_training_trials))
     
     
     PR_types = unique(PR_type(2:end));
@@ -123,9 +132,8 @@ if strcmp(experiment_name,'1A')
     end
     
     
-    rel_score_pi_star=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/rel_score_pi_star_1A','.',version,'.csv']);
-    optimal_nr_clicks=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star_1A','.',version,'.csv']);
-    
+    %rel_score_pi_star=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/rel_score_pi_star_1A','.',version,'.csv']);
+    %optimal_nr_clicks=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star_1A','.',version,'.csv']);    
     fig_performance=figure()
     fig_nr_clicks=figure()
     FB_types = {'metacognitive FB','no FB','action FB'};
@@ -133,10 +141,13 @@ if strcmp(experiment_name,'1A')
         fig1=figure(fig_performance)
         subplot(1,3,ic)
         errorbar(avg_rel_score_by_trial(:,:,ic),sem_rel_score_by_trial(:,:,ic),'LineWidth',3), hold on
-        plot([1,nr_trials],rel_score_pi_star(ic)*[1,1],'.-','LineWidth',3)
+        plot([1,nr_trials],optimal_performance(ic)*[1,1],'.-','LineWidth',3)
         set(gca,'FontSize',20)
         xlim([0.5,nr_trials+1])
-        legend(FB_types,'Location','SouthEast')
+        if ic==1
+            legend(FB_types,'Location','SouthEast')
+        end
+        %legend(FB_types,'Location','SouthEast')
         title(['$',num2str(info_costs(ic)),'/click'],'FontSize',32)
         ylabel('Relative Performance','FontSize',24)
         xlabel('Trial Number','FontSize',24)
@@ -147,7 +158,7 @@ if strcmp(experiment_name,'1A')
         set(gca,'FontSize',20)
         plot([1,nr_trials],optimal_nr_clicks(ic)*[1,1],'.-','LineWidth',3)
         title(['$',num2str(info_costs(ic)),'/click'],'FontSize',32)
-        xlim([0.50,nr_trials+1]),ylim([0,15])
+        xlim([0.50,nr_trials+1]),ylim([0,12])
         ylabel('Avg. Nr. Clicks','FontSize',24)
         xlabel('Trial Number','FontSize',24)
         %legend('no FB', 'FB','optimal','Location','SouthEast')
@@ -160,10 +171,10 @@ if strcmp(experiment_name,'1A')
     figure(fig_performance),tightfig
     figure(fig_nr_clicks),tightfig
     
-    saveas(fig_performance,'relativePerformance.fig')
-    saveas(fig_performance,'relativePerformance.png')
-    saveas(fig_nr_clicks,'nrClicks.fig')
-    saveas(fig_nr_clicks,'nrClicks.png')
+    saveas(fig_performance,[fig_dir,'relativePerformance.fig'])
+    saveas(fig_performance,[fig_dir,'relativePerformance.png'])
+    saveas(fig_nr_clicks,[fig_dir,'nrClicks.fig'])
+    saveas(fig_nr_clicks,[fig_dir,'nrClicks.png'])
 end
 %% Learning curve analysis for Experiment 1A: meta-level PRs vs. no FB vs. action FB
 
@@ -180,17 +191,17 @@ if strcmp(experiment_name,'1A')
     labels={'metaFB_vs_noFB','metaFB_vs_actionFB','actionFB_vs_noFB'};
     
     for c=1:numel(comparisons)
-        X=[trial_index(info_cost==0.01 & included(:,c)),...
-            strcmp(PR_type(info_cost==0.01 & included(:,c)),comparisons{c}{1})];
-        y=relative_score(info_cost==0.01 & included(:,c));
+        X=[trial_index(info_cost==info_costs(1) & included(:,c)),...
+            strcmp(PR_type(info_cost==info_costs(1) & included(:,c)),comparisons{c}{1})];
+        y=relative_score(info_cost==info_costs(1) & included(:,c));
         eval(['model_low_cost_',labels{c},' = fitnlm(X,y,''y ~ (1-b1+b2*x2)*sigmoid(b6+(x1-1)*(b3+b4*x2))+b5+b7*x2'',[0.01;0.01;0.25;0.1;0.5;0;0.1])'])
         fit_low(:,1,c)=eval(['model_low_cost_',labels{c},'.predict([(1:12)'',zeros(12,1)])'])
         fit_low(:,2,c)=eval(['model_low_cost_',labels{c},'.predict([(1:12)'',ones(12,1)])'])
         
         
         X=[trial_index(info_cost==1 & included(:,c)),...
-            strcmp(PR_type(info_cost==1 & included(:,c)),comparisons{c}{1})];
-        y=relative_score(info_cost==1 & included(:,c));
+            strcmp(PR_type(info_cost==info_costs(2) & included(:,c)),comparisons{c}{1})];
+        y=relative_score(info_cost==info_costs(2) & included(:,c));
         %X=[[(1:12)';(1:12)'],[ones(12,1); 2*ones(12,1)]]
         %y=[avg_rel_score_by_trial(:,1,2);avg_rel_score_by_trial(:,2,2)];
         eval(['model_medium_cost_',labels{c},' = fitnlm(X,y,''y ~ (1-b1+b2*x2)*sigmoid(b6+x1*(b3+b4*x2))+b5+b7*x2'',[0.2;1;0.25;0.5;1;0.5;0.1])']);
@@ -200,9 +211,9 @@ if strcmp(experiment_name,'1A')
         fit_medium(:,2,c)=eval(['model_medium_cost_',labels{c},'.predict([(1:12)'',ones(12,1)])'])
         
         
-        X=[trial_index(info_cost==2.5 & included(:,c)),...
-            strcmp(PR_type(info_cost==2.5 & included(:,c)),comparisons{c}{1})];
-        y=relative_score(info_cost==2.5 & included(:,c));
+        X=[trial_index(info_cost==info_costs(3) & included(:,c)),...
+            strcmp(PR_type(info_cost==info_costs(3) & included(:,c)),comparisons{c}{1})];
+        y=relative_score(info_cost==info_costs(3) & included(:,c));
         eval(['model_high_cost_',labels{c},' = fitnlm(X,y,''y ~ (1-b1+b5*x2)*sigmoid(b2+x1*(b3+b4*x2))+b6+b7*x2'',[0.01;0.01;0.25;0.1;0.1; 0.5; 0.1])'])
         BIC_high_cost_nonlinear(c)=eval(['model_high_cost_',labels{c},'.ModelCriterion.BIC'])
         eval(['linear_model_high_cost_',labels{c},'=fitnlm(X,y,''y ~ (b1+b3*x2)*x1+b2+b4*x2'',[0.1;0.5;0.1;0.1])'])
@@ -221,10 +232,10 @@ fig_LC_performance=figure()
 if strcmp(experiment_name,'1A')
     
     for ic=1:length(info_costs)
-        fig1=figure(fig_LC_performance)
+        figure(fig_LC_performance)
         subplot(1,3,ic)
         errorbar(avg_rel_score_by_trial(:,:,ic),sem_rel_score_by_trial(:,:,ic),'o','MarkerSize',8), hold on
-        plot([1,nr_training_trials],rel_score_pi_star(ic).*[1,1],'.-','LineWidth',2),hold on
+        plot([1,nr_training_trials],optimal_performance(ic).*[1,1],'.-','LineWidth',2),hold on
         set(gca,'FontSize',20)
         xlim([0.5,nr_training_trials+0.5])
         
@@ -232,6 +243,7 @@ if strcmp(experiment_name,'1A')
             plot(1:12,fit_low(:,2,1),'b-','LineWidth',3),hold on
             plot(1:12,fit_low(:,1,1),'r-','LineWidth',3),hold on
             plot(1:12,fit_low(:,2,3),'-','LineWidth',3,'Color',[1 .5 0]),hold on
+            legend({FB_types{:},'Optimal'},'Location','SouthEast')
         elseif ic==2
             plot(1:12,fit_medium(:,2,1),'b-','LineWidth',3),hold on
             plot(1:12,fit_medium(:,1,1),'r-','LineWidth',3),hold on
@@ -242,14 +254,16 @@ if strcmp(experiment_name,'1A')
             plot(1:12,fit_high(:,2,3),'-','LineWidth',3,'Color',[1 .5 0]),hold on
         end
         
-        legend({FB_types{:},'Optimal'},'Location','SouthEast')
         title(['$',num2str(info_costs(ic)),'/click'],'FontSize',32)
         ylabel('Relative Performance','FontSize',24)
         xlabel('Trial Number','FontSize',24)
     end
     
-    figure(1),tightfig
+    figure(fig_LC_performance),tightfig
 end
+
+saveas(fig_LC_performance,[fig_dir,'LearningCurves1A.fig'])
+saveas(fig_LC_performance,[fig_dir,'LearningCurves1A.png'])
 
 %% analyze number of clicks on the first trial before vs. after the first message
 for a=1:numel(action_times)
