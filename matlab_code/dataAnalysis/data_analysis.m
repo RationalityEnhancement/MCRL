@@ -13,7 +13,7 @@ eval(['import_data_exp',experiment_name,'_v',version])
 %%
 if strcmp(experiment_name,'1A')
     %import_data: MCRL/experiments/data/1.0A/trials_matlab.csv
-        
+    
     nr_training_trials = 10;
     training_trials=1:nr_training_trials;
     test_trials=11:16;
@@ -23,10 +23,10 @@ if strcmp(experiment_name,'1A')
     
     rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star',experiment_name,'.',version,'.csv']);
     nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star',experiment_name,'.',version,'.csv']);
-
+    
     optimal_nr_clicks=mean(nr_observations_pi_star)';
-    optimal_performance=mean(rel_score_pi_star)';    
-        
+    optimal_performance=mean(rel_score_pi_star)';
+    
     PR_types = unique(PR_type);
     PR_types=PR_types([2,3,1]);
     
@@ -40,6 +40,9 @@ if strcmp(experiment_name,'1A')
     
     trial_numbers = unique(trial_index(2:end));
     nr_trials = max(trial_numbers);
+    
+    anovan(relative_score,{PR_type,info_cost},'varnames',{'FB','cost'},'model','interaction')
+    
     
     for ic=1:numel(info_costs)
         [h_optimal_vs_none(ic),p_optimal_vs_none(ic),ci_optimal_vs_none(:,ic),stats_optimal_vs_none{ic}]=...
@@ -57,23 +60,40 @@ if strcmp(experiment_name,'1A')
         [h_pi_star_vs_MC_FB(ic),p_pi_star_vs_MC_FB(ic),ci_pi_star_vs_MC_FB,stats_pi_star_vs_MC_FB(ic)]=...
             ttest(relative_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials))-optimal_performance(ic))
         
+        %analyze the number of clicks
+        [h_optimal_vs_none_clicks(ic),p_optimal_vs_none_clicks(ic),ci_optimal_vs_none_clicks(:,ic),stats_optimal_vs_none_clicks{ic}]=...
+            ttest2(n_click(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)),...
+            n_click(strcmp(PR_type,'none') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
+        
+        [h_optimal_vs_action_clicks(ic),p_optimal_vs_action_clicks(ic),ci_optimal_vs_action_clicks(:,ic),stats_optimal_vs_action_clicks{ic}]=...
+            ttest2(n_click(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)),...
+            n_click(strcmp(PR_type,'objectLevel') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
+        
+        [h_action_vs_none_clicks(ic),p_action_vs_none_clicks(ic),ci_action_vs_none_clicks(:,ic),stats_action_vs_none_clicks{ic}]=...
+            ttest2(n_click(strcmp(PR_type,'objectLevel') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)),...
+            n_click(strcmp(PR_type,'none') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
+        
         for pr=1:numel(PR_types)
             avg_rel_score_test_block(ic,pr)=mean(relative_score(...
                 strcmp(PR_type,PR_types{pr}) & info_cost==info_costs(ic) & ...
                 ismember(trial_index,test_trials)));
-
+            
+            median_rel_score_test_block(ic,pr)=median(relative_score(...
+                strcmp(PR_type,PR_types{pr}) & info_cost==info_costs(ic) & ...
+                ismember(trial_index,test_trials)))
+            
             sem_rel_score_test_block(ic,pr)=sem(relative_score(...
                 strcmp(PR_type,PR_types{pr}) & info_cost==info_costs(ic) & ...
                 ismember(trial_index,test_trials)));
-
+            
             avg_nr_clicks_test_block(ic,pr)=mean(n_click(...
                 strcmp(PR_type,PR_types{pr}) & info_cost==info_costs(ic) & ...
                 ismember(trial_index,test_trials)));
-
+            
             sem_nr_clicks_test_block(ic,pr)=sem(n_click(...
                 strcmp(PR_type,PR_types{pr}) & info_cost==info_costs(ic) & ...
                 ismember(trial_index,test_trials)));
-                                    
+            
         end
     end
     
@@ -85,9 +105,10 @@ if strcmp(experiment_name,'1A')
     xlabel('Time cost','FontSize',18)
     ylabel('Relative performance','FontSize',18)
     %plot([0.5;3.5],repmat(rel_score_pi_star,[2,1]))
-    legend('no FB','action FB','metacognitive FB','optimal')
+    legend('no FB','action FB','metacognitive FB','\pi_{LC}','Location','SouthWest')
     title('Test Block Performance in Exp 1A','FontSize',18)
-    saveas(fig_test,'figures/test_block_performance_Exp1A.png')
+    saveas(fig_test,[fig_dir,'test_block_performance_Exp1A.png'])
+    saveas(fig_test,[fig_dir,'test_block_performance_Exp1A.fig'])
     
     [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(end) & trial_index>3),...
         relative_score(strcmp(PR_type,'none') & info_cost==info_costs(end) & trial_index > 3))
@@ -100,14 +121,16 @@ if strcmp(experiment_name,'1A')
         [avg_nr_clicks_test_block,mean(nr_observations_pi_star)'+0.05]), hold on
     %ylim([-1,10])
     set(gca,'XTickLabel',{['$',num2str(info_costs(1),2),'/click'],...
-    ['$',num2str(info_costs(2),2),'/click'],['$',num2str(info_costs(3),2),'/click']},'FontSize',16),
+        ['$',num2str(info_costs(2),2),'/click'],['$',num2str(info_costs(3),2),'/click']},'FontSize',16),
     xlabel('Time cost','FontSize',18)
     ylabel('Number Clicks','FontSize',18)
     %plot([0.5;3.5],repmat(rel_score_pi_star,[2,1]))
-    legend('no FB','action FB','metacognitive FB','optimal')%
+    legend('no FB','action FB','metacognitive FB','\pi_{LC}')%
     title('Test Block Performance in Exp 1A','FontSize',18)
     saveas(fig_clicks,'figures/test_block_nr_clicks_Exp1A.png')
-
+    
+    anovan(n_click,{PR_type,info_cost},'varnames',{'FB','cost'},'model','interaction')
+    
     [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & info_cost==info_costs(end) & trial_index> nr_training_trials),...
         n_click(strcmp(PR_type,'none') & info_cost==info_costs(end) & trial_index > nr_training_trials))
     
@@ -123,7 +146,11 @@ if strcmp(experiment_name,'1A')
             for t=1:nr_trials
                 condition_met = info_cost==info_costs(ic) & strcmp(PR_type,PR_types(pr)) & trial_index==t;
                 avg_rel_score_by_trial(t,pr,ic)=mean(relative_score(condition_met));
+                median_rel_score_by_trial(t,pr,ic)=median(relative_score(condition_met));
                 sem_rel_score_by_trial(t,pr,ic)=sem(relative_score(condition_met));
+
+                avg_score_by_trial(t,pr,ic)=mean(score(condition_met));
+                sem_score_by_trial(t,pr,ic)=sem(score(condition_met));                
                 
                 avg_nr_clicks_by_trial(t,pr,ic)=mean(n_click(condition_met));
                 sem_nr_clicks_by_trial(t,pr,ic)=sem(n_click(condition_met));
@@ -133,7 +160,7 @@ if strcmp(experiment_name,'1A')
     
     
     %rel_score_pi_star=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/rel_score_pi_star_1A','.',version,'.csv']);
-    %optimal_nr_clicks=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star_1A','.',version,'.csv']);    
+    %optimal_nr_clicks=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star_1A','.',version,'.csv']);
     fig_performance=figure()
     fig_nr_clicks=figure()
     FB_types = {'metacognitive FB','no FB','action FB'};
@@ -163,7 +190,7 @@ if strcmp(experiment_name,'1A')
         xlabel('Trial Number','FontSize',24)
         %legend('no FB', 'FB','optimal','Location','SouthEast')
         if ic==1
-            legend(FB_types,'Location','SouthEast')
+            legend({FB_types{:},'\pi_{LC}'},'Location','SouthEast')
         end
         
     end
@@ -190,37 +217,61 @@ if strcmp(experiment_name,'1A')
     
     labels={'metaFB_vs_noFB','metaFB_vs_actionFB','actionFB_vs_noFB'};
     
+    comp_idx=[1 2; 1 3; 3 2];
+    
+    cost_labels={'low','medium','high'};
+    
     for c=1:numel(comparisons)
-        X=[trial_index(info_cost==info_costs(1) & included(:,c)),...
-            strcmp(PR_type(info_cost==info_costs(1) & included(:,c)),comparisons{c}{1})];
-        y=relative_score(info_cost==info_costs(1) & included(:,c));
-        eval(['model_low_cost_',labels{c},' = fitnlm(X,y,''y ~ (1-b1+b2*x2)*sigmoid(b6+(x1-1)*(b3+b4*x2))+b5+b7*x2'',[0.01;0.01;0.25;0.1;0.5;0;0.1])'])
-        fit_low(:,1,c)=eval(['model_low_cost_',labels{c},'.predict([(1:12)'',zeros(12,1)])'])
-        fit_low(:,2,c)=eval(['model_low_cost_',labels{c},'.predict([(1:12)'',ones(12,1)])'])
         
+        opts=statset('nlinfit');
+        %opts.RobustWgtFun = 'bisquare';
         
+        %X=[trial_index(info_cost==info_costs(1) & included(:,c)),...
+        %    strcmp(PR_type(info_cost==info_costs(1) & included(:,c)),comparisons{c}{1})];
+        
+        for cost_index=1:3
+            
+            %y=relative_score(info_cost==info_costs(cost_index) & included(:,c));
+            
+            for t=1:16
+                for i=1:2
+                    X1_tilde(t,i)=t;
+                    X2_tilde(t,i)=2-i;
+                end
+            end
+            X_mean=[X1_tilde(:),X2_tilde(:)];
+            y_temp=avg_rel_score_by_trial(:,[comp_idx(c,1),comp_idx(c,2)],cost_index);
+            y_mean=y_temp(:);
+            
+            
+            eval(['model_',cost_labels{cost_index},'_cost_',labels{c},' = fitnlm(X_mean,y_mean,''y_mean ~ (1-b1+b2*x_mean2)*sigmoid(b5+(x_mean1-1)*(b3+b4*x_mean2))+b6'',[0.01;0.01;0.1;0.1;0;0],''Options'',opts)'])
+            eval(['fit_',cost_labels{cost_index},'(:,1,c)=model_',cost_labels{cost_index},'_cost_',labels{c},'.predict([(1:16)'',zeros(16,1)])'])
+            eval(['fit_',cost_labels{cost_index},'(:,2,c)=model_',cost_labels{cost_index},'_cost_',labels{c},'.predict([(1:16)'',ones(16,1)])'])
+        end
+        
+        %{
         X=[trial_index(info_cost==1 & included(:,c)),...
             strcmp(PR_type(info_cost==info_costs(2) & included(:,c)),comparisons{c}{1})];
         y=relative_score(info_cost==info_costs(2) & included(:,c));
         %X=[[(1:12)';(1:12)'],[ones(12,1); 2*ones(12,1)]]
         %y=[avg_rel_score_by_trial(:,1,2);avg_rel_score_by_trial(:,2,2)];
-        eval(['model_medium_cost_',labels{c},' = fitnlm(X,y,''y ~ (1-b1+b2*x2)*sigmoid(b6+x1*(b3+b4*x2))+b5+b7*x2'',[0.2;1;0.25;0.5;1;0.5;0.1])']);
+        eval(['model_medium_cost_',labels{c},' = fitnlm(X,y,''y ~ (1-b1+b2*x2)*sigmoid(b5+(x1-1)*(b3+b4*x2)+b6*x2)'',[0.01;0.01;0.1;0.1;0;0],''Options'',opts)']);
         eval(['linear_model_medium_cost_',labels{c},' = fitnlm(X,y,''y ~ (b1+b2*x2)*x1'',[1; 1])'])
         
-        fit_medium(:,1,c)=eval(['model_medium_cost_',labels{c},'.predict([(1:12)'',zeros(12,1)])'])
-        fit_medium(:,2,c)=eval(['model_medium_cost_',labels{c},'.predict([(1:12)'',ones(12,1)])'])
+        fit_medium(:,1,c)=eval(['model_medium_cost_',labels{c},'.predict([(1:16)'',zeros(16,1)])'])
+        fit_medium(:,2,c)=eval(['model_medium_cost_',labels{c},'.predict([(1:16)'',ones(16,1)])'])
         
         
         X=[trial_index(info_cost==info_costs(3) & included(:,c)),...
             strcmp(PR_type(info_cost==info_costs(3) & included(:,c)),comparisons{c}{1})];
         y=relative_score(info_cost==info_costs(3) & included(:,c));
-        eval(['model_high_cost_',labels{c},' = fitnlm(X,y,''y ~ (1-b1+b5*x2)*sigmoid(b2+x1*(b3+b4*x2))+b6+b7*x2'',[0.01;0.01;0.25;0.1;0.1; 0.5; 0.1])'])
+        eval(['model_high_cost_',labels{c},' = fitnlm(X,y,''y ~ (1-b1+b2*x2)*sigmoid(b5+(x1-1)*(b3+b4*x2)+b6*x2)'',[0.01;0.01;0.1;0.1;0;0],''Options'',opts)'])
         BIC_high_cost_nonlinear(c)=eval(['model_high_cost_',labels{c},'.ModelCriterion.BIC'])
         eval(['linear_model_high_cost_',labels{c},'=fitnlm(X,y,''y ~ (b1+b3*x2)*x1+b2+b4*x2'',[0.1;0.5;0.1;0.1])'])
         BIC_high_cost_linear(c)=eval(['linear_model_high_cost_',labels{c},'.ModelCriterion.BIC'])
-        fit_high(:,1,c)=eval(['model_high_cost_',labels{c},'.predict([(1:12)'',zeros(12,1)])'])
-        fit_high(:,2,c)=eval(['model_high_cost_',labels{c},'.predict([(1:12)'',ones(12,1)])'])
-        
+        fit_high(:,1,c)=eval(['model_high_cost_',labels{c},'.predict([(1:16)'',zeros(16,1)])'])
+        fit_high(:,2,c)=eval(['model_high_cost_',labels{c},'.predict([(1:16)'',ones(16,1)])'])
+        %}
     end
 end
 %% Plot fits
@@ -237,23 +288,25 @@ if strcmp(experiment_name,'1A')
         errorbar(avg_rel_score_by_trial(:,:,ic),sem_rel_score_by_trial(:,:,ic),'o','MarkerSize',8), hold on
         plot([1,nr_training_trials],optimal_performance(ic).*[1,1],'.-','LineWidth',2),hold on
         set(gca,'FontSize',20)
-        xlim([0.5,nr_training_trials+0.5])
+        xlim([0.5,nr_training_trials+0.5])        
         
         if ic==1
-            plot(1:12,fit_low(:,2,1),'b-','LineWidth',3),hold on
-            plot(1:12,fit_low(:,1,1),'r-','LineWidth',3),hold on
-            plot(1:12,fit_low(:,2,3),'-','LineWidth',3,'Color',[1 .5 0]),hold on
-            legend({FB_types{:},'Optimal'},'Location','SouthEast')
+            plot(1:16,fit_low(:,2,1),'b-','LineWidth',3),hold on
+            plot(1:16,fit_low(:,1,1),'r-','LineWidth',3),hold on
+            plot(1:16,fit_low(:,2,3),'-','LineWidth',3,'Color',[1 .5 0]),hold on
+            legend({FB_types{:},'\pi_{LC}'},'Location','SouthEast')
         elseif ic==2
-            plot(1:12,fit_medium(:,2,1),'b-','LineWidth',3),hold on
-            plot(1:12,fit_medium(:,1,1),'r-','LineWidth',3),hold on
-            plot(1:12,fit_medium(:,2,3),'-','LineWidth',3,'Color',[1 .5 0]),hold on
+            plot(1:16,fit_medium(:,2,1),'b-','LineWidth',3),hold on
+            plot(1:16,fit_medium(:,1,1),'r-','LineWidth',3),hold on
+            plot(1:16,fit_medium(:,2,3),'-','LineWidth',3,'Color',[1 .5 0]),hold on
+            ylim([0,1.2])
         elseif ic==3
-            plot(1:12,fit_high(:,2,1),'b-','LineWidth',3),hold on
-            plot(1:12,fit_high(:,1,1),'r-','LineWidth',3),hold on
-            plot(1:12,fit_high(:,2,3),'-','LineWidth',3,'Color',[1 .5 0]),hold on
+            plot(1:16,fit_high(:,2,1),'b-','LineWidth',3),hold on
+            plot(1:16,fit_high(:,1,1),'r-','LineWidth',3),hold on
+            plot(1:16,fit_high(:,2,3),'-','LineWidth',3,'Color',[1 .5 0]),hold on
+            ylim([-1.55,1])
         end
-        
+
         title(['$',num2str(info_costs(ic)),'/click'],'FontSize',32)
         ylabel('Relative Performance','FontSize',24)
         xlabel('Trial Number','FontSize',24)
@@ -269,18 +322,18 @@ saveas(fig_LC_performance,[fig_dir,'LearningCurves1A.png'])
 for a=1:numel(action_times)
     eval(['move_time(a,:)=',action_times{a},';'])
     eval(['click_time{a}=',strrep(click_times{a},'None','NaN'),';'])
-        
+    
 end
 
 first_trials = find(trial_index == 1);
 
 for i=1:numel(first_trials)
-   idx = first_trials(i);
-   nr_clicks_trial1(i)=numel(click_time{idx});
-   nr_clicks_before_first_msg(i) = sum(click_time{idx}<move_time(idx,1));
-   nr_clicks_after_first_msg(i) = sum(click_time{idx}>move_time(idx,1));
-   FB_condition(i) = find(strcmp(PR_type{idx},PR_types))
-   cost_condition(i) = find(info_cost(idx)==info_costs)
+    idx = first_trials(i);
+    nr_clicks_trial1(i)=numel(click_time{idx});
+    nr_clicks_before_first_msg(i) = sum(click_time{idx}<move_time(idx,1));
+    nr_clicks_after_first_msg(i) = sum(click_time{idx}>move_time(idx,1));
+    FB_condition(i) = find(strcmp(PR_type{idx},PR_types))
+    cost_condition(i) = find(info_cost(idx)==info_costs)
 end
 
 anovan(nr_clicks_trial1,{FB_condition,cost_condition},'model','full','varnames',{'FB','cost'})
@@ -648,7 +701,7 @@ end
 %% Analyze data from Experiment 1C
 if strcmp(experiment_name,'1C')
     nr_trials=16;
-
+    
     training_trials = 1:10;
     test_trials=11:16;
     
@@ -659,7 +712,7 @@ if strcmp(experiment_name,'1C')
     
     rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.',version,'.csv'])
     nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star_',experiment_name,'.',version,'.csv'])
-            
+    
     info_costs=unique(info_cost);
     
     condition_nr=2;
@@ -698,20 +751,20 @@ if strcmp(experiment_name,'1C')
     saveas(fig_1C,'figures/PerformanceExp1C.png')
     
     [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
-           relative_score(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)))
-       
+        relative_score(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)))
+    
     [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)),...
-           relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))  
-       
+        relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))
+    
     [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
-           relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))         
+        relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))
     
     test_scores = relative_score(ismember(trial_index,test_trials));
     test_clicks = n_click(ismember(trial_index,test_trials));
     training_method = PR_type(ismember(trial_index,test_trials))
     anovan(test_scores, {training_method})
     anovan(test_clicks, {training_method})
-       
+    
     fig_1C_clicks=figure()
     barwitherr(sem_nr_clicks_test_block,avg_nr_clicks_test_block,'FaceColor',[0.75,0.75,0.75])
     set(gca,'XTickLabel',condition_labels,'FontSize',18)
@@ -721,16 +774,16 @@ if strcmp(experiment_name,'1C')
     title('Test Block of Exp 1C','FontSize',18)
     
     saveas(fig_1C_clicks,'figures/ClicksExp1C.png')
-       
+    
     [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
-           n_click(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)))
-       
+        n_click(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)))
+    
     [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)),...
-           n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))  
-       
+        n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))
+    
     [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
-           n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))         
-       
+        n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))
+    
 end
 
 %% Analyze Experiment 1A.2
@@ -749,12 +802,12 @@ test_trials = (nr_training_trials+1):nr_trials;
 
 max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
 min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
-    
+
 %rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.',version,'.csv'])
 %nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star_',experiment_name,'.',version,'.csv'])
-            
+
 info_costs=unique(info_cost);
-    
+
 condition_nr=3;
 for i=1:numel(score)
     relative_score(i,1)=(score(i)-min_score(trial_i(i)+1,condition_nr))/...
@@ -805,12 +858,12 @@ test_trials = (nr_training_trials+1):nr_trials;
 
 max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
 min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
-    
+
 %rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.',version,'.csv'])
 %nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star_',experiment_name,'.',version,'.csv'])
-            
+
 info_costs=unique(info_cost);
-    
+
 condition_nr=3;
 for i=1:numel(score)
     relative_score(i,1)=(score(i)-min_score(trial_i(i)+1,condition_nr))/...
@@ -919,7 +972,7 @@ for p=1:numel(participants)
 end
 %compute the average vicarious delay by condition
 avg_delay_condition=NaN(numel(conditions),1);
-for c=1:numel(conditions)       
+for c=1:numel(conditions)
     
     avg_delay_by_condition(c) = mean(thresholded_total_delay(condition_by_trial(:)== conditions(c)));
     std_delay_by_condition(c) = std(thresholded_total_delay(condition_by_trial(:)== conditions(c)))
@@ -943,7 +996,7 @@ end
 
 percentile(completion_time(:),[90,95])
 
-%% 
+%%
 clear
 import_trial_data_exp0d992
 import_participant_data_exp0d992
@@ -965,9 +1018,9 @@ figure()
 barwitherr([sem(avg_nr_clicks_by_participant(condition(finished)==0)),...
     sem(avg_nr_clicks_by_participant(condition(finished)==1))],...
     [mean(avg_nr_clicks_by_participant(condition(finished)==0)),...
-     mean(avg_nr_clicks_by_participant(condition(finished)==1))])
- ylabel('Average Nr. Clicks','FontSize',18)
- set(gca,'XTickLabel',{'Time Limit','No Time Limit'},'FontSize',18)
+    mean(avg_nr_clicks_by_participant(condition(finished)==1))])
+ylabel('Average Nr. Clicks','FontSize',18)
+set(gca,'XTickLabel',{'Time Limit','No Time Limit'},'FontSize',18)
 
 [h,p,ci,stats]=ttest2(avg_nr_clicks_by_participant(condition(finished)==0),...
     avg_nr_clicks_by_participant(condition(finished)==1))
@@ -980,9 +1033,9 @@ figure()
 barwitherr([sem(score1(condition(finished)==0)),...
     sem(score1(condition(finished)==1))],...
     [nanmean(score1(condition(finished)==0)),...
-     nanmean(score1(condition(finished)==1))])
- ylabel('Average Score','FontSize',18)
- set(gca,'XTickLabel',{'Time Limit','No Time Limit'},'FontSize',18)
+    nanmean(score1(condition(finished)==1))])
+ylabel('Average Score','FontSize',18)
+set(gca,'XTickLabel',{'Time Limit','No Time Limit'},'FontSize',18)
 
 
 [h,p,ci,stats]=ttest2(score1(condition(finished)==0),...
