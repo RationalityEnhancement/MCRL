@@ -199,8 +199,9 @@ initializeExperiment = ->
             [markdown """
               # Instructions
 
-              <b> In the first #{N_TRAIN} rounds, an expert will demonstrate optimal flight planning.</b> In the remaining #{N_TEST}
-              rounds, you will make your own choices.
+              <b> In the first #{N_TRAIN} rounds, an expert will demonstrate
+              optimal flight planning.</b> In the remaining #{N_TEST} rounds,
+              you will make your own choices.
               """
             ]
         else if PARAMS.message == "simple"

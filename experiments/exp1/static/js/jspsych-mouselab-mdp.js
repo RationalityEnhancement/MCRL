@@ -254,6 +254,22 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           '2': 16
         }, {}, {}
       ];
+      this.state2move = (function(_this) {
+        return function() {
+          var j, len, m, moves, r, ref20, s1;
+          r = {};
+          ref20 = _this.transition;
+          for (j = 0, len = ref20.length; j < len; j++) {
+            moves = ref20[j];
+            for (m in moves) {
+              s1 = moves[m];
+              console.log("ms1 " + m + " " + s1);
+              r[s1] = DIRECTIONS[m];
+            }
+          }
+          return r;
+        };
+      })(this)();
       this.layout = [[0, 0], [0, 1], [0, 2], [1, 2], [-1, 2], [1, 0], [2, 0], [2, -1], [2, 1], [0, -1], [0, -2], [-1, -2], [1, -2], [-1, 0], [-2, 0], [-2, 1], [-2, -1]];
       if (leftMessage == null) {
         leftMessage = "Round: " + TRIAL_INDEX + "/" + N_TRIALS;
@@ -447,9 +463,10 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           if (action === TERM_ACTION) {
             return [
               _.extend({
-                'Q': objectQs[new_location],
-                'V': _.max(Object.values(objectQs)),
-                'Qs': objectQs
+                Q: objectQs[new_location]({
+                  V: _.max(Object.values(objectQs)),
+                  Qs: objectQs
+                })
               }, arg)
             ];
           }
@@ -554,7 +571,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       }
       return this.PRdata.then((function(_this) {
         return function(PRdata) {
-          var delay_per_point, head, info, msg, penalty, redGreenSpan, result, showCriticism, threshold;
+          var delay_per_point, dir, head, info, msg, penalty, redGreenSpan, result, showCriticism, threshold;
           _this.data.PRdata = PRdata;
           threshold = 2;
           delay_per_point = 1.5;
@@ -617,7 +634,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
               if (result.optimalAction.direction.includes(parseInt(a))) {
                 head = redGreenSpan("You chose the best possible move.", 1);
               } else {
-                head = redGreenSpan("Bad move! You should have moved " + DIRECTIONS[result.optimalAction.direction[0]] + ".", -1);
+                dir = DIRECTIONS[result.optimalAction.direction[0]];
+                head = redGreenSpan("Bad move! You should have moved " + dir + ".", -1);
               }
             } else {
               if (PARAMS.PR_type === 'featureBased' && PARAMS.message === 'full') {
@@ -838,7 +856,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           x = loc[0], y = loc[1];
           return _this.states.push(_this.draw(new State(idx, x, y, {
             fill: '#bbb',
-            label: ''
+            label: "" + idx
           })));
         };
       })(this));

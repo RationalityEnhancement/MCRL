@@ -238,7 +238,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       } = config
 
       @initial = 0
-      @tree =  [ 
+      @tree =  [
          [ 1, 5, 9, 13 ],
          [ 2 ],
          [ 3, 4 ],
@@ -256,6 +256,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
          [ 15, 16 ],
          [],
          [] ]
+
       @transition = [
        { '0': 1, '1': 5, '2': 9, '3': 13 },
        { '0': 2 },
@@ -274,6 +275,13 @@ jsPsych.plugins['mouselab-mdp'] = do ->
        { '0': 15, '2': 16 },
        {},
        {} ]
+      @state2move = do =>
+        r = {}
+        for moves in @transition
+          for m, s1 of moves
+            console.log "ms1 #{m} #{s1}"
+            r[s1] = DIRECTIONS[m]
+        return r
       @layout =    [ [ 0, 0 ],
          [ 0, 1 ],
          [ 0, 2 ],
@@ -455,7 +463,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                 #newData = _.extend(@objectLevelPRs[s0][s1], arg)
                 #newData = _.extend(OBJECT_LEVEL_PRs[@trial_id][s0][s1], arg)
                 #delay = _.round delay_per_point * Math.max(objectQs) - objectQs[new_location]
-                [_.extend({'Q': objectQs[new_location], 'V': _.max(Object.values(objectQs)), 'Qs': objectQs}, arg)]
+                [_.extend({Q: objectQs[new_location]
+                           V: _.max(Object.values(objectQs))
+                           Qs: objectQs}, arg)]
                 #data.concat([newData])
         else            
             callWebppl('getPRinfo', arg).then (info) ->
@@ -601,9 +611,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             if PARAMS.PR_type is 'objectLevel'                
                   #if the move was optimal, say so
                   if result.optimalAction.direction.includes parseInt a
-                      head = redGreenSpan "You chose the best possible move.", 1            
+                    head = redGreenSpan "You chose the best possible move.", 1            
                   else
-                      head = redGreenSpan "Bad move! You should have moved #{DIRECTIONS[result.optimalAction.direction[0]]}.", -1            
+                    dir = DIRECTIONS[result.optimalAction.direction[0]]
+                    head = redGreenSpan "Bad move! You should have moved #{dir}.", -1            
                   
                   #if the move was sub-optimal point out the optimal move
             else            
@@ -804,7 +815,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @states.push @draw new State idx, x, y,
           fill: '#bbb'
           # label: if @stateDisplay is 'always' then (@getStateLabel s) else ''
-          label: ''
+          label: "#{idx}"
+          # label: ''
       @beliefState[0] = 0
       @data.beliefs.push @beliefState.slice()
 
