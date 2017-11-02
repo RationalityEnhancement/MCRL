@@ -443,7 +443,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           state: state,
           action: action
         };
-        if (PARAMS.PR_type === 'objectLevel') {
+        if (PARAMS.PR_type === 'objectLevel' || PARAMS.PR_type === 'none') {
           if (action === TERM_ACTION) {
             return [
               _.extend({
@@ -592,7 +592,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             optimalAction: bestMove(s0, _this.objectQs)
           };
           console.log('feedback', result);
-          showCriticism = result.delay >= threshold;
+          showCriticism = result.delay >= threshold || PARAMS.PR_type === 'none';
           if (PARAMS.PR_type === 'none') {
             result.delay = (function() {
               switch (PARAMS.info_cost) {
@@ -601,6 +601,14 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
                 case 1.00:
                   return [null, 17, 0, 0][this.data.actions.length];
                 case 4.00:
+                  return [null, 5, 0, 0][this.data.actions.length];
+                case 3.95:
+                  return [null, 5, 0, 0][this.data.actions.length];
+                case 3.50:
+                  return [null, 5, 0, 0][this.data.actions.length];
+                case 2.95:
+                  return [null, 5, 0, 0][this.data.actions.length];
+                case 2.50:
                   return [null, 5, 0, 0][this.data.actions.length];
               }
             }).call(_this);
