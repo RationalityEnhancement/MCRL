@@ -48,7 +48,7 @@ switch experiment_nr
   when 0.99 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['none'],infoCosts: [1.00]} 
   when 0.991 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['none'],infoCosts: [0.25, 1.00, 4.00]} 
   when 0.992 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['none'],infoCosts: [0.25], time_limits: [true,false]} 
-  when 0.993 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['none'],infoCosts: [0.05,1.25,2.50,2.95,3.50,3.95], time_limits: [true]} 
+  when 0.993 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['none'],infoCosts: [0.01, 0.05,1.25,2.50,2.95,3.50,3.95], time_limits: [true]} 
   when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,1.0001],time_limits:[true]}
   when 1.5 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.25,1.00,4.00],time_limits:[true]}    
   when 1.6 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.25,1.00,4.00],time_limits:[true]}    
