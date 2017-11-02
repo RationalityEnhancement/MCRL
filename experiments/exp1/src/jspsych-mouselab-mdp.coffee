@@ -458,7 +458,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                   
       @PRdata = @PRdata.then (data) ->
         arg = {state, action}    
-        if PARAMS.PR_type is 'objectLevel'
+        if PARAMS.PR_type is 'objectLevel' or PARAMS.PR_type is 'none'
             if action is TERM_ACTION            
                 #newData = _.extend(@objectLevelPRs[s0][s1], arg)
                 #newData = _.extend(OBJECT_LEVEL_PRs[@trial_id][s0][s1], arg)
@@ -589,7 +589,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             #  Math.min(1, d.V - d.Q)
           optimalAction: bestMove(s0,this.objectQs)   # {direction: "0"}
         console.log 'feedback', result
-        showCriticism = result.delay >= threshold
+        showCriticism = result.delay >= threshold or PARAMS.PR_type is 'none'
         if PARAMS.PR_type is 'none'
           result.delay = switch PARAMS.info_cost
             #when 0.01 then [null, 4, 0, 0][@data.actions.length]
@@ -598,6 +598,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             #when 2.50 then [null, 15, 0, 0][@data.actions.length]
             #when 1.0001 then [null, 2, 0, 0][@data.actions.length]
             when 4.00 then [null, 5, 0, 0][@data.actions.length]
+            when 3.95 then [null, 5, 0, 0][@data.actions.length]
+            when 3.50 then [null, 5, 0, 0][@data.actions.length]
+            when 2.95 then [null, 5, 0, 0][@data.actions.length]
+            when 2.50 then [null, 5, 0, 0][@data.actions.length]
               
         @data.delays.push result.delay
         @data.plannedTooLittle.push result.plannedTooLittle
