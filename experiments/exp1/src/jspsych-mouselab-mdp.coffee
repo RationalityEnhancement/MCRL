@@ -463,9 +463,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                 #newData = _.extend(@objectLevelPRs[s0][s1], arg)
                 #newData = _.extend(OBJECT_LEVEL_PRs[@trial_id][s0][s1], arg)
                 #delay = _.round delay_per_point * Math.max(objectQs) - objectQs[new_location]
-                [_.extend({Q: objectQs[new_location]
-                           V: _.max(Object.values(objectQs))
-                           Qs: objectQs}, arg)]
+                [_.extend({Q: objectQs[new_location], V: _.max(Object.values(objectQs)), Qs: objectQs}, arg)]
                 #data.concat([newData])
         else            
             callWebppl('getPRinfo', arg).then (info) ->
@@ -819,7 +817,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @states.push @draw new State idx, x, y,
           fill: '#bbb'
           # label: if @stateDisplay is 'always' then (@getStateLabel s) else ''
-          label: "#{idx}"
+          # label: "#{idx}"
           # label: ''
       @beliefState[0] = 0
       @data.beliefs.push @beliefState.slice()

@@ -120,7 +120,7 @@ switch (experiment_nr) {
       frequencyOfFB: ['after_each_move'],
       PRTypes: ['none'],
       messageTypes: ['none'],
-      infoCosts: [2.50, 2.95, 3.50, 3.95],
+      infoCosts: [0.01, 0.05, 1.25, 2.50, 2.95, 3.50, 3.95],
       time_limits: [true]
     };
     break;
@@ -288,9 +288,15 @@ COST_LEVEL = (function() {
   switch (PARAMS.info_cost) {
     case 0.01:
       return 'low';
+    case 0.05:
+      return 'low';
+    case 0.10:
+      return 'low';
     case 0.25:
       return 'low';
     case 1.00:
+      return 'med';
+    case 1.25:
       return 'med';
     case 2.50:
       return 'high';

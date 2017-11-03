@@ -463,10 +463,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           if (action === TERM_ACTION) {
             return [
               _.extend({
-                Q: objectQs[new_location]({
-                  V: _.max(Object.values(objectQs)),
-                  Qs: objectQs
-                })
+                Q: objectQs[new_location],
+                V: _.max(Object.values(objectQs)),
+                Qs: objectQs
               }, arg)
             ];
           }
@@ -863,8 +862,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           _this.beliefState.push(UNKNOWN);
           x = loc[0], y = loc[1];
           return _this.states.push(_this.draw(new State(idx, x, y, {
-            fill: '#bbb',
-            label: "" + idx
+            fill: '#bbb'
           })));
         };
       })(this));
