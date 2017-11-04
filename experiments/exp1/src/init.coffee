@@ -35,7 +35,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-experiment_nr = 0.995  #0.992  #1.5 #0.991  # pilot experiment with low-cost and i.i.d. rewards
+experiment_nr = 1.7 
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
@@ -53,7 +53,8 @@ switch experiment_nr
   when 0.995 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['none'],infoCosts: [0.01, 0.05,0.10,1.25,1.50], time_limits: [true]}
   when 1 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.01,1.00,1.0001],time_limits:[true]}
   when 1.5 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.25,1.00,4.00],time_limits:[true]}    
-  when 1.6 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.25,1.00,4.00],time_limits:[true]}    
+  when 1.6 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.25,1.00,4.00],time_limits:[true]} 
+  when 1.7 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.10,1.25,4.00],time_limits:[true]}    
   when 2 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.00],time_limits:[true]}
   when 3 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','demonstration'], messageTypes: ['full'],infoCosts: [1.00],time_limits:[true]}    
   when 4 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['full'],infoCosts: [1.00],time_limits:[true]}
@@ -78,6 +79,7 @@ nrConditions = switch experiment_nr
     when 1 then 3 * 3
     when 1.5 then 3*3
     when 1.6 then 3*3
+    when 1.7 then 3*3
     else nrDelays * nrMessages * nrInfoCosts
 
 conditions = {'PRType':[], 'messageType':[], 'infoCost': [], 'frequencyOfFB': [],'time_limits': []}
