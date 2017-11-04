@@ -1104,3 +1104,58 @@ for ic=1:numel(info_costs)
     avg_nr_clicks(ic)=mean(n_click(info_cost==info_costs(ic)))
     sem_nr_clicks(ic)=sem(n_click(info_cost==info_costs(ic)))
 end
+
+%% compute the delays participants would have experienced in Pilot 0.995
+load_PRs_pilot_exp_0d995
+
+conditions = unique(info_cost1);
+
+load PR_thresholds
+
+click_thresholds = [thresholds.low_cost(:),thresholds.med_cost(:),thresholds.high_cost(:)];
+nr_locations=16;
+%threshold click PRs
+for i=1:numel(click_pr)
+    
+    condition(i)=find(info_cost1(i)==conditions);
+    clicks_remaining=nr_locations-(click_num(i)-1);
+    
+    click_threshold=click_thresholds(clicks_remaining,condition(i));
+    
+    if click_pr(i)<-click_threshold
+        thresholded_click_pr(i)=click_pr(i);
+    else
+        thresholded_click_pr(i)=0;
+    end
+end
+
+delay_threshold = 2;
+delay_per_point = - 1.5;
+delays = delay_per_point * thresholded_click_pr;
+
+%compute the vicarious delay of each trial
+participants=unique(pid1);
+trial_ids = unique(trial_index1);
+for p=1:numel(participants)
+    for t=1:numel(trial_ids)
+        indices = find(pid1==participants(p) & trial_index1==trial_ids(t));
+        
+        total_delay(p,t)=sum(delays(indices));
+        
+        if total_delay(p,t)>delay_threshold
+            thresholded_total_delay(p,t)=total_delay(p,t);
+        else
+            thresholded_total_delay(p,t)=0;
+        end
+        
+        condition_by_trial(p,t)=unique(info_cost1(indices));
+        
+    end
+end
+%compute the average vicarious delay by condition
+avg_delay_condition=NaN(numel(conditions),1);
+for c=1:numel(conditions)
+    
+    avg_delay_by_condition(c) = mean(thresholded_total_delay(condition_by_trial(:)== conditions(c)));
+    std_delay_by_condition(c) = std(thresholded_total_delay(condition_by_trial(:)== conditions(c)))
+end
