@@ -1,0 +1,42 @@
+PR_type,bonus,bonus_rate,completed,condition,delay_hours,delay_window,feedback,frequencyOfFB,info_cost,message,pid,score,test_idx,time_limit,version
+none,3.03,0.01,True,0,24,4,False,after_each_move,0.01,none,0,303.25,"[5, 0, 3, 4, 7, 9]",True,0.994
+none,3.98,0.01,True,0,24,4,False,after_each_move,0.01,none,1,397.71,"[9, 10, 4, 15, 2, 12]",True,0.994
+none,3.98,0.01,True,0,24,4,False,after_each_move,0.01,none,2,397.89,"[1, 14, 2, 12, 0, 5]",True,0.994
+none,3.64,0.01,True,1,24,4,False,after_each_move,0.05,none,3,364.25,"[1, 14, 9, 10, 5, 12]",True,0.994
+none,1.12,0.01,True,1,24,4,False,after_each_move,0.05,none,4,112.0,"[10, 0, 4, 13, 9, 2]",True,0.994
+none,3.44,0.01,True,1,24,4,False,after_each_move,0.05,none,5,343.9,"[14, 1, 11, 10, 4, 2]",True,0.994
+none,0.8,0.01,True,0,24,4,False,after_each_move,0.01,none,6,79.84,"[5, 7, 8, 4, 2, 12]",True,0.994
+none,0.0,0.01,True,0,24,4,False,after_each_move,0.01,none,7,-48.0,"[15, 8, 13, 5, 12, 9]",True,0.994
+none,3.33,0.01,True,2,24,4,False,after_each_move,0.1,none,8,333.4,"[4, 8, 11, 2, 10, 5]",True,0.994
+none,3.5,0.01,True,0,24,4,False,after_each_move,0.01,none,9,350.44,"[8, 14, 2, 3, 13, 12]",True,0.994
+none,0.0,0.01,False,1,24,4,False,after_each_move,0.05,none,10,,,True,0.994
+none,0.0,0.01,True,2,24,4,False,after_each_move,0.1,none,11,-16.0,"[14, 6, 3, 10, 2, 8]",True,0.994
+none,3.49,0.01,True,1,24,4,False,after_each_move,0.05,none,12,349.4,"[15, 14, 0, 13, 3, 5]",True,0.994
+none,3.52,0.01,True,1,24,4,False,after_each_move,0.05,none,13,352.05,"[11, 0, 9, 6, 7, 13]",True,0.994
+none,2.5,0.01,True,1,24,4,False,after_each_move,0.05,none,14,250.35,"[1, 9, 5, 13, 6, 4]",True,0.994
+none,0.0,0.01,False,0,24,4,False,after_each_move,0.01,none,15,,,True,0.994
+none,2.95,0.01,True,0,24,4,False,after_each_move,0.01,none,16,294.75,"[11, 2, 4, 6, 14, 3]",True,0.994
+none,3.55,0.01,True,2,24,4,False,after_each_move,0.1,none,17,354.7,"[2, 6, 4, 1, 10, 12]",True,0.994
+none,3.59,0.01,True,0,24,4,False,after_each_move,0.01,none,18,358.83,"[11, 15, 6, 5, 3, 14]",True,0.994
+none,3.42,0.01,True,0,24,4,False,after_each_move,0.01,none,19,342.37,"[0, 14, 2, 9, 11, 15]",True,0.994
+none,3.68,0.01,True,1,24,4,False,after_each_move,0.05,none,20,367.55,"[9, 11, 14, 12, 3, 10]",True,0.994
+none,0.0,0.01,False,1,24,4,False,after_each_move,0.05,none,21,,,True,0.994
+none,0.77,0.01,True,2,24,4,False,after_each_move,0.1,none,22,77.3,"[7, 12, 2, 0, 5, 8]",True,0.994
+none,3.97,0.01,True,0,24,4,False,after_each_move,0.01,none,23,397.46,"[3, 12, 0, 4, 7, 15]",True,0.994
+none,3.98,0.01,True,0,24,4,False,after_each_move,0.01,none,24,398.18,"[13, 7, 3, 8, 0, 1]",True,0.994
+none,1.92,0.01,True,0,24,4,False,after_each_move,0.01,none,25,191.74,"[9, 11, 13, 8, 0, 3]",True,0.994
+none,3.68,0.01,True,1,24,4,False,after_each_move,0.05,none,26,367.85,"[2, 0, 15, 12, 7, 4]",True,0.994
+none,3.8,0.01,True,2,24,4,False,after_each_move,0.1,none,27,379.5,"[10, 7, 9, 11, 8, 14]",True,0.994
+none,3.3,0.01,True,2,24,4,False,after_each_move,0.1,none,28,330.3,"[10, 13, 7, 11, 9, 4]",True,0.994
+none,0.88,0.01,True,0,24,4,False,after_each_move,0.01,none,29,88.0,"[8, 0, 6, 5, 14, 1]",True,0.994
+none,0.0,0.01,False,1,24,4,False,after_each_move,0.05,none,30,,,True,0.994
+none,0.0,0.01,True,1,24,4,False,after_each_move,0.05,none,31,-96.0,"[3, 4, 13, 9, 10, 1]",True,0.994
+none,3.85,0.01,True,1,24,4,False,after_each_move,0.05,none,32,384.6,"[8, 13, 11, 4, 0, 5]",True,0.994
+none,1.99,0.01,True,0,24,4,False,after_each_move,0.01,none,33,199.48,"[11, 7, 5, 2, 4, 1]",True,0.994
+none,2.94,0.01,True,2,24,4,False,after_each_move,0.1,none,34,294.2,"[0, 3, 10, 8, 14, 2]",True,0.994
+none,0.32,0.01,True,1,24,4,False,after_each_move,0.05,none,35,32.0,"[8, 3, 13, 4, 10, 12]",True,0.994
+none,0.0,0.01,True,1,24,4,False,after_each_move,0.05,none,36,-24.0,"[9, 2, 0, 4, 3, 14]",True,0.994
+none,3.79,0.01,True,2,24,4,False,after_each_move,0.1,none,37,379.3,"[6, 3, 15, 8, 10, 11]",True,0.994
+none,3.58,0.01,True,0,24,4,False,after_each_move,0.01,none,38,358.37,"[5, 7, 12, 9, 13, 11]",True,0.994
+none,3.78,0.01,True,2,24,4,False,after_each_move,0.1,none,39,378.5,"[12, 4, 9, 13, 6, 2]",True,0.994
+none,3.63,0.01,True,2,24,4,False,after_each_move,0.1,none,40,362.6,"[4, 9, 14, 7, 6, 10]",True,0.994

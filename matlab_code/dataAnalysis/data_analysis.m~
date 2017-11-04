@@ -1063,44 +1063,17 @@ import_data_pilot0d993
 
 is_training=trial_index1<=10;
 is_test=trial_index1>10;
-is_beginning=trial_index1<=3;
+is_b
 
 info_costs = unique(info_cost1);
 
 for ic=1:numel(info_costs)
     avg_nr_clicks_training(ic)=mean(n_click1(is_training & info_cost1==info_costs(ic)))
     sem_nr_clicks_training(ic)=sem(n_click1(is_training & info_cost1==info_costs(ic)))
-
-    avg_nr_clicks_start(ic)=mean(n_click1(is_beginning & info_cost1==info_costs(ic)))
-    sem_nr_clicks_start(ic)=sem(n_click1(is_beginning & info_cost1==info_costs(ic)))
-    
     
     avg_nr_clicks_test(ic)=mean(n_click1(is_test & info_cost1==info_costs(ic)))
     sem_nr_clicks_test(ic)=sem(n_click1(is_test & info_cost1==info_costs(ic)))
     
     avg_nr_clicks(ic)=mean(n_click1(info_cost1==info_costs(ic)))
     sem_nr_clicks(ic)=sem(n_click1(info_cost1==info_costs(ic)))
-end
-
-%% 
-import_data_pilot0d995
-is_training=trial_index<=10;
-is_test=trial_index>10;
-is_beginning=trial_index<=3;
-
-info_costs = unique(info_cost);
-
-for ic=1:numel(info_costs)
-    avg_nr_clicks_training(ic)=mean(n_click(is_training & info_cost==info_costs(ic)))
-    sem_nr_clicks_training(ic)=sem(n_click(is_training & info_cost==info_costs(ic)))
-
-    avg_nr_clicks_start(ic)=mean(n_click(is_beginning & info_cost==info_costs(ic)))
-    sem_nr_clicks_start(ic)=sem(n_click(is_beginning & info_cost==info_costs(ic)))
-    
-    
-    avg_nr_clicks_test(ic)=mean(n_click(is_test & info_cost==info_costs(ic)))
-    sem_nr_clicks_test(ic)=sem(n_click(is_test & info_cost==info_costs(ic)))
-    
-    avg_nr_clicks(ic)=mean(n_click(info_cost==info_costs(ic)))
-    sem_nr_clicks(ic)=sem(n_click(info_cost==info_costs(ic)))
 end
