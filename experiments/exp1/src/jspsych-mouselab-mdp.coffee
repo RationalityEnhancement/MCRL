@@ -613,16 +613,19 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
         if PARAMS.message
             if PARAMS.PR_type is 'objectLevel'                
-                  #if the move was optimal, say so
-                  if result.optimalAction.direction.includes parseInt a
+                
+                if result.optimalAction.direction.includes parseInt a
+                    #if the move was optimal, say so
                     head = redGreenSpan "You chose the best possible move.", 1            
-                  else
+                else
+                    #if the move was sub-optimal point out the optimal move
                     dir = DIRECTIONS[result.optimalAction.direction[0]]
-                    head = redGreenSpan "Bad move! You should have moved #{dir}.", -1            
+                    head = redGreenSpan "Bad move! You should have moved #{dir}.", -1
+                
+                info = ''    
                   
-                  #if the move was sub-optimal point out the optimal move
-            else            
-                if PARAMS.PR_type is 'featureBased' and PARAMS.message is 'full'
+            if PARAMS.PR_type is 'featureBased' or PARAMS.PR_type is 'none'    
+                if PARAMS.message is 'full'
                   if result.plannedTooLittle and showCriticism
                     if result.plannedTooMuch and showCriticism
                         head = redGreenSpan "You gathered the wrong information.", -1            
@@ -640,19 +643,19 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                           head += redGreenSpan " But you didn't prioritize the most important locations.", -1
                           
                 if PARAMS.message is 'simple'
-                      head =''
-                      #if result.PR_type is 'none'
-                      #    head = ''
-                      #else
-                      #    head = redGreenSpan "Poor planning!", -1                    
-                if PARAMS.message is 'none'
-                      if result.delay is 1
-                          head = "Please wait 1 second."
+                      #head =''
+                      if result.PR_type is 'none'
+                          head = ''
                       else
-                          head = "Please wait "+result.delay+" seconds."
+                          head = redGreenSpan "Poor planning!", -1
+                                
           
           if PARAMS.PR_type is "none"
-              penalty = if result.delay then "<p>Please wait #{result.delay} seconds.</p>"
+              if result.delay is 1
+                penalty = "<p> Please wait 1 second. </p>"
+              else
+                penalty  = "<p>Please wait "+result.delay+" seconds.</p>"
+
           else
               penalty = if result.delay then redGreenSpan "<p>#{result.delay} second penalty!</p>", -1
           
@@ -665,24 +668,20 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                 redGreenSpan 'suboptimal.', -1
             else ''
           
-          if (PARAMS.message is 'full' or PARAMS.message is 'simple') and PARAMS.PR_type != 'objectLevel'
-              msg = """
-              <h3>#{head}</h3>            
+        if !PARAMS.message or PARAMS.message is 'none'
+            msg = "Please wait "+result.delay+" seconds."  
+        
+        if PARAMS.message is 'simple'
+            msg = """
               <b>#{penalty}</b>                        
+              """
+        
+        if PARAMS.message is 'full'
+            msg = """
+              <h3>#{head}</h3>            
+              <b>#{penalty}</b>
               #{info}
               """
-          if PARAMS.PR_type is 'objectLevel'
-               msg = """
-              <h3>#{head}</h3>             
-              <b>#{penalty}</b> 
-               """
-          
-          if PARAMS.message is 'none'
-              msg = """
-              <h3>#{head}</h3>
-              """
-        if !PARAMS.message
-          msg = "Please wait "+result.delay+" seconds."  
 
         if @feedback and showCriticism     
             @freeze = true
