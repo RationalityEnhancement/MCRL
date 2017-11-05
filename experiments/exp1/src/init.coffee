@@ -35,7 +35,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-experiment_nr = 1.7 
+experiment_nr = 2 
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
@@ -55,7 +55,7 @@ switch experiment_nr
   when 1.5 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.25,1.00,4.00],time_limits:[true]}    
   when 1.6 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.25,1.00,4.00],time_limits:[true]} 
   when 1.7 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','objectLevel'], messageTypes: ['full','none'],infoCosts: [0.10,1.25,4.00],time_limits:[true]}    
-  when 2 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.00],time_limits:[true]}
+  when 2 then   IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.25],time_limits:[true]}
   when 3 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','demonstration'], messageTypes: ['full'],infoCosts: [1.00],time_limits:[true]}    
   when 4 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none'], messageTypes: ['full'],infoCosts: [1.00],time_limits:[true]}
   #when 4 then IVs = {IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased'], messageTypes: ['full','simple'],infoCosts: [1.00]}}
@@ -126,7 +126,7 @@ if experiment_nr is 4
 if DEBUG
   PARAMS.message = 'full'
   PARAMS.PR_type = 'objectLevel'#'featureBased'
-  PARAMS.info_cost = 1.00
+  PARAMS.info_cost = 1.25
 
 # console.log 'PARAMS', PARAMS
 COST_LEVEL =
