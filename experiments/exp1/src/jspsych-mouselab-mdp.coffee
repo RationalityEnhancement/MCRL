@@ -25,7 +25,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
   UNKNOWN = '__'
   TERM_ACTION = '__TERM_ACTION__'
 
-
   fabric.Object::originX = fabric.Object::originY = 'center'
   fabric.Object::selectable = false
   fabric.Object::hoverCursor = 'plain'
@@ -35,7 +34,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     DEMO_SPEED = 500
     MOVE_SPEED = 300
   else
-    OPTIMAL = (loadJson 'static/json/optimal_policy.json')[COST_LEVEL]
+    OPTIMAL = (loadJson 'static/json/demonstrations.json')[PARAMS.info_cost.toFixed(2)]
+    # console.log('OPTIMAL', "static/json/optimal_policy_#{PARAMS.info_cost.toFixed(2)}.json")
+    # OPTIMAl = loadJson "static/json/optimal_policy_#{PARAMS.info_cost.toFixed(2)}.json"
+    console.log(OPTIMAL)
 
   # =========================== #
   # ========= Helpers ========= #
@@ -237,6 +239,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @feedback=true
       } = config
 
+      if DEBUG
+        @demonstrate = true
+
       @initial = 0
       @tree =  [
          [ 1, 5, 9, 13 ],
@@ -279,8 +284,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         r = {}
         for moves in @transition
           for m, s1 of moves
-            console.log "ms1 #{m} #{s1}"
-            r[s1] = DIRECTIONS[m]
+            r[s1] = m
         return r
       @layout =    [ [ 0, 0 ],
          [ 0, 1 ],
@@ -323,7 +327,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         trial_id: @trial_id
         trialIndex: @trialIndex
         score: 0
-        path: []
+        path: [@initial]
         rt: []
         actions: []
         actionTimes: []
@@ -398,10 +402,13 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         if ifvisible.now()
           a = actions[i]
           if a.is_click
+            console.log 'click', a.state
             @clickState @states[a.state], a.state
           else
             s = _.last @data.path
-            @handleKey s, a.move
+            console.log 'path', @data.path, 
+            console.log 'move', a.state, @state2move[a.state]
+            @handleKey s, @state2move[a.state]
           i += 1
           if i is actions.length
             do interval.stop
@@ -426,6 +433,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       LOG_DEBUG "#{s0}, #{a} -> #{r}, #{s1}"
 
       s1g = @states[s1]
+      console.log('key', s0, a, @transition[s0], s1, s1g)
       @PRdata.then => @player.animate {left: s1g.left, top: s1g.top},
           duration: MOVE_SPEED
           onChange: @canvas.renderAll.bind(@canvas)
@@ -456,21 +464,21 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       new_location = _.last @data.path
       objectQs = @objectQs    
                   
-      @PRdata = @PRdata.then (data) ->
+      @PRdata = @PRdata.then (data) =>
         arg = {state, action}    
         if PARAMS.PR_type is 'objectLevel' or PARAMS.PR_type is 'none'
-            if action is TERM_ACTION            
-                #newData = _.extend(@objectLevelPRs[s0][s1], arg)
-                #newData = _.extend(OBJECT_LEVEL_PRs[@trial_id][s0][s1], arg)
-                #delay = _.round delay_per_point * Math.max(objectQs) - objectQs[new_location]
-                [_.extend({Q: objectQs[new_location], V: _.max(Object.values(objectQs)), Qs: objectQs}, arg)]
-                #data.concat([newData])
-        else            
-            callWebppl('getPRinfo', arg).then (info) ->
-                newData = _.extend(info, arg)
-                console.log('PR info', newData)
-                data.concat([newData])        
-            
+          if action is TERM_ACTION            
+            #newData = _.extend(@objectLevelPRs[s0][s1], arg)
+            #newData = _.extend(OBJECT_LEVEL_PRs[@trial_id][s0][s1], arg)
+            #delay = _.round delay_per_point * Math.max(objectQs) - objectQs[new_location]
+            [_.extend({Q: objectQs[new_location], V: _.max(Object.values(objectQs)), Qs: objectQs}, arg)]
+            #data.concat([newData])
+        else if @feedback
+          callWebppl('getPRinfo', arg).then (info) =>
+            newData = _.extend(info, arg)
+            console.log('PR info', newData)
+            data.concat([newData])
+        
       @PRdata.catch (reason) =>
         console.log('WEBPPL ERROR: ' + reason)
 

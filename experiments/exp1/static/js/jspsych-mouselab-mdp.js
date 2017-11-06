@@ -45,7 +45,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     DEMO_SPEED = 500;
     MOVE_SPEED = 300;
   } else {
-    OPTIMAL = (loadJson('static/json/optimal_policy.json'))[COST_LEVEL];
+    OPTIMAL = (loadJson('static/json/demonstrations.json'))[PARAMS.info_cost.toFixed(2)];
+    console.log(OPTIMAL);
   }
   chooseAction = function(belief){
         
@@ -224,6 +225,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.runDemo = bind(this.runDemo, this);
       var centerMessage, leftMessage, lowerMessage, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, rightMessage, timeMsg;
       this.display = config.display, this.graph = config.graph, this.layout = config.layout, this.tree = (ref = config.tree) != null ? ref : null, this.initial = config.initial, this.stateLabels = (ref1 = config.stateLabels) != null ? ref1 : null, this.stateDisplay = (ref2 = config.stateDisplay) != null ? ref2 : 'never', this.stateClickCost = (ref3 = config.stateClickCost) != null ? ref3 : PARAMS.info_cost, this.edgeLabels = (ref4 = config.edgeLabels) != null ? ref4 : 'reward', this.edgeDisplay = (ref5 = config.edgeDisplay) != null ? ref5 : 'always', this.edgeClickCost = (ref6 = config.edgeClickCost) != null ? ref6 : 0, this.trial_id = config.trial_id, this.objectQs = config.objectQs, this.demonstrate = (ref7 = config.demonstrate) != null ? ref7 : false, this.PRdata = (ref8 = config.PRdata) != null ? ref8 : [], this.stateRewards = (ref9 = config.stateRewards) != null ? ref9 : null, this.keys = (ref10 = config.keys) != null ? ref10 : KEYS, this.trialIndex = (ref11 = config.trialIndex) != null ? ref11 : TRIAL_INDEX, this.playerImage = (ref12 = config.playerImage) != null ? ref12 : 'static/images/plane.png', SIZE = (ref13 = config.SIZE) != null ? ref13 : 110, leftMessage = (ref14 = config.leftMessage) != null ? ref14 : null, centerMessage = (ref15 = config.centerMessage) != null ? ref15 : '&nbsp;', rightMessage = (ref16 = config.rightMessage) != null ? ref16 : 'Score: <span id=mouselab-score/>', lowerMessage = (ref17 = config.lowerMessage) != null ? ref17 : "Navigate with the arrow keys.", this.minTime = (ref18 = config.minTime) != null ? ref18 : (DEBUG ? 5 : MIN_TIME), this.feedback = (ref19 = config.feedback) != null ? ref19 : true;
+      if (DEBUG) {
+        this.demonstrate = true;
+      }
       this.initial = 0;
       this.tree = [[1, 5, 9, 13], [2], [3, 4], [], [], [6], [7, 8], [], [], [10], [11, 12], [], [], [14], [15, 16], [], []];
       this.transition = [
@@ -263,8 +267,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             moves = ref20[j];
             for (m in moves) {
               s1 = moves[m];
-              console.log("ms1 " + m + " " + s1);
-              r[s1] = DIRECTIONS[m];
+              r[s1] = m;
             }
           }
           return r;
@@ -292,7 +295,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         trial_id: this.trial_id,
         trialIndex: this.trialIndex,
         score: 0,
-        path: [],
+        path: [this.initial],
         rt: [],
         actions: [],
         actionTimes: [],
@@ -375,10 +378,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           if (ifvisible.now()) {
             a = actions[i];
             if (a.is_click) {
+              console.log('click', a.state);
               _this.clickState(_this.states[a.state], a.state);
             } else {
               s = _.last(_this.data.path);
-              _this.handleKey(s, a.move);
+              console.log('path', _this.data.path, console.log('move', a.state, _this.state2move[a.state]));
+              _this.handleKey(s, _this.state2move[a.state]);
             }
             i += 1;
             if (i === actions.length) {
@@ -404,6 +409,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       r = this.stateRewards[s1];
       LOG_DEBUG(s0 + ", " + a + " -> " + r + ", " + s1);
       s1g = this.states[s1];
+      console.log('key', s0, a, this.transition[s0], s1, s1g);
       return this.PRdata.then((function(_this) {
         return function() {
           return _this.player.animate({
@@ -453,31 +459,33 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       state = this.beliefState.slice();
       new_location = _.last(this.data.path);
       objectQs = this.objectQs;
-      this.PRdata = this.PRdata.then(function(data) {
-        var arg;
-        arg = {
-          state: state,
-          action: action
-        };
-        if (PARAMS.PR_type === 'objectLevel' || PARAMS.PR_type === 'none') {
-          if (action === TERM_ACTION) {
-            return [
-              _.extend({
-                Q: objectQs[new_location],
-                V: _.max(Object.values(objectQs)),
-                Qs: objectQs
-              }, arg)
-            ];
+      this.PRdata = this.PRdata.then((function(_this) {
+        return function(data) {
+          var arg;
+          arg = {
+            state: state,
+            action: action
+          };
+          if (PARAMS.PR_type === 'objectLevel' || PARAMS.PR_type === 'none') {
+            if (action === TERM_ACTION) {
+              return [
+                _.extend({
+                  Q: objectQs[new_location],
+                  V: _.max(Object.values(objectQs)),
+                  Qs: objectQs
+                }, arg)
+              ];
+            }
+          } else if (_this.feedback) {
+            return callWebppl('getPRinfo', arg).then(function(info) {
+              var newData;
+              newData = _.extend(info, arg);
+              console.log('PR info', newData);
+              return data.concat([newData]);
+            });
           }
-        } else {
-          return callWebppl('getPRinfo', arg).then(function(info) {
-            var newData;
-            newData = _.extend(info, arg);
-            console.log('PR info', newData);
-            return data.concat([newData]);
-          });
-        }
-      });
+        };
+      })(this));
       this.PRdata["catch"]((function(_this) {
         return function(reason) {
           return console.log('WEBPPL ERROR: ' + reason);
