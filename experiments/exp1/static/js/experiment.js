@@ -139,7 +139,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, MDPBlock, QuizLoop, TextBlock, ask_email, check_code, check_returning, debug_slide, experiment_timeline, finish, foobar, instruct_loop, instructions, msgType, ppl, prompt_resubmit, quiz, reprompt, retention_instruction, save_data, test, text;
+  var Block, MDPBlock, QuizLoop, TextBlock, ask_email, check_code, check_returning, debug_slide, experiment_timeline, finish, instruct_loop, instructions, msgType, ppl, prompt_resubmit, quiz, reprompt, retention_instruction, save_data, test, text;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   msgType = (function() {
@@ -243,19 +243,6 @@ initializeExperiment = function() {
     return QuizLoop;
 
   })(Block);
-  foobar = _.extend(STRUCTURE, {
-    type: 'mouselab-mdp',
-    _init: function() {
-      return this.trialCount = 0;
-    }
-  });
-  console.log('foobar', foobar);
-  foobar = {
-    type: 'mouselab-mdp',
-    _init: function() {
-      return this.trialCount = 0;
-    }
-  };
   MDPBlock = (function(superClass) {
     extend(MDPBlock, superClass);
 
@@ -444,7 +431,7 @@ initializeExperiment = function() {
     code: 'globalStore.display_element.html(JSON.stringify(flip()))'
   });
   if (DEBUG) {
-    experiment_timeline = [train, finish];
+    experiment_timeline = [test, finish];
   } else {
     experiment_timeline = (function() {
       var tl;

@@ -1,4 +1,4 @@
-DEBUG = true
+DEBUG = false
 
 if DEBUG
   console.log """
@@ -6,7 +6,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 2
+  condition = 3
   workerId = ['debugFRED']
 
   
@@ -124,8 +124,9 @@ if experiment_nr is 4
   RETURN_TIME = new Date (getTime() + 1000 * 60 * 60 * PARAMS.delay_hours)
 
 if DEBUG
-  PARAMS.message = 'full'
-  PARAMS.PR_type = 'objectLevel'#'featureBased'
+  # PARAMS.message = 'full'
+  # PARAMS.PR_type = 'objectLevel'#'featureBased'
+  PARAMS.PR_type = 'demonstration'
   PARAMS.info_cost = 1.25
 
 # console.log 'PARAMS', PARAMS

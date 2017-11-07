@@ -9,3 +9,5 @@ experiments/*/server.log
 experiments/.ipynb_checkpoints/
 experiments/deploy
 .ipynb_checkpoints/
+python/data
+python/results

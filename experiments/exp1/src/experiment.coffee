@@ -320,11 +320,6 @@ initializeExperiment = ->
           return true
       return false
 
-  foobar = _.extend STRUCTURE, {type: 'mouselab-mdp', _init: -> @trialCount = 0}
-  console.log 'foobar', foobar
-  foobar =
-    type: 'mouselab-mdp'
-    _init: -> @trialCount = 0
   class MDPBlock extends Block
     type: 'mouselab-mdp'
     _init: -> 
@@ -676,8 +671,8 @@ initializeExperiment = ->
       # test
       # check_returning
       # check_code
-      train
-      # test
+      # train
+      test
       finish
       # ppl
     ]

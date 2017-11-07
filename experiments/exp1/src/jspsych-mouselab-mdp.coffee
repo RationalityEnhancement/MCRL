@@ -239,9 +239,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @feedback=true
       } = config
 
-      if DEBUG
-        @demonstrate = true
-
       @initial = 0
       @tree =  [
          [ 1, 5, 9, 13 ],
