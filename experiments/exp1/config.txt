@@ -26,8 +26,8 @@ login_pw =
 threads = 4
 
 [Task Parameters]
-experiment_code_version = 2.3
-num_conds = 4
+experiment_code_version = 1C.1
+num_conds = 3
 num_counters = 1
 
 [Shell Parameters]
