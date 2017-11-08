@@ -1,6 +1,9 @@
+experiment_name='1B';
+%{
+
 %%  Which experiment do you want to analyze?
 experiment_name='1A';
-version = '2';
+version = '3';
 %experiment_name='1B';
 %experiment_name='1C';
 %version = '1';
@@ -18,14 +21,14 @@ if strcmp(experiment_name,'1A')
     training_trials=1:nr_training_trials;
     test_trials=11:16;
     
-    max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
-    min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
+    max_score=load([MCRL_path,'experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
+    min_score=load([MCRL_path,'experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
     
     rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star',experiment_name,'.',version,'.csv']);
     nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star',experiment_name,'.',version,'.csv']);
     
     optimal_nr_clicks=mean(nr_observations_pi_star)';
-    optimal_performance=mean(rel_score_pi_star)'-mean(rel_score_pi_star)';
+    optimal_performance=nanmean(rel_score_pi_star)'-nanmean(rel_score_pi_star)';
     
     PR_types = unique(PR_type);
     PR_types=PR_types([2,3,1]);
@@ -101,15 +104,15 @@ if strcmp(experiment_name,'1A')
     end
     
     fig_test=figure()
-    barwitherr([sem_rel_score_test_block,zeros(3,1)],...
-        [avg_rel_score_test_block,optimal_performance]), hold on
+    barwitherr([sem_rel_score_test_block],...
+        [avg_rel_score_test_block]), hold on
     set(gca,'XTickLabel',{['$',num2str(info_costs(1),2),'/click'],...
-        ['$',num2str(info_costs(2),2),'/click'],['$',num2str(info_costs(3),2),'/click']},'FontSize',16),
-    xlabel('Time cost','FontSize',18)
-    ylabel('Relative performance','FontSize',18)
-    %plot([0.5;3.5],repmat(rel_score_pi_star,[2,1]))
-    legend('no FB','action FB','metacognitive FB','\pi_{LC}','Location','SouthWest')
-    title('Test Block Performance in Exp 1A','FontSize',18)
+        ['$',num2str(info_costs(2),3),'/click'],['$',num2str(info_costs(3),3),'/click']},'FontSize',18),
+    xlabel('Time cost','FontSize',20)
+    ylabel('Performance relative to \pi_{LC}','FontSize',20)
+    %plot([0.5;10.5],repmat(optimal_performance(ic),[2,1]))
+    legend('no FB','action FB','metacognitive FB','Location','SouthWest') %'\pi_{LC}'
+    title('Test Block Performance in Exp 1A','FontSize',20)
     saveas(fig_test,[fig_dir,'test_block_performance_Exp1A.png'])
     saveas(fig_test,[fig_dir,'test_block_performance_Exp1A.fig'])
     
@@ -123,8 +126,8 @@ if strcmp(experiment_name,'1A')
     barwitherr([sem_nr_clicks_test_block,zeros(3,1)],...
         [avg_nr_clicks_test_block,mean(nr_observations_pi_star)'+0.05]), hold on
     %ylim([-1,10])
-    set(gca,'XTickLabel',{['$',num2str(info_costs(1),2),'/click'],...
-        ['$',num2str(info_costs(2),2),'/click'],['$',num2str(info_costs(3),2),'/click']},'FontSize',16),
+    set(gca,'XTickLabel',{['$',num2str(info_costs(1),3),'/click'],...
+        ['$',num2str(info_costs(2),3),'/click'],['$',num2str(info_costs(3),3),'/click']},'FontSize',16),
     xlabel('Time cost','FontSize',18)
     ylabel('Number Clicks','FontSize',18)
     %plot([0.5;3.5],repmat(rel_score_pi_star,[2,1]))
@@ -179,7 +182,7 @@ if strcmp(experiment_name,'1A')
         end
         %legend(FB_types,'Location','SouthEast')
         title(['$',num2str(info_costs(ic)),'/click'],'FontSize',32)
-        ylabel('Relative Performance','FontSize',24)
+        ylabel('Performance relative to \pi_{LC}','FontSize',24)
         xlabel('Trial Number','FontSize',24)
         
         fig2=figure(fig_nr_clicks)
@@ -255,17 +258,26 @@ if strcmp(experiment_name,'1A')
             eval(['complex_model_',cost_labels{cost_index},'_cost',' = fitnlm(X_mean,y_mean,''y_mean ~ (1-b1+b7*x_mean2+b8*x_mean3)*sigmoid(b5+(x_mean1-1)*(b3+b4*x_mean2+b9*x_mean3))+b6+b2*x_mean2+b10*x_mean3'',[0;0;0;0;0;0;0;0;0;0],''Options'',opts)'])
             eval(['model_',cost_labels{cost_index},'_cost',' = fitnlm(X_simple,y_mean,''y_mean ~ (1-b1+b7*x_simple2)*sigmoid(b5+(x_simple1-1)*(b3+b4*x_simple2))+b6+b2*x_simple2'',[0;0;0;0;0;0;0],''Options'',opts)'])
             eval(['null_model_',cost_labels{cost_index},'_cost',' = fitnlm(X_null,y_mean,''y_mean ~ (1-b1)*sigmoid(b5+(x_null-1)*b3)+b6'',[0;0;0;0],''Options'',opts)'])
-            
-            eval(['fit_',cost_labels{cost_index},'(:,1,c)=model_',cost_labels{cost_index},'_cost','.predict([(1:10)'',zeros(10,1)])'])
-            eval(['fit_',cost_labels{cost_index},'(:,2,c)=model_',cost_labels{cost_index},'_cost','.predict([(1:10)'',ones(10,1)])'])
-            eval(['fit_',cost_labels{cost_index},'(:,3,c)=model_',cost_labels{cost_index},'_cost','.predict([(1:10)'',zeros(10,1)])'])
-            
+
             BICs_null_model(cost_index)=eval(['null_model_',cost_labels{cost_index},'_cost.ModelCriterion.BIC']);
             BICs_complex_model(cost_index)=eval(['complex_model_',cost_labels{cost_index},'_cost.ModelCriterion.BIC']);
             BICs_model(cost_index)=eval(['model_',cost_labels{cost_index},'_cost.ModelCriterion.BIC']);
+            
+            best_model=argmin([BICs_null_model(cost_index),BICs_model(cost_index),BICs_complex_model(cost_index)]);
+            
+            model_names={'null_model','model','complex_model'};
+            predictors{1}=[(1:10)',zeros(10,1),zeros(10,1)];
+            predictors{2}=[(1:10)',ones(10,1),zeros(10,1)];
+            predictors{3}=[(1:10)',zeros(10,1),ones(10,1)];
+            model_name=model_names{best_model};
+                        
+            eval(['fit_',cost_labels{cost_index},'(:,1,c)=',model_name,'_',cost_labels{cost_index},'_cost','.predict(predictors{1}(:,1:',int2str(best_model),'))'])
+            eval(['fit_',cost_labels{cost_index},'(:,2,c)=',model_name,'_',cost_labels{cost_index},'_cost','.predict(predictors{2}(:,1:',int2str(best_model),'))'])
+            eval(['fit_',cost_labels{cost_index},'(:,3,c)=',model_name,'_',cost_labels{cost_index},'_cost','.predict(predictors{3}(:,1:',int2str(best_model),'))'])
+            
         end
 
-        BICs=[BICs_model;BICs_null_model;BICs_complex_model];
+        BICs=[BICs_null_model;BICs_model;BICs_complex_model];
         %{
         X=[trial_index(info_cost==1 & included(:,c)),...
             strcmp(PR_type(info_cost==info_costs(2) & included(:,c)),comparisons{c}{1})];
@@ -303,29 +315,31 @@ if strcmp(experiment_name,'1A')
         figure(fig_LC_performance)
         subplot(1,3,ic)
         errorbar(avg_rel_score_by_trial(1:nr_training_trials,:,ic),sem_rel_score_by_trial(1:nr_training_trials,:,ic),'o','MarkerSize',8), hold on
-        plot([1,nr_training_trials],optimal_performance(ic).*[1,1],'.-','LineWidth',2),hold on
+        l0=plot([1,nr_training_trials],optimal_performance(ic).*[1,1],'.-','LineWidth',2),hold on
         set(gca,'FontSize',20)
         xlim([0.5,nr_training_trials+0.5])        
         
         if ic==1
-            plot(1:nr_training_trials,fit_low(:,2,1),'b-','LineWidth',3),hold on
-            plot(1:nr_training_trials,fit_low(:,1,1),'r-','LineWidth',3),hold on
-            plot(1:nr_training_trials,fit_low(:,3,1),'-','LineWidth',3,'Color',[1 .5 0]),hold on
+            l1=plot(1:nr_training_trials,fit_low(:,2,1),'b-','LineWidth',3),hold on
+            l2=plot(1:nr_training_trials,fit_low(:,1,1),'r-','LineWidth',3),hold on
+            l3=plot(1:nr_training_trials,fit_low(:,3,1),'-','LineWidth',3,'Color',[1 .5 0]),hold on %
             legend({FB_types{:},'\pi_{LC}'},'Location','SouthEast')
         elseif ic==2
-            plot(1:nr_training_trials,fit_medium(:,2,1),'b-','LineWidth',3),hold on
-            plot(1:nr_training_trials,fit_medium(:,1,1),'r-','LineWidth',3),hold on
-            plot(1:nr_training_trials,fit_medium(:,3,1),'-','LineWidth',3,'Color',[1 .5 0]),hold on
+            l1=plot(1:nr_training_trials,fit_medium(:,2,1),'b-','LineWidth',3),hold on
+            l2=plot(1:nr_training_trials,fit_medium(:,1,1),'g-','LineWidth',3),hold on
+            l3=plot(1:nr_training_trials,fit_medium(:,3,1),'g-','LineWidth',3),hold on %'Color',[1 .5 0]
             %ylim([0,1.2])
+            legend([l1,l3,l0],{'metacognitive FB','no FB & action FB','\pi_{LC}'},'Location','SouthEast')
         elseif ic==3
-            plot(1:nr_training_trials,fit_high(:,2,1),'b-','LineWidth',3),hold on
-            plot(1:nr_training_trials,fit_high(:,1,1),'r-','LineWidth',3),hold on
-            plot(1:nr_training_trials,fit_high(:,3,2),'-','LineWidth',3,'Color',[1 .5 0]),hold on
+            l1=plot(1:nr_training_trials,fit_high(:,2,1),'k-','LineWidth',3),hold on
+            l2=plot(1:nr_training_trials,fit_high(:,1,1),'k-','LineWidth',3),hold on
+            l3=plot(1:nr_training_trials,fit_high(:,3,1),'k','LineWidth',3),hold on %,'Color',[1 .5 0]
+            legend([l3,l0],{'all conditions','\pi_{LC}'},'Location','SouthEast')
             %ylim([-1.55,1])
         end
 
         title(['$',num2str(info_costs(ic)),'/click'],'FontSize',32)
-        ylabel('Relative Performance','FontSize',24)
+        ylabel('Performance relative to \pi_{LC}','FontSize',24)
         xlabel('Trial Number','FontSize',24)
     end
     
@@ -334,6 +348,21 @@ end
 
 saveas(fig_LC_performance,[fig_dir,'LearningCurves1A.fig'])
 saveas(fig_LC_performance,[fig_dir,'LearningCurves1A.png'])
+
+ic=1;
+fig_LC_low=figure()
+errorbar(avg_rel_score_by_trial(1:nr_training_trials,:,ic),sem_rel_score_by_trial(1:nr_training_trials,:,ic),'o','MarkerSize',8), hold on
+l0=plot([1,nr_training_trials],optimal_performance(ic).*[1,1],'.-','LineWidth',2),hold on
+set(gca,'FontSize',20)
+xlim([0.5,nr_training_trials+0.5])
+l1=plot(1:nr_training_trials,fit_low(:,2,1),'b-','LineWidth',3),hold on
+l2=plot(1:nr_training_trials,fit_low(:,1,1),'r-','LineWidth',3),hold on
+l3=plot(1:nr_training_trials,fit_low(:,3,1),'-','LineWidth',3,'Color',[1 .5 0]),hold on %
+legend({FB_types{:},'\pi_{LC}'},'Location','SouthEast')
+title(['Training Block', '$',num2str(info_costs(ic)),'/click'],'FontSize',32)
+ylabel('Performance relative to \pi_{LC}','FontSize',24)
+xlabel('Trial Number','FontSize',24)
+
 
 %% analyze number of clicks on the first trial before vs. after the first message
 for a=1:numel(action_times)
@@ -361,23 +390,30 @@ for c=1:3
     avg_nr_clicks_before_msg(c)=mean(nr_clicks_before_first_msg(cost_condition==c))
     avg_nr_clicks_after_msg(c)=mean(nr_clicks_after_first_msg(cost_condition==c))
 end
-%% Analyze Data from Experiment 1B
+%}
 
+%% Analyze Data from Experiment 1B
+experiment_name='1B';
 if strcmp(experiment_name,'1B')
     
-    MCRL_path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
+    MCRL_path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';        
     
     experiment_name='1B';
+    version='2';
+    fig_dir=[MCRL_path,'results/figures/',experiment_name,version,'/'];
     
-    max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.csv']);
-    min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.csv']);
+    max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
+    min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
     
-    score_pi_star=csvread([MCRL_path,'experiments/data/stimuli/exp1/score_pi_star.csv']);
-    rel_score_pi_star=(score_pi_star-min_score)./(max_score-min_score);
+    score_pi_star=csvread([MCRL_path,'experiments/data/stimuli/exp1/score_pi_star',...
+        experiment_name,'.',version,'.csv']);
+    rel_score_pi_star=score_pi_star-score_pi_star;%(score_pi_star-min_score)./(max_score-min_score);
     
-    nr_observations_pi_star=csvread([MCRL_path,'experiments/data/stimuli/exp1/nr_observations_pi_star.csv']);
+    nr_observations_pi_star=csvread([MCRL_path,...
+        'experiments/data/stimuli/exp1/nr_observations_pi_star',...
+        experiment_name,'.',version,'.csv']);
     
-    eval(['import_data_exp',experiment_name])
+    eval(['import_data_exp',experiment_name,version])
     
     message_types={'simple','full'};%unique(message); message_types=message_types(2:-1:1);
     PR_types=unique(PR_type); PR_types=PR_types(2:-1:1);
@@ -386,8 +422,8 @@ if strcmp(experiment_name,'1B')
     
     for i=1:numel(score)
         condition_nr=find(info_costs==info_cost(i));
-        relative_score(i,1)=(score(i)-min_score(trial_i(i)+1,condition_nr))/...
-            (max_score(trial_i(i)+1,condition_nr)-min_score(trial_i(i)+1,condition_nr));
+        relative_score(i,1)=score(i)-max_score(trial_id(i)+1,condition_nr);%(score(i)-min_score(trial_id(i)+1,condition_nr))/...
+            %(max_score(trial_id(i)+1,condition_nr)-min_score(trial_id(i)+1,condition_nr));
     end
     
     conditions=[1,1; 1 2; 2 1; 2 2];
@@ -416,15 +452,15 @@ if strcmp(experiment_name,'1B')
             sem_nr_clicks(t,c)=sem(n_click(in_condition));
         end
         
-        avg_test_block_performance(c)=mean(avg_rel_score(test_trials,c));
+        avg_test_block_performance(c)=nanmean(avg_rel_score(test_trials,c));
         sem_test_block_performance(c)=sqrt(sum(sem_rel_score(test_trials,c).^2)/numel(test_trials)^2);
         
         avg_nr_clicks_test_block(c)=mean(avg_nr_clicks(test_trials,c));
         sem_nr_clicks_test_block(c)=sem(avg_nr_clicks(test_trials,c));
     end
     
-    optimal_nr_clicks_by_trial_type=nr_observations_pi_star(:,2);
-    optimal_nr_clicks=optimal_nr_clicks_by_trial_type(trial_i+1);
+    optimal_nr_clicks_by_trial_type=nr_observations_pi_star;
+    optimal_nr_clicks=optimal_nr_clicks_by_trial_type(trial_id+1);
     
     [h,p,ci,stats]=ttest(n_click(trial_index==16 & strcmp(PR_type,'featureBased') & strcmp(message,'full'))-n_click(trial_index==10 & strcmp(PR_type,'featureBased') & strcmp(message,'full')))
     
@@ -456,14 +492,14 @@ if strcmp(experiment_name,'1B')
         
     end
     fig1=figure(1),
-    plot(training_trials,mean(rel_score_pi_star(:,2))*ones(size(training_trials)),'LineWidth',3)
+    plot(training_trials,mean(rel_score_pi_star)*ones(size(training_trials)),'LineWidth',3)
     legend([condition_names(1,:)';'Optimal Strategy'],'Location','SouthEast')
-    saveas(fig1,[MCRL_path,'matlab_code/dataAnalysis/figures/AvgRelScore',experiment_name,'.png'])
+    saveas(fig1,[fig_dir,'AvgRelScore',experiment_name,'.png'])
     
     fig2=figure(2),
-    plot(training_trials,mean(nr_observations_pi_star(:,2))*ones(size(training_trials)),'LineWidth',3)
+    plot(training_trials,mean(nr_observations_pi_star)*ones(size(training_trials)),'LineWidth',3)
     legend([condition_names(1,:)';'Optimal Strategy'],'Location','SouthEast')
-    saveas(fig2,[MCRL_path,'matlab_code/dataAnalysis/figures/AvgNrClicks',experiment_name,'.png'])
+    saveas(fig2,[fig_dir,'AvgNrClicks',experiment_name,'.png'])
     
     
     fig_all_scores=figure(),  fig_all_clicks=figure()
@@ -485,16 +521,16 @@ if strcmp(experiment_name,'1B')
         
     end
     figure(fig_all_scores),
-    plot(1:nr_trials,mean(rel_score_pi_star(:,2))*ones(1,nr_trials),'LineWidth',3)
+    plot(1:nr_trials,mean(rel_score_pi_star)*ones(1,nr_trials),'LineWidth',3)
     xlim([0.5,nr_trials+0.5])
     legend([condition_names(1,:)';'Optimal Strategy'],'Location','SouthEast')
-    saveas(fig_all_scores,[MCRL_path,'matlab_code/dataAnalysis/figures/AvgRelScoreAllTrials',experiment_name,'.png'])
+    saveas(fig_all_scores,[fig_dir,'AvgRelScoreAllTrials',experiment_name,'.png'])
     
     figure(fig_all_clicks),
-    plot(1:nr_trials,mean(nr_observations_pi_star(:,2))*ones(1,nr_trials),'LineWidth',3)
+    plot(1:nr_trials,mean(nr_observations_pi_star)*ones(1,nr_trials),'LineWidth',3)
     xlim([0.5,nr_trials+0.5])
     legend([condition_names(1,:)';'Optimal Strategy'],'Location','SouthEast')
-    saveas(fig_all_clicks,[MCRL_path,'matlab_code/dataAnalysis/figures/AvgNrClicksAllTrials',experiment_name,'.png'])
+    saveas(fig_all_clicks,[fig_dir,'AvgNrClicksAllTrials',experiment_name,'.png'])
     
     
     
@@ -504,11 +540,12 @@ if strcmp(experiment_name,'1B')
     message_nr = 0* strcmp(message,message_types{1}) + 1* strcmp(message,message_types{2});
     FB_nr = 0* strcmp(PR_type,PR_types{1}) + 1* strcmp(PR_type,PR_types{2});
     p_FB_test=anovan(relative_score(in_test_block),{FB_nr(in_test_block),...
-        message_nr(in_test_block)},'varnames',{'Delay','Message'},'model','full');
-    
-    
+        message_nr(in_test_block),trial_index(in_test_block)},...
+        'varnames',{'Delay','Message','Trial Nr.'},'model','full');
+        
     p_clicks_test=anovan(n_click(in_test_block),{FB_nr(in_test_block),...
-        message_nr(in_test_block)},'varnames',{'Delay','Message'},'model','full');
+        message_nr(in_test_block),trial_index(in_test_block)},...
+        'varnames',{'Delay','Message','Trial Number'},'model','full');
     
     [h,p,ci,stats]=ttest(n_click(in_test_block & strcmp(PR_type,'featureBased'))-optimal_nr_clicks(in_test_block & strcmp(PR_type,'featureBased')))
     
@@ -525,7 +562,7 @@ if strcmp(experiment_name,'1B')
         [0,avg_test_block_performance([2])],'BarWidth',0.2),hold on
     handles(2,2)=barwitherr([0,sem_test_block_performance([3])],[0,1.825],...
         [0,avg_test_block_performance([4])],'BarWidth',0.2),hold on
-    set(gca,'FontSize',16,'XTickLabel',{})
+    set(gca,'FontSize',24,'XTickLabel',{})
     set(handles(1,1),'FaceColor',[1 1 1],'BarWidth',0.2), set(handles(1,2),'FaceColor',[1 1 1],'BarWidth',0.2)
     set(handles(2,1),'FaceColor',[1 1 1],'BarWidth',0.2) ,set(handles(2,2),'FaceColor',[1 1 1],'BarWidth',0.2)
     set(handles(1,1),'LineStyle','--','LineWidth',3,'EdgeColor',[1 0 0],'BarWidth',0.2),
@@ -537,27 +574,26 @@ if strcmp(experiment_name,'1B')
     set(handles(2,1),'BarWidth',0.1)
     set(handles(2,2),'BarWidth',0.05)
     xlim([0.75,2])
-    ylim([0.3,0.9])
-    handles(3,1)=plot([0.5,2.5],mean(rel_score_pi_star(:,2))*ones(1,2),'LineWidth',3)
+    %ylim([0.3,0.9])
+    handles(3,1)=plot([0.5,2.5],mean(rel_score_pi_star)*ones(1,2),'LineWidth',3)
     %handles(3)=plot([0.5,2.5],mean(rel_score_pi_star(:,2))*ones(1,2),'LineWidth',3)
     %set(gca,'XTickLabel',{'constant delays','PR-based delays'},'FontSize',16)
-    %legend([handles(1,:),handles(2,:)],...
-    %    'no PR, no message','no PR, message','PR, no message','PR, message','Location','best')
-    ylabel('Relative Performance in Test Block','FontSize',18)
+    legend([handles(1,1),handles(1,2),handles(2,1),handles(2,2)],...
+        'no PR, no message','no PR, message','PR, no message','PR, message','Location','best')
+    ylabel('Relative Performance in Test Block','FontSize',24)
     %title('Experiment 1B','FontSize',18)
-    saveas(fig,'figures/TestPerformance1B.png')
-    
+    saveas(fig,[fig_dir,'TestPerformance1B.png'])
     
     fig=figure()
     handles=barwitherr([sem_nr_clicks_test_block([1,2]); sem_nr_clicks_test_block([3,4])],...
         [avg_nr_clicks_test_block([1,2]); avg_nr_clicks_test_block([3,4])]),
     hold on
-    handles(3)=plot([0.5,2.5],mean(nr_observations_pi_star(:,2))*ones(1,2),'LineWidth',3)
+    handles(3)=plot([0.5,2.5],mean(nr_observations_pi_star)*ones(1,2),'LineWidth',3)
     set(gca,'XTickLabel',{'constant delays','PR-based delays'},'FontSize',16)
     legend(handles,'No message','Message','optimal strategy','Location','North')
     ylabel('Number Clicks in Test Block','FontSize',16)
     title('Experiment 1B','FontSize',18)
-    saveas(fig,'figures/NrClicksTestBlock1B.png')
+    saveas(fig,[fig_dir,'NrClicksTestBlock1B.png'])
     
     
     % Learning Curves
@@ -623,6 +659,9 @@ end
     BIC_noPR_noMessage=model_noPR_noMessage.ModelCriterion.BIC
     BIC_complex=model_with_interaction.ModelCriterion.BIC
     
+    BICs=[BIC_model,BIC_noPR_Message,BIC_PR_noMessage,BIC_noPR_noMessage,BIC_complex]
+    best_model=argmin(BICs)
+    
     z=(model.Coefficients.Estimate(2)-model.Coefficients.Estimate(3))/sqrt(model.Coefficients.SE(2)^2+model.Coefficients.SE(3)^2)
     p=1-normcdf(z)
     
@@ -674,36 +713,37 @@ end
         figure(fig_score)
         plot(model_fit_by_condition(:,c),'LineStyle',line_styles{c},...
             'LineWidth',3,'Color',line_colors{c}),hold on
-        set(gca,'FontSize',16)
+        set(gca,'FontSize',24)
         
         figure(fig_clicks)
         plot(click_model_fit_by_condition(:,c),'LineStyle',line_styles{c},...
             'LineWidth',3,'Color',line_colors{c}),hold on
-        set(gca,'FontSize',16)
+        set(gca,'FontSize',24)
         
     end
     figure(fig_score)
-    plot(training_trials,mean(rel_score_pi_star(:,2))*ones(size(training_trials)),'LineWidth',3)
+    plot(training_trials,mean(rel_score_pi_star)*ones(size(training_trials)),'LineWidth',3)
     
     figure(fig_clicks)
-    plot(training_trials,mean(nr_observations_pi_star(:,2))*ones(size(training_trials)),'LineWidth',3)
+    plot(training_trials,mean(nr_observations_pi_star)*ones(size(training_trials)),'LineWidth',3)
     
     for c=1:numel(condition)
         figure(fig_score)
         plot(avg_rel_score(training_trials,c),'o','Color',line_colors{c},'MarkerFaceColor',marker_colors{c})
-        set(gca,'FontSize',16)
+        set(gca,'FontSize',24)
         
         figure(fig_clicks)
         plot(avg_nr_clicks(training_trials,c),'o','Color',line_colors{c},'MarkerFaceColor',marker_colors{c})
-        set(gca,'FontSize',16)
+        set(gca,'FontSize',24)
     end
+    
     figure(fig_score)
     xlim([1,10])
-    xlabel('Trial Number','FontSize',18)
-    ylabel('Relative Score','FontSize',17)
+    xlabel('Trial Number','FontSize',24)
+    ylabel('Relative Score','FontSize',24)
     legend('no PR, no message','no PR, message','PR, no message',...
         'PR, message','optimal strategy','Location','South')
-    saveas(fig_score,'figures/LearningCurvesExp1B.png')
+    saveas(fig_score,[fig_dir,'LearningCurvesExp1B.png'])
     
     figure(fig_clicks)
     xlim([1,10])
@@ -711,74 +751,86 @@ end
     ylabel('Number Clicks','FontSize',17)
     legend('no PR, no message','no PR, message','PR, no message',...
         'optimal strategy','PR, message','Location','South')
-    saveas(fig_clicks,'figures/LearningCurvesClicksExp1B.png')
+    saveas(fig_clicks,[fig_dir,'LearningCurvesClicksExp1B.png'])
     
 end
 
 %% Analyze data from Experiment 1C
+
+experiment_name='1C';
+version='0';
+
+MCRL_path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
+fig_dir=[MCRL_path,'results/figures/',experiment_name,version,'/'];
+
 if strcmp(experiment_name,'1C')
     nr_trials=16;
     
     training_trials = 1:10;
     test_trials=11:16;
     
-    conditions = unique(PR_type);
+    eval(['import_data_exp',experiment_name,version])    
+        
+    conditions = unique(PR_type1);
     
     max_score=load([MCRL_path,'/experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
     min_score=load([MCRL_path,'/experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
     
-    rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.',version,'.csv'])
+    %rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star_',experiment_name,'.',version,'.csv'])
     nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star_',experiment_name,'.',version,'.csv'])
+    score_pi_star=csvread([MCRL_path,'experiments/data/stimuli/exp1/score_pi_star_',...
+        experiment_name,'.',version,'.csv']);
+    rel_score_pi_star=score_pi_star-score_pi_star;%(score_pi_star-min_score)./(max_score-min_score);
     
-    info_costs=unique(info_cost);
+    info_costs=unique(info_cost1);
     
-    condition_nr=2;
-    for i=1:numel(score)
-        relative_score(i,1)=(score(i)-min_score(trial_i(i)+1,condition_nr))/...
-            (max_score(trial_i(i)+1,condition_nr)-min_score(trial_i(i)+1,condition_nr));
+    %condition_nr=2;
+    for i=1:numel(score1)
+        relative_score(i,1)=score1(i)-max_score(trial_id1(i)+1);%(score(i)-min_score(trial_i(i)+1,condition_nr))/...
+            %(max_score(trial_i(i)+1,condition_nr)-min_score(trial_i(i)+1,condition_nr));
     end
     
     
     for c=1:numel(conditions)
         avg_rel_score_test_block(c)=mean(relative_score(...
-            strcmp(PR_type,conditions{c}) & ismember(trial_index,test_trials)));
+            strcmp(PR_type1,conditions{c}) & ismember(trial_index1,test_trials)));
         
         sem_rel_score_test_block(c)=sem(relative_score(...
-            strcmp(PR_type,conditions{c}) & ismember(trial_index,test_trials)));
+            strcmp(PR_type1,conditions{c}) & ismember(trial_index1,test_trials)));
         
-        avg_nr_clicks_test_block(c)=mean(n_click(...
-            strcmp(PR_type,conditions{c}) & ismember(trial_index,test_trials)));
+        avg_nr_clicks_test_block(c)=mean(n_click1(...
+            strcmp(PR_type1,conditions{c}) & ismember(trial_index1,test_trials)));
         
-        sem_nr_clicks_test_block(c)=sem(n_click(...
-            strcmp(PR_type,conditions{c}) & ismember(trial_index,test_trials)));
+        sem_nr_clicks_test_block(c)=sem(n_click1(...
+            strcmp(PR_type1,conditions{c}) & ismember(trial_index1,test_trials)));
         
     end
     
     
-    condition_labels = {'Demonstration','Metacognitive FB','Practice without FB'};
+    condition_labels = {'Demonstration','Metacognitive FB','No FB'};
     
     fig_1C=figure()
     barwitherr(sem_rel_score_test_block,avg_rel_score_test_block,'FaceColor',[0.75,0.75,0.75])
-    set(gca,'XTickLabel',condition_labels,'FontSize',18)
-    ylabel('Relative Score','FontSize',18)
+    set(gca,'XTickLabel',condition_labels,'FontSize',24)
+    ylabel('Relative Score','FontSize',24)
     hold on
-    plot([0.5,3.5],repmat(rel_score_pi_star(2),[1,2]),'LineWidth',3)
-    title('Test Block Performance in Exp 1C','FontSize',18)
+    plot([0.5,3.5],repmat(mean(rel_score_pi_star),[1,2]),'LineWidth',3)
+    title('Test Block Performance','FontSize',24)
     
-    saveas(fig_1C,'figures/PerformanceExp1C.png')
+    saveas(fig_1C,[fig_dir,'PerformanceExp1C.png'])
     
-    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
-        relative_score(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)))
+    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type1,'demonstration') & ismember(trial_index1,test_trials)),...
+        relative_score(strcmp(PR_type1,'featureBased') & ismember(trial_index1,test_trials)))
     
-    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)),...
-        relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))
+    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type1,'featureBased') & ismember(trial_index1,test_trials)),...
+        relative_score(strcmp(PR_type1,'none') & ismember(trial_index1,test_trials)))
     
-    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
-        relative_score(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))
+    [h,p,ci,stats]=ttest2(relative_score(strcmp(PR_type1,'demonstration') & ismember(trial_index1,test_trials)),...
+        relative_score(strcmp(PR_type1,'none') & ismember(trial_index1,test_trials)))
     
-    test_scores = relative_score(ismember(trial_index,test_trials));
-    test_clicks = n_click(ismember(trial_index,test_trials));
-    training_method = PR_type(ismember(trial_index,test_trials))
+    test_scores = relative_score(ismember(trial_index1,test_trials));
+    test_clicks = n_click1(ismember(trial_index1,test_trials));
+    training_method = PR_type1(ismember(trial_index1,test_trials))
     anovan(test_scores, {training_method})
     anovan(test_clicks, {training_method})
     
@@ -790,16 +842,16 @@ if strcmp(experiment_name,'1C')
     plot([0.5,3.5],repmat(nr_observations_pi_star(2),[1,2]),'LineWidth',3)
     title('Test Block of Exp 1C','FontSize',18)
     
-    saveas(fig_1C_clicks,'figures/ClicksExp1C.png')
+    saveas(fig_1C_clicks,[fig_dClicksExp1C.png')
     
-    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
-        n_click(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)))
+    [h,p,ci,stats]=ttest2(n_click1(strcmp(PR_type1,'demonstration') & ismember(trial_index1,test_trials)),...
+        n_click1(strcmp(PR_type1,'featureBased') & ismember(trial_index1,test_trials)))
     
-    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'featureBased') & ismember(trial_index,test_trials)),...
-        n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))
+    [h,p,ci,stats]=ttest2(n_click1(strcmp(PR_type1,'featureBased') & ismember(trial_index1,test_trials)),...
+        n_click1(strcmp(PR_type1,'none') & ismember(trial_index1,test_trials)))
     
-    [h,p,ci,stats]=ttest2(n_click(strcmp(PR_type,'demonstration') & ismember(trial_index,test_trials)),...
-        n_click(strcmp(PR_type,'none') & ismember(trial_index,test_trials)))
+    [h,p,ci,stats]=ttest2(n_click1(strcmp(PR_type1,'demonstration') & ismember(trial_index1,test_trials)),...
+        n_click1(strcmp(PR_type1,'none') & ismember(trial_index1,test_trials)))
     
 end
 
@@ -1063,17 +1115,99 @@ import_data_pilot0d993
 
 is_training=trial_index1<=10;
 is_test=trial_index1>10;
-is_b
+is_beginning=trial_index1<=3;
 
 info_costs = unique(info_cost1);
 
 for ic=1:numel(info_costs)
     avg_nr_clicks_training(ic)=mean(n_click1(is_training & info_cost1==info_costs(ic)))
     sem_nr_clicks_training(ic)=sem(n_click1(is_training & info_cost1==info_costs(ic)))
+
+    avg_nr_clicks_start(ic)=mean(n_click1(is_beginning & info_cost1==info_costs(ic)))
+    sem_nr_clicks_start(ic)=sem(n_click1(is_beginning & info_cost1==info_costs(ic)))
+    
     
     avg_nr_clicks_test(ic)=mean(n_click1(is_test & info_cost1==info_costs(ic)))
     sem_nr_clicks_test(ic)=sem(n_click1(is_test & info_cost1==info_costs(ic)))
     
     avg_nr_clicks(ic)=mean(n_click1(info_cost1==info_costs(ic)))
     sem_nr_clicks(ic)=sem(n_click1(info_cost1==info_costs(ic)))
+end
+
+%% 
+import_data_pilot0d995
+is_training=trial_index<=10;
+is_test=trial_index>10;
+is_beginning=trial_index<=3;
+
+info_costs = unique(info_cost);
+
+for ic=1:numel(info_costs)
+    avg_nr_clicks_training(ic)=mean(n_click(is_training & info_cost==info_costs(ic)))
+    sem_nr_clicks_training(ic)=sem(n_click(is_training & info_cost==info_costs(ic)))
+
+    avg_nr_clicks_start(ic)=mean(n_click(is_beginning & info_cost==info_costs(ic)))
+    sem_nr_clicks_start(ic)=sem(n_click(is_beginning & info_cost==info_costs(ic)))
+    
+    
+    avg_nr_clicks_test(ic)=mean(n_click(is_test & info_cost==info_costs(ic)))
+    sem_nr_clicks_test(ic)=sem(n_click(is_test & info_cost==info_costs(ic)))
+    
+    avg_nr_clicks(ic)=mean(n_click(info_cost==info_costs(ic)))
+    sem_nr_clicks(ic)=sem(n_click(info_cost==info_costs(ic)))
+end
+
+%% compute the delays participants would have experienced in Pilot 0.995
+load_PRs_pilot_exp_0d995
+
+conditions = unique(info_cost1);
+
+load PR_thresholds
+
+click_thresholds = [thresholds.low_cost(:),thresholds.med_cost(:),thresholds.high_cost(:)];
+nr_locations=16;
+%threshold click PRs
+for i=1:numel(click_pr)
+    
+    condition(i)=find(info_cost1(i)==conditions);
+    clicks_remaining=nr_locations-(click_num(i)-1);
+    
+    click_threshold=click_thresholds(clicks_remaining,condition(i));
+    
+    if click_pr(i)<-click_threshold
+        thresholded_click_pr(i)=click_pr(i);
+    else
+        thresholded_click_pr(i)=0;
+    end
+end
+
+delay_threshold = 2;
+delay_per_point = - 1.5;
+delays = delay_per_point * thresholded_click_pr;
+
+%compute the vicarious delay of each trial
+participants=unique(pid1);
+trial_ids = unique(trial_index1);
+for p=1:numel(participants)
+    for t=1:numel(trial_ids)
+        indices = find(pid1==participants(p) & trial_index1==trial_ids(t));
+        
+        total_delay(p,t)=sum(delays(indices));
+        
+        if total_delay(p,t)>delay_threshold
+            thresholded_total_delay(p,t)=total_delay(p,t);
+        else
+            thresholded_total_delay(p,t)=0;
+        end
+        
+        condition_by_trial(p,t)=unique(info_cost1(indices));
+        
+    end
+end
+%compute the average vicarious delay by condition
+avg_delay_condition=NaN(numel(conditions),1);
+for c=1:numel(conditions)
+    
+    avg_delay_by_condition(c) = mean(thresholded_total_delay(condition_by_trial(:)== conditions(c)));
+    std_delay_by_condition(c) = std(thresholded_total_delay(condition_by_trial(:)== conditions(c)))
 end
