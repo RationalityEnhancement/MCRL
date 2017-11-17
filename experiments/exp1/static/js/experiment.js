@@ -431,7 +431,7 @@ initializeExperiment = function() {
     code: 'globalStore.display_element.html(JSON.stringify(flip()))'
   });
   if (DEBUG) {
-    experiment_timeline = [test, finish];
+    experiment_timeline = [train, test, finish];
   } else {
     experiment_timeline = (function() {
       var tl;

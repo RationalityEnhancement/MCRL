@@ -671,7 +671,7 @@ initializeExperiment = ->
       # test
       # check_returning
       # check_code
-      # train
+      train
       test
       finish
       # ppl
