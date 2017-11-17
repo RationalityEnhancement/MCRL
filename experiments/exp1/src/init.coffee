@@ -6,7 +6,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 7
+  condition = 8
   workerId = ['debugFRED']
   
 else
@@ -34,7 +34,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-experiment_nr = 1 
+experiment_nr = 1.7 
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    

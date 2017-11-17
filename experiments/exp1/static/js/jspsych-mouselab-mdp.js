@@ -695,7 +695,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             penalty = result.delay ? redGreenSpan("<p>" + result.delay + " second penalty!</p>", -1) : void 0;
           }
           info = (function() {
-            if (PARAMS.message === 'full' && PARAMS.PR_type === !"objectLevel") {
+            if (PARAMS.message === 'full' && PARAMS.PR_type !== "objectLevel") {
               return "Given the information you collected, your decision was " + (result.informationUsedCorrectly ? redGreenSpan('optimal.', 1) : redGreenSpan('suboptimal.', -1));
             } else {
               return '';

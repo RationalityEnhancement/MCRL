@@ -5,7 +5,7 @@ DEBUG = true;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 7;
+  condition = 8;
   workerId = ['debugFRED'];
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
@@ -31,7 +31,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
  */
 
-experiment_nr = 1;
+experiment_nr = 1.7;
 
 switch (experiment_nr) {
   case 0:
