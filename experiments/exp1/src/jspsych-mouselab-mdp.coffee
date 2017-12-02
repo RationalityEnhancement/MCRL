@@ -459,7 +459,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     updatePR: (action, r) ->
       state = @beliefState.slice()
       new_location = _.last @data.path
-      objectQs = @objectQs    
+      objectQs = @objectQs
                   
       @PRdata = @PRdata.then (data) =>
         arg = {state, action}    

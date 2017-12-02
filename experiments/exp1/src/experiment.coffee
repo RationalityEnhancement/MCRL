@@ -726,7 +726,7 @@ initializeExperiment = ->
         if reprompt?
           window.clearInterval reprompt
         psiturk.computeBonus('compute_bonus', psiturk.completeHIT)
-      error: -> prompt_resubmit
+      error: prompt_resubmit
 
 
   prompt_resubmit = ->
