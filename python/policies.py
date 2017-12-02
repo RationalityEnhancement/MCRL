@@ -2,7 +2,7 @@ from collections import namedtuple, defaultdict, Counter, deque
 import itertools as it
 import numpy as np
 from abc import ABC, abstractmethod
-from utils import clear_screen, PriorityQueue
+from utils import PriorityQueue
 import time
 np.set_printoptions(precision=3, linewidth=200)
 from scipy import stats

@@ -91,7 +91,7 @@ class LiederQ(ActionValueFunction):
         if action == self.env.term_action:
             return self.env.expected_term_reward(state)
         else:
-            return np.dot(self.theta, self.env.action_features(action))
+            return np.dot(self.theta, self.env.action_features(action, state))
 
     def predict(self, state):
         qs = np.full(self.agent.env.action_space.n, -np.inf)

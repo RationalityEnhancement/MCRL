@@ -23,7 +23,7 @@ class MouselabEnv(gym.Env):
     """MetaMDP for a tree with a discrete unobserved reward function."""
     metadata = {'render.modes': ['human', 'array']}
     term_state = '__term_state__'
-    def __init__(self, branch=2, height=2, reward=None, cost=0, 
+    def __init__(self, branch=2, height=2, reward=None, cost=0, sample_term_reward=False,
                  ground_truth=None, expand_only=True, initial_states=None):
         self.branch = branch
         self._binary = branch == 2
@@ -59,7 +59,7 @@ class MouselabEnv(gym.Env):
             # else:u
                 # self.init = reward
         # self.expected_term_reward = self.reward.expectation()
-        self.sample_term_reward = False
+        self.sample_term_reward = sample_term_reward
         self.action_space = spaces.Discrete(len(self.tree) + 1)
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=len(self.tree))
         self.subtree = self._get_subtree()
@@ -81,8 +81,8 @@ class MouselabEnv(gym.Env):
             # self._state = self.term_state
             if self.sample_term_reward:
                 if self.ground_truth is not None:
-                    path = list(self.best_path())
-                    reward = self.ground_truth[path].sum()
+                    path = random.choice(list(self.optimal_paths()))
+                    reward = self.ground_truth[list(path)].sum()
                 else:
                     reward = self.term_reward().sample()
             else:
@@ -187,6 +187,22 @@ class MouselabEnv(gym.Env):
             n = max(self.tree[n],
                     key=lambda n1: self.node_quality(n1, state).expectation())
             yield n
+    
+    def optimal_paths(self, state=None):
+        state = state if state is not None else self._state
+        def rec(path):
+            children = self.tree[path[-1]]
+            if not children:
+                yield path
+                return
+            quals = [self.node_quality(n1, state).expectation()
+                     for n1 in children]
+            best_q = max(quals)
+            for n1, q in zip(children, quals):
+                if np.abs(q - best_q) < 0.01:
+                    yield from rec(path + (n1,))
+
+        yield from rec((0,))
 
     @lru_cache(CACHE_SIZE)
     def expected_term_reward(self, state):
