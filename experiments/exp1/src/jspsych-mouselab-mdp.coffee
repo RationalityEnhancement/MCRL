@@ -141,6 +141,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
 
   `function loadObjectLevelPRs(){
+    throw new Error('Fred: this file shouldn't be used')
     var PR_json = loadJson("static/json/ObjectLevelPRs.json")
     var object_level_PRs=PR_json
 
@@ -219,6 +220,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @edgeDisplay='always'  # one of 'never', 'hover', 'click', 'always'
         @edgeClickCost=0  # subtracted from score every time an edge is clicked
         @trial_id
+        @env_id
         @objectQs
         @demonstrate=false
         @PRdata=[]
@@ -322,6 +324,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         plannedTooMuch: []
         informationUsedCorrectly: []
         trial_id: @trial_id
+        env_id: @env_id
         trialIndex: @trialIndex
         score: 0
         path: [@initial]
