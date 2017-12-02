@@ -1,4 +1,4 @@
-DEBUG = false
+DEBUG = true
 
 if DEBUG
   console.log """
@@ -6,9 +6,8 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 3
+  condition = 8
   workerId = ['debugFRED']
-
   
 else
   console.log """
@@ -35,7 +34,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-experiment_nr = 3 
+experiment_nr = 1.7 
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
@@ -125,8 +124,8 @@ if experiment_nr is 4
 
 if DEBUG
   # PARAMS.message = 'full'
-  # PARAMS.PR_type = 'objectLevel'#'featureBased'
-  PARAMS.PR_type = 'demonstration'
+  PARAMS.PR_type = 'objectLevel'#'featureBased'
+  #PARAMS.PR_type = 'demonstration'
   PARAMS.info_cost = 1.25
 
 # console.log 'PARAMS', PARAMS

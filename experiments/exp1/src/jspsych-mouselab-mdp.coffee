@@ -665,7 +665,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
               penalty = if result.delay then redGreenSpan "<p>#{result.delay} second penalty!</p>", -1
           
           info = do ->
-            if PARAMS.message is 'full'
+            if PARAMS.message is 'full' and PARAMS.PR_type isnt "objectLevel"
               "Given the information you collected, your decision was " + \
               if result.informationUsedCorrectly
                 redGreenSpan 'optimal.', 1
