@@ -73,7 +73,7 @@ $(window).on('load', function() {
     if (SHOW_PARTICIPANT_DATA) {
       TRIALS = loadJson("static/json/data/1B.0/stimuli/" + COST_LEVEL + "_cost.json");
     } else {
-      TRIALS = loadJson("static/json/rewards.json");
+      TRIALS = loadJson("static/json/rewards_" + COST_LEVEL + "_cost.json");
       STRUCTURE = loadJson("static/json/structure.json");
       THRESHOLDS = loadJson("static/json/thresholds_" + COST_LEVEL + "_cost.json");
       console.log('STRUCTURE', STRUCTURE);
@@ -476,9 +476,7 @@ initializeExperiment = function() {
         }
         return psiturk.computeBonus('compute_bonus', psiturk.completeHIT);
       },
-      error: function() {
-        return prompt_resubmit;
-      }
+      error: prompt_resubmit
     });
   };
   prompt_resubmit = function() {

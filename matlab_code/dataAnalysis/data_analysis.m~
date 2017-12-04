@@ -67,25 +67,25 @@ if strcmp(experiment_name,'1A')
     anovan(relative_score,{PR_type,info_cost},'varnames',{'FB','cost'},'model','interaction')
     
     in_test_block=trial_index>10;
-    anovan(z_score(in_test_block),{PR_type(in_test_block),info_cost},'varnames',{'FB','cost'},'model','interaction')
+    anovan(z_score(in_test_block),{PR_type(in_test_block),info_cost(in_test_block),trial_index(in_test_block)},'varnames',{'FB','cost','trial number'},'model','interaction')
     
     
     
     for ic=1:numel(info_costs)
         [h_optimal_vs_none(ic),p_optimal_vs_none(ic),ci_optimal_vs_none(:,ic),stats_optimal_vs_none{ic}]=...
-            ttest2(relative_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)),...
-            relative_score(strcmp(PR_type,'none') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
+            ttest2(z_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)),...
+            z_score(strcmp(PR_type,'none') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
         
         [h_optimal_vs_action(ic),p_optimal_vs_action(ic),ci_optimal_vs_action(:,ic),stats_optimal_vs_action{ic}]=...
-            ttest2(relative_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)),...
-            relative_score(strcmp(PR_type,'objectLevel') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
+            ttest2(z_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)),...
+            z_score(strcmp(PR_type,'objectLevel') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
         
         [h_action_vs_none(ic),p_action_vs_none(ic),ci_action_vs_none(:,ic),stats_action_vs_none{ic}]=...
-            ttest2(relative_score(strcmp(PR_type,'objectLevel') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)),...
-            relative_score(strcmp(PR_type,'none') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
+            ttest2(z_score(strcmp(PR_type,'objectLevel') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)),...
+            z_score(strcmp(PR_type,'none') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
         
         [h_pi_star_vs_MC_FB(ic),p_pi_star_vs_MC_FB(ic),ci_pi_star_vs_MC_FB,stats_pi_star_vs_MC_FB(ic)]=...
-            ttest(relative_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials))-optimal_performance(ic))
+            ttest(z_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials))-mean(z_score_pi_star(:,ic)))
         
         %analyze the number of clicks
         [h_optimal_vs_none_clicks(ic),p_optimal_vs_none_clicks(ic),ci_optimal_vs_none_clicks(:,ic),stats_optimal_vs_none_clicks{ic}]=...
@@ -190,14 +190,14 @@ if strcmp(experiment_name,'1A')
 
         
         fig_test(k)=figure()
-        %ids=barwitherr([sem_score',zeros(3,1)],[avg_score',LC_performance]), hold on
-        ids=barwitherr([sem_score'],[avg_score']), hold on
+        ids=barwitherr([sem_score',zeros(3,1)],[avg_score',LC_performance]), hold on
+        %ids=barwitherr([sem_score'],[avg_score']), hold on
         set(gca,'XTickLabel',{['$',num2str(info_costs(1),2),'/click'],...
             ['$',num2str(info_costs(2),3),'/click'],['$',num2str(info_costs(3),3),'/click']},'FontSize',18),
         xlabel('Time cost','FontSize',20)
         ylabel('Relative Performance','FontSize',20)
         %plot([0.5;3.5],repmat(LC_performance(ic),[2,1]))
-        legend('no FB','action FB','metacognitive FB','Location','SouthWest') %'\pi_{LC}'
+        legend('no FB','action FB','metacognitive FB','optimal strategy','Location','SouthWest') %'\pi_{LC}'
         title('Test Block','FontSize',24)
         ids(1).FaceColor=[0.75,0.75,0.75]; ids(2).FaceColor=[1 0.5 0]; ids(3).FaceColor=[1 0 0];
         saveas(fig_test(k),[fig_dir,'test_block_performance_Exp1A',int2str(k),'.png'])
@@ -234,7 +234,7 @@ if strcmp(experiment_name,'1A')
             end
             %legend(FB_types,'Location','SouthEast')
             title(['$',num2str(info_costs(ic)),'/click'],'FontSize',32)
-            ylabel('Performance relative to \pi_{LC}','FontSize',24)
+            ylabel('Relative Performance','FontSize',24)
             xlabel('Trial Number','FontSize',24)
             
             fig2=figure(fig_nr_clicks)
