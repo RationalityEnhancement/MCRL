@@ -80,7 +80,7 @@ $(window).on 'load', ->
     if SHOW_PARTICIPANT_DATA
       TRIALS = loadJson "static/json/data/1B.0/stimuli/#{COST_LEVEL}_cost.json"
     else
-      TRIALS = loadJson "static/json/rewards_#{COST_LEVEL}_cost.json"
+      TRIALS = loadJson "static/json/rewards_#{PARAMS.info_cost.toFixed(2)}.json"
       STRUCTURE = loadJson "static/json/structure.json"
       THRESHOLDS = loadJson "static/json/thresholds_#{COST_LEVEL}_cost.json"    
       console.log 'STRUCTURE', STRUCTURE
@@ -95,11 +95,13 @@ $(window).on 'load', ->
     #   condition: condition_nr
     #   start_time: new Date
     
-    idx = _.shuffle (_.range N_TRIALS)
-    train_idx = idx[...N_TRAIN]
-    TEST_IDX = idx[N_TRAIN...]    
-    TRAIN_TRIALS = (TRIALS[i] for i in train_idx)
-    TEST_TRIALS = (TRIALS[i] for i in TEST_IDX)
+    #idx = _.shuffle (_.range N_TRIALS)
+    #train_idx = idx[...N_TRAIN]
+    #TEST_IDX = idx[N_TRAIN...]    
+    #TRAIN_TRIALS = (TRIALS[i] for i in train_idx)
+    #TEST_TRIALS = (TRIALS[i] for i in TEST_IDX)
+    TRAIN_TRIALS = _.shuffle TRIALS.train
+    TEST_TRIALS = _.shuffle TRIALS.test
 
     if DEBUG
       TRAIN_TRIALS = TRIALS

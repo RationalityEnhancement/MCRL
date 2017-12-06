@@ -69,38 +69,19 @@ $(window).on('load', function() {
   loadTimeout = delay(12000, slowLoad);
   psiturk.preloadImages(['static/images/example1.png', 'static/images/example2.png', 'static/images/example3.png', 'static/images/money.png', 'static/images/plane.png', 'static/images/spider.png']);
   return delay(300, function() {
-    var ERROR, condition_nr, i, idx, train_idx;
+    var ERROR, condition_nr;
     if (SHOW_PARTICIPANT_DATA) {
       TRIALS = loadJson("static/json/data/1B.0/stimuli/" + COST_LEVEL + "_cost.json");
     } else {
-      TRIALS = loadJson("static/json/rewards_" + COST_LEVEL + "_cost.json");
+      TRIALS = loadJson("static/json/rewards_" + (PARAMS.info_cost.toFixed(2)) + ".json");
       STRUCTURE = loadJson("static/json/structure.json");
       THRESHOLDS = loadJson("static/json/thresholds_" + COST_LEVEL + "_cost.json");
       console.log('STRUCTURE', STRUCTURE);
       console.log('TRIALS', TRIALS);
     }
     condition_nr = condition % nrConditions;
-    idx = _.shuffle(_.range(N_TRIALS));
-    train_idx = idx.slice(0, N_TRAIN);
-    TEST_IDX = idx.slice(N_TRAIN);
-    TRAIN_TRIALS = (function() {
-      var j, len, results;
-      results = [];
-      for (j = 0, len = train_idx.length; j < len; j++) {
-        i = train_idx[j];
-        results.push(TRIALS[i]);
-      }
-      return results;
-    })();
-    TEST_TRIALS = (function() {
-      var j, len, results;
-      results = [];
-      for (j = 0, len = TEST_IDX.length; j < len; j++) {
-        i = TEST_IDX[j];
-        results.push(TRIALS[i]);
-      }
-      return results;
-    })();
+    TRAIN_TRIALS = _.shuffle(TRIALS.train);
+    TEST_TRIALS = _.shuffle(TRIALS.test);
     if (DEBUG) {
       TRAIN_TRIALS = TRIALS;
     }
