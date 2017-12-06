@@ -191,7 +191,6 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       k = keys[j];
       if (obj[k] === void 0) {
         console.log('Bad Object: ', obj);
-        throw new Error(k + " is undefined");
       }
     }
     return obj;

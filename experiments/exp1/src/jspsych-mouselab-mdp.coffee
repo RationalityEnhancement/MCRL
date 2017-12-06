@@ -189,7 +189,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     for k in keys
       if obj[k] is undefined
         console.log 'Bad Object: ', obj
-        throw new Error "#{k} is undefined"
+        #throw new Error "#{k} is undefined"
     obj
 
   KEYS = _.mapObject
