@@ -85,7 +85,7 @@ if strcmp(experiment_name,'1A')
             z_score(strcmp(PR_type,'none') & info_cost==info_costs(ic) & ismember(trial_index,test_trials)))
         
         [h_pi_star_vs_MC_FB(ic),p_pi_star_vs_MC_FB(ic),ci_pi_star_vs_MC_FB,stats_pi_star_vs_MC_FB(ic)]=...
-            ttest(z_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials))-z_score_pi_star(:,ic))
+            ttest(z_score(strcmp(PR_type,'featureBased') & info_cost==info_costs(ic) & ismember(trial_index,test_trials))-mean(z_score_pi_star(:,ic)))
         
         %analyze the number of clicks
         [h_optimal_vs_none_clicks(ic),p_optimal_vs_none_clicks(ic),ci_optimal_vs_none_clicks(:,ic),stats_optimal_vs_none_clicks{ic}]=...
@@ -234,7 +234,7 @@ if strcmp(experiment_name,'1A')
             end
             %legend(FB_types,'Location','SouthEast')
             title(['$',num2str(info_costs(ic)),'/click'],'FontSize',32)
-            ylabel('Performance relative to \pi_{LC}','FontSize',24)
+            ylabel('Relative Performance','FontSize',24)
             xlabel('Trial Number','FontSize',24)
             
             fig2=figure(fig_nr_clicks)

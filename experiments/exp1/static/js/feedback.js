@@ -733,6 +733,7 @@ function getTrials(){
 }
 
 function loadObjectLevelPRs(){
+    alert('Loading object level PRs from feedback.js')
     PR_json = loadJson("static/json/ObjectLevelPRs_"+COST_LEVEL+".json")
     object_level_PRs=PR_json
     /*

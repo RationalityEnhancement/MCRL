@@ -141,7 +141,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
 
   `function loadObjectLevelPRs(){
-    throw new Error('Fred: this file shouldn't be used')
+    throw new Error('Fred: this file should not be used')
+    alert('Loading object-level PRs')
     var PR_json = loadJson("static/json/ObjectLevelPRs.json")
     var object_level_PRs=PR_json
 
