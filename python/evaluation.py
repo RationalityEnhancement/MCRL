@@ -71,8 +71,8 @@ def get_q_error(theta, envs, parallel=None):
 def evaluate(policy, envs):
     agent = Agent()
     def run_env(policy, env):
-        agent.register(policy)
         agent.register(env)
+        agent.register(policy)
         tr = agent.run_episode()
         return {'util': tr['return'],
                 'observations': len(tr['actions']) - 1}

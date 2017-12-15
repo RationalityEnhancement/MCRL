@@ -49,17 +49,17 @@ def filename(cost, note=''):
     c = round(float(cost), 5)
     if note:
         note += '_'
-    return f'data/412_{note}{c}.pkl'
+    return f'data/policy_{note}{c}.pkl'
 
-def read_bo_result(cost):
+def read_bo_result(cost, note=''):
     return skopt.load(filename(cost))
 
-def read_bo_policy(cost):
+def read_bo_policy(cost, note=''):
     result = read_bo_result(cost)
     return LiederPolicy(result.specs['info']['theta'])
 
 def read_state_actions(cost):
-    with open(f'data/state_actions_{cost:.2f}.json') as f:
+    with open(f'data/human_state_actions_{cost:.2f}.json') as f:
         data = json.load(f)
     env = make_env(float(cost))
 

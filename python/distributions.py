@@ -132,6 +132,8 @@ class Categorical(Distribution):
             self.probs = tuple(probs)
 
         self._hash = id(self)
+        self.mean = sum(v * p for v, p in self)
+        self.var = sum(v ** 2 * p for v, p in self) - self.mean ** 2
 
     def __lt__(self, other):
         # This is for sorting belief states.

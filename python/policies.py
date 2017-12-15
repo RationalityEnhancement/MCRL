@@ -42,7 +42,10 @@ class RandomPolicy(Policy):
         super().__init__()
     
     def act(self, state):
-        return self.env.action_space.sample()
+        try:
+            return random.choice(list(self.env.actions(state)))
+        except:
+            return self.env.action_space.sample()
     
 class RandomTreePolicy(Policy):
     """Chooses actions randomly."""
