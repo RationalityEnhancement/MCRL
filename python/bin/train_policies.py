@@ -10,8 +10,7 @@ import warnings
 warnings.filterwarnings("ignore", 
                         message="The objective has been evaluated at this point before.")
 
-#COSTS = [0.1, 1.25, 4.0]
-COSTS = [4.0]
+COSTS = [0.1, 1.25, 4.0]
 N_JOBS = 22
 N_TRAIN = 880
 N_CROSS_VAL = 3520
@@ -41,7 +40,7 @@ def write_bo_policy(cost, cross_val=True):
         theta = max(top_theta, key=
                     lambda th: get_util(LiederPolicy(th), cross_envs, parallel=joblib.Parallel(N_JOBS)))
         result.specs['info']['theta'] = theta
-    skopt.dump(result, filename(cost, note='empirical'))
+    skopt.dump(result, filename(cost, note='human_states'))
     return result
 
 

@@ -19,7 +19,6 @@ from utils import *
 # no-feedback condition.
 
 
-
 N_JOBS = 22
 
 COSTS = [0.1, 1.25, 4.0]
@@ -27,7 +26,7 @@ COSTS = [0.1, 1.25, 4.0]
 
 def run_rollouts(cost, sa, N=300):
     agent = Agent()
-    agent.register(read_bo_policy(cost))
+    agent.register(read_bo_policy(cost, note='human_states'))
     states = []
     actions = []
     qs = []
@@ -72,5 +71,5 @@ labeler = Labeler()
 print('Estimating q values by monte carlo.')
 for c in COSTS:
     q_samples[c] = get_q_samples(c, labeler)
-    q_samples[c].to_pickle(f'data/big_qs_{c}.pkl')
+    q_samples[c].to_pickle(f'data/q_samples_{c}.pkl')
 dump(labeler, 'data/state_labeler.pkl')

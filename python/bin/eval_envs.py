@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Creates eval_envs.pkl, a DataFrame with policy performance on many environments."""
+
 from evaluation import *
 from model_utils import *
 from utils import *
