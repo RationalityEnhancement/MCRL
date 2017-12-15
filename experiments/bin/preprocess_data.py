@@ -67,16 +67,16 @@ def write_trials(version):
     df[cols].to_csv(file)
     print('Wrote {}'.format(file))
 
-    # Write state_actions
-    for cost, dd in df.groupby('info_cost'):
-        data = {}
-        data['states'] = list(concat(dd.beliefs.apply(literal_eval)))
-        data['actions'] = list(concat(dd.meta_actions.apply(literal_eval)))
-        fn = f'../python/data/human_state_actions_{cost:.2f}.json'
-        with open(fn, 'w+') as f:
-            json.dump(data, f)
-            print(f'Wrote {fn}')
-    
+    if write_state_actions:
+        for cost, dd in df.groupby('info_cost'):
+            data = {}
+            data['states'] = list(concat(dd.beliefs.apply(literal_eval)))
+            data['actions'] = list(concat(dd.meta_actions.apply(literal_eval)))
+            fn = f'../python/data/human_state_actions_{cost:.2f}.json'
+            with open(fn, 'w+') as f:
+                json.dump(data, f)
+                print(f'Wrote {fn}')
+        
 
 
 if __name__ == '__main__':
@@ -89,7 +89,12 @@ if __name__ == '__main__':
         help=("Experiment version. This corresponds to the experiment_code_version "
               "parameter in the psiTurk config.txt file that was used when the "
               "data was collected."))
-    write_trials(parser.parse_args().version)
+    parser.add_argument(
+        "--state_actions",
+        action='store_true')
+    
+    args = parser.parse_args()
+    write_trials(args.version, args.write_state_actions)
 
 # from toolz import concat
 # df['info_cost'] = list(pdf.info_cost[df.pid])
