@@ -2,7 +2,7 @@
 import pandas as pd
 from ast import literal_eval
 from toolz.curried import *
-
+import json
 # import sys
 # sys.path.append('lib')
 # from analysis_utils import *
@@ -66,6 +66,17 @@ def write_trials(version):
     file = 'data/human/{}/trials.csv'.format(version)
     df[cols].to_csv(file)
     print('Wrote {}'.format(file))
+
+    # Write state_actions
+    for cost, dd in df.groupby('info_cost'):
+        data = {}
+        data['states'] = list(concat(dd.beliefs.apply(literal_eval)))
+        data['actions'] = list(concat(dd.meta_actions.apply(literal_eval)))
+        fn = f'../python/data/human_state_actions_{cost:.2f}.json'
+        with open(fn, 'w+') as f:
+            json.dump(data, f)
+            print(f'Wrote {fn}')
+    
 
 
 if __name__ == '__main__':
