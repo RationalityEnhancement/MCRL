@@ -6,6 +6,7 @@ from tqdm import tqdm
 from agents import Agent
 from policies import LiederPolicy
 import skopt
+import os
 
 from evaluation import *
 from model_utils import *
@@ -19,7 +20,7 @@ from utils import *
 # no-feedback condition.
 
 
-N_JOBS = 22
+N_JOBS = 11
 
 COSTS = [0.1, 1.25, 4.0]
 # POLICIES = load('data/cross_val_policies.pkl')
@@ -67,9 +68,17 @@ def get_q_samples(cost, labeler):
 
 
 q_samples = {}
-labeler = Labeler()
+try:
+    labeler = load('data/state_labeler.pkl')
+    print('Loaded data/state_labeler.pkl')
+except FileNotFoundError:
+    labeler = Labeler()
+
 print('Estimating q values by monte carlo.')
 for c in COSTS:
+    if os.path.isfile(f'data/q_samples_{c}.pkl'):
+        print('Skipping {c}')
+        continue
     q_samples[c] = get_q_samples(c, labeler)
     q_samples[c].to_pickle(f'data/q_samples_{c}.pkl')
-dump(labeler, 'data/state_labeler.pkl')
+    dump(labeler, 'data/state_labeler.pkl')

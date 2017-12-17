@@ -134,6 +134,7 @@ class Categorical(Distribution):
         self._hash = id(self)
         self.mean = sum(v * p for v, p in self)
         self.var = sum(v ** 2 * p for v, p in self) - self.mean ** 2
+        self.std = self.var ** 0.5
 
     def __lt__(self, other):
         # This is for sorting belief states.

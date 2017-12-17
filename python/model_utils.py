@@ -52,22 +52,24 @@ def filename(cost, note=''):
     return f'data/policy_{note}{c}.pkl'
 
 def read_bo_result(cost, note=''):
-    return skopt.load(filename(cost))
+    return skopt.load(filename(cost, note))
 
 def read_bo_policy(cost, note=''):
-    result = read_bo_result(cost)
+    result = read_bo_result(cost, note)
     return LiederPolicy(result.specs['info']['theta'])
+
+ENV = make_env(0)
+
+def parse_state(state):
+    return tuple(ENV.reward if x == '__' else float(x)
+                 for x in state)
+def parse_action(action):
+    return ENV.term_action if action == '__TERM_ACTION__' else action
 
 def read_state_actions(cost):
     with open(f'data/human_state_actions_{cost:.2f}.json') as f:
         data = json.load(f)
-    env = make_env(float(cost))
 
-    def parse_state(state):
-        return tuple(env.reward if x == '__' else float(x)
-                     for x in state)
-    def parse_action(action):
-        return env.term_action if action == '__TERM_ACTION__' else action
 
     return {'states': list(map(parse_state, data['states'])), 
             'actions': list(map(parse_action, data['actions']))}
