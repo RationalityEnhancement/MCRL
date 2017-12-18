@@ -33,7 +33,9 @@ def make_env(cost, ground_truth=False, **kwargs):
     constant across runs on this env. This reduces variance of the return."""
     reward = Normal(0, 10).to_discrete(6)
     env = MouselabEnv([4,1,2], reward=reward, cost=cost, **kwargs)
-    if ground_truth:
+    if hasattr(ground_truth, 'len'):
+        env.ground_truth = np.array(ground_truth)
+    elif ground_truth:
         env.ground_truth = np.array([0, *reward.sample(len(env.tree) - 1)])
     return env
 

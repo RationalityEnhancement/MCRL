@@ -3,10 +3,10 @@ from utils import *
 from toolz.curried import *
 from ast import literal_eval
 
-def load(v):
+def load(v, base='../experiments/data/human'):
     """Loads data from experiment with codeversion `v`."""
-    df = pd.read_csv('../experiments/data/human/{}/mouselab-mdp.csv'.format(v))
-    pdf = pd.read_csv('../experiments/data/human/{}/participants.csv'.format(v))
+    df = pd.read_csv(f'{base}/{v}/mouselab-mdp.csv')
+    pdf = pd.read_csv(f'{base}/{v}/participants.csv')
 
     pr_types = 'none objectLevel featureBased'.split()
     pdf['pr_type'] = pdf.PR_type.astype('category', categories=pr_types)

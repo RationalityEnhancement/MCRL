@@ -6,7 +6,6 @@ from policies import Policy
 from contexttimer import Timer
 from joblib import Parallel, delayed
 from toolz import curry
-from utils import softmax
 
 import warnings
 warnings.filterwarnings("ignore",
@@ -15,13 +14,21 @@ warnings.filterwarnings("ignore",
 from pymc3.distributions.continuous import Continuous
 import theano.tensor as tt
 
+def softmax(x, temp=1):
+    ex = np.exp((x - x.max()) / temp)
+    return ex / ex.sum()
+
 def zero_pad(size, x):
     return np.r_[x, np.zeros(size - len(x))]
 
 @curry
 def path_features(env, state, path):
     val = env.node_value_to(path[-1], state=state)
-    return [val.mean, val.std, val.mean * val.std]
+    # m = val.mean / (max(env.reward.vals) * len(path))
+    # s = val.std / env.node_value_to(path[-1], state=env.init).std
+    m = val.mean / env.reward.std
+    s = val.std
+    return [m, s, m * s]
 
 @curry
 def action_features(env, state, action, max_paths=2):
@@ -56,7 +63,7 @@ class HumanModel(Continuous):
       
 
 class HumanPolicy(Policy):
-    def __init__(self, theta, temp=1e-10):
+    def __init__(self, theta, temp=0):
         super().__init__()
         self.theta = np.array(theta)
         self.temp = temp
@@ -66,19 +73,25 @@ class HumanPolicy(Policy):
         self.max_paths = len(list(self.env.all_paths(start=1)))
         
     def act(self, state):
-        return max(self.env.actions(state), key=self.Q(state))
+        if self.temp == 0:
+            return max(self.env.actions(state), key=self.Q(state))
+        else:
+            assert 0
 
     def action_distribution(self, state):
         q = np.zeros(self.n_action)
         for a in self.env.actions(state):
             q[a] = self.Q(state, a)
-        print(q.round(4))
-        return softmax(q, 1 / self.temp)
+        # return q
+        return softmax(q, self.temp)
     
     @curry
     def Q(self, state, action):
         phi = action_features(self.env, state, action, self.max_paths)
         return np.dot(self.theta, phi)
+
+    def phi(self, state, action):
+        return action_features(self.env, state, action, self.max_paths)
 
 
     @classmethod
@@ -88,7 +101,8 @@ class HumanPolicy(Policy):
         else:
             parallel = None
 
-        def objective(theta):
+        def objective(x):
+            theta = np.r_[1, x]  # term_reward weight fixed to 1
             with Timer() as t:
                 util = get_util(cls(theta), envs, parallel)
             if verbose:
@@ -99,13 +113,12 @@ class HumanPolicy(Policy):
         max_paths = len(list(envs[0].all_paths(start=1)))
 
         bounds = [
-            (1., 1.),                       # term reward
-            (-10, 10),                      # is click
-            *([(-10, 10)] * max_paths * 3)  # node_features
+            (-5., 5.),                      # is click
+            *([(-1., 1.)] * max_paths * 3)  # node_features
         ]
         with Timer() as t:
             result = gp_minimize(objective, bounds, **kwargs)
-        theta = np.array(result.x)
+        theta = np.r_[1, result.x]
         util = -result.fun
 
         print('BO:', theta.round(3), '->', round(util, 3),
