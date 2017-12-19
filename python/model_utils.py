@@ -65,11 +65,12 @@ ENV = make_env(0)
 def parse_state(state):
     return tuple(ENV.reward if x == '__' else float(x)
                  for x in state)
+    
 def parse_action(action):
     return ENV.term_action if action == '__TERM_ACTION__' else action
 
 def read_state_actions(cost):
-    with open(f'data/human_state_actions_{cost:.2f}.json') as f:
+    with open(f'exp-data/human_state_actions_{cost:.2f}.json') as f:
         data = json.load(f)
 
 

@@ -36,7 +36,7 @@ def cum_returns(rewards):
 def clear_screen():
     print(chr(27) + "[2J")
     clear_output()
-    
+
 class Labeler(object):
     """Assigns unique integer labels."""
     def __init__(self, init=()):

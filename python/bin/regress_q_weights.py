@@ -15,11 +15,14 @@ from model_utils import *
 N_JOBS = 22
 COSTS = [0.1, 1.25, 4.0]
 
-labeler = load('data/state_labeler.pkl')
+
+def decode_state(state):
+    return tuple(ENV.reward if x == '_' else float(x)
+                 for x in state.split())
 
 def get_some_features(cost, sa):
     env = make_env(cost)
-    return [env.action_features(a, labeler.unlabel(s))
+    return [env.action_features(a, decode_state(s))
             for s, a in sa]
 
 def get_features(cost, qdf):
@@ -32,7 +35,7 @@ def get_features(cost, qdf):
                      concat(Parallel(N_JOBS)(jobs))))
 
 def regress(cost):
-    qdf = pd.read_pickle(f'data/big_qs_{cost}.pkl')
+    qdf = pd.read_pickle(f'data/q_samples_{cost}.pkl')
     features = get_features(cost, qdf)
     X = np.stack([features[s, a] for s, a in zip(qdf.state, qdf.action)])
     y = np.array(qdf.q)
