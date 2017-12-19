@@ -81,38 +81,38 @@ def load(version, file, func=lambda x: x):
             return func(json.load(f))
 
 
-# ---------- Statistics ---------- #
+# # ---------- Statistics ---------- #
 
-import rpy2.robjects as ro
-from rpy2.robjects import pandas2ri
-pandas2ri.activate()
-from rpy2.robjects.conversion import ri2py
+# import rpy2.robjects as ro
+# from rpy2.robjects import pandas2ri
+# pandas2ri.activate()
+# from rpy2.robjects.conversion import ri2py
 
-def r2py(results, p_col=None):
-    tbl = ri2py(results)
-    tbl = tbl.rename(columns=reformat_name)
-    if p_col:
-        tbl['signif'] = tbl[reformat_name(p_col)].apply(pval)
-    return tbl
+# def r2py(results, p_col=None):
+#     tbl = ri2py(results)
+#     tbl = tbl.rename(columns=reformat_name)
+#     if p_col:
+#         tbl['signif'] = tbl[reformat_name(p_col)].apply(pval)
+#     return tbl
 
-def pval(x):
-    if x < 0.001:
-        return "p < 0.001"
-    elif x < 0.01:
-        return "p < 0.01"
-    elif x < 0.05:
-        return "p < 0.05"
-    elif x >= 0.05:
-        return "p = {:.2f}".format(x)
-    else:
-        return float('nan')
+# def pval(x):
+#     if x < 0.001:
+#         return "p < 0.001"
+#     elif x < 0.01:
+#         return "p < 0.01"
+#     elif x < 0.05:
+#         return "p < 0.05"
+#     elif x >= 0.05:
+#         return "p = {:.2f}".format(x)
+#     else:
+#         return float('nan')
 
-def df2r(df, cols):
-    df = df[cols].copy()
-    for name, col in df.iteritems():
-        if col.dtype == bool:
-            df[name] = col.astype(int)
-    return df
+# def df2r(df, cols):
+#     df = df[cols].copy()
+#     for name, col in df.iteritems():
+#         if col.dtype == bool:
+#             df[name] = col.astype(int)
+#     return df
 
 # ---------- Saving results ---------- #
 

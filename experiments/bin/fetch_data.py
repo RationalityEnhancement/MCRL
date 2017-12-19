@@ -121,7 +121,6 @@ def reformat_data(version):
                 row['completed'] = True
                 data = ast.literal_eval(completed_row[2].iloc[0])
                 for k, v in data.items():
-                    print(k, v)
                     row[k] = v
             else:
                 bonus_row = df[df[1] == 'final_bonus']

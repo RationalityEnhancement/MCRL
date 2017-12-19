@@ -85,7 +85,7 @@ def solve(env, hash_state=None, actions=None, blinkered=None):
                 return state
             else:
                 if kwargs:
-                 # Blinkered approximation. Hash key is insensitive
+                    # Blinkered approximation. Hash key is insensitive
                     # to states that can't be acted on, except for the
                     # best expected value
                     # Embed the action subset into the state.

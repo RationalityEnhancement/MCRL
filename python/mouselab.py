@@ -174,7 +174,6 @@ class MouselabEnv(gym.Env):
         ])
 
 
-
     def term_reward(self, state=None):
         state = state if state is not None else self._state
         assert state is not None
@@ -188,7 +187,7 @@ class MouselabEnv(gym.Env):
                     key=lambda n1: self.node_quality(n1, state).expectation())
             yield n
     
-    def optimal_paths(self, state=None):
+    def optimal_paths(self, state=None, tolerance=0.01):
         state = state if state is not None else self._state
         def rec(path):
             children = self.tree[path[-1]]
@@ -199,7 +198,7 @@ class MouselabEnv(gym.Env):
                      for n1 in children]
             best_q = max(quals)
             for n1, q in zip(children, quals):
-                if np.abs(q - best_q) < 0.01:
+                if np.abs(q - best_q) < tolerance:
                     yield from rec(path + (n1,))
 
         yield from rec((0,))
@@ -288,6 +287,14 @@ class MouselabEnv(gym.Env):
     
     @lru_cache(None) 
     def _relevant_subtree(self, node):
+        trees = [self.subtree[n1] for n1 in self.tree[0]]
+        for t in trees:
+            if node in t:
+                return tuple(t)
+        assert False
+
+    @lru_cache(None) 
+    def leaves(self, node):
         trees = [self.subtree[n1] for n1 in self.tree[0]]
         for t in trees:
             if node in t:
