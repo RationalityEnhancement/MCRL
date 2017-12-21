@@ -620,13 +620,13 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             result.delay = (function() {
               switch (PARAMS.info_cost) {
                 case 0.10:
-                  return [null, 15, 0, 0][this.data.actions.length];
+                  return [null, 14, 0, 0][this.data.actions.length];
                 case 0.25:
                   return [null, 15, 0, 0][this.data.actions.length];
                 case 1.00:
                   return [null, 17, 0, 0][this.data.actions.length];
                 case 1.25:
-                  return [null, 15, 0, 0][this.data.actions.length];
+                  return [null, 16, 0, 0][this.data.actions.length];
                 case 4.00:
                   return [null, 5, 0, 0][this.data.actions.length];
                 case 3.95:
