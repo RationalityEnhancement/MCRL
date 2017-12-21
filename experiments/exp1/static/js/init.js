@@ -31,7 +31,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
  */
 
-experiment_nr = 1.8;
+experiment_nr = 1.9;
 
 switch (experiment_nr) {
   case 0:
@@ -375,11 +375,11 @@ if (PARAMS.time_limit) {
   MIN_TIME = (function() {
     switch (COST_LEVEL) {
       case 'low':
-        return 38;
+        return 31;
       case 'med':
-        return 49;
+        return 38;
       case 'high':
-        return 39;
+        return 26;
     }
   })();
 } else {

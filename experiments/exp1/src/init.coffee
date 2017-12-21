@@ -34,7 +34,7 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-experiment_nr = 1.8 
+experiment_nr = 1.9 
 
 switch experiment_nr
   when 0 then IVs = {frequencyOfFB : ['after_each_move'], PRTypes: ['none','featureBased','fullObservation'], messageTypes: ['full','none'],infoCosts: [0.01,2.80]}    
@@ -151,11 +151,12 @@ COST_LEVEL =
     when 1.0001 then 'high'
     else throw new Error('bad info_cost')
 
+#set minimum time per trial to the 90% of participants time on trial in the pilot experiment (experiment version 1.8)
 if PARAMS.time_limit        
     MIN_TIME = 
         switch COST_LEVEL
-            when 'low' then 38
-            when 'med' then 49
-            when 'high' then 39
+            when 'low' then 31
+            when 'med' then 38
+            when 'high' then 26
 else
     MIN_TIME = 1
