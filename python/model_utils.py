@@ -33,7 +33,9 @@ def make_env(cost, ground_truth=False, **kwargs):
     constant across runs on this env. This reduces variance of the return."""
     reward = Normal(0, 10).to_discrete(6)
     env = MouselabEnv([4,1,2], reward=reward, cost=cost, **kwargs)
-    if ground_truth:
+    if hasattr(ground_truth, 'len'):
+        env.ground_truth = np.array(ground_truth)
+    elif ground_truth:
         env.ground_truth = np.array([0, *reward.sample(len(env.tree) - 1)])
     return env
 
@@ -52,22 +54,25 @@ def filename(cost, note=''):
     return f'data/policy_{note}{c}.pkl'
 
 def read_bo_result(cost, note=''):
-    return skopt.load(filename(cost))
+    return skopt.load(filename(cost, note))
 
 def read_bo_policy(cost, note=''):
-    result = read_bo_result(cost)
+    result = read_bo_result(cost, note)
     return LiederPolicy(result.specs['info']['theta'])
 
-def read_state_actions(cost):
-    with open(f'data/human_state_actions_{cost:.2f}.json') as f:
-        data = json.load(f)
-    env = make_env(float(cost))
+ENV = make_env(0)
 
-    def parse_state(state):
-        return tuple(env.reward if x == '__' else float(x)
-                     for x in state)
-    def parse_action(action):
-        return env.term_action if action == '__TERM_ACTION__' else action
+def parse_state(state):
+    return tuple(ENV.reward if x == '__' else float(x)
+                 for x in state)
+    
+def parse_action(action):
+    return ENV.term_action if action == '__TERM_ACTION__' else action
+
+def read_state_actions(cost):
+    with open(f'exp-data/human_state_actions_{cost:.2f}.json') as f:
+        data = json.load(f)
+
 
     return {'states': list(map(parse_state, data['states'])), 
             'actions': list(map(parse_action, data['actions']))}

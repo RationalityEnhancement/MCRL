@@ -6,6 +6,7 @@ from tqdm import tqdm
 from agents import Agent
 from policies import LiederPolicy
 import skopt
+import os
 
 from evaluation import *
 from model_utils import *
@@ -19,10 +20,14 @@ from utils import *
 # no-feedback condition.
 
 
-N_JOBS = 22
+N_JOBS = 11
 
 COSTS = [0.1, 1.25, 4.0]
 # POLICIES = load('data/cross_val_policies.pkl')
+
+def encode_state(state):
+    return ' '.join('_' if hasattr(x, 'sample') else str(int(x))
+                    for x in state)
 
 def run_rollouts(cost, sa, N=300):
     agent = Agent()
@@ -47,9 +52,9 @@ def run_rollouts(cost, sa, N=300):
                 states.extend([state] + trace['states'][:-1])
                 actions.extend([action] + trace['actions'])
                 qs.extend(cum_returns([r] + trace['rewards']))
-    return states, actions, qs
+    return list(map(encode_state, states)), actions, qs
 
-def get_q_samples(cost, labeler):
+def get_q_samples(cost):
     sa = read_state_actions(cost)
     all_sa = list(zip(sa['states'], sa['actions']))
     chunk_size = len(all_sa) // (N_JOBS * 5)
@@ -60,16 +65,15 @@ def get_q_samples(cost, labeler):
     print('rollouts completed')
     states, actions, qs = [], [], []
     for s, a, q in results:
-        states.extend(map(labeler, s))
+        states.extend(s)
         actions.extend(a)
         qs.extend(q)
     return pd.DataFrame({'state': states, 'action': actions, 'q': qs, 'cost': cost})
 
 
-q_samples = {}
-labeler = Labeler()
 print('Estimating q values by monte carlo.')
 for c in COSTS:
-    q_samples[c] = get_q_samples(c, labeler)
-    q_samples[c].to_pickle(f'data/q_samples_{c}.pkl')
-dump(labeler, 'data/state_labeler.pkl')
+    if os.path.isfile(f'data/q_samples_{c}.pkl'):
+        print(f'Skipping {c}')
+        continue
+    get_q_samples(c).to_pickle(f'data/q_samples_{c}.pkl')

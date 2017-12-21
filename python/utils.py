@@ -30,17 +30,13 @@ def dict_product(d):
     for v in list(it.product(*d.values())):
         yield dict(zip(d.keys(), v))
 
-def softmax(x, alpha=1):
-    ex = np.exp(x * alpha)
-    return ex / ex.sum()
-
 def cum_returns(rewards):
     return np.flip(np.cumsum(np.flip(rewards, 0)), 0)
 
 def clear_screen():
     print(chr(27) + "[2J")
     clear_output()
-    
+
 class Labeler(object):
     """Assigns unique integer labels."""
     def __init__(self, init=()):

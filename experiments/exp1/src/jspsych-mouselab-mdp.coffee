@@ -600,10 +600,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         if PARAMS.PR_type is 'none'
           result.delay = switch PARAMS.info_cost
             #when 0.01 then [null, 4, 0, 0][@data.actions.length]
-            when 0.10 then [null, 15, 0, 0][@data.actions.length]
+            when 0.10 then [null, 14, 0, 0][@data.actions.length]
             when 0.25 then [null, 15, 0, 0][@data.actions.length]
             when 1.00 then [null, 17, 0, 0][@data.actions.length]
-            when 1.25 then [null, 15, 0, 0][@data.actions.length]
+            when 1.25 then [null, 16, 0, 0][@data.actions.length]
             #when 2.50 then [null, 15, 0, 0][@data.actions.length]
             #when 1.0001 then [null, 2, 0, 0][@data.actions.length]
             when 4.00 then [null, 5, 0, 0][@data.actions.length]

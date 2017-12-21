@@ -30,7 +30,7 @@ def combine(*vs):
     return df, pdf
 
 
-def write_trials(version):
+def write_trials(version, write_state_actions):
 
     # Get data for participants that completed the experiment.
     df, pdf = load(version)
@@ -70,9 +70,14 @@ def write_trials(version):
     if write_state_actions:
         for cost, dd in df.groupby('info_cost'):
             data = {}
-            data['states'] = list(concat(dd.beliefs.apply(literal_eval)))
-            data['actions'] = list(concat(dd.meta_actions.apply(literal_eval)))
-            fn = f'../python/data/human_state_actions_{cost:.2f}.json'
+            states = dd.beliefs.apply(literal_eval)
+            actions = dd.meta_actions.apply(literal_eval)
+            bad = states.apply(len) != actions.apply(len)
+            data['states'] = list(concat(states[~bad]))
+            data['actions'] = list(concat(actions[~bad]))
+            # if cost == 4.0:
+            #     import IPython; IPython.embed()
+            fn = f'../python/exp-data/human_state_actions_{cost:.2f}.json'
             with open(fn, 'w+') as f:
                 json.dump(data, f)
                 print(f'Wrote {fn}')
@@ -94,7 +99,7 @@ if __name__ == '__main__':
         action='store_true')
     
     args = parser.parse_args()
-    write_trials(args.version, args.write_state_actions)
+    write_trials(args.version, args.state_actions)
 
 # from toolz import concat
 # df['info_cost'] = list(pdf.info_cost[df.pid])
