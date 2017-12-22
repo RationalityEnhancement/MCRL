@@ -37,6 +37,10 @@ def clear_screen():
     print(chr(27) + "[2J")
     clear_output()
 
+def softmax(x, temp=1):
+    ex = np.exp((x - x.max()) / temp)
+    return ex / ex.sum()
+
 class Labeler(object):
     """Assigns unique integer labels."""
     def __init__(self, init=()):
