@@ -32,17 +32,13 @@ class Normal(Distribution):
         return 'Norm({:.2f}, {:.2f})'.format(self.mu, self.sigma)
 
     def __add__(self, other):
-        # if isinstance(other, Normal):
         if hasattr(other, 'mu'):
-            # print('add norm')
             return Normal(self.mu + other.mu,
                           (self.sigma ** 2 + other.sigma ** 2) ** 0.5)
         # if isinstance(other, PointMass):
         if hasattr(other, 'val'):
-            # print('add pointmass')
             return Normal(self.mu + other.val, self.sigma)
         else:
-            # print('add number')
             return Normal(self.mu + other, self.sigma)
 
     def to_sampledist(self, n=10000):
@@ -65,7 +61,6 @@ class Normal(Distribution):
         return Normal(self.mu, self.sigma)
 
     def sample(self, n=None):
-        # print('sample', id(self) % 1000)
         if n is not None:
             return self.mu + self.sigma * np.random.randn(n)
         else:
@@ -105,7 +100,6 @@ class NormalMixture(Distribution):
         return NormalMixture(self.mu, self.sigma, self.weights)
 
     def sample(self, n):
-        # print('sample', id(self) % 1000)
         if n is not None:
             z = self._z.rvs(n)
             return (self._norm.rvs((n, self.n_mix)) * z).sum(1)
@@ -131,22 +125,16 @@ class Categorical(Distribution):
         else:
             self.probs = tuple(probs)
 
-        self._hash = id(self)
+        # self._hash = id(self)
+        self._hash = hash((self.vals, self.probs))
 
-    @property
-    @lru_cache(None)
-    def mean(self):
-        return sum(v * p for v, p in self)
-    
-    @property
     @lru_cache(None)
     def var(self):
-        return sum(v ** 2 * p for v, p in self) - self.mean ** 2
+        return sum(v ** 2 * p for v, p in self) - self.expectation() ** 2
     
-    @property
     @lru_cache(None)
     def std(self):
-        return self.var ** 0.5
+        return self.var() ** 0.5
 
     def __lt__(self, other):
         # This is for sorting belief states.
@@ -171,10 +159,12 @@ class Categorical(Distribution):
     def __len__(self):
         return len(self.probs)
 
+    @lru_cache(maxsize=None)
     def __add__(self, other):
         # if isinstance(other, Categorical):
         if hasattr(other, 'probs'):
-            return cross([self, other], lambda s, o: s + o)
+            # print(f'add({id(self) % 1000}, {id(other) % 1000})')
+            return cross((self, other), lambda s, o: s + o)
         # if isinstance(other, PointMass):
         if hasattr(other, 'val'):
             return self.apply(lambda v: v + other.val)
@@ -326,7 +316,7 @@ def cross(dists, f=None):
 
 __no_default__ = '__no_default___'
 
-# @lru_cache(maxsize=None)
+@lru_cache(maxsize=None)
 def cmax(dists, default=__no_default__):
     if len(dists) == 1:
         return dists[0]
@@ -358,7 +348,6 @@ def dmax(dists, default=__no_default__):
 
 # @lru_cache(CACHE_SIZE)
 def smax(dists, default=__no_default__):
-    # print('smax', dists)
     if len(dists) == 0:
         if default is not __no_default__:
             return default

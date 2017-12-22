@@ -10,7 +10,7 @@ from tqdm import tqdm, trange, tnrange
 from copy import deepcopy
 import random
 from agents import Component, Model
-
+from utils import softmax
 
 class Policy(Component):
     """Chooses actions."""
@@ -46,7 +46,31 @@ class RandomPolicy(Policy):
             return random.choice(list(self.env.actions(state)))
         except:
             return self.env.action_space.sample()
+
+
+class SoftmaxPolicy(Policy):
+    """Samples actions from a softmax over preferences."""
+    def __init__(self, preference=None, temp=1e-9, noise=1e-9):
+        super().__init__()
+        if preference is None:
+            assert hasattr(self, 'preference')
+        else:
+            self.preference = preference
+        self.temp = temp
+        self.noise = noise
     
+    def act(self, state):
+        probs = self.action_distribution(state)
+        return np.random.choice(len(probs), p=probs)
+
+    def action_distribution(self, state):
+        q = np.zeros(self.n_action) - 1e9
+        for a in self.env.actions(state):
+            q[a] = self.preference(state, a)
+        q += np.random.rand(len(q)) * self.noise
+        return softmax(q, self.temp)
+
+
 class RandomTreePolicy(Policy):
     """Chooses actions randomly."""
     def __init__(self):
