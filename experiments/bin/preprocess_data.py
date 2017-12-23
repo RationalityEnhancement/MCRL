@@ -77,10 +77,10 @@ def write_trials(version, write_state_actions):
             data['actions'] = list(concat(actions[~bad]))
             # if cost == 4.0:
             #     import IPython; IPython.embed()
-            fn = f'../python/exp-data/human_state_actions_{cost:.2f}.json'
+            fn = '../python/exp-data/human_state_actions_{cost:.2f}.json'.format(cost=cost)
             with open(fn, 'w+') as f:
                 json.dump(data, f)
-                print(f'Wrote {fn}')
+                print('Wrote {fn}'.format(fn=fn))
         
 
 
