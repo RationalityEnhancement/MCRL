@@ -61,13 +61,13 @@ class SoftmaxPolicy(Policy):
     
     def act(self, state):
         probs = self.action_distribution(state)
+        probs += np.random.rand(len(probs)) * self.noise
         return np.random.choice(len(probs), p=probs)
 
     def action_distribution(self, state):
         q = np.zeros(self.n_action) - 1e9
         for a in self.env.actions(state):
             q[a] = self.preference(state, a)
-        q += np.random.rand(len(q)) * self.noise
         return softmax(q, self.temp)
 
 

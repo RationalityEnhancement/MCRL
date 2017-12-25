@@ -16,21 +16,29 @@ class HumanPolicy(SoftmaxPolicy):
     def __init__(self, theta, **kwargs):
         super().__init__(**kwargs)
         self.theta = np.array(theta)
+        self._theta = np.r_[self.theta, 1]  # dummy coefficient
 
     @curry
     def preference(self, state, action):
         """Softmax is over this value."""
-        return np.dot(self.theta, self.phi(state, action))
+        # if self.env.node_quality(action, state) <= self.pruning_threshold:
+        #     return - 1e9
+        # if self.env.expected_term_reward(state) >= self.satisficing_threshold:
+        #     return 1e9 if action == self.env.term_action else -1e9
+        return np.dot(self._theta, self.phi(state, action))
 
     def phi(self, state, action):
-        env, theta = self.env, self.theta
+        env, theta = self.env, self._theta
         x = np.zeros(len(theta))
         if action == env.term_action:
             x[0] = 1
-            x[1] = env.expected_term_reward(state)
+            x[1] = etr = env.expected_term_reward(state)
+            # if etr > self.satisficing_threshold:
+            #     x[8] = 1e100
             return x
         else:
             if not hasattr(state[action], 'sample'):
+                x[8] = -1e100
                 return x  # already clicked this node
             # Value of information
             # the `self.theta[i] and` trick skips computing if feature won't be used
@@ -49,3 +57,4 @@ class HumanPolicy(SoftmaxPolicy):
             # TODO: same_branch_as_last
 
         return x
+
