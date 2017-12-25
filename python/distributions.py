@@ -125,8 +125,8 @@ class Categorical(Distribution):
         else:
             self.probs = tuple(probs)
 
-        # self._hash = id(self)
-        self._hash = hash((self.vals, self.probs))
+        self._hash = id(self)
+        # self._hash = hash((self.vals, self.probs))
 
     @lru_cache(None)
     def var(self):
@@ -159,7 +159,7 @@ class Categorical(Distribution):
     def __len__(self):
         return len(self.probs)
 
-    @lru_cache(maxsize=None)
+    # @lru_cache(maxsize=None)
     def __add__(self, other):
         # if isinstance(other, Categorical):
         if hasattr(other, 'probs'):
