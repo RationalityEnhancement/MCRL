@@ -3,7 +3,7 @@ experiment_name='1A';
 %version = '1';
 %experiment_name='1B';
 %experiment_name='1C';
-version = '3';
+version = '4';
 
 MCRL_path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
 fig_dir=[MCRL_path,'matlab_code/dataAnalysis/figures/']
@@ -15,37 +15,46 @@ if strcmp(experiment_name,'1A')
     %import_data: MCRL/experiments/data/1.0A/trials_matlab.csv
     
     eval(['import_data_exp',experiment_name,'_v',version])
-    trial_id=trial_i;
+    %trial_id=trial_i;
     
     nr_training_trials = 10;
     training_trials=1:nr_training_trials;
     test_trials=11:16;
     
     max_score=load([MCRL_path,'experiments/data/stimuli/exp1/optimal',experiment_name,'.',version,'.csv']);
-    min_score=load([MCRL_path,'experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
+    %min_score=load([MCRL_path,'experiments/data/stimuli/exp1/worst',experiment_name,'.',version,'.csv']);
     
-    score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/score_pi_star',experiment_name,'.',version,'.csv']);
-    rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star',experiment_name,'.',version,'.csv']);
+    score_pi_star=max_score;
+    %score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/score_pi_star',experiment_name,'.',version,'.csv']);
+    %rel_score_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/rel_score_pi_star',experiment_name,'.',version,'.csv']);
     nr_observations_pi_star=load([MCRL_path,'/experiments/data/stimuli/exp1/nr_observations_pi_star',experiment_name,'.',version,'.csv']);
+    
+    info_costs = unique(info_cost);
+    nr_trials=numel(unique(trial_index));
+
     
     trial_ids = unique(trial_id);
     for i=1:numel(trial_ids)
+        
+        info_cost_by_trial_id(i)=unique(info_cost(trial_id==trial_ids(i)));
+        
         avg_score_by_trial_id(i)=mean(score(trial_id==trial_ids(i)));
         std_score_by_trial_id(i)=std(score(trial_id==trial_ids(i)));
         
-        for ic=1:3
-            z_score_pi_star(i,ic) = (score_pi_star(i,ic)-avg_score_by_trial_id(i))/std_score_by_trial_id(i);
-        end
+        ic = find(info_costs==info_cost_by_trial_id(i));
+        t=mod(i-1,nr_trials)+1;
+        z_score_pi_star(t,ic) = (score_pi_star(t,ic)-avg_score_by_trial_id(i))/std_score_by_trial_id(i);
+
     end
     
     for i=1:numel(score)
-        z_score(i)=(score(i)-avg_score_by_trial_id(trial_id(i)+1))/...
-            std_score_by_trial_id(trial_id(i)+1);
+        z_score(i)=(score(i)-avg_score_by_trial_id(trial_ids==trial_id(i)))/...
+            std_score_by_trial_id(trial_ids==trial_id(i));
     end
     
     
     optimal_nr_clicks=mean(nr_observations_pi_star)';
-    optimal_performance=nanmean(rel_score_pi_star)'-nanmean(rel_score_pi_star)';
+    optimal_performance=[0;0;0];%nanmean(rel_score_pi_star)'-nanmean(rel_score_pi_star)';
     
     PR_types = unique(PR_type);
     PR_types=PR_types([2,3,1]);
@@ -58,7 +67,9 @@ if strcmp(experiment_name,'1A')
         relative_score(i,1)=(score(i)-min_score(trial_id(i)+1,condition_nr))/...
             (max_score(trial_id(i)+1,condition_nr)-min_score(trial_id(i)+1,condition_nr));
         %}
-        relative_score(i,1)=score(i)-max_score(trial_id(i)+1,condition_nr);
+        k=find(trial_id(i)==trial_ids);
+        t=mod(k-1,nr_trials)+1;
+        relative_score(i,1)=score(i)-max_score(t,condition_nr);
     end
     
     trial_numbers = unique(trial_index(2:end));
@@ -200,8 +211,8 @@ if strcmp(experiment_name,'1A')
         legend('no FB','action FB','metacognitive FB','Location','SouthWest') %'\pi_{LC}'
         title('Test Block','FontSize',24)
         ids(1).FaceColor=[0.75,0.75,0.75]; ids(2).FaceColor=[1 0.5 0]; ids(3).FaceColor=[1 0 0];
-        saveas(fig_test(k),[fig_dir,'test_block_performance_Exp1A',int2str(k),'.png'])
-        saveas(fig_test(k),[fig_dir,'test_block_performance_Exp1A',int2str(k),'.fig'])
+        saveas(fig_test(k),[fig_dir,'test_block_performance_Exp1A_version',int2str(version),'_',int2str(k),'.png'])
+        saveas(fig_test(k),[fig_dir,'test_block_performance_Exp1A_version',int2str(version),'_','.fig'])
     end
 
     
@@ -210,23 +221,22 @@ if strcmp(experiment_name,'1A')
     %optimal_nr_clicks=csvread(['/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/experiments/data/stimuli/exp1/nr_observations_pi_star_1A','.',version,'.csv']);
     fig_performance=figure()
     fig_nr_clicks=figure()
-    FB_types = {'metacognitive FB','no FB','action FB'};
+    FB_types = {'no FB','action FB','metacognitive FB'};
 
     avg_scores={avg_rel_score_by_trial,avg_z_score_by_trial};
     sem_scores={sem_rel_score_by_trial,sem_z_score_by_trial};
-    LC_performances={optimal_performance,};
+    LC_performances={optimal_performance,optimal_performance,optimal_performance};
     
-    for k=1:2
+    for k=2%2%1:2
         
         avg_score=avg_scores{k};
         sem_score=sem_scores{k};
-        LC_performance=LC_performances{k};
         
         for ic=1:length(info_costs)
             fig1=figure(fig_performance)
             subplot(1,3,ic)
             errorbar(avg_score(:,:,ic),sem_score(:,:,ic),'LineWidth',3), hold on
-            plot([1,nr_trials],LC_performance(ic)*[1,1],'.-','LineWidth',3)
+            plot([1,nr_trials],LC_performances{ic}*[1,1],'.-','LineWidth',3)
             set(gca,'FontSize',20)
             xlim([0.5,nr_trials+1])
             if ic==1
@@ -862,8 +872,8 @@ end
 
 %% Analyze data from Experiment 1C
 
-experiment_name='1C';
-version='1';
+%experiment_name='1C';
+%version='1';
 
 MCRL_path='/Users/Falk/Dropbox/PhD/Metacognitive RL/MCRL/';
 fig_dir=[MCRL_path,'results/figures/',experiment_name,version,'/'];
@@ -1133,8 +1143,9 @@ nr_training_trials = 10;
     with_FB.nr_clicks(with_FB.trial_index>nr_training_trials),...
     without_FB.nr_clicks(test_trials))
 
-%% Compute the delays participants would have experienced in the pilot experiment 0.991
-load_PRs_pilot_exp_0d991
+%% Compute the delays participants would have experienced in the pilot experiment 0.995
+
+load_PRs_pilot_exp_0d995
 
 conditions = unique(info_cost1);
 
@@ -1184,8 +1195,8 @@ end
 avg_delay_condition=NaN(numel(conditions),1);
 for c=1:numel(conditions)
     
-    avg_delay_by_condition(c) = mean(thresholded_total_delay(condition_by_trial(:)== conditions(c)));
-    std_delay_by_condition(c) = std(thresholded_total_delay(condition_by_trial(:)== conditions(c)))
+    avg_delay_by_condition(c) = nanmean(thresholded_total_delay(condition_by_trial(:)== conditions(c)));
+    std_delay_by_condition(c) = nanstd(thresholded_total_delay(condition_by_trial(:)== conditions(c)));
 end
 
 %% Determine 95-percentiles of repsonse time distributions by condition
