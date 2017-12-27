@@ -22,17 +22,15 @@ class PriorityQueue(list):
     def push(self, item):
         heapq.heappush(self, (self.inv * self.key(item), item))
 
-def make_env(cost, ground_truth=False, **kwargs):
+def make_env(cost, ground_truth=None, **kwargs):
     """Returns a MouselabEnv with branching [4,1,2].
     
     If `ground_truth` is True, the reward observed at a given node will be
     constant across runs on this env. This reduces variance of the return."""
     reward = Normal(0, 10).to_discrete(6)
-    env = MouselabEnv([4,1,2], reward=reward, cost=cost, **kwargs)
-    if hasattr(ground_truth, 'len'):
-        env.ground_truth = np.array(ground_truth)
-    elif ground_truth:
-        env.ground_truth = np.array([0, *reward.sample(len(env.tree) - 1)])
+    if ground_truth and (not hasattr(ground_truth, '__len__')):
+        ground_truth = np.array([0, *reward.sample(16)])
+    env = MouselabEnv([4,1,2], reward=reward, cost=cost, ground_truth=ground_truth, **kwargs)
     return env
 
 def make_envs(cost, n=100, ground_truth=None, **kwargs):
@@ -41,7 +39,7 @@ def make_envs(cost, n=100, ground_truth=None, **kwargs):
         np.random.seed(ground_truth)
         return [make_env(cost, True, **kwargs) for _ in range(n)]
     else:
-        return [make_env(cost, False, **kwargs)] * n
+        return [make_env(cost, None, **kwargs)] * n
 
 def filename(cost, note=''):
     c = round(float(cost), 5)

@@ -86,6 +86,10 @@ class MouselabEnv(gym.Env):
                 else:
                     reward = self.term_reward().sample()
             else:
+                if self.ground_truth is not None:
+                    reward =  np.mean([self.ground_truth[list(path)].sum() 
+                                       for path in self.optimal_paths()])
+
                 reward = self.term_reward().expectation()
             done = True
         elif not hasattr(self._state[action], 'sample'):  # already observed
