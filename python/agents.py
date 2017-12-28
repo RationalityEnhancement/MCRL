@@ -278,6 +278,11 @@ class Memory(object):
 #             yield np.random.choice(self.deque, size, replace=False)
 
 
+def run_episode(policy, env):
+    agent = Agent()
+    agent.register(env)
+    agent.register(policy)
+    return agent.run_episode()
 
 def interactions(x):
     return [a * b for a, b in it.combinations(x, 2)]

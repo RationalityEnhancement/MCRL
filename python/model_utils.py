@@ -22,10 +22,6 @@ class PriorityQueue(list):
     def push(self, item):
         heapq.heappush(self, (self.inv * self.key(item), item))
 
-def softmax(x):
-    ex = np.exp(x)
-    return ex / ex.sum()
-
 def make_env(cost, ground_truth=False, **kwargs):
     """Returns a MouselabEnv with branching [4,1,2].
     

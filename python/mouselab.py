@@ -175,8 +175,8 @@ class MouselabEnv(gym.Env):
 
 
     def term_reward(self, state=None):
+        """A distribution over """
         state = state if state is not None else self._state
-        assert state is not None
         return self.node_value(0, state)
 
     def best_path(self, state=None):
