@@ -331,30 +331,28 @@ class MetaTreeEnv(gym.Env):
 
 
 class Tree(object):
-    def __init__(self, vals, structure):
-        assert len(vals) == len(structure)
-        self.vals = vals
-        self.structure = structure
-
-    def __len__(self):
-        return len(self.vals)
+    def __init__(self, val, children):
+        self.val = val
+        self.children = children
 
     @memoize
+    def __len__(self):
+        return 1 + sum(len(c) for c in self.children)
+
     def __hash__(self):
-        return hash(self.vals) + hash(self.structure)
-
-    def __getitem__(self, idx):
-        return self.vals[idx]
+        return id(self)
+        # return hash(self.vals) + hash(self.structure)
     
-    def update(self, idx, val):
-        vals = list(self.vals)
-        vals[idx] = val
-        return Tree(vals, self.structure)
+    @memoize
+    def update(self, address, val):
+        if address:
+            children = list(self.children)
+            first, rest = address[0], address[1:]
+            children[first] = children[first].update(rest, val)
+            return Tree(self.val, children)
+        else:
+            return Tree(val, self.children)
     
-    @property
-    def children(self):
-        return [Tree()]
-
     def leaves(self):
         pass
 
@@ -362,7 +360,7 @@ class Tree(object):
         pass
 
     def value(self):
-        return max((child.value() + child[0] for child in self.children),
+        return max((child.value() + child.val for child in self.children),
                     default=ZERO, key=expectation)
 
     def obs_value(self):
@@ -375,33 +373,46 @@ class Tree(object):
             val = value
             value = lambda depth: val
 
-        vals = []
-        structure = []
+        def rec(d):
+            v = value(d)
+            if d == len(branching):
+                children = []
+            else:
+                children = [rec(d+1) for _ in range(branching[d])]
+            return Tree(v, children)
 
-        def expand(d):
-            my_idx = len(vals)
-            vals.append(value(d))
-            children = []
-            structure.append(children)
-            for _ in range(get(d, branching, 0)):
-                child_idx = expand(d+1)
-                children.append(child_idx)
-            return my_idx
-
-        expand(0)
-        print(vals)
-        print(structure)
-        return cls(vals, structure)
+        return rec(0)
 
     def __repr__(self):
         return 'Tree'
 
     def __str__(self):
-        pass
+        children = tuple(str(c) for c in self.children)
+        return f'({self.val}, {children})'
 
     def as_tuple(self):
         return (self.vals[0],
                 tuple(child.as_tuple() for child in self.children))
+
+    def draw(self):
+        from graphviz import Digraph
+        from IPython.display import display
+        
+        def color(val):
+            if val > 0:
+                return '#8EBF87'
+            else:
+                return '#F7BDC4'
+        
+        dot = Digraph()
+        def rec(tree):
+            dot.node(str(id(tree)), label=repr(tree.val))
+            for child in tree.children:
+                dot.edge(str(id(tree)), str(id(child)))
+                rec(child)
+
+        rec(self)
+        display(dot)
         
 
 
