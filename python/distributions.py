@@ -280,6 +280,8 @@ def expectation(val):
         return val
 
 
+ZERO = PointMass(0)
+
 # def expectation(val):
 #     try:
 #         return val.expectation()
