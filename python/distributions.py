@@ -316,10 +316,11 @@ def cross(dists, f=None):
 
 
 
-__no_default__ = '__no_default___'
+__no_default__ = 25
 
-@lru_cache(maxsize=None)
+# @lru_cache(maxsize=None)
 def cmax(dists, default=__no_default__):
+    dists = tuple(dists)
     if len(dists) == 1:
         return dists[0]
     elif len(dists) == 0:

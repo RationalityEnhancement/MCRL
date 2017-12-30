@@ -1,10 +1,9 @@
-
-
+from toolz import memoize
+from tree import Tree
 
 class TreeStructure(tuple):
     def __init__(self, *args):
         super().__init__(*args)
-
 
     def hash(self):
         return id(self)

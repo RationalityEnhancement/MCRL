@@ -55,45 +55,36 @@ class MetaTreeEnv(gym.Env):
             reward = self._get_term_reward()
             done = True
 
-        elif not hasattr(self._state[action], 'sample'):  # already observed
+        elif not hasattr(self.node(action), 'sample'):  # already observed
             assert 0, f'{action} has already been observed'
             reward = 0
             done = False
 
         else:  # observe a new node
-            self._state = self._state.update(action, self._observe(action))
+            address = self.index[action]
+            self._state = self._state.update(address, self._observe(action))
             reward = self.cost
             done = False
 
         return self._state, reward, done, {}
 
+    def node(self, idx):
+        address = self.index[idx]
+        return self._state[address].val
+
+    def _get_term_reward(self):
+        # TODO
+        return self.term_reward(self._state).expectation()
+
     def _ground_truth_term_reward(self):
+        # TODO
+        assert 0
         assert self.ground_truth is not None
-        paths = self.optimal_paths(self._state)
-
-        # if self.sample_term_reward:
-        #     if self.ground_truth is not None:
-        #         reward = self.ground_truth[list(path)].sum()
-        #     else:
-        #         reward = self.term_reward().sample()
-        # else:
-        #     if self.ground_truth is not None:
-        #         reward =  np.mean([self.ground_truth[list(path)].sum()
-        #                            for path in self.optimal_paths()])
-            paths = self.optimal_paths(self._state)
-
-
-
-        if self.sample_term_reward:
-            return self.term_reward(self._state).sample()
-        else:
-            return self.term_reward(self._state).expectation()
-        
-        
+        paths = self.optimal_paths(self._state)        
 
     def _observe(self, action):
         if self.ground_truth is None:
-            return self._state[action].sample()
+            return self.node(action).sample()
         else:
             return self.ground_truth[action]
 
@@ -224,6 +215,10 @@ class MetaTreeEnv(gym.Env):
         
         obs can be a single node, a list of nodes, or 'all'
         """
+        address = self.index[node]
+        
+        return state[address].value(cmax(default=ZERO))
+
         if self._binary:
             obs_flat = self.to_obs_flat(state, node, obs)
             if self.exact:
@@ -257,26 +252,9 @@ class MetaTreeEnv(gym.Env):
     def _render(self, mode='notebook', close=False):
         if close:
             return
-        from graphviz import Digraph
-        from IPython.display import display
-        
 
-        def color(val):
-            if val > 0:
-                return '#8EBF87'
-            else:
-                return '#F7BDC4'
-        
-        dot = Digraph()
-        for x, ys in enumerate(self.tree):
-            r = self._state[x]
-            observed = not hasattr(self._state[x], 'sample')
-            c = color(r) if observed else 'grey'
-            l = str(round(r, 2)) if observed else str(x)
-            dot.node(str(x), label=l, style='filled', color=c)
-            for y in ys:
-                dot.edge(str(x), str(y))
-        display(dot)
+        self._state.draw()
+     
 
     def to_obs_tree(self, state, node, obs=(), sort=True):
         maybe_sort = sorted if sort else lambda x: x

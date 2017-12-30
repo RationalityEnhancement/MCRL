@@ -1,5 +1,6 @@
 from toolz import memoize, last
 
+
 class Tree(object):
     def __init__(self, val, children):
         self.val = val
@@ -7,6 +8,12 @@ class Tree(object):
 
     def __getitem__(self, address):
         return last(self.path(address))
+
+    def __iter__(self):
+        yield self.val
+        for child in self.children:
+            yield from child
+
 
     @memoize
     def __len__(self):
@@ -51,8 +58,8 @@ class Tree(object):
         return rec([self])
     
     def value(self, max=max):
-        return max([child.value(max) + child.val
-                    for child in self.children])
+        return max(child.value(max) + child.val
+                   for child in self.children)
 
     @classmethod
     def build(cls, branching, value):
