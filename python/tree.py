@@ -57,9 +57,9 @@ class Tree(object):
 
         return rec([self])
     
-    def value(self, max=max):
-        return max(child.value(max) + child.val
-                   for child in self.children)
+    def value(self, max=max, key=lambda x: x, default=0):
+        options = (child.value(max) + child.val for child in self.children)
+        return max(options, key=key, default=default)
 
     @classmethod
     def build(cls, branching, value):

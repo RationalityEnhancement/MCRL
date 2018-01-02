@@ -35,8 +35,6 @@ class MetaTreeEnv(gym.Env):
         self.sample_term_reward = sample_term_reward
         self.term_action = len(self.init_belief)
         self.reset()
-        self.index = TreeIndex(init_belief)
-
 
         # Required for gym.Env API.
         self.action_space = spaces.Discrete(len(self.init_belief) + 1)
@@ -61,16 +59,14 @@ class MetaTreeEnv(gym.Env):
             done = False
 
         else:  # observe a new node
-            address = self.index[action]
-            self._state = self._state.update(address, self._observe(action))
+            self._state = self._state.update(action, self._observe(action))
             reward = self.cost
             done = False
 
         return self._state, reward, done, {}
 
     def node(self, idx):
-        address = self.index[idx]
-        return self._state[address].val
+        return self._state[idx]
 
     def _get_term_reward(self):
         # TODO
@@ -126,14 +122,12 @@ class MetaTreeEnv(gym.Env):
     def node_value(self, node, state=None):
         """A distribution over total rewards after the given node."""
         state = state if state is not None else self._state
-        address = self.index[node]
-        return state[address].value(max(key=expectation, default=ZERO))
+        return state.subtree(node).value(max(key=expectation, default=ZERO))
     
     def node_value_to(self, node, state=None):
         """A distribution over rewards up to and including the given node."""
         state = state if state is not None else self._state
-        address = self.index[node]
-        return sum((n.val for n in state.path(address)), ZERO)
+        return sum((n for n in state.path(node)), ZERO)
 
     def node_quality(self, node, state=None):
         """A distribution of total expected rewards if this node is visited."""

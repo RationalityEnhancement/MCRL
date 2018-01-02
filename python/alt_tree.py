@@ -1,19 +1,36 @@
-from toolz import memoize
+from toolz import memoize, get, sliding_window, concatv
 from tree import Tree
 
-class TreeStructure(tuple):
+class TreeStructure(list):
     def __init__(self, *args):
         super().__init__(*args)
+        
 
     def hash(self):
         return id(self)
 
+    def __setitem__(self):
+        assert 0
+
+    def __delitem__(self):
+        assert 0
+
+    def subtree(self, idx):
+        children = []
+        child_indices = self.structure[0]
+        for idx, stop in sliding_window(2, concatv(child_indices, [None])):
+            structure = tuple(tuple(i - idx for i in indices)
+                              for indices in self.structure[idx:stop])
+            children.append(self.new(self.values[idx:stop], structure))
+        return children
+
+
     @property
-    @memoize
+    # @memoize
     def subtrees(self):
-        slices = [0] * len(self.tree)
+        slices = [0] * len(self)
         def get_end(n):
-            end = max((get_end(n1) for n1 in self.tree[n]), default=n+1)
+            end = max((get_end(n1) for n1 in self[n]), default=n+1)
             slices[n] = slice(n, end)
             return end
         get_end(0)
@@ -49,6 +66,33 @@ class TreeStructure(tuple):
             else:
                 path.append(child)
         assert False
+
+    @classmethod
+    @memoize
+    def build(cls, branching):
+        # if branching:
+        #     return TreeStructure(cls.build(branching[1:])
+        #                          for _ in range(branching[0]))
+        # else:
+        #     return TreeStructure()
+
+        structure = []
+        return
+
+        def expand(d):
+            my_idx = len(vals)
+            vals.append(value(d))
+            children = []
+            structure.append(children)
+            for _ in range(get(d, branching, 0)):
+                child_idx = expand(d+1)
+                children.append(child_idx)
+            return my_idx
+
+        expand(0)
+        return cls(tuple(vals), TreeStructure(structure))
+
+
       
 
 class FlatTree(Tree):
@@ -117,5 +161,5 @@ class FlatTree(Tree):
             return my_idx
 
         expand(0)
-        return cls(tuple(vals), tuple(map(tuple, structure)))
+        return cls(tuple(vals), TreeStructure(structure))
 
