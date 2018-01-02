@@ -11,8 +11,8 @@ from utils import softmax
 from policies import SoftmaxPolicy
 
 
-class HumanPolicy(SoftmaxPolicy):
-    """A linear softmax policy"""
+class MouselabPolicy(SoftmaxPolicy):
+    """A linear softmax policy for MouselabEnv."""
     def __init__(self, theta, **kwargs):
         super().__init__(**kwargs)
         self.theta = np.array(theta)
@@ -32,14 +32,15 @@ class HumanPolicy(SoftmaxPolicy):
         x = np.zeros(len(theta))
         if action == env.term_action:
             x[0] = 1
-            x[1] = etr = env.expected_term_reward(state)
+            x[1] = env.expected_term_reward(state)
             # if etr > self.satisficing_threshold:
             #     x[8] = 1e100
             return x
         else:
             if not hasattr(state[action], 'sample'):
+                # already clicked this node
                 x[8] = -1e100
-                return x  # already clicked this node
+                return x
             # Value of information
             # the `self.theta[i] and` trick skips computing if feature won't be used
             x[2] = theta[2] and env.myopic_voc(action, state)
@@ -53,7 +54,7 @@ class HumanPolicy(SoftmaxPolicy):
                 x[6] = quality.std()
         
             # Structural
-            x[7] = len(env.path_to(action)) # depth
+            x[7] = len(env.path_to(action)) - 1 # depth
             # TODO: same_branch_as_last
 
         return x

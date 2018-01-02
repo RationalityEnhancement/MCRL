@@ -269,7 +269,7 @@ class MouselabEnv(gym.Env):
         path = [start]
         if node == start:
             return path
-        for _ in range(self.height + 1):
+        for _ in range(10000):
             children = self.tree[path[-1]]
             for i, child in enumerate(children):
                 if child == node:
