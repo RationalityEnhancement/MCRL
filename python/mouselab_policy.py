@@ -9,14 +9,27 @@ from toolz import curry, concat
 from utils import softmax
 
 from policies import SoftmaxPolicy
+from collections import OrderedDict
 
-
-class HumanPolicy(SoftmaxPolicy):
-    """A linear softmax policy"""
-    def __init__(self, theta, **kwargs):
+class MouselabPolicy(SoftmaxPolicy):
+    """A linear softmax policy for MouselabEnv."""
+    def __init__(self, weights, **kwargs):
         super().__init__(**kwargs)
-        self.theta = np.array(theta)
-        self._theta = np.r_[self.theta, 1]  # dummy coefficient
+        self.weights = OrderedDict(
+            is_term=0,
+            term_reward=1,
+            voi_myopic=0,
+            vpi_action=0,
+            vpi_full=0,
+            quality_ev=0,
+            quality_std=0,
+            depth=0,
+        )
+        for k in weights:
+            if k not in self.weights:
+                raise ValueError(f'No paramter named "{k}"')
+        self.weights.update(weights)
+        self.theta = np.array([*self.weights.values(), 1])  # dummy coefficient
 
     @curry
     def preference(self, state, action):
@@ -25,21 +38,22 @@ class HumanPolicy(SoftmaxPolicy):
         #     return - 1e9
         # if self.env.expected_term_reward(state) >= self.satisficing_threshold:
         #     return 1e9 if action == self.env.term_action else -1e9
-        return np.dot(self._theta, self.phi(state, action))
+        return np.dot(self.theta, self.phi(state, action))
 
     def phi(self, state, action):
-        env, theta = self.env, self._theta
+        env, theta = self.env, self.theta
         x = np.zeros(len(theta))
         if action == env.term_action:
             x[0] = 1
-            x[1] = etr = env.expected_term_reward(state)
+            x[1] = env.expected_term_reward(state)
             # if etr > self.satisficing_threshold:
             #     x[8] = 1e100
             return x
         else:
             if not hasattr(state[action], 'sample'):
+                # already clicked this node
                 x[8] = -1e100
-                return x  # already clicked this node
+                return x
             # Value of information
             # the `self.theta[i] and` trick skips computing if feature won't be used
             x[2] = theta[2] and env.myopic_voc(action, state)
@@ -53,7 +67,7 @@ class HumanPolicy(SoftmaxPolicy):
                 x[6] = quality.std()
         
             # Structural
-            x[7] = len(env.path_to(action)) # depth
+            x[7] = len(env.path_to(action)) - 1 # depth
             # TODO: same_branch_as_last
 
         return x
