@@ -9,14 +9,27 @@ from toolz import curry, concat
 from utils import softmax
 
 from policies import SoftmaxPolicy
-
+from collections import OrderedDict
 
 class MouselabPolicy(SoftmaxPolicy):
     """A linear softmax policy for MouselabEnv."""
-    def __init__(self, theta, **kwargs):
+    def __init__(self, weights, **kwargs):
         super().__init__(**kwargs)
-        self.theta = np.array(theta)
-        self._theta = np.r_[self.theta, 1]  # dummy coefficient
+        self.weights = OrderedDict(
+            is_term=0,
+            term_reward=1,
+            voi_myopic=0,
+            vpi_action=0,
+            vpi_full=0,
+            quality_ev=0,
+            quality_std=0,
+            depth=0,
+        )
+        for k in weights:
+            if k not in self.weights:
+                raise ValueError(f'No paramter named "{k}"')
+        self.weights.update(weights)
+        self.theta = np.array([*self.weights.values(), 1])  # dummy coefficient
 
     @curry
     def preference(self, state, action):
@@ -25,10 +38,10 @@ class MouselabPolicy(SoftmaxPolicy):
         #     return - 1e9
         # if self.env.expected_term_reward(state) >= self.satisficing_threshold:
         #     return 1e9 if action == self.env.term_action else -1e9
-        return np.dot(self._theta, self.phi(state, action))
+        return np.dot(self.theta, self.phi(state, action))
 
     def phi(self, state, action):
-        env, theta = self.env, self._theta
+        env, theta = self.env, self.theta
         x = np.zeros(len(theta))
         if action == env.term_action:
             x[0] = 1

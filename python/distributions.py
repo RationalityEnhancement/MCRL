@@ -90,7 +90,7 @@ class NormalMixture(Distribution):
     def to_sampledist(self, n=10000):
         d = SampleDist(self.sample(n))
         ev = self.mu @ self.weights
-        d.expectation = lambda *args: ev
+        d.expectation = lambda: ev
         return d
 
     def expectation(self):
@@ -125,8 +125,8 @@ class Categorical(Distribution):
         else:
             self.probs = tuple(probs)
 
-        self._hash = id(self)
-        # self._hash = hash((self.vals, self.probs))
+        # self._hash = id(self)
+        self._hash = hash((self.vals, self.probs))
 
     @lru_cache(None)
     def var(self):
@@ -159,13 +159,11 @@ class Categorical(Distribution):
     def __len__(self):
         return len(self.probs)
 
-    # @lru_cache(maxsize=None)
+    @lru_cache(maxsize=None)
     def __add__(self, other):
-        # if isinstance(other, Categorical):
         if hasattr(other, 'probs'):
             # print(f'add({id(self) % 1000}, {id(other) % 1000})')
             return cross((self, other), lambda s, o: s + o)
-        # if isinstance(other, PointMass):
         if hasattr(other, 'val'):
             return self.apply(lambda v: v + other.val)
         else:
@@ -306,7 +304,7 @@ def sample(val):
 
 def cross(dists, f=None):
     if f is None:
-        f = lambda *args: args
+        f = lambda *x: x
     outcomes = Counter()
     for outcome_probs in it.product(*dists):
         o, p = zip(*outcome_probs)
@@ -370,7 +368,6 @@ def smax(dists, default=__no_default__):
 
 def normal_approximation(dist, samples=10000):
     return Normal(scipy.stats.norm.fit(dist.sample(samples)))
-
 
 
 class SampleDist(Distribution):

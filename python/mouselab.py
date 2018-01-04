@@ -2,7 +2,7 @@ from collections import namedtuple, defaultdict, deque, Counter
 import numpy as np
 import gym
 from gym import spaces
-from distributions import cmax, smax, expectation, Normal, PointMass
+from distributions import smax, cmax, sample, expectation, Normal, PointMass
 from toolz import memoize, get
 import random
 from contracts import contract
@@ -26,7 +26,10 @@ class MouselabEnv(gym.Env):
     def __init__(self, tree, init, ground_truth=None, cost=0, sample_term_reward=False):
         self.tree = tree
         self.init = tuple(init)
-        self.ground_truth = np.array(ground_truth) if ground_truth is not None else None
+        if ground_truth is not None:
+            self.ground_truth = np.array(ground_truth)
+        else:
+            self.ground_truth = np.array(list(map(sample, init)))
         self.cost = - abs(cost)
         self.sample_term_reward = sample_term_reward
         self.term_action = len(self.init)
@@ -52,19 +55,8 @@ class MouselabEnv(gym.Env):
         if self._state is self.term_state:
             assert 0, 'state is terminal'
         if action == self.term_action:
+            reward = self._term_reward()
             self._state = self.term_state
-            if self.sample_term_reward:
-                if self.ground_truth is not None:
-                    path = random.choice(list(self.optimal_paths()))
-                    reward = self.ground_truth[list(path)].sum()
-                else:
-                    reward = self.term_reward().sample()
-            else:
-                if self.ground_truth is not None:
-                    reward = np.mean([self.ground_truth[list(path)].sum() 
-                                      for path in self.optimal_paths()])
-
-                reward = self.term_reward().expectation()
             done = True
         elif not hasattr(self._state[action], 'sample'):  # already observed
             assert 0, self._state[action]
@@ -75,6 +67,15 @@ class MouselabEnv(gym.Env):
             reward = self.cost
             done = False
         return self._state, reward, done, {}
+
+    def _term_reward(self):
+        returns = [self.ground_truth[list(path)].sum() 
+                   for path in self.optimal_paths()]
+        if self.sample_term_reward:
+            return np.random.sample(returns)
+        else:
+            return np.mean(returns)
+
 
     def _observe(self, action):
         if self.ground_truth is not None:
@@ -310,17 +311,20 @@ class MouselabEnv(gym.Env):
         return [tuple(gen(n)) for n in range(len(self.tree))]
 
     @classmethod
-    def build(cls, branching, value, **kwargs):
-        if not callable(value):
-            val = value
-            value = lambda depth: val
+    def new_symmetric(cls, branching, reward, seed=None, **kwargs):
+        """Returns a MouselabEnv with a symmetric structure."""
+        if seed is not None:
+            np.random.seed(seed)
+        if not callable(reward):
+            r = reward
+            reward = lambda depth: r
 
         init = []
         tree = []
 
         def expand(d):
             my_idx = len(init)
-            init.append(value(d))
+            init.append(reward(d))
             children = []
             tree.append(children)
             for _ in range(get(d, branching, 0)):
@@ -329,7 +333,7 @@ class MouselabEnv(gym.Env):
             return my_idx
 
         expand(0)
-        return cls(tree, init)
+        return cls(tree, init, **kwargs)
 
     def _render(self, mode='notebook', close=False):
         if close:
