@@ -44,8 +44,8 @@ def render_trace(trace, env=ENV):
     # from time import sleep
     from toolz import get
     from shutil import rmtree
+    rmtree('trace/', ignore_errors=True)
     for i, (s, a, r) in enumerate(zip(*get(['states', 'actions', 'rewards'], trace))):
-        rmtree('trace/', ignore_errors=True)
         # clear_output()
         env._state = s
         dot = env.render()
