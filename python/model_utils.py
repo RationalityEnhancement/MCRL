@@ -4,7 +4,6 @@ import json
 import skopt
 from policies import LiederPolicy
 
-
 def filename(cost, note=''):
     c = round(float(cost), 5)
     if note:
@@ -38,3 +37,19 @@ def read_state_actions(cost):
 
     return {'states': list(map(parse_state, data['states'])), 
             'actions': list(map(parse_action, data['actions']))}
+
+def render_trace(trace, env=ENV):
+    """Saves images of a trace."""
+    # from IPython.display import clear_output, display
+    # from time import sleep
+    from toolz import get
+    from shutil import rmtree
+    for i, (s, a, r) in enumerate(zip(*get(['states', 'actions', 'rewards'], trace))):
+        rmtree('trace/', ignore_errors=True)
+        # clear_output()
+        env._state = s
+        dot = env.render()
+        # display(dot)
+        dot.render(filename=f'{i}', directory='trace', cleanup=True)
+        # sleep(1)
+    print('Rendered state sequence to trace/')
