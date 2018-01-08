@@ -1,47 +1,8 @@
 from distributions import Normal
 from mouselab import MouselabEnv
-import numpy as np
 import json
 import skopt
 from policies import LiederPolicy
-from agents import Agent
-
-def clear_screen():
-    print(chr(27) + "[2J")
-    clear_output()
-
-import heapq
-class PriorityQueue(list):
-    def __init__(self, key, max_first=True):
-        self.key = key
-        self.inv = -1 if max_first else 1
-
-    def pop(self):
-        return heapq.heappop(self)[1]
-        
-    def push(self, item):
-        heapq.heappush(self, (self.inv * self.key(item), item))
-
-def make_env(cost, ground_truth=False, **kwargs):
-    """Returns a MouselabEnv with branching [4,1,2].
-    
-    If `ground_truth` is True, the reward observed at a given node will be
-    constant across runs on this env. This reduces variance of the return."""
-    reward = Normal(0, 10).to_discrete(6)
-    env = MouselabEnv([4,1,2], reward=reward, cost=cost, **kwargs)
-    if hasattr(ground_truth, 'len'):
-        env.ground_truth = np.array(ground_truth)
-    elif ground_truth:
-        env.ground_truth = np.array([0, *reward.sample(len(env.tree) - 1)])
-    return env
-
-def make_envs(cost, n=100, ground_truth=None, **kwargs):
-    # Note, ground_truth can be an int in which case it acts as a random seed.
-    if ground_truth is not None:
-        np.random.seed(ground_truth)
-        return [make_env(cost, True, **kwargs) for _ in range(n)]
-    else:
-        return [make_env(cost, False, **kwargs)] * n
 
 def filename(cost, note=''):
     c = round(float(cost), 5)
@@ -56,7 +17,11 @@ def read_bo_policy(cost, note=''):
     result = read_bo_result(cost, note)
     return LiederPolicy(result.specs['info']['theta'])
 
-ENV = make_env(0)
+def make_env(cost=1.25, ground_truth=None):
+    reward = Normal(0, 10).to_discrete(6)
+    return MouselabEnv.new_symmetric([4,1,2], reward, cost=cost, ground_truth=None)
+
+ENV = make_env()
 
 def parse_state(state):
     return tuple(ENV.reward if x == '__' else float(x)
@@ -72,3 +37,19 @@ def read_state_actions(cost):
 
     return {'states': list(map(parse_state, data['states'])), 
             'actions': list(map(parse_action, data['actions']))}
+
+def render_trace(trace, env=ENV):
+    """Saves images of a trace."""
+    # from IPython.display import clear_output, display
+    # from time import sleep
+    from toolz import get
+    from shutil import rmtree
+    rmtree('trace/', ignore_errors=True)
+    for i, (s, a, r) in enumerate(zip(*get(['states', 'actions', 'rewards'], trace))):
+        # clear_output()
+        env._state = s
+        dot = env.render()
+        # display(dot)
+        dot.render(filename=f'{i}', directory='trace', cleanup=True)
+        # sleep(1)
+    print('Rendered state sequence to trace/')
