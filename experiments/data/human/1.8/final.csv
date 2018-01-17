@@ -1,0 +1,91 @@
+pid	Verbal Report	cat_score_high	cat_score_low	cat_score_med	cat_cost_high	cat_cost_low	cat_cost_med
+0	I tried to aviod the big decreases in money.	1	0	0	0	0	1
+1	Looked at end branch nodes for high value. I though there were less negative values than there were.	0	1	0	1	0	0
+2	I click on everything and see which one is the best route	0	1	0	0	1	0
+3	I made my best route	0	1	0	0	1	0
+4	Guessing	1	0	0	1	0	0
+5	Choosing the potential for highest paying routes of course	0	0	1	0	0	1
+6	Completely random. My decisions didn't have any influence on the final outcome.	0	0	1	1	0	0
+7		0	1	0	0	1	0
+8	IT WAS RANDOM	1	0	0	1	0	0
+9	I revealed most or all of the spots and tried to pick the best route.	0	0	1	0	1	0
+10	I tried to select the first route that had a good enough profit to avoid paying to look at every option.	0	0	1	0	1	0
+11	I picked the ending spot with the highest award and worked backward.	0	0	1	0	1	0
+12	I calculated the best route that would earn most money.	1	0	0	0	1	0
+14	I tried to maximize my profit by finding the most profitable course in the fewest clicks.	0	0	1	0	0	1
+15	I tried to minimize my cost and do my best guessing	0	0	1	0	0	1
+17	Checked which paid more	0	0	1	1	0	0
+18	If the first point I looked at was good I checked a second one on that route.  If it didn't I tried another one.	0	0	1	0	0	1
+21	Randomly	0	1	0	0	1	0
+22	clicked on however many dots i needed to determine the smartest route	0	0	1	0	1	0
+23	Randomly click 3-4 location, and see the values associated to them, avoid possible negative values	0	0	1	1	0	0
+24	At first I tried to see which route might be cheaper.	0	0	1	1	0	0
+25	I would click on a location to determine its value and decide from there.	0	1	0	1	0	0
+26	I had no strategy	0	1	0	1	0	0
+28	Looking for the most money.	0	0	1	0	0	1
+29	I didn't plan it out, I just went with the route that appeared to be giving me positive points.	0	0	1	0	0	1
+30	find a positive end value	0	1	0	1	0	0
+31	I felt like it was tricky and there was no method to succeeding 	0	0	1	0	0	1
+32	At first I did it randomly but then I kept losing money, so I started looking at the pay for each spot and kept losing money.	0	1	0	0	0	1
+33	At first I just checked the value of every spot. Later I noticed the values capped at +/-$20 so I didn't need to click every one to tell if a path was clearly bad.	1	0	0	0	1	0
+34	For the most part I checked all of the hidden costs/bonuses. It was cheap enough that it was worth it to get the best route. I only stopped when I thought I couldn't do better. 	1	0	0	0	1	0
+35	Basically started at 3 o'clock and based on money I would either stay or move. 	0	1	0	0	0	1
+36	I had no game plan	0	0	1	1	0	0
+37	I had to go through the hub at the end of each node. If that was extremely negative I could eliminate it easier. If it was good I checked the node between me and it. But generally checked the far node before the destination in each cardinal direction each time.	1	0	0	0	1	0
+39	I guessed randomly at times and at other times I tried to find the $20 spots.  	1	0	0	1	0	0
+40	There was no strategy in the way I chose the route for the plane. It was a random guess.	0	1	0	0	1	0
+42	I tried to minimize losses and find the most profitable route. I had to take a few risks with the hopes of not having a negative balance.	1	0	0	0	0	1
+43	pure guessing!	1	0	0	1	0	0
+44	checked all the first routes and then went further checked the ones that were green	1	0	0	0	0	1
+45	looking for where I wouldn't lose money	0	0	1	0	1	0
+46	I looked for the most money at the end and along the way.  	0	0	1	0	1	0
+48	I went with my gut.	0	0	1	1	0	0
+49	When it did well I moved to another route, if it did poorly I stayed with the same route.  Unfortunately, that wasn't the best plan.  	0	1	0	0	0	1
+50	I minimized the planning cost by only searching for the first paying move and the endpoint that paid the most.	0	1	0	0	0	1
+51	I usually tried to play it safe where I would make money	1	0	0	0	0	1
+52	I scouted my route. If I saw $12 or $20 then I knew it was the way to go.	1	0	0	0	1	0
+53	I first tried to use one or two chances to see which route had an initial big pay.	1	0	0	1	0	0
+55	I went with what would give me the highest payout.	0	0	1	0	1	0
+56	I went with the first step that offered the most money	0	0	1	0	0	1
+57	I tried to find a path that would lead me to the most money. At some points, I realized that I it would be the safe bet to just take what I had available instead of searching for better options and investing more money.	1	0	0	0	0	1
+58	Just followed a route and tried to see if there was a pattern.	1	0	0	1	0	0
+60	I checked the award of the first destinations and the last.	0	0	1	0	1	0
+61	I quickly decided that the best idea was to click every dot.	1	0	0	0	1	0
+62	Couldn't relly	0	1	0	1	0	0
+63	I tried keeping with the same route to see the different prices. 	0	1	0	0	0	1
+64	I did it randomly	0	1	0	0	1	0
+65	Looked for the big money	0	0	1	0	1	0
+66	I clicked a few trying to figure out where the positive transactions were, but I found it very difficult.	0	1	0	1	0	0
+67	I'd just pick one of the outermost ending points to reveal first. if it was negative then I'd just head to the opposite end of it. 	1	0	0	1	0	0
+68	RANDOM	0	1	0	1	0	0
+69	It felt impossible.	0	1	0	1	0	0
+70	Most of it was random but later in the game if a route was profitable i tried to choose a different route the next time.	1	0	0	1	0	0
+71	I planned overall loss versus win	0	0	1	0	0	1
+72	It was pretty random	1	0	0	1	0	0
+73	I tried to pick the most profitable route without paying too much for information.	1	0	0	0	0	1
+74	I just randomly picked the route.	0	1	0	0	0	1
+75	I clicked on the immediate options to see how much they were taking away or adding to my total. I tried follow paths that took the least amount of deductions and the most amount of additions.	0	0	1	0	1	0
+76	I didn't have any plan, I just chose randomly.	0	0	1	0	0	1
+77	Just tried to go each direction	1	0	0	0	0	1
+78	I went randomly	0	1	0	0	1	0
+79	I looked at how I could make the most money.	0	1	0	0	0	1
+80	Randomly	0	1	0	0	1	0
+81	I started by picking circles on the outside, but then realized it is better to pick circles closer to the middle to minimize the amount I had to pick.	1	0	0	0	1	0
+82	I would avoid a route if I uncovered a minus.	0	1	0	0	1	0
+83	I chose fairly randomly 	0	1	0	1	0	0
+84	max amount of money	1	0	0	0	1	0
+85	just guessing	0	0	1	1	0	0
+86	The first round I paid to look at one of the spaces. It seemed like it cost too much so I started randomly panning my trips.	0	0	1	1	0	0
+87		0	0	1	1	0	0
+88	Instinct	0	1	0	0	0	1
+89	I checked enough circled to find a high enough paying route, then went with it.	1	0	0	0	1	0
+90	Random until I got a positive result	1	0	0	1	0	0
+91	Tried ti minimize my losses basically	1	0	0	0	0	1
+92	I used the uncover option to plot the safest route.	1	0	0	0	0	1
+95	guessed	0	1	0	1	0	0
+97	I clicked on all the circles and added up which would be the best route	1	0	0	0	1	0
+98	Just went with whatever.	0	1	0	0	0	1
+99	randomly	0	0	1	1	0	0
+100	Choose a final destination and work backwards	1	0	0	0	0	1
+101	i just kept taking random routes	0	1	0	0	1	0
+102	I kind of just went with gut instinct.	0	1	0	0	0	1

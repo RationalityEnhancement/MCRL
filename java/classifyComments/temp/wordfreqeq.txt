@@ -1,0 +1,82 @@
+tried, try, trying	21
+squares, square, blocks, boxes, area, areas	29
+felt, gut, instinct, intuition, trusted	18
+most, more, many	21
+black	15
+open, opened, reveal, revealed, uncover, cleared, clear	19
+went	14
+fun, enjoyed, love, nice, blas	13
+just, simply	13
+guess, guessed, guesses, guessing	9
+thank, thanks	9
+move, moves, moved	8
+exit, dot, red	7
+path, paths, pathways, route, routes, way	7
+few, fewest, least, less	6
+choice, choices, chose, decisions, decision, selected, pic	5
+closest, closer, nearest	4
+number, amount, minimize	8
+possible	4
+sometimes	4
+space, spaces	4
+where	4
+find, finding	3
+see, looked, visible	3
+steps, step	3
+take, taken, took	3
+think, thinking, thought	3
+direction	2
+distance, proximity	2
+first	2
+may, might	2
+time, times	2
+usually	2
+well	2
+work	2
+available	1
+away	1
+backtrack, backtracking, retrace	1
+bar	1
+behind	1
+best, better	1
+between	1
+board	1
+bonus	1
+case	1
+convenient	1
+dead-end	1
+early	1
+educated	1
+envision	1
+equal	1
+explored, checked	2
+fast, fastest, quickest, shortest	4
+following	1
+game	1
+gave	1
+hidden	1
+interesting	1
+kept	1
+kind	1
+large, largest	1
+lead	1
+location, place	2
+make	1
+matter	1
+mind	1
+obviously	1
+opportunity	1
+picture	1
+probability	1
+problems	1
+reaction	1
+really	1
+received	1
+rule	1
+seem, seems	1
+show, showed	1
+small	1
+specific	1
+started	1
+strategy	1
+study, survey, task	3
