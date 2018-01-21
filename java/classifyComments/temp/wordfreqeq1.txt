@@ -1,0 +1,179 @@
+selected	1
+squares	18
+proximity	1
+whichever	2
+one	1
+closest, nearest	4
+also, too	2
+kept	1
+mind, place	2
+distance, way	7
+had	4
+backtrack, retrace	2
+case, time	2
+went	14
+along	2
+path	5
+lead	1
+dead-end	1
+most	12
+often	1
+decisions	1
+based	4
+seems	1
+convenient	1
+gut	9
+guesses	2
+comments	1
+largest	3
+number	4
+revealed	1
+per	1
+step	1
+taken	1
+problems	1
+fun, game	10
+task	1
+chose	1
+where	4
+could	5
+uncover, reveal	7
+blocks	3
+tried	19
+direction	2
+would	10
+open	4
+black	15
+boxes	1
+first	2
+minimize	4
+steps	3
+moved	1
+without	1
+backtracking	1
+just, simply	13
+with	11
+thought, reaction	2
+should	1
+pick	3
+red	4
+square	2
+didn't	4
+always	1
+work	2
+out	2
+well	2
+trying	2
+moves	6
+enjoyed	1
+study, survey	2
+thank, show	8
+really	1
+have	4
+specific	1
+strategy	1
+available, visible	2
+pathways	1
+try, take	4
+choice	1
+having	1
+more	4
+cleared	1
+away	1
+can	1
+better	1
+picture	1
+overall	1
+board	1
+not	1
+let	2
+bar, closet	2
+get, clear	5
+'gut'	1
+decision, move	2
+actually	1
+very	1
+think, see	3
+about	1
+hidden	1
+exit	2
+paths	1
+opened	2
+spaces	2
+used	2
+intuition	1
+instinct	4
+guessed	4
+many	5
+few	2
+possible	4
+location, finding	2
+early	1
+interesting	1
+bit	1
+for	4
+opportunity, day	2
+any	1
+bonus	1
+may	2
+received	1
+areas	5
+sometimes	4
+other	1
+times	1
+checked	1
+closer, equal	2
+small	1
+rule	1
+fast	1
+usually	2
+obviously	1
+this	1
+total, amount	4
+blast	1
+wouldlove	1
+find	2
+shortest	1
+routes	1
+looked	1
+which	3
+area, space	5
+less	1
+none	2
+least	2
+guess	1
+between	1
+choices	1
+make	1
+guessing	2
+thanks	2
+what	2
+felt	3
+gave	1
+best	1
+probability	1
+route	2
+how	2
+fastest, quickest	2
+once	2
+behidn	1
+thinking	1
+through	2
+might	1
+the	1
+fewest	1
+seem, matter	2
+started	1
+following	1
+kind	1
+showed	1
+trusted	1
+dot	1
+envision	1
+explored	1
+that	2
+quite	1
+nice	1
+educated	1
+large	1
+took	1

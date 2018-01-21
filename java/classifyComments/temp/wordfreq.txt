@@ -1,0 +1,118 @@
+actually	1
+along	2
+always	1
+area, areas	8
+available	1
+away	1
+backtrack, backtracking, retrace	1
+bar	1
+based	4
+behind	1
+best, better	1
+between	1
+black	15
+blocks, boxes	3
+board	1
+bonus	1
+can	1
+case	1
+checked	1
+choice, choices, chose, decisions, decision, selecte, pic	5
+cleared, clear	4
+closest, closer, nearest	4
+comments	1
+convenient	1
+could	5
+day	1
+dead-end	1
+didn't	4
+direction	2
+distance, proximity	2
+early	1
+educated	1
+fun, enjoyed, love, nice, blas	13
+envision	1
+equal	1
+exit, dot, red	7
+explored	1
+fast, fastest, quickest	1
+few, fewest, least, less	6
+find, finding	3
+first	2
+following	1
+game	1
+gave	1
+get	2
+guess, guessed, guesses, guessing	9
+felt, gut, instinct, intuition	17
+have, having, had	9
+hidden	1
+interesting	1
+just	12
+kept	1
+kind	1
+large, largest	1
+lead	1
+let	2
+location	1
+make	1
+many	5
+matter	1
+may, might	2
+mind	1
+minimize	4
+most, more	16
+move, moves, moved	8
+none	2
+not	1
+number, amount	4
+obviously	1
+once	2
+open, opened, reveal, revealed, uncover	15
+opportunity	1
+path, paths, pathways, route, routes, wa	7
+picture	1
+place	1
+possible	4
+probability	1
+problems	1
+quite	1
+reaction	1
+really	1
+received	1
+rule	1
+see, looked	3
+seem, seems	1
+shortest	1
+should	1
+show, showed	1
+simply	1
+small	1
+sometimes	4
+space, spaces	4
+specific	1
+squares, square	18
+started	1
+steps, step	3
+strategy	1
+study, survey	1
+take, taken, took	3
+task	1
+thank, thanks	9
+think, thinking, thought	3
+through	2
+time, times	2
+tried, try, trying	21
+trusted	1
+usually	2
+visible	1
+well	2
+went	14
+what	2
+where	4
+which	3
+whichever	2
+with	11
+without	1
+work	2
+would	10
