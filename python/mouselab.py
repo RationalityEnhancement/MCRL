@@ -43,6 +43,7 @@ class MouselabEnv(gym.Env):
         
         self.subtree = self._get_subtree()
         self.subtree_slices = self._get_subtree_slices()
+        self.paths = self.get_paths(0)
         self.reset()
 
     def _reset(self):
@@ -231,12 +232,23 @@ class MouselabEnv(gym.Env):
             return r+random.choice(lst)
         return r 
     
-    def mean_Q(self,node):
+    def mean_Q(self, node):
         r = self.ground_truth[node]
         lst = [self.mean_Q(n1) for n1 in self.tree[node]]
         if lst:
             return r+np.mean(lst)
         return r 
+    
+    def get_paths(self, node):  
+        if self.tree[node] == []:
+            return [[]]
+        paths = []
+        for n in self.tree[node]:
+            new_paths = self.get_paths(n)
+            for path in new_paths:
+                path.insert(0, n)
+                paths.append(path)
+        return paths
     
     @lru_cache(None) 
     def _relevant_subtree(self, node):
