@@ -25,21 +25,26 @@ class TornadoEnv(gym.Env):
     """Decide whether or not to evacuate each city."""
     term_state = '__term_state__'
 
-    def __init__(self, n_city, evac_cost, false_neg_cost, sim_cost=0, max_sims=10):
+    def __init__(self, n_city, evac_cost, false_neg_cost, sim_cost=0, max_sims=10, prior=(.1, .9)):
         super().__init__()
-        self.n_city = n_city
+        self.n_city = self.n_arm = n_city
         self.evac_cost = -abs(evac_cost)
         self.false_neg_cost = -abs(false_neg_cost)
         self.sim_cost = -abs(sim_cost)
         self.max_sims = max_sims
+        self.prior = prior
 
-        self.init = ((1, 1),) * n_city
+        self.init = (prior,) * n_city
         self._cities = range(n_city)
         self._actions = range(n_city + 1)
         self.term_action = self._actions[-1]
         self._max_sum = max_sims + sum(concat(self.init))
         self._reset()
         self.n_actions = n_city + 1
+
+    def __hash__(self):
+        return hash((self.n_city, self.evac_cost, self.false_neg_cost,
+                     self.sim_cost, self.max_sims, self.prior))
 
     def _reset(self):
         self._state = self.init
