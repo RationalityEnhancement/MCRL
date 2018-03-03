@@ -462,8 +462,8 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       v = (_.max qs)
       optimal = (a for a, q of qs when v - q < .01)
 
-      if action in optimal
-        return
+      #if action in optimal
+      #     return
 
       @freeze = true
       strictness = 1
@@ -475,38 +475,46 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       
     
       if @_block.show_feedback
-          oldFeedbackMessage = @prompt.html()
+          defaultMessage = ""    
+          @prompt.html(defaultMessage)
+          #oldFeedbackMessage = @prompt.html()
+          
+          if loss == 0
+               @prompt.html """
+                <div align='center' style='color:#008800; font-weight:bold; font-size:18pt'>
+                Good job!
+                </div>"""
+                
+          else      
+            if @termAction in optimal
+                    msg = """        
+                    You shouldn't have inspected any more nodes.
+                    """
+            else
+                msg = """          
+                You should have inspected one of the highlighted nodes.          
+                """
+                for a in optimal
+                    @states[a].circle.set('fill', '#49f')
+                    @canvas.renderAll()
+            
+                msg += "<br> Please wait #{delay} seconds."
+            
+                @prompt.html """
+                <div align='center' style='color:#FF0000; font-weight:bold; font-size:18pt'>
+                #{msg}
+                </div>
+                """
+                # @freeze = true
+                # $('#mdp-feedback').show()
+                # $('#mdp-feedback-content')
+                #   .html msg
+                # $('#mdp-feedback').hide()
 
-          if @termAction in optimal
-            msg = """        
-              You shouldn't have inspected any more nodes.
-            """
-          else
-            msg = """          
-              You should have inspected one of the highlighted nodes.          
-            """
-            for a in optimal
-              @states[a].circle.set('fill', '#49f')
-            @canvas.renderAll()
+                await sleep delay * 1000
 
-          @prompt.html """
-            <div align='center' style='color:#FF0000; font-weight:bold; font-size:18pt'>
-            #{msg}<br>
-            Please wait #{delay} seconds.
-            </div>
-          """
-
-
-          # @freeze = true
-          # $('#mdp-feedback').show()
-          # $('#mdp-feedback-content')
-          #   .html msg
-          # $('#mdp-feedback').hide()
-
-          await sleep delay * 1000
-
-          # Reset.
-          @prompt.html oldFeedbackMessage
+                # Reset.
+                @prompt.html defaultMessage
       else
             console.log 'no'
 
