@@ -22,9 +22,13 @@ class RegistrationError(Exception): pass
 
 class Agent(ABC):
     """An agent that can run openai gym environments."""
-    def __init__(self):
-        self.env = None
-        self.policy = None
+    def __init__(self, env=None, policy=None):
+        if env:
+            self.register(env)
+        if policy:
+            self.register(policy)
+        if policy:
+            policy.attach(self)
         self.ep_trace = None
         self.value_functions = []
         self.i_episode = 0
@@ -103,12 +107,14 @@ class Agent(ABC):
         range_ = tnrange if pbar else range
         for _ in range_(n_episodes):
             trace = self.run_episode(**kwargs)
-            data['n_steps'].append(len(trace.pop('states')))
+            data['n_steps'].append(len(trace['actions']))
             # data['i_episode'].append(trace.pop('i_episode'))
             # data['return'].append(trace.pop('return'))
             # data['finished'].append(trace.pop('finished'))
-            trace.pop('actions')
-            trace.pop('rewards')
+            data['last'].append(trace['states'][-2])
+            del trace['states']
+            del trace['actions']
+            del trace['rewards']
             for k, v in trace.items():
                 data[k].append(v)
 

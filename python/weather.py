@@ -33,6 +33,7 @@ class TornadoEnv(gym.Env):
         self.sim_cost = -abs(sim_cost)
         self.max_sims = max_sims
         self.prior = prior
+        self.prior_dist = beta(*prior)
 
         self.init = (prior,) * n_city
         self._cities = range(n_city)
@@ -48,14 +49,17 @@ class TornadoEnv(gym.Env):
 
     def _reset(self):
         self._state = self.init
+        self.true_p = self.prior_dist.rvs(self.n_city)
         return self._state
 
     def _step(self, action):
         if action == self.term_action:
-            return self.term_state, self.expected_term_reward(self._state), True, {}
+            # r = self.expected_term_reward(self._state)
+            r = self.true_term_reward(self._state)
+            return self.term_state, r, True, {}
         else:
             city = action
-            p = self.p_hit(self._state, city)
+            p = self.true_p[city]
             
             s = list(self._state)
             a, b = s[city]
@@ -95,10 +99,6 @@ class TornadoEnv(gym.Env):
             etr
         ])
 
-    def p_hit(self, state, city):
-        a, b = state[city]
-        return a / (a + b)
-
     def value(self, state, city):
         a, b = state[city]
         p = a / (a + b)
@@ -109,9 +109,10 @@ class TornadoEnv(gym.Env):
             yield (1, self.term_state, self.expected_term_reward(state))
         else:
             city = action
-            p = self.p_hit(state, city)
-
             a, b = state[city]
+            p = a / (a + b)
+            p = self.true_p[city]
+
             s = list(state)
             s[city] = (a + 1, b)
             yield (p, tuple(s), self.sim_cost)
@@ -121,6 +122,14 @@ class TornadoEnv(gym.Env):
     @memoize(key=memo_key)
     def expected_term_reward(self, state):
         return sum(self.value(state, a) for a in self._cities)
+
+    def true_term_reward(self, state):
+        return sum(self.evac_cost if evac else p * self.false_neg_cost
+                   for p, evac in zip(self.true_p, self.decisions(state)))
+
+    def decisions(self, state):
+        return [self.value(state, i) == self.evac_cost
+                for i in range(self.n_city)]
     
     @memoize(key=memo_key)
     def myopic_voc(self, state, action):
