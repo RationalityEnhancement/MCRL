@@ -24,8 +24,8 @@ def make_env(cost=1.25, ground_truth=None):
 ENV = make_env()
 
 def parse_state(state):
-    return tuple(ENV.reward if x == '__' else float(x)
-                 for x in state)
+    return tuple(ENV.init[i] if x == '__' else float(x)
+                 for i, x in enumerate(state))
     
 def parse_action(action):
     return ENV.term_action if action == '__TERM_ACTION__' else action

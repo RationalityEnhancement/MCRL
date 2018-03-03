@@ -279,7 +279,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
        { '3': 14 },
        { '0': 15, '2': 16 },
        {},
-       {} ]
+       {}
+     ]
+
       @state2move = do =>
         r = {}
         for moves in @transition
@@ -774,8 +776,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     startTimer: =>
       @timeLeft = @minTime
-      intervalID = undefined
-
       interval = ifvisible.onEvery 1, =>
         if @freeze then return
         @timeLeft -= 1
@@ -787,7 +787,6 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       
       $('#mdp-time').html @timeLeft
       $('#mdp-time').css 'color', (redGreen (-@timeLeft + .1))
-      # intervalID = window.setInterval tick, 1000
 
     # Draws the player image.
     initPlayer: (img) =>

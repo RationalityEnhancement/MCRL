@@ -25,11 +25,14 @@ class MouselabEnv(gym.Env):
 
     def __init__(self, tree, init, ground_truth=None, cost=0, sample_term_reward=False):
         self.tree = tree
-        self.init = tuple(init)
+        self.init = (0, *init[1:])
         if ground_truth is not None:
+            if len(ground_truth) != len(init):
+                raise ValueError('len(ground_truth) != len(init)')
             self.ground_truth = np.array(ground_truth)
         else:
             self.ground_truth = np.array(list(map(sample, init)))
+        self.ground_truth[0] = 0.
         self.cost = - abs(cost)
         self.sample_term_reward = sample_term_reward
         self.term_action = len(self.init)
@@ -339,17 +342,8 @@ class MouselabEnv(gym.Env):
         if close:
             return
         from graphviz import Digraph
-        from IPython.display import display
-        import matplotlib as mpl
-        from matplotlib.colors import rgb2hex
         
-        vmin = -2
-        vmax = 2
-        norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
-        cmap = mpl.cm.get_cmap('RdYlGn')
-        colormap = mpl.cm.ScalarMappable(norm=norm, cmap=cmap)
-        colormap.set_array(np.array([vmin, vmax]))
-
+        
         def color(val):
             if val > 0:
                 return '#8EBF87'
@@ -365,7 +359,8 @@ class MouselabEnv(gym.Env):
             dot.node(str(x), label=l, style='filled', color=c)
             for y in ys:
                 dot.edge(str(x), str(y))
-        display(dot)
+        return dot
+
 
     def to_obs_tree(self, state, node, obs=(), sort=True):
         maybe_sort = sorted if sort else lambda x: x

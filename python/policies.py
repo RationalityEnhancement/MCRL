@@ -366,6 +366,10 @@ class FixedPlanPolicy(Policy):
         return next(self.plan)
 
 
+      
+      
+
+
 class ValSearchPolicy(Policy):
     """Searches for the maximum reward path using a model."""
     def __init__(self, V, replan=False, epsilon=0, noise=1, anneal=1, **kwargs):

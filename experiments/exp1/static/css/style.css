@@ -1,4 +1,4 @@
-/* A modal pop up box, used for feedback in jspsych-graph */
+/* A modal pop up box */
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
