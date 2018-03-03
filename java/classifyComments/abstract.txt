@@ -1,0 +1,19 @@
+Title:	Semi-Automated Classification of Free-form Participant Comments
+Author keywords:	
+semi-automated text classification
+natural language processing
+behavioral experiments
+
+Abstract:	
+Behavioral experiments with human participants often involve free-form feedback or open-ended questions, such as, 'How did you make your decisions during the experiment?' or 'Why did you choose alternative A over alternative B?'. Free-form question are valuable for understanding the participants' thought process and interpretation of the task, however, the patterns in the answers are rarely obvious. The usual approach to analyzing free-form comments is by manual coding. First a researcher comes up with a set of categories of comments by looking through the data-set. Next, two or more independent raters code each comment by assigning a category label from this set. The inter-rater agreement, the percent of entries on which the two raters independently agree on the same label, reflects the quality of the proposed categories.
+
+Coming up with good categories from free-form natural language comments, however, is hard. People may express themselves using different styles of language, synonyms or metaphors, wheres defining a category set requires extracting a small set of word features associated with each label. We describe and implement an algorithm that partially automates this process. The algorithm combines natural grammar processing, synonym analysis and decision trees to produce a tree of word features exposing the semantic structure of the content to aid category analysis.
+
+The algorithm first processes the text to generate a set of word features and then trains a decision tree. To extract the word features, the individual comments are split into tokens and tagged with a part-of-speech (POS) tags from the Penn Treebank tag set. Verbs, nouns, adjectives and adverbs, regardless of their grammatical form, are retained. Next, words are converted to a neutral form using a stemming algorithm, such as Porter's algorithm, or a natural language lemmatization, lemmatization is somewhat more effective. Each word is mapped to its most common synonym, given POS, using Princeton WordNet®. The set of synonyms of each word (the Synset) is retained, while merging overlapping synsets. The pre-processing reduces the set of unique word features to 30% of the original number of unique words occurring in the text.
+
+A decision-tree is trained with the set of recovered word features, which generates the chi-square criteria and the list of examples at each node. The tree is presented in an GUI showing structure of the data in a concise form, which helps to consider all answers at once and come up with plausible categories of responses.
+The chi-square criteria require large sets of examples to be significant. With smaller (e.g. ~100 as is common in psychology experiments) sets of examples the criteria will not be significant, however inspecting the tree structure is still useful. The purpose of this method is to expose the decision-tree structure rather than to test whether the use of a particular word is a significant predictor of behaviour.
+Green edges indicate the presence of a word, red edges indicate the absence. Leaves show the label associated with each leaf and the number of examples at the leaf. Numbers in brackets at the decision-tree nodes show the chi^2 criterion and the number of examples at the node. 
+The system is designed for analyzing comments in behavioral experiments, however it can be equally applied to other snippets of text, such as online reviews, queries, or social media content. 
+
+
