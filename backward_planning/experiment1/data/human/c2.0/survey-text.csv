@@ -1,0 +1,16 @@
+pid,responses,rt,time_elapsed
+0,"{""Q0"":""BY FLUKE"",""Q1"":""DONT KNOW"",""Q2"":""WHO KNOWS"",""Q3"":""LUCK"",""Q4"":""NOTHING""}",27720,638630
+0,"{""Q0"":""NOTHING"",""Q1"":""24"",""Q2"":""GREAT""}",14823,654459
+1,"{""Q0"":""I always started by looking for the 48 spots. I realized in some situations you don't need to click them all because each run will always have 48 spot."",""Q1"":""I didn't bother clicking on the pathways I knew I wasn't going to go."",""Q2"":""Once you realize the optimal strategy to gaining the most money it's important to stop clicking."",""Q3"":""Always at the end spots and work your way backwards from there."",""Q4"":""So my idea was, I knew there was always going to be a green 48 spot which I always wanted to go for. When you had two green 48 spots, generally, it's best to reveal both pathways and figure out which will gain you more money. This is because you are only losing 4 dollars to reveal those spaces. In general, spending money is really valuable in this game. But in some situations you do not to spend very much and you can decide what is there from deduction.  ""}",215372,1552450
+1,"{""Q0"":""no"",""Q1"":""23"",""Q2"":""""}",8730,1562187
+2,"{""Q0"":""The ones at the edges are the most important ones. As soon as I find the one with 48 dollars I use that path."",""Q1"":""The ones at the inside were not important."",""Q2"":""I stop clicking as soon as I find the one with 48 dollars."",""Q3"":""The right top one."",""Q4"":""Not really.""}",146682,1230171
+2,"{""Q0"":""No."",""Q1"":""23"",""Q2"":""No.""}",15281,1246456
+3,"{""Q0"":""I clicked on the farthest ends to see where the bigger payouts were located."",""Q1"":""I rarely clicked the circles closest to me because they didn't pay as much."",""Q2"":""I stopped clicking when I found a circle that paid 45 points."",""Q3"":""I was most likely to click at the outermost ends first."",""Q4"":""I just tried to find the highest paying path.""}",131342,1406561
+4,"{""Q0"":""based on my preferences"",""Q1"":""if there was a red"",""Q2"":""if i found the highest number"",""Q3"":""at the edges"",""Q4"":""i wanted the highest at all times""}",45163,787742
+4,"{""Q0"":""no"",""Q1"":""35"",""Q2"":""n/a""}",8119,796872
+5,"{""Q0"":""BY FLUKE"",""Q1"":""DON'T KNOW"",""Q2"":""BY GUESSING"",""Q3"":"""",""Q4"":""""}",32720,633887
+5,"{""Q0"":""NO"",""Q1"":""24"",""Q2"":""GREAT""}",9829,644718
+6,"{""Q0"":""Just went with my gut instinct."",""Q1"":""Tried to go by a pattern."",""Q2"":""After the 3rd one is usually were i found the biggest amount."",""Q3"":""48"",""Q4"":""Just tried to figure out if their was a pattern and went with it.""}",125347,870621
+6,"{""Q0"":""No"",""Q1"":""32"",""Q2"":""Fun game!!""}",21931,893570
+7,"{""Q0"":""I always started with the last node because it had the biggest reward"",""Q1"":""If the nodes I found had a big reward already, i avoided further clicking"",""Q2"":""If the nodes I found had a big reward already, i avoided further clicking"",""Q3"":""the last node"",""Q4"":""nope""}",103591,1291836
+7,"{""Q0"":"""",""Q1"":""27"",""Q2"":""""}",9448,1302299

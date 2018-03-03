@@ -1,0 +1,14 @@
+bonus,bonusRate,completed,inspectCost,pid,startTime,variance,version
+2.86,0.005,True,1,0,Mon Jan 15 2018 16:29:28 GMT-0600 (Central Standard Time),constant_high,c0.0
+2.31,0.005,True,1,1,Mon Jan 15 2018 15:19:20 GMT-0800 (PST),constant_high,c0.0
+2.18,0.005,True,1,2,Mon Jan 15 2018 15:18:10 GMT-0700 (Mountain Standard Time),constant_high,c0.0
+1.74,0.005,True,1,3,Mon Jan 15 2018 14:36:27 GMT-0800 (Pacific Standard Time),constant_high,c0.0
+2.92,0.005,True,1,4,Mon Jan 15 2018 13:30:26 GMT-0800 (Pacific Standard Time),constant_high,c0.0
+0.55,0.005,True,1,5,Mon Jan 15 2018 18:27:37 GMT-0500 (Eastern Standard Time),constant_high,c0.0
+2.72,0.005,True,1,6,Mon Jan 15 2018 16:55:13 GMT-0600 (Central Standard Time),constant_high,c0.0
+3.56,0.005,True,1,7,Mon Jan 15 2018 15:42:53 GMT-0700 (Mountain Standard Time),constant_high,c0.0
+0.39,0.005,True,1,8,Mon Jan 15 2018 16:27:25 GMT-0700 (Mountain Standard Time),constant_high,c0.0
+3.26,0.005,True,1,9,Mon Jan 15 2018 17:18:05 GMT-0500 (Eastern Standard Time),constant_high,c0.0
+0.44,0.005,True,1,10,Mon Jan 15 2018 14:50:02 GMT-0800 (PST),constant_high,c0.0
+3.09,0.005,True,1,11,Mon Jan 15 2018 16:15:07 GMT-0600 (Central Standard Time),constant_high,c0.0
+3.39,0.005,True,1,12,Mon Jan 15 2018 17:28:29 GMT-0500 (EST),constant_high,c0.0
