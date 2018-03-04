@@ -29,13 +29,16 @@ with_feedback = CONDITION > 0
 
 BLOCKS = undefined
 PARAMS = undefined
-TRIALS = undefined
+TRIALS_TRAINING = undefined
+TRIALS_TEST = undefined
 DEMO_TRIALS = undefined
-STRUCTURE = undefined
+STRUCTURE_TEST = undefined
+STRUCTURE_TRAINING = undefined
 N_TRIAL = undefined
 SCORE = 0
 calculateBonus = undefined
-getTrials = undefined
+getTrainingTrials = undefined
+getTestTrials = undefined
 
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
@@ -88,18 +91,29 @@ $(window).on 'load', ->
       id = "#{PARAMS.branching}_#{PARAMS.variance}"
     else
       id = "#{PARAMS.branching}"
-    STRUCTURE = loadJson "static/json/structure/31123.json"
+    STRUCTURE_TEST = loadJson "static/json/structure/31123.json"
+    STRUCTURE_TRAINING = loadJson "static/json/structure/312.json"
     #TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
-    TRIALS = loadJson "static/json/rewards/31123_increasing1.json"
-    console.log "loaded #{TRIALS?.length} trials"
+    TRIALS_TEST = loadJson "static/json/rewards/31123_increasing1.json"
+    console.log "loaded #{TRIALS_TEST?.length} test trials"
+    TRIALS_TRAINING = loadJson "static/json/mcrl_trials/increasing.json"
+    console.log "loaded #{TRIALS_TRAINING?.length} training trials"
 
-    getTrials = do ->
-      t = _.shuffle TRIALS
+    getTrainingTrials = do ->
+      t = _.shuffle TRIALS_TRAINING
       idx = 0
       return (n) ->
         idx += n
         t.slice(idx-n, idx)
 
+    getTestTrials = do ->
+      t = _.shuffle TRIALS_TEST
+      idx = 0
+      return (n) ->
+        idx += n
+        t.slice(idx-n, idx)
+        
+        
     if DEBUG or TALK
       createStartButton()
       clearTimeout loadTimeout
@@ -204,9 +218,9 @@ initializeExperiment = ->
       Move with the arrow keys.</b>
     """
     
-    _init: ->
-      _.extend(this, STRUCTURE)
-      @trialCount = 0
+    #_init: ->
+      #_.extend(this, STRUCTURE)
+    #  @trialCount = 0
 
 
 
@@ -482,9 +496,12 @@ initializeExperiment = ->
     stateClickCost: PARAMS.inspectCost
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
-      when DEBUG then TRIALS.slice(6, 7)
-      else getTrials 1
+      when DEBUG then getTestTrials 1
+      else getTestTrials 1
     startScore: 50        
+    _init: ->
+      _.extend(this, STRUCTURE_TEST)
+      @trialCount = 0
 
         
   training = new MouselabBlock
@@ -495,9 +512,12 @@ initializeExperiment = ->
     stateClickCost: PARAMS.inspectCost
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
-      when DEBUG then TRIALS.slice(6, 8)
-      else getTrials 10
+      when DEBUG then getTrainingTrials 2
+      else getTrainingTrials 10
     startScore: 50
+    _init: ->
+      _.extend(this, STRUCTURE_TRAINING)
+      @trialCount = 0
         
         
   post_test = new MouselabBlock
@@ -508,12 +528,14 @@ initializeExperiment = ->
     stateClickCost: PARAMS.inspectCost
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
-      when DEBUG then TRIALS.slice(6, 8)
-      else getTrials 20
+      when DEBUG then getTestTrials 2
+      else getTestTrials 20
     startScore: 50
+    _init: ->
+      _.extend(this, STRUCTURE_TEST)
+      @trialCount = 0
     
-    
-    
+        
   verbal_responses = new Block
     type: 'survey-text'
     preamble: -> markdown """
@@ -566,7 +588,7 @@ initializeExperiment = ->
         stateDisplay: 'click'
         prompt: null
         stateClickCost: PARAMS.inspectCost
-        timeline: TRIALS.slice(10,14)
+        timeline: getTestTrials 4
     ]
 
 
@@ -580,9 +602,9 @@ initializeExperiment = ->
       #train_inspect_cost
       #instructions1    
       # pre_test_intro
-      # pre_test
+      #pre_test
       # divider_pretest_training    
-      #training
+      training
       #divider_training_test
       #test_block_intro
       post_test
