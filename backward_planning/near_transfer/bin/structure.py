@@ -19,7 +19,8 @@ BRANCH_DIRS = {
         'right': ('up', 'right', 'down'),
         'down': ('right', 'down', 'left'),
         'left': ('up', 'down', 'left'),
-        'all': DIRECTIONS}
+        'all': DIRECTIONS},
+    4: {'all': DIRECTIONS},
 }
 
 def move_xy(x, y, direction, dist=1):
@@ -34,10 +35,11 @@ def move_xy(x, y, direction, dist=1):
 def dist(branch, depth):
     """Distance between nodes at a given depth of a tree with given branching factor."""
     return 1
-    if branch == 3:
-        return 2 ** (depth - 1)
-    else:
-        return 2 ** (depth/2 - 0.5)  
+    # depth = 3 - depth
+    # if branch == 3:
+    #     return 2 ** (depth - 1)
+    # else:
+    #     return 1.3 ** (depth/2)  
 
 
 class Layouts:
@@ -139,8 +141,10 @@ class Layouts:
 
 def main():
     import json
-    struct = Layouts.tree2([3,1,2], first='up')
-    with open('experiment/static/json/structure/312.json', 'w+') as f:
+    branching = [3,1,1,2,3]
+    struct = Layouts.tree2(branching, first='up')
+    name = ''.join(map(str, branching))
+    with open(f'experiment/static/json/structure/{name}.json', 'w+') as f:
         json.dump(struct, f)
 
 if __name__ == '__main__':

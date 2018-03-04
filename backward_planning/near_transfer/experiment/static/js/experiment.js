@@ -2,7 +2,7 @@
 // coffeelint: disable=max_line_length, indentation
 var BLOCKS, CONDITION, DEBUG, DEMO, DEMO_TRIALS, N_TRIAL, PARAMS, SCORE, SHOW_PARTICIPANT, STRUCTURE, TALK, TRIALS, calculateBonus, createStartButton, getTrials, initializeExperiment, psiturk, saveData, with_feedback;
 
-DEBUG = false;
+DEBUG = true;
 
 TALK = false;
 
@@ -102,7 +102,7 @@ $(window).on('load', function() {
     } else {
       id = `${PARAMS.branching}`;
     }
-    STRUCTURE = loadJson("static/json/structure/312.json");
+    STRUCTURE = loadJson("static/json/structure/31123.json");
     TRIALS = loadJson("static/json/mcrl_trials/increasing.json");
     console.log(`loaded ${(TRIALS != null ? TRIALS.length : void 0)} trials`);
     getTrials = (function() {
@@ -542,22 +542,14 @@ initializeExperiment = function() {
       case !SHOW_PARTICIPANT:
         return [test];
       case !DEBUG:
-        return [
-          train_basic1,
-          //train_inspector
-          //train_inspect_cost
-          //instructions1    
-          pre_test_intro,
-          pre_test,
-          divider_pretest_training,
-          training,
-          divider_training_test,
-          test_block_intro,
-          post_test,
-          quiz,
-          verbal_responses,
-          finish
-        ];
+        // train_basic1
+        //train_inspector
+        //train_inspect_cost
+        //instructions1    
+        // pre_test_intro
+        // pre_test
+        // divider_pretest_training    
+        return [training, divider_training_test, test_block_intro, post_test, quiz, verbal_responses, finish];
       case !TALK:
         return [talk_demo];
       default:

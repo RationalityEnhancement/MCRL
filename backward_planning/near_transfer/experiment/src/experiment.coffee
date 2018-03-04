@@ -1,6 +1,6 @@
 # coffeelint: disable=max_line_length, indentation
 
-DEBUG = no
+DEBUG = yes
 TALK = no
 SHOW_PARTICIPANT = false
 
@@ -88,7 +88,7 @@ $(window).on 'load', ->
       id = "#{PARAMS.branching}_#{PARAMS.variance}"
     else
       id = "#{PARAMS.branching}"
-    STRUCTURE = loadJson "static/json/structure/312.json"
+    STRUCTURE = loadJson "static/json/structure/31123.json"
     TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
     console.log "loaded #{TRIALS?.length} trials"
 
@@ -574,13 +574,13 @@ initializeExperiment = ->
       test
     ]
     when DEBUG then [
-      train_basic1
+      # train_basic1
       #train_inspector
       #train_inspect_cost
       #instructions1    
-      pre_test_intro
-      pre_test
-      divider_pretest_training    
+      # pre_test_intro
+      # pre_test
+      # divider_pretest_training    
       training
       divider_training_test
       test_block_intro

@@ -507,7 +507,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     }
 
     async showFeedback(action) {
-      var a, delay, i, j, len, len1, loss, msg, oldFeedbackMessage, optimal, q, qs, ref, ref1, s, strictness, v;
+      var a, defaultMessage, delay, i, j, len, len1, loss, msg, optimal, q, qs, ref, ref1, s, strictness, v;
       console.log('showFeedback');
       qs = this.qs[this.encodeBelief()];
       v = _.max(qs);
@@ -522,9 +522,8 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         }
         return results;
       })();
-      if (indexOf.call(optimal, action) >= 0) {
-        return;
-      }
+      //if action in optimal
+      //     return
       this.freeze = true;
       strictness = 1;
       loss = v - qs[action];
@@ -534,26 +533,33 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         delay = 0;
       }
       if (this._block.show_feedback) {
-        oldFeedbackMessage = this.prompt.html();
-        if (ref = this.termAction, indexOf.call(optimal, ref) >= 0) {
-          msg = "You shouldn't have inspected any more nodes.";
+        defaultMessage = "";
+        this.prompt.html(defaultMessage);
+        //oldFeedbackMessage = @prompt.html()
+        if (loss === 0) {
+          this.prompt.html("<div align='center' style='color:#008800; font-weight:bold; font-size:18pt'>\nGood job!\n</div>");
         } else {
-          msg = "You should have inspected one of the highlighted nodes.          ";
-          for (i = 0, len = optimal.length; i < len; i++) {
-            a = optimal[i];
-            this.states[a].circle.set('fill', '#49f');
+          if (ref = this.termAction, indexOf.call(optimal, ref) >= 0) {
+            msg = "You shouldn't have inspected any more nodes.";
+          } else {
+            msg = "You should have inspected one of the highlighted nodes.          ";
+            for (i = 0, len = optimal.length; i < len; i++) {
+              a = optimal[i];
+              this.states[a].circle.set('fill', '#49f');
+              this.canvas.renderAll();
+            }
+            msg += `<br> Please wait ${delay} seconds.`;
+            this.prompt.html(`<div align='center' style='color:#FF0000; font-weight:bold; font-size:18pt'>\n${msg}\n</div>`);
+            // @freeze = true
+            // $('#mdp-feedback').show()
+            // $('#mdp-feedback-content')
+            //   .html msg
+            // $('#mdp-feedback').hide()
+            await sleep(delay * 1000);
+            // Reset.
+            this.prompt.html(defaultMessage);
           }
-          this.canvas.renderAll();
         }
-        this.prompt.html(`<div align='center' style='color:#FF0000; font-weight:bold; font-size:18pt'>\n${msg}<br>\nPlease wait ${delay} seconds.\n</div>`);
-        // @freeze = true
-        // $('#mdp-feedback').show()
-        // $('#mdp-feedback-content')
-        //   .html msg
-        // $('#mdp-feedback').hide()
-        await sleep(delay * 1000);
-        // Reset.
-        this.prompt.html(oldFeedbackMessage);
       } else {
         console.log('no');
       }
