@@ -298,7 +298,7 @@ initializeExperiment = ->
    divider_pretest_training  = new TextBlock
     text: ->
       SCORE = 0
-      "<h1>Training block</h1> <div style='text-align: center;'> You will now enter a training block where you can practice playing Web of Cash some more. After that, there will be a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block.</div>"
+      "<h1>Training block</h1> <div style='text-align: center;'> The game you just played is quite complex and it can be rather difficult to get it right. To help you master it, we will now let you practice on a simplified version of this game 10 times. After that, there will be a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block.</div>"
 
         
         
@@ -462,7 +462,7 @@ initializeExperiment = ->
        '5 cents for every $10 you make in the game']
     ]
 
-  pre_test_intro = new TextBlock
+  pre_test_intro1 = new TextBlock
     text: ->
       SCORE = 0
       #prompt: ''
@@ -486,7 +486,21 @@ initializeExperiment = ->
       <div align="center"> Press <code>space</code> to continue. </div>
         
     """
-       
+
+  pre_test_intro2 = new TextBlock
+    text: ->
+      SCORE = 0
+      #prompt: ''
+      #psiturk.finishInstructions()
+      markdown """
+      ## Get ready!
+
+      You are about to play your first round of Web of Cash. You will notice that the web used in this game is larger than the example you saw in the previous pictures. But that is the only difference, and everything else works as described. Good luck!
+
+      <div align="center"> Press <code>space</code> to continue. </div>
+        
+    """
+        
         
   pre_test = new MouselabBlock
     minTime: 7
@@ -597,30 +611,26 @@ initializeExperiment = ->
       test
     ]
     when DEBUG then [
-      # train_basic1
-      #train_inspector
-      #train_inspect_cost
-      #instructions1    
-      # pre_test_intro
-      #pre_test
-      # divider_pretest_training    
+      train_basic1
+      pre_test_intro1
+      pre_test_intro2
+      pre_test
+      divider_pretest_training    
       training
-      #divider_training_test
-      #test_block_intro
+      divider_training_test
+      test_block_intro
       post_test
       #quiz
       #verbal_responses
-      #finish
+      finish
     ]
     when TALK then [
       talk_demo
     ]
     else [
       train_basic1
-      #train_inspector
-      #train_inspect_cost
-      #instructions1    
-      pre_test_intro
+      pre_test_intro1
+      pre_test_intro2
       pre_test
       divider_pretest_training    
       training

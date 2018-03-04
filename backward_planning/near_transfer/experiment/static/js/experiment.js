@@ -174,7 +174,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, bonus_text, divider, divider_intro_training, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, nodeValuesDescription, post_test, pre_test, pre_test_intro, prompt_resubmit, quiz, reprompt, reset_score, save_data, talk_demo, test_block_intro, text, train_basic1, training, verbal_responses;
+  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, bonus_text, divider, divider_intro_training, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, nodeValuesDescription, post_test, pre_test, pre_test_intro1, pre_test_intro2, prompt_resubmit, quiz, reprompt, reset_score, save_data, talk_demo, test_block_intro, text, train_basic1, training, verbal_responses;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   //  ======================== #
@@ -327,7 +327,7 @@ initializeExperiment = function() {
   divider_pretest_training = new TextBlock({
     text: function() {
       SCORE = 0;
-      return "<h1>Training block</h1> <div style='text-align: center;'> You will now enter a training block where you can practice playing Web of Cash some more. After that, there will be a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block.</div>";
+      return "<h1>Training block</h1> <div style='text-align: center;'> The game you just played is quite complex and it can be rather difficult to get it right. To help you master it, we will now let you practice on a simplified version of this game 10 times. After that, there will be a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block.</div>";
     }
   });
   train_basic1 = new TextBlock({
@@ -458,12 +458,20 @@ initializeExperiment = function() {
     questions: ["What is the range of node values in the first step?", "What is the range of node values in the last step?", "What is the cost of clicking?", "How much REAL money do you earn?"],
     options: [['$-4 to $4', '$-8 to $8', '$-48 to $48'], ['$-4 to $4', '$-8 to $8', '$-48 to $48'], ['$0', '$1', '$8', '$24'], ['1 cent for every $1 you make in the game', '1 cent for every $5 you make in the game', '5 cents for every $1 you make in the game', '5 cents for every $10 you make in the game']]
   });
-  pre_test_intro = new TextBlock({
+  pre_test_intro1 = new TextBlock({
     text: function() {
       SCORE = 0;
       //prompt: ''
       //psiturk.finishInstructions()
       return markdown("## Node Inspector\n\nIt's hard to make good decision when you can't see what you will get!\nFortunately, you will have access to a ***node inspector*** which can reveal\nthe value of a node. To use the node inspector, simply ***click on a node***. The image below illustrates how this works, and you can try this out on the **next** screen. \n\n**Note:** you can only use the node inspector when you're on the first\nnode. \n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash.png'/>\n\nOne more thing: **You must spend *at least* 7 seconds on each round.**\nIf you finish a round early, you'll have to wait until 7 seconds have\npassed.      \n\n<div align=\"center\"> Press <code>space</code> to continue. </div>\n  ");
+    }
+  });
+  pre_test_intro2 = new TextBlock({
+    text: function() {
+      SCORE = 0;
+      //prompt: ''
+      //psiturk.finishInstructions()
+      return markdown("## Get ready!\n\nYou are about to play your first round of Web of Cash. You will notice that the web used in this game is larger than the example you saw in the previous pictures. But that is the only difference, and everything else works as described. Good luck!\n\n<div align=\"center\"> Press <code>space</code> to continue. </div>\n  ");
     }
   });
   pre_test = new MouselabBlock({
@@ -572,40 +580,23 @@ initializeExperiment = function() {
         return [test];
       case !DEBUG:
         return [
-          // train_basic1
-          //train_inspector
-          //train_inspect_cost
-          //instructions1    
-          // pre_test_intro
-          //pre_test
-          // divider_pretest_training    
-          training,
-          //divider_training_test
-          //test_block_intro
-          post_test
-        ];
-      //quiz
-      //verbal_responses
-      //finish
-      case !TALK:
-        return [talk_demo];
-      default:
-        return [
           train_basic1,
-          //train_inspector
-          //train_inspect_cost
-          //instructions1    
-          pre_test_intro,
+          pre_test_intro1,
+          pre_test_intro2,
           pre_test,
           divider_pretest_training,
           training,
           divider_training_test,
           test_block_intro,
           post_test,
-          quiz,
-          verbal_responses,
+          //quiz
+          //verbal_responses
           finish
         ];
+      case !TALK:
+        return [talk_demo];
+      default:
+        return [train_basic1, pre_test_intro1, pre_test_intro2, pre_test, divider_pretest_training, training, divider_training_test, test_block_intro, post_test, quiz, verbal_responses, finish];
     }
   })();
   // ================================================ #
