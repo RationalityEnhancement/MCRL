@@ -456,23 +456,26 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @canvas.renderAll()
 
     showFeedback: (action) =>
-              
-      console.log 'showFeedback'
-      qs = @qs[@encodeBelief()]
-      v = (_.max qs)
-      optimal = (a for a, q of qs when v - q < .01)
+            
+            
+      if @_block.show_feedback      
+        console.log 'showFeedback'
+        qs = @qs[@encodeBelief()]
+        v = (_.max qs)
+        optimal = (a for a, q of qs when v - q < .01)
 
-      #if action in optimal
-      #     return
+        #if action in optimal
+        #     return
 
-      @freeze = true
-      strictness = 1
-      loss = v - qs[action]
-      if loss > 0
-        delay = 2 + Math.round(strictness * loss)
+        @freeze = true
+        strictness = 1
+        loss = v - qs[action]
+        if loss > 0
+            delay = 2 + Math.round(strictness * loss)
+        else
+            delay = 0
       else
-        delay = 0
-      
+            return
     
       if @_block.show_feedback
           defaultMessage = ""    

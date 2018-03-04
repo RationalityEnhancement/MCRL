@@ -89,7 +89,8 @@ $(window).on 'load', ->
     else
       id = "#{PARAMS.branching}"
     STRUCTURE = loadJson "static/json/structure/31123.json"
-    TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
+    #TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
+    TRIALS = loadJson "static/json/rewards/31123_increasing1.json"
     console.log "loaded #{TRIALS?.length} trials"
 
     getTrials = do ->
@@ -581,13 +582,13 @@ initializeExperiment = ->
       # pre_test_intro
       # pre_test
       # divider_pretest_training    
-      training
-      divider_training_test
-      test_block_intro
+      #training
+      #divider_training_test
+      #test_block_intro
       post_test
-      quiz
-      verbal_responses
-      finish
+      #quiz
+      #verbal_responses
+      #finish
     ]
     when TALK then [
       talk_demo

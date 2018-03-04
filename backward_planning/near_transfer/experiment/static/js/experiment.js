@@ -103,7 +103,8 @@ $(window).on('load', function() {
       id = `${PARAMS.branching}`;
     }
     STRUCTURE = loadJson("static/json/structure/31123.json");
-    TRIALS = loadJson("static/json/mcrl_trials/increasing.json");
+    //TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
+    TRIALS = loadJson("static/json/rewards/31123_increasing1.json");
     console.log(`loaded ${(TRIALS != null ? TRIALS.length : void 0)} trials`);
     getTrials = (function() {
       var idx, t;
@@ -549,7 +550,13 @@ initializeExperiment = function() {
         // pre_test_intro
         // pre_test
         // divider_pretest_training    
-        return [training, divider_training_test, test_block_intro, post_test, quiz, verbal_responses, finish];
+        //training
+        //divider_training_test
+        //test_block_intro
+        return [post_test];
+      //quiz
+      //verbal_responses
+      //finish
       case !TALK:
         return [talk_demo];
       default:
