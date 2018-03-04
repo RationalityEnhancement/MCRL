@@ -79,7 +79,7 @@ $(window).on 'load', ->
     PARAMS =
       inspectCost: 1
       startTime: Date(Date.now())
-      bonusRate: .001
+      bonusRate: .0025
       # variance: ['2_4_24', '24_4_2'][CONDITION]
       branching: '312'
       with_feedback: with_feedback
@@ -403,9 +403,9 @@ initializeExperiment = ->
   bonus_text = (long) ->
     # if PARAMS.bonusRate isnt .01
     #   throw new Error('Incorrect bonus rate')
-    s = "**you will earn 1 cent for every $10 you make in the game.**"
+    s = "**you will earn 5 cent for every $20 you make in the game.**"
     if long
-      s += " For example, if your final score is $1000, you will receive a bonus of $1."
+      s += " For example, if your final score is $400, you will receive a bonus of $1."
     return s
 
 
@@ -550,7 +550,7 @@ initializeExperiment = ->
     stateClickCost: PARAMS.inspectCost
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
-      when DEBUG then getTestTrials 2
+      when DEBUG then getTestTrials 10
       else getTestTrials 20
     startScore: 100
     _init: ->
