@@ -23,19 +23,22 @@ else
 
 if mode is "{{ mode }}"
   DEMO = true
-  CONDITION = 1
+  CONDITION = 0
 
 with_feedback = CONDITION > 0    
 
 BLOCKS = undefined
 PARAMS = undefined
-TRIALS = undefined
+TRIALS_TRAINING = undefined
+TRIALS_TEST = undefined
 DEMO_TRIALS = undefined
-STRUCTURE = undefined
+STRUCTURE_TEST = undefined
+STRUCTURE_TRAINING = undefined
 N_TRIAL = undefined
 SCORE = 0
 calculateBonus = undefined
-getTrials = undefined
+getTrainingTrials = undefined
+getTestTrials = undefined
 
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
@@ -76,7 +79,7 @@ $(window).on 'load', ->
     PARAMS =
       inspectCost: 1
       startTime: Date(Date.now())
-      bonusRate: .002
+      bonusRate: .001
       # variance: ['2_4_24', '24_4_2'][CONDITION]
       branching: '312'
       with_feedback: with_feedback
@@ -88,17 +91,29 @@ $(window).on 'load', ->
       id = "#{PARAMS.branching}_#{PARAMS.variance}"
     else
       id = "#{PARAMS.branching}"
-    STRUCTURE = loadJson "static/json/structure/31123.json"
-    TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
-    console.log "loaded #{TRIALS?.length} trials"
+    STRUCTURE_TEST = loadJson "static/json/structure/31123.json"
+    STRUCTURE_TRAINING = loadJson "static/json/structure/312.json"
+    #TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
+    TRIALS_TEST = loadJson "static/json/rewards/31123_increasing1.json"
+    console.log "loaded #{TRIALS_TEST?.length} test trials"
+    TRIALS_TRAINING = loadJson "static/json/mcrl_trials/increasing.json"
+    console.log "loaded #{TRIALS_TRAINING?.length} training trials"
 
-    getTrials = do ->
-      t = _.shuffle TRIALS
+    getTrainingTrials = do ->
+      t = _.shuffle TRIALS_TRAINING
       idx = 0
       return (n) ->
         idx += n
         t.slice(idx-n, idx)
 
+    getTestTrials = do ->
+      t = _.shuffle TRIALS_TEST
+      idx = 0
+      return (n) ->
+        idx += n
+        t.slice(idx-n, idx)
+        
+        
     if DEBUG or TALK
       createStartButton()
       clearTimeout loadTimeout
@@ -203,9 +218,9 @@ initializeExperiment = ->
       Move with the arrow keys.</b>
     """
     
-    _init: ->
-      _.extend(this, STRUCTURE)
-      @trialCount = 0
+    #_init: ->
+      #_.extend(this, STRUCTURE)
+    #  @trialCount = 0
 
 
 
@@ -261,7 +276,7 @@ initializeExperiment = ->
    divider_training_test  = new TextBlock
     text: ->
       SCORE = 0
-      "<div style='text-align: center;'> Congratulations! You have completed the training block. <br/>      
+      "<div style='text-align: left;'> Congratulations! You have completed the training block. <br/>      
        <br/> Press <code>space</code> to start the test block.</div>"
 
    test_block_intro  = new TextBlock
@@ -269,21 +284,28 @@ initializeExperiment = ->
       SCORE = 0        
       markdown """ 
       <h1>Test block</h1>
-     Welcome to the test block! Here, you can use what you have learned to earn a bonus. Concretely, #{bonus_text('long')} <br/> To thank you for your work so far, we'll start you off with **$50**.
+     Welcome to the test block! Here, you can use what you have learned to earn a bonus. Concretely, #{bonus_text('long')} <br/> To thank you for your work so far, we'll start you off with **$100**.
       Good luck! 
       <div style='text-align: center;'> Press <code>space</code> to continue. </div>
       """
     
     
-   divider_intro_training  = new TextBlock
-    text: ->
-      SCORE = 0
-      "  <h1>Training</h1>  Congratulations! You have completed the instructions. Next, you will enter a training block where you can practice planning 10 times. After that, you will enter test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block."
+   #divider_intro_training  = new TextBlock
+#    text: ->
+#      SCORE = 0
+#      "  <h1>Training</h1>  Congratulations! You have completed the instructions. Next, you will enter a training block where you can practice planning 10 times. After that, you will enter a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block."
 
    divider_pretest_training  = new TextBlock
     text: ->
       SCORE = 0
-      "<h1>Training block</h1> <div style='text-align: center;'> You will now enter a training block where you can practice playing Web of Cash some more. After that, there will be a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block.</div>"
+      "<h1>Training block</h1> 
+<p> The game you just played is quite complex and it can be rather difficult to get it right. To help you master it, we will now let you practice on a simplified version of this game 10 times. </p>
+
+<p> In the simplified version your goal is to find the most profitable route of an airplane across a network of airports. There will be only three steps but otherwise the game works just like the one you just played. </p>
+
+<p>After that, there will be a test block where you can use what you have learned to earn a bonus. </p>
+
+<br/> Press <code>space</code> to start the training block.</div>"
 
         
         
@@ -381,9 +403,9 @@ initializeExperiment = ->
   bonus_text = (long) ->
     # if PARAMS.bonusRate isnt .01
     #   throw new Error('Incorrect bonus rate')
-    s = "**you will earn 1 cent for every $5 you make in the game.**"
+    s = "**you will earn 1 cent for every $10 you make in the game.**"
     if long
-      s += " For example, if your final score is $1000, you will receive a bonus of $2."
+      s += " For example, if your final score is $1000, you will receive a bonus of $1."
     return s
 
 
@@ -447,7 +469,7 @@ initializeExperiment = ->
        '5 cents for every $10 you make in the game']
     ]
 
-  pre_test_intro = new TextBlock
+  pre_test_intro1 = new TextBlock
     text: ->
       SCORE = 0
       #prompt: ''
@@ -471,7 +493,21 @@ initializeExperiment = ->
       <div align="center"> Press <code>space</code> to continue. </div>
         
     """
-       
+
+  pre_test_intro2 = new TextBlock
+    text: ->
+      SCORE = 0
+      #prompt: ''
+      #psiturk.finishInstructions()
+      markdown """
+      ## Get ready!
+
+      You are about to play your first round of Web of Cash. You will notice that the web used in this game is larger than the example you saw in the previous pictures. But that is the only difference, and everything else works as described. Good luck!
+
+      <div align="center"> Press <code>space</code> to continue. </div>
+        
+    """
+        
         
   pre_test = new MouselabBlock
     minTime: 7
@@ -481,9 +517,12 @@ initializeExperiment = ->
     stateClickCost: PARAMS.inspectCost
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
-      when DEBUG then TRIALS.slice(6, 7)
-      else getTrials 1
+      when DEBUG then getTestTrials 1
+      else getTestTrials 1
     startScore: 50        
+    _init: ->
+      _.extend(this, STRUCTURE_TEST)
+      @trialCount = 0
 
         
   training = new MouselabBlock
@@ -494,9 +533,13 @@ initializeExperiment = ->
     stateClickCost: PARAMS.inspectCost
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
-      when DEBUG then TRIALS.slice(6, 8)
-      else getTrials 10
+      when DEBUG then getTrainingTrials 2
+      else getTrainingTrials 10
     startScore: 50
+    _init: ->
+      _.extend(this, STRUCTURE_TRAINING)
+      @playerImage = 'static/images/plane.png'
+      @trialCount = 0
         
         
   post_test = new MouselabBlock
@@ -507,12 +550,14 @@ initializeExperiment = ->
     stateClickCost: PARAMS.inspectCost
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
-      when DEBUG then TRIALS.slice(6, 8)
-      else getTrials 20
-    startScore: 50
+      when DEBUG then getTestTrials 2
+      else getTestTrials 20
+    startScore: 100
+    _init: ->
+      _.extend(this, STRUCTURE_TEST)
+      @trialCount = 0
     
-    
-    
+        
   verbal_responses = new Block
     type: 'survey-text'
     preamble: -> markdown """
@@ -565,7 +610,7 @@ initializeExperiment = ->
         stateDisplay: 'click'
         prompt: null
         stateClickCost: PARAMS.inspectCost
-        timeline: TRIALS.slice(10,14)
+        timeline: getTestTrials 4
     ]
 
 
@@ -574,19 +619,17 @@ initializeExperiment = ->
       test
     ]
     when DEBUG then [
-      # train_basic1
-      #train_inspector
-      #train_inspect_cost
-      #instructions1    
-      # pre_test_intro
-      # pre_test
-      # divider_pretest_training    
+      train_basic1
+      pre_test_intro1
+      pre_test_intro2
+      pre_test
+      divider_pretest_training    
       training
       divider_training_test
       test_block_intro
       post_test
-      quiz
-      verbal_responses
+      #quiz
+      #verbal_responses
       finish
     ]
     when TALK then [
@@ -594,10 +637,8 @@ initializeExperiment = ->
     ]
     else [
       train_basic1
-      #train_inspector
-      #train_inspect_cost
-      #instructions1    
-      pre_test_intro
+      pre_test_intro1
+      pre_test_intro2
       pre_test
       divider_pretest_training    
       training

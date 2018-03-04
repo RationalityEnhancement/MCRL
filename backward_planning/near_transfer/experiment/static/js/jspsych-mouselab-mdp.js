@@ -508,29 +508,33 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
 
     async showFeedback(action) {
       var a, defaultMessage, delay, i, j, len, len1, loss, msg, optimal, q, qs, ref, ref1, s, strictness, v;
-      console.log('showFeedback');
-      qs = this.qs[this.encodeBelief()];
-      v = _.max(qs);
-      optimal = (function() {
-        var results;
-        results = [];
-        for (a in qs) {
-          q = qs[a];
-          if (v - q < .01) {
-            results.push(a);
+      if (this._block.show_feedback) {
+        console.log('showFeedback');
+        qs = this.qs[this.encodeBelief()];
+        v = _.max(qs);
+        optimal = (function() {
+          var results;
+          results = [];
+          for (a in qs) {
+            q = qs[a];
+            if (v - q < .01) {
+              results.push(a);
+            }
           }
+          return results;
+        })();
+        //if action in optimal
+        //     return
+        this.freeze = true;
+        strictness = 1;
+        loss = v - qs[action];
+        if (loss > 0) {
+          delay = 2 + Math.round(strictness * loss);
+        } else {
+          delay = 0;
         }
-        return results;
-      })();
-      //if action in optimal
-      //     return
-      this.freeze = true;
-      strictness = 1;
-      loss = v - qs[action];
-      if (loss > 0) {
-        delay = 2 + Math.round(strictness * loss);
       } else {
-        delay = 0;
+        return;
       }
       if (this._block.show_feedback) {
         defaultMessage = "";
