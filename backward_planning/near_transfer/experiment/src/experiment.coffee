@@ -23,7 +23,7 @@ else
 
 if mode is "{{ mode }}"
   DEMO = true
-  CONDITION = 1
+  CONDITION = 0
 
 with_feedback = CONDITION > 0    
 
@@ -79,7 +79,7 @@ $(window).on 'load', ->
     PARAMS =
       inspectCost: 1
       startTime: Date(Date.now())
-      bonusRate: .002
+      bonusRate: .001
       # variance: ['2_4_24', '24_4_2'][CONDITION]
       branching: '312'
       with_feedback: with_feedback
@@ -276,7 +276,7 @@ initializeExperiment = ->
    divider_training_test  = new TextBlock
     text: ->
       SCORE = 0
-      "<div style='text-align: center;'> Congratulations! You have completed the training block. <br/>      
+      "<div style='text-align: left;'> Congratulations! You have completed the training block. <br/>      
        <br/> Press <code>space</code> to start the test block.</div>"
 
    test_block_intro  = new TextBlock
@@ -284,21 +284,28 @@ initializeExperiment = ->
       SCORE = 0        
       markdown """ 
       <h1>Test block</h1>
-     Welcome to the test block! Here, you can use what you have learned to earn a bonus. Concretely, #{bonus_text('long')} <br/> To thank you for your work so far, we'll start you off with **$50**.
+     Welcome to the test block! Here, you can use what you have learned to earn a bonus. Concretely, #{bonus_text('long')} <br/> To thank you for your work so far, we'll start you off with **$100**.
       Good luck! 
       <div style='text-align: center;'> Press <code>space</code> to continue. </div>
       """
     
     
-   divider_intro_training  = new TextBlock
-    text: ->
-      SCORE = 0
-      "  <h1>Training</h1>  Congratulations! You have completed the instructions. Next, you will enter a training block where you can practice planning 10 times. After that, you will enter test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block."
+   #divider_intro_training  = new TextBlock
+#    text: ->
+#      SCORE = 0
+#      "  <h1>Training</h1>  Congratulations! You have completed the instructions. Next, you will enter a training block where you can practice planning 10 times. After that, you will enter a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block."
 
    divider_pretest_training  = new TextBlock
     text: ->
       SCORE = 0
-      "<h1>Training block</h1> <div style='text-align: center;'> The game you just played is quite complex and it can be rather difficult to get it right. To help you master it, we will now let you practice on a simplified version of this game 10 times. After that, there will be a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block.</div>"
+      "<h1>Training block</h1> 
+<p> The game you just played is quite complex and it can be rather difficult to get it right. To help you master it, we will now let you practice on a simplified version of this game 10 times. </p>
+
+<p> In the simplified version your goal is to find the most profitable route of an airplane across a network of airports. There will be only three steps but otherwise the game works just like the one you just played. </p>
+
+<p>After that, there will be a test block where you can use what you have learned to earn a bonus. </p>
+
+<br/> Press <code>space</code> to start the training block.</div>"
 
         
         
@@ -396,9 +403,9 @@ initializeExperiment = ->
   bonus_text = (long) ->
     # if PARAMS.bonusRate isnt .01
     #   throw new Error('Incorrect bonus rate')
-    s = "**you will earn 1 cent for every $5 you make in the game.**"
+    s = "**you will earn 1 cent for every $10 you make in the game.**"
     if long
-      s += " For example, if your final score is $1000, you will receive a bonus of $2."
+      s += " For example, if your final score is $1000, you will receive a bonus of $1."
     return s
 
 
@@ -531,6 +538,7 @@ initializeExperiment = ->
     startScore: 50
     _init: ->
       _.extend(this, STRUCTURE_TRAINING)
+      @playerImage = 'static/images/plane.png'
       @trialCount = 0
         
         
@@ -544,7 +552,7 @@ initializeExperiment = ->
       when SHOW_PARTICIPANT then DEMO_TRIALS
       when DEBUG then getTestTrials 2
       else getTestTrials 20
-    startScore: 50
+    startScore: 100
     _init: ->
       _.extend(this, STRUCTURE_TEST)
       @trialCount = 0
