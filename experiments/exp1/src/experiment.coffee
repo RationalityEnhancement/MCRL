@@ -63,7 +63,7 @@ if isIE
 # $(document).ready ->
 $(window).on 'load', ->
   # Load data and test connection to server.
-  slowLoad = -> $('#failLoad').show()
+M= -> $('#failLoad').show()
   loadTimeout = delay 12000, slowLoad
 
   psiturk.preloadImages [
@@ -324,7 +324,7 @@ initializeExperiment = ->
 
   class MDPBlock extends Block
     type: 'mouselab-mdp'
-    _init: -> 
+    _init: ->
       _.extend(this, STRUCTURE)
       @trialCount = 0
 

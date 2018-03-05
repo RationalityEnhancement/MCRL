@@ -1,0 +1,3 @@
+action_times,actions,block,button_pressed,key_press,path,queries,responses,rewards,rt,score,simulation_mode,stimulus,time_elapsed,trial_index,trial_id,trial_type,pid
+,,,,,,,"{""Q0"":""No everything was fine"",""Q1"":""Tried to minimize what I was spending to get info"",""Q2"":""58"",""Q3"":""""}",,30244,,,,671578,,,survey-text,0
+,,,,,,,"{""Q0"":""No it was easy."",""Q1"":""I didn't really have one I just tried to guess"",""Q2"":""33"",""Q3"":""This was fun!""}",,25494,,,,411026,,,survey-text,1

@@ -1,0 +1,120 @@
+bonus,bonusRate,branching,completed,condition,inspectCost,pid,startTime,with_feedback,version
+1.48,0.002,312,True,1.0,1,0,Wed Feb 28 2018 12:37:15 GMT-0500 (EST),True,1A.5
+1.74,0.002,312,True,1.0,1,1,Tue Feb 27 2018 19:01:38 GMT-0500 (Eastern Standard Time),True,1A.5
+1.02,0.002,312,True,1.0,1,2,Tue Feb 27 2018 18:02:03 GMT-0600 (Central Standard Time),True,1A.5
+1.77,0.002,312,True,1.0,1,3,Tue Feb 27 2018 14:02:37 GMT-0800 (Pacific Standard Time),True,1A.5
+1.68,0.002,312,True,1.0,1,4,Wed Feb 28 2018 12:29:44 GMT-0500 (Eastern Standard Time),True,1A.5
+1.8,0.002,312,True,0.0,1,5,Tue Feb 27 2018 16:00:00 GMT-0600 (CST),False,1A.5
+1.04,0.002,312,True,0.0,1,6,Tue Feb 27 2018 16:26:53 GMT-0600 (Central Standard Time),False,1A.5
+1.87,0.002,312,True,1.0,1,7,Wed Feb 28 2018 12:59:05 GMT-0600 (Central Standard Time),True,1A.5
+1.85,0.002,312,True,1.0,1,8,Tue Feb 27 2018 17:05:25 GMT-0600 (Central Standard Time),True,1A.5
+1.7,0.002,312,True,1.0,1,9,Tue Feb 27 2018 17:23:34 GMT-0500 (Eastern Standard Time),True,1A.5
+1.65,0.002,312,True,0.0,1,10,Tue Feb 27 2018 19:01:15 GMT-0500 (EST),False,1A.5
+0.69,0.002,312,True,0.0,1,11,Tue Feb 27 2018 17:25:56 GMT-0500 (Eastern Standard Time),False,1A.5
+1.33,0.002,312,True,1.0,1,12,Tue Feb 27 2018 15:33:18 GMT-0800 (PST),True,1A.5
+0.0,0.002,312,True,0.0,1,13,Tue Feb 27 2018 17:48:52 GMT-0500 (Eastern Standard Time),False,1A.5
+0.55,0.002,312,True,0.0,1,14,Tue Feb 27 2018 17:04:25 GMT-0500 (Eastern Standard Time),False,1A.5
+1.62,0.002,312,True,1.0,1,15,Tue Feb 27 2018 17:01:53 GMT-0500 (EST),True,1A.5
+1.83,0.002,312,True,1.0,1,16,Wed Feb 28 2018 12:20:14 GMT-0500 (Eastern Standard Time),True,1A.5
+0.0,0.002,312,True,0.0,1,17,Wed Feb 28 2018 13:57:51 GMT-0500 (Eastern Standard Time),False,1A.5
+1.58,0.002,312,True,0.0,1,18,Tue Feb 27 2018 15:08:18 GMT-0700 (Mountain Standard Time),False,1A.5
+1.53,0.002,312,True,0.0,1,19,Wed Feb 28 2018 13:28:02 GMT-0500 (Eastern Standard Time),False,1A.5
+1.44,0.002,312,True,1.0,1,20,Tue Feb 27 2018 17:03:38 GMT-0500 (Eastern Standard Time),True,1A.5
+1.45,0.002,312,True,1.0,1,21,Wed Feb 28 2018 09:21:50 GMT-0800 (Pacific Standard Time),True,1A.5
+1.6,0.002,312,True,0.0,1,22,Tue Feb 27 2018 17:01:16 GMT-0500 (Eastern Standard Time),False,1A.5
+1.67,0.002,312,True,1.0,1,23,Tue Feb 27 2018 17:00:51 GMT-0500 (Eastern Standard Time),True,1A.5
+1.65,0.002,312,True,1.0,1,24,Wed Feb 28 2018 12:18:10 GMT-0500 (Eastern Standard Time),True,1A.5
+0.46,0.002,312,True,0.0,1,25,Tue Feb 27 2018 17:00:11 GMT-0500 (Eastern Standard Time),False,1A.5
+1.41,0.002,312,True,1.0,1,26,Tue Feb 27 2018 17:21:31 GMT-0500 (EST),True,1A.5
+1.53,0.002,312,True,0.0,1,27,Tue Feb 27 2018 15:59:14 GMT-0600 (Central Standard Time),False,1A.5
+1.57,0.002,312,True,1.0,1,28,Tue Feb 27 2018 14:55:11 GMT-0700 (US Mountain Standard Time),True,1A.5
+1.18,0.002,312,True,0.0,1,29,Wed Feb 28 2018 11:19:01 GMT-0600 (Central Standard Time),False,1A.5
+1.95,0.002,312,True,1.0,1,30,Tue Feb 27 2018 19:10:53 GMT-0500 (Eastern Standard Time),True,1A.5
+1.82,0.002,312,True,1.0,1,31,Wed Feb 28 2018 12:19:30 GMT-0500 (Eastern Standard Time),True,1A.5
+0.05,0.002,312,True,0.0,1,32,Tue Feb 27 2018 19:09:27 GMT-0500 (Eastern Standard Time),False,1A.5
+1.64,0.002,312,True,1.0,1,33,Wed Feb 28 2018 11:07:09 GMT-0800 (Pacific Standard Time),True,1A.5
+1.62,0.002,312,True,1.0,1,34,Tue Feb 27 2018 18:08:13 GMT-0600 (Central Standard Time),True,1A.5
+1.52,0.002,312,True,1.0,1,35,Tue Feb 27 2018 17:00:33 GMT-0500 (EST),True,1A.5
+0.0,0.002,312,True,0.0,1,36,Wed Feb 28 2018 14:26:54 GMT-0500 (EST),False,1A.5
+1.54,0.002,312,True,0.0,1,37,Tue Feb 27 2018 13:30:44 GMT-0800 (Pacific Standard Time),False,1A.5
+1.63,0.002,312,True,1.0,1,38,Tue Feb 27 2018 14:59:46 GMT-0700 (US Mountain Standard Time),True,1A.5
+1.02,0.002,312,True,0.0,1,39,Wed Feb 28 2018 12:20:01 GMT-0500 (Eastern Standard Time),False,1A.5
+1.28,0.002,312,True,0.0,1,40,Wed Feb 28 2018 11:31:49 GMT-0600 (CST),False,1A.5
+1.74,0.002,312,True,1.0,1,41,Tue Feb 27 2018 16:36:22 GMT-0600 (Central Standard Time),True,1A.5
+1.61,0.002,312,True,1.0,1,42,Wed Feb 28 2018 12:16:53 GMT-0500 (EST),True,1A.5
+1.81,0.002,312,True,0.0,1,43,Tue Feb 27 2018 14:16:53 GMT-0800 (Pacific Standard Time),False,1A.5
+1.32,0.002,312,True,0.0,1,44,Wed Feb 28 2018 12:17:23 GMT-0500 (EST),False,1A.5
+1.82,0.002,312,True,0.0,1,45,Tue Feb 27 2018 19:04:05 GMT-0500 (Eastern Standard Time),False,1A.5
+1.56,0.002,312,True,1.0,1,46,Tue Feb 27 2018 17:05:55 GMT-0500 (Eastern Standard Time),True,1A.5
+1.85,0.002,312,True,0.0,1,47,Wed Feb 28 2018 09:19:23 GMT-0800 (Pacific Standard Time (Mexico)),False,1A.5
+1.27,0.002,312,True,0.0,1,48,Wed Feb 28 2018 09:22:44 GMT-0800 (Pacific Standard Time),False,1A.5
+0.0,0.002,312,True,0.0,1,49,Tue Feb 27 2018 17:33:43 GMT-0600 (Central Standard Time),False,1A.5
+1.62,0.002,312,True,,1,50,Tue Feb 27 2018 15:16:29 GMT-0500 (COT),,1A.5
+1.7,0.002,312,True,1.0,1,51,Tue Feb 27 2018 18:51:55 GMT-0500 (Eastern Standard Time),True,1A.5
+1.82,0.002,312,True,,1,52,Tue Feb 27 2018 15:27:42 GMT-0500 (Eastern Standard Time),,1A.5
+0.68,0.002,312,True,0.0,1,53,Wed Feb 28 2018 09:50:24 GMT+0530 (India Standard Time),False,1A.5
+1.61,0.002,312,True,1.0,1,54,Wed Feb 28 2018 12:36:58 GMT-0600 (Central Standard Time),True,1A.5
+1.77,0.002,312,True,0.0,1,55,Wed Feb 28 2018 11:36:15 GMT-0700 (Mountain Standard Time),False,1A.5
+1.7,0.002,312,True,0.0,1,56,Tue Feb 27 2018 22:00:43 GMT-0500 (Eastern Standard Time),False,1A.5
+1.35,0.002,312,True,0.0,1,57,Tue Feb 27 2018 18:17:02 GMT-0500 (Eastern Standard Time),False,1A.5
+1.76,0.002,312,True,1.0,1,58,Tue Feb 27 2018 18:03:13 GMT-0600 (CST),True,1A.5
+1.58,0.002,312,True,1.0,1,59,Tue Feb 27 2018 13:59:17 GMT-0800 (Pacific Standard Time),True,1A.5
+1.78,0.002,312,True,0.0,1,60,Wed Feb 28 2018 12:17:02 GMT-0500 (Eastern Standard Time),False,1A.5
+1.7,0.002,312,True,1.0,1,61,Tue Feb 27 2018 16:07:09 GMT-0600 (Central Standard Time),True,1A.5
+0.0,0.002,312,True,0.0,1,62,Tue Feb 27 2018 15:59:33 GMT-0600 (Central Standard Time),False,1A.5
+1.74,0.002,312,True,1.0,1,63,Tue Feb 27 2018 16:50:11 GMT-0600 (Central Standard Time),True,1A.5
+1.84,0.002,312,True,0.0,1,64,Tue Feb 27 2018 14:38:48 GMT-0800 (Pacific Standard Time),False,1A.5
+1.67,0.002,312,True,1.0,1,65,Tue Feb 27 2018 14:21:11 GMT-0800 (Pacific Standard Time),True,1A.5
+1.13,0.002,312,True,0.0,1,66,Tue Feb 27 2018 19:03:18 GMT-0600 (CST),False,1A.5
+0.09,0.002,312,True,0.0,1,67,Tue Feb 27 2018 16:59:33 GMT-0500 (Eastern Standard Time),False,1A.5
+1.66,0.002,312,True,0.0,1,68,Tue Feb 27 2018 17:20:19 GMT-0800 (Pacific Standard Time),False,1A.5
+1.51,0.002,312,True,0.0,1,69,Tue Feb 27 2018 17:22:18 GMT-0500 (Eastern Standard Time),False,1A.5
+1.55,0.002,312,True,1.0,1,70,Tue Feb 27 2018 14:49:35 GMT-0800 (Pacific Standard Time),True,1A.5
+0.15,0.002,312,True,0.0,1,71,Wed Feb 28 2018 12:17:22 GMT-0500 (Eastern Standard Time),False,1A.5
+1.54,0.002,312,True,0.0,1,72,Wed Feb 28 2018 12:18:36 GMT-0500 (Eastern Standard Time),False,1A.5
+0.0,0.002,312,True,0.0,1,73,Tue Feb 27 2018 16:36:21 GMT-0600 (Central Standard Time),False,1A.5
+1.71,0.002,312,True,1.0,1,74,Wed Feb 28 2018 12:52:32 GMT-0600 (CST),True,1A.5
+1.19,0.002,312,True,0.0,1,75,Wed Feb 28 2018 10:45:37 GMT-0800 (Pacific Standard Time),False,1A.5
+1.53,0.002,312,True,1.0,1,76,Tue Feb 27 2018 17:52:30 GMT-0500 (Eastern Standard Time),True,1A.5
+1.5,0.002,312,True,0.0,1,77,Tue Feb 27 2018 19:09:02 GMT-0500 (Eastern Standard Time),False,1A.5
+1.47,0.002,312,True,0.0,1,78,Tue Feb 27 2018 17:16:29 GMT-0500 (Eastern Standard Time),False,1A.5
+0.62,0.002,312,True,0.0,1,79,Tue Feb 27 2018 17:07:53 GMT-0500 (Eastern Standard Time),False,1A.5
+0.2,0.002,312,True,1.0,1,80,Tue Feb 27 2018 17:05:08 GMT-0500 (Eastern Standard Time),True,1A.5
+1.79,0.002,312,True,,1,81,Tue Feb 27 2018 16:18:34 GMT-0500 (Eastern Standard Time),,1A.5
+1.24,0.002,312,True,0.0,1,82,Wed Feb 28 2018 11:24:36 GMT-0700 (US Mountain Standard Time),False,1A.5
+1.93,0.002,312,True,0.0,1,83,Wed Feb 28 2018 12:22:04 GMT-0500 (Eastern Standard Time),False,1A.5
+1.52,0.002,312,True,1.0,1,84,Wed Feb 28 2018 12:16:51 GMT-0500 (EST),True,1A.5
+1.32,0.002,312,True,1.0,1,85,Tue Feb 27 2018 22:42:06 GMT-0500 (EST),True,1A.5
+1.76,0.002,312,True,0.0,1,86,Tue Feb 27 2018 19:33:38 GMT-0500 (EST),False,1A.5
+1.59,0.002,312,True,1.0,1,87,Wed Feb 28 2018 12:52:12 GMT-0500 (Eastern Standard Time),True,1A.5
+1.61,0.002,312,True,1.0,1,88,Tue Feb 27 2018 16:59:10 GMT-0600 (Central Standard Time),True,1A.5
+1.62,0.002,312,True,0.0,1,89,Tue Feb 27 2018 15:15:36 GMT-0700 (Mountain Standard Time),False,1A.5
+1.55,0.002,312,True,1.0,1,90,Tue Feb 27 2018 17:34:04 GMT-0600 (Central Standard Time),True,1A.5
+1.61,0.002,312,True,1.0,1,91,Tue Feb 27 2018 20:35:08 GMT-0600 (Central Standard Time),True,1A.5
+0.0,0.002,312,True,0.0,1,92,Wed Feb 28 2018 12:16:46 GMT-0500 (Eastern Standard Time),False,1A.5
+1.3,0.002,312,True,1.0,1,93,Wed Feb 28 2018 11:18:27 GMT-0600 (Central Standard Time),True,1A.5
+1.54,0.002,312,True,0.0,1,94,Tue Feb 27 2018 15:58:36 GMT-0600 (Central Standard Time),False,1A.5
+1.68,0.002,312,True,0.0,1,95,Tue Feb 27 2018 17:11:55 GMT-0500 (Eastern Standard Time),False,1A.5
+1.66,0.002,312,True,1.0,1,96,Wed Feb 28 2018 11:17:17 GMT-0600 (Central Standard Time),True,1A.5
+1.67,0.002,312,True,1.0,1,97,Tue Feb 27 2018 16:53:08 GMT-0600 (CST),True,1A.5
+0.0,0.002,312,True,0.0,1,98,Tue Feb 27 2018 17:36:45 GMT-0500 (EST),False,1A.5
+1.64,0.002,312,True,1.0,1,99,Tue Feb 27 2018 14:01:15 GMT-0800 (Pacific Standard Time),True,1A.5
+1.77,0.002,312,True,,1,100,Tue Feb 27 2018 12:46:38 GMT-0800 (Pacific Standard Time),,1A.5
+1.82,0.002,312,True,0.0,1,101,Wed Feb 28 2018 01:39:09 GMT+0300 (E. Africa Standard Time),False,1A.5
+1.55,0.002,312,True,0.0,1,102,Tue Feb 27 2018 18:47:10 GMT-0500 (Eastern Standard Time),False,1A.5
+1.67,0.002,312,True,,1,103,Tue Feb 27 2018 15:36:12 GMT-0500 (Eastern Standard Time),,1A.5
+1.65,0.002,312,True,0.0,1,104,Tue Feb 27 2018 14:38:35 GMT-0800 (Pacific Standard Time),False,1A.5
+1.66,0.002,312,True,1.0,1,105,Wed Feb 28 2018 14:04:45 GMT-0500 (Eastern Standard Time),True,1A.5
+1.15,0.002,312,True,,1,106,Tue Feb 27 2018 12:09:42 GMT-0800 (Pacific Standard Time),,1A.5
+0.38,0.002,312,True,1.0,1,107,Tue Feb 27 2018 18:20:05 GMT-0800 (Pacific Standard Time),True,1A.5
+0.0,0.002,312,True,0.0,1,108,Wed Feb 28 2018 09:20:25 GMT-0800 (Pacific Standard Time),False,1A.5
+1.64,0.002,312,True,1.0,1,109,Wed Feb 28 2018 12:25:25 GMT-0500 (Eastern Standard Time),True,1A.5
+1.59,0.002,312,True,1.0,1,110,Tue Feb 27 2018 16:32:42 GMT-0600 (CST),True,1A.5
+1.51,0.002,312,True,1.0,1,111,Tue Feb 27 2018 18:28:25 GMT-0500 (Eastern Standard Time),True,1A.5
+0.36,0.002,312,True,1.0,1,112,Tue Feb 27 2018 21:08:16 GMT-0600 (Central Standard Time),True,1A.5
+1.62,0.002,312,True,1.0,1,113,Wed Feb 28 2018 12:21:31 GMT-0500 (Eastern Standard Time),True,1A.5
+1.7,0.002,312,True,1.0,1,114,Wed Feb 28 2018 12:19:25 GMT-0500 (Eastern Standard Time),True,1A.5
+1.78,0.002,312,True,1.0,1,115,Wed Feb 28 2018 12:21:11 GMT-0500 (EST),True,1A.5
+0.13,0.002,312,True,0.0,1,116,Tue Feb 27 2018 19:14:27 GMT-0500 (Eastern Standard Time),False,1A.5
+1.96,0.002,312,True,0.0,1,117,Wed Feb 28 2018 13:04:29 GMT-0600 (Central Standard Time),False,1A.5
+0.72,0.002,312,True,0.0,1,118,Tue Feb 27 2018 21:06:51 GMT-0500 (Eastern Standard Time),False,1A.5
