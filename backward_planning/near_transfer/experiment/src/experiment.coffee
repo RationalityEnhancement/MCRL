@@ -1,6 +1,6 @@
 # coffeelint: disable=max_line_length, indentation
 
-DEBUG = no
+DEBUG = true
 TALK = no
 SHOW_PARTICIPANT = false
 
@@ -23,7 +23,7 @@ else
 
 if mode is "{{ mode }}"
   DEMO = true
-  CONDITION = 0
+  CONDITION = 1
 
 with_feedback = CONDITION > 0    
 

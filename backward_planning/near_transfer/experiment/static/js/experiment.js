@@ -2,7 +2,7 @@
 // coffeelint: disable=max_line_length, indentation
 var BLOCKS, CONDITION, DEBUG, DEMO, DEMO_TRIALS, N_TRIAL, PARAMS, SCORE, SHOW_PARTICIPANT, STRUCTURE_TEST, STRUCTURE_TRAINING, TALK, TRIALS_TEST, TRIALS_TRAINING, calculateBonus, createStartButton, getTestTrials, getTrainingTrials, initializeExperiment, psiturk, saveData, with_feedback;
 
-DEBUG = false;
+DEBUG = true;
 
 TALK = false;
 
@@ -19,7 +19,7 @@ if (DEBUG) {
 
 if (mode === "{{ mode }}") {
   DEMO = true;
-  CONDITION = 0;
+  CONDITION = 1;
 }
 
 with_feedback = CONDITION > 0;
