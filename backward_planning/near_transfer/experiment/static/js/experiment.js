@@ -2,7 +2,7 @@
 // coffeelint: disable=max_line_length, indentation
 var BLOCKS, CONDITION, DEBUG, DEMO, DEMO_TRIALS, N_TRIAL, PARAMS, SCORE, SHOW_PARTICIPANT, STRUCTURE_TEST, STRUCTURE_TRAINING, TALK, TRIALS_TEST, TRIALS_TRAINING, calculateBonus, createStartButton, getTestTrials, getTrainingTrials, initializeExperiment, psiturk, saveData, with_feedback;
 
-DEBUG = true;
+DEBUG = false;
 
 TALK = false;
 
@@ -96,7 +96,7 @@ $(window).on('load', function() {
     PARAMS = {
       inspectCost: 1,
       startTime: Date(Date.now()),
-      bonusRate: .001,
+      bonusRate: .0025,
       // variance: ['2_4_24', '24_4_2'][CONDITION]
       branching: '312',
       with_feedback: with_feedback,
@@ -409,9 +409,9 @@ initializeExperiment = function() {
     var s;
     // if PARAMS.bonusRate isnt .01
     //   throw new Error('Incorrect bonus rate')
-    s = "**you will earn 1 cent for every $10 you make in the game.**";
+    s = "**you will earn 5 cent for every $20 you make in the game.**";
     if (long) {
-      s += " For example, if your final score is $1000, you will receive a bonus of $1.";
+      s += " For example, if your final score is $400, you will receive a bonus of $1.";
     }
     return s;
   };
@@ -529,7 +529,7 @@ initializeExperiment = function() {
         case !SHOW_PARTICIPANT:
           return DEMO_TRIALS;
         case !DEBUG:
-          return getTestTrials(2);
+          return getTestTrials(10);
         default:
           return getTestTrials(20);
       }
