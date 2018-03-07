@@ -379,8 +379,8 @@ initializeExperiment = ->
           The total base payment for both HITs is $2.00.
 
           Stage 1 takes about 5 minutes. It pays only  $0.10 but it makes you eligible
-          to participate in Stage 2 where you can earn $1.90 in 10 minutes plus a **performance-dependent
-          bonus** of up to $3.50 ($1.30 is a typical bonus). 
+          to participate in Stage 2 where you can earn $1.90 in 10 minutes plus a performance-dependent
+          bonus of up to $3.50 ($1.30 is a typical bonus). 
           You will complete Stage 2 in a second HIT which you can begin #{text.return_window()}.
           If you do not begin the HIT within this time frame, you will not receive the
           second base payment or any bonus.
@@ -389,8 +389,8 @@ initializeExperiment = ->
           $5.50**.
 
           <div class="alert alert-warning">
-            Only continue if you can complete the second (~10 minute) HIT which
-            which will be available #{text.return_window()}.
+            **Please do NOT continue unless you are certain that you will complete the second (~10 minute) HIT which
+            which becomes available #{text.return_window()}. Completing only the first HIT would be a very bad deal for you (corresponding to a wage of $1.20/hour) and it would be bad for us too. You will be much better of if you complete both HITs (corresponding to a wage of about $13.20/hour.) and we need that for our experiment to work.
           </div>
         """
 
