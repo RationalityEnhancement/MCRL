@@ -12,10 +12,10 @@ getTrainingTrials = undefined
 getTestTrials = undefined
 
 
-DEBUG = true
+DEBUG = false
 TALK = no
 SHOW_PARTICIPANT = false
-STAGE = 2
+STAGE = 1
 
 STAGE1 = STAGE == 1
 STAGE2 = STAGE == 2
@@ -341,8 +341,7 @@ initializeExperiment = ->
 
                 After practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.
 
-                Before you begin, you will review the instructions and take another
-                quiz.
+                Before you begin, let us give you a brief refresher of how the game works.
               """
           else
             return new Block

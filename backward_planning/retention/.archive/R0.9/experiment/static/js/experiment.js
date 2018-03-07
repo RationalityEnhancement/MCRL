@@ -30,13 +30,13 @@ getTrainingTrials = void 0;
 
 getTestTrials = void 0;
 
-DEBUG = true;
+DEBUG = false;
 
 TALK = false;
 
 SHOW_PARTICIPANT = false;
 
-STAGE = 2;
+STAGE = 1;
 
 STAGE1 = STAGE === 1;
 
@@ -388,7 +388,7 @@ initializeExperiment = function() {
           choices: ['Continue'],
           button_html: '<button id="return-continue" class="btn btn-primary btn-lg">%choice%</button>',
           stimulus: function() {
-            return markdown("# Welcome back\n\nThanks for returning to complete Stage 2!\n\nAfter practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.\n\nBefore you begin, you will review the instructions and take another\nquiz.");
+            return markdown("# Welcome back\n\nThanks for returning to complete Stage 2!\n\nAfter practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.\n\nBefore you begin, let us give you a brief refresher of how the game works.");
           }
         });
       } else {
