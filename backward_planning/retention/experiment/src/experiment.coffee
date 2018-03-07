@@ -1,6 +1,18 @@
 # coffeelint: disable=max_line_length, indentation
+BLOCKS = undefined
+TRIALS_TRAINING = undefined
+TRIALS_TEST = undefined
+DEMO_TRIALS = undefined
+STRUCTURE_TEST = undefined
+STRUCTURE_TRAINING = undefined
+N_TRIAL = undefined
+SCORE = 0
+calculateBonus = undefined
+getTrainingTrials = undefined
+getTestTrials = undefined
 
-DEBUG = true
+
+DEBUG = no
 TALK = no
 SHOW_PARTICIPANT = false
 STAGE = 1
@@ -14,49 +26,60 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  CONDITION = 1
-
+  condition = 1
+  workerId = ['debugFRED']
+  
 else
   console.log """
   # =============================== #
   # ========= NORMAL MODE ========= #
   # =============================== #
   """
-  console.log '16/01/18 12:38:03 PM'
-  CONDITION = parseInt condition
-
 if mode is "{{ mode }}"
+  # Viewing experiment not through the PsiTurk server
   DEMO = true
-  CONDITION = 1
+  condition = 1
+  workerId = ['debugFRED']
+  # counterbalance = 0
+ 
+CONDITION = parseInt condition
+    
+_.mapObject = mapObject
+#_.compose = _.flowRight
+#SHOW_PARTICIPANT_DATA = '0/108'
+SHOW_PARTICIPANT_DATA = false
+###
+All Mouselab-MDP trials will be demonstration trials
+with data for the given participant. The coding is
+CONDITION/PID and you can find the available codes
+in exp1/static/json/data/1B.0/traces
+###
 
 with_feedback = CONDITION > 0    
 
-BLOCKS = undefined
-PARAMS = undefined
-TRIALS_TRAINING = undefined
-TRIALS_TEST = undefined
-DEMO_TRIALS = undefined
-STRUCTURE_TEST = undefined
-STRUCTURE_TRAINING = undefined
-N_TRIAL = undefined
-SCORE = 0
-calculateBonus = undefined
-getTrainingTrials = undefined
-getTestTrials = undefined
+PARAMS =
+  feedback: condition > 0
+  inspectCost: 1
+  condition: condition
+  bonusRate: .002
+  delay_hours: 24
+  delay_window: 4
+  branching: '312'
+  with_feedback: with_feedback
+  condition: CONDITION   
+  startTime: Date(Date.now())
+  variance: '2_4_24'    
+
+
+RETURN_TIME = new Date (getTime() + 1000 * 60 * 60 * PARAMS.delay_hours)
+
+MIN_TIME = 7
 
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 psiturk.recordUnstructuredData 'condition', CONDITION   
 psiturk.recordUnstructuredData 'with_feedback', with_feedback
 
-PARAMS =
-  inspectCost: 1
-  startTime: Date(Date.now())
-  bonusRate: .002
-  # variance: ['2_4_24', '24_4_2'][CONDITION]
-  branching: '312'
-  with_feedback: with_feedback
-  condition: CONDITION      
 
 
 delay = (time, func) -> setTimeout func, time
@@ -350,21 +373,20 @@ initializeExperiment = ->
         button_html: '<button class="btn btn-primary btn-lg">%choice%</button>'
         stimulus: ->
           markdown """
-          # You are beginning a two-part experiment
+          # You are beginning a two-stage experiment
 
           This experiment has two stages which you will complete in separate HITs.
-          The total base payment for both hits is $1.75, plus a **performance-dependent
-          bonus** of up to $3.50 ($2.50 is a typical bonus).
+          The total base payment for both HITs is $2.00.
 
-          Stage 1 takes about 15 minutes, and you will receive $0.75 when you
-          complete it. You will complete Stage 2 in a second HIT.
-          You can begin the second HIT #{text.return_window()}.
+          Stage 1 takes about 5 minutes. It pays only  $0.10 but it makes you eligible
+          to participate in Stage 2 where you can earn $1.90 in 10 minutes plus a **performance-dependent
+          bonus** of up to $3.50 ($1.30 is a typical bonus). 
+          You will complete Stage 2 in a second HIT which you can begin #{text.return_window()}.
           If you do not begin the HIT within this time frame, you will not receive the
           second base payment or any bonus.
 
-          Upon completing Stage 2, you will receive $1.00 plus your bonus of
-          up to $3.50.<br>**By completing both stages, you can make up to
-          $5.25**.
+          By completing both stages, you can make up to
+          $5.50**.
 
           <div class="alert alert-warning">
             Only continue if you can complete the second (~10 minute) HIT which
@@ -827,15 +849,28 @@ initializeExperiment = ->
     #      ]
 
       if DEBUG
-        experiment_timeline = [
-          # train
-          # test
-          # check_returning
-          # check_code
-          training
-          post_test
-          finish
-        ]
+        experiment_timeline = do ->
+          tl = []
+          if STAGE1
+            tl.push retention_instruction
+          if STAGE2
+            tl.push check_returning
+          #tl.push instruct_loop
+          unless STAGE2
+            tl.push train_basic1
+            tl.push pre_test_intro1
+            tl.push pre_test_intro2
+            tl.push pre_test     
+            tl.push divider_pretest_training    
+            tl.push training
+          unless STAGE1
+            tl.push test_block_intro
+            tl.push post_test
+          if STAGE1
+            tl.push ask_email
+          else
+            tl.push finish
+          return tl
       else
         experiment_timeline = do ->
           tl = []

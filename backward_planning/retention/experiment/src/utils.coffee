@@ -3,6 +3,32 @@ markdown = (txt) -> converter.makeHtml(txt)
 
 getTime = -> (new Date).getTime()
 
+format_time = (date=null) ->
+  if not date?
+    date = new Date
+  return date.toLocaleTimeString [], {hour: '2-digit', minute: '2-digit'}
+
+format_date = (date=null) ->
+  if not date?
+    date = new Date
+  return date.toLocaleDateString [], {day: '2-digit', month: '2-digit'}
+
+img = (name) -> """<img class='display' src='static/images/#{name}'/>"""
+
+fmtMoney = (v) -> '$' + v.toFixed(2)
+
+reformatTrial = (old) ->
+  trial =
+    trialID: old.trial_i
+    graph: null
+    initialState: old.initial
+
+  return trial
+
+# because the order of arguments of setTimeout is awful.
+delay = (time, func) -> setTimeout func, time
+
+
 loadJson = (file) ->
   result = $.ajax
     dataType: 'json'
