@@ -313,7 +313,11 @@ initializeExperiment = ->
 
     check_returning = do ->
         console.log 'worker', uniqueId
-        worker_id = uniqueId.split(':')[0]
+        if DEBUG
+          worker_id = 'debugSRVTKD'
+        else
+          worker_id = uniqueId.split(':')[0]
+
         stage1 = (loadJson 'static/json/stage1.json')[worker_id]
         if stage1?
           console.log 'stage1.return_time', stage1.return_time
