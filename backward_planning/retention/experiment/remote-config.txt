@@ -1,6 +1,7 @@
 [HIT Configuration]
-title = Web of Cash
-description = Earn money by navigating through a spider web in this psychology experiment.
+title = Web of Cash stage 2 (only accept if you completed stage 1)
+description = You cannot complete this HIT if you have not already completed stage 1
+allow_repeats = true
 amt_keywords = psychology, experiment
 lifetime = 24
 us_only = true
