@@ -17,8 +17,8 @@ def memo_key(args, kwargs):
         mask[action] = 1
         state = zip(state, mask)
         state = ((s, i == action) for i, s in enumerate(state))
-    return sum(map(hash, state))
-    # return (env, tuple(sorted(state)))
+    # return sum(map(hash, map(str, state)))
+    return tuple(sorted(state))
 
 
 class TornadoEnv(gym.Env):
@@ -93,9 +93,9 @@ class TornadoEnv(gym.Env):
         etr = self.expected_term_reward(state)
         return np.array([
             self.sim_cost,
-            self.myopic_voc(state, action) - etr,
-            self.vpi_action(state, action) - etr,
-            self.vpi(state) - etr,
+            self.myopic_voc(state, action),
+            self.vpi_action(state, action),
+            self.vpi(state),
             etr
         ])
 
@@ -111,7 +111,6 @@ class TornadoEnv(gym.Env):
             city = action
             a, b = state[city]
             p = a / (a + b)
-            p = self.true_p[city]
 
             s = list(state)
             s[city] = (a + 1, b)
@@ -122,6 +121,7 @@ class TornadoEnv(gym.Env):
     @memoize(key=memo_key)
     def expected_term_reward(self, state):
         return sum(self.value(state, a) for a in self._cities)
+
 
     def true_term_reward(self, state):
         return sum(self.evac_cost if evac else p * self.false_neg_cost
@@ -135,7 +135,7 @@ class TornadoEnv(gym.Env):
     def myopic_voc(self, state, action):
         val = sum(p * self.expected_term_reward(s1)
                   for p, s1, r in self.results(state, action))
-        return val 
+        return val - self.expected_term_reward(state)
     
     @memoize(key=memo_key)
     def vpi(self, state):
@@ -145,21 +145,8 @@ class TornadoEnv(gym.Env):
     def vpi_action(self, state, action):
         a, b = state[action]
         fnc = self.false_neg_cost
-        return fnc * expected_min_beta_constant(a, b, self.evac_cost / fnc)
-    
-    # @memoize(key=memo_key)
-    # def vpi_action(self, state, action):
-    #     value = lambda i: state[i][0] / (state[i][0] + state[i][1])
-    #     best_arm = max(self._cities, key=value)
-    #     city
-    #     if action == best_arm:
-    #         others = (act for act in self._cities if act != action)
-    #         competing_value = max(map(value, others))
-    #     else:
-    #         competing_value = value(best_arm)
-    #     a, b = state[action]
-    #     val = np.maximum(beta_samples(a, b, 0), competing_value).mean()
-    #     return val - self.expected_term_reward(state)
+        val = fnc * expected_min_beta_constant(a, b, self.evac_cost / fnc)
+        return val - self.value(state, action)
 
 
 @lru_cache(None)

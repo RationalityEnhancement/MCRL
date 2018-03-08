@@ -1,4 +1,3 @@
-from skopt import gp_minimize
 import pandas as pd
 import numpy as np
 
@@ -92,6 +91,8 @@ def bo_policy(envs, max_cost=10., normalize_voi=True, n_calls=60,
               verbose=False, return_result=False, n_jobs=None, q_learning=False,
               **kwargs):
 
+    from skopt import gp_minimize
+
     if n_jobs is not None:
         parallel = Parallel(n_jobs=n_jobs)
     else:
@@ -118,7 +119,7 @@ def bo_policy(envs, max_cost=10., normalize_voi=True, n_calls=60,
                       'in', round(t.elapsed), 'sec')
             return - util
 
-    bounds = [ (1., max_cost)] + [ (0., 1.) ] * 3
+    bounds = [ (0., max_cost)] + [ (0., 1.) ] * 3
     with Timer() as t:
         result = gp_minimize(objective, bounds, n_calls=n_calls, random_state=0, **kwargs)
 
