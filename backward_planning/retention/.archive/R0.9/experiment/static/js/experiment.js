@@ -74,7 +74,7 @@ PARAMS = {
   condition: condition,
   bonusRate: .002,
   delay_hours: 24,
-  delay_window: 4,
+  delay_window: 12,
   branching: '312',
   with_feedback: with_feedback,
   condition: CONDITION,
@@ -226,7 +226,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, ask_email, bonus_text, check_code, check_returning, divider, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, post_test, pre_test, pre_test_intro1, pre_test_intro2, prompt_resubmit, quiz, reprompt, reset_score, retention_instruction, save_data, talk_demo, test_block_intro, text, train_basic1, training, verbal_responses;
+  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, ask_email, bonus_text, check_code, check_returning, divider, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, post_test, pre_test, pre_test_intro1, pre_test_intro2, prompt_resubmit, quiz, refresher1, refresher2, reprompt, reset_score, retention_instruction, save_data, talk_demo, test_block_intro, text, train_basic1, training, verbal_responses;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   //  ======================== #
@@ -298,11 +298,11 @@ initializeExperiment = function() {
   }).call(this);
   QuizLoop = class QuizLoop extends Block {
     loop_function(data) {
-      var c, j, len, ref;
+      var c, i, len, ref;
       console.log('data', data);
       ref = data[data.length].correct;
-      for (j = 0, len = ref.length; j < len; j++) {
-        c = ref[j];
+      for (i = 0, len = ref.length; i < len; i++) {
+        c = ref[i];
         if (!c) {
           return true;
         }
@@ -339,11 +339,11 @@ initializeExperiment = function() {
   };
   QuizLoop = class QuizLoop extends Block {
     loop_function(data) {
-      var c, j, len, ref;
+      var c, i, len, ref;
       console.log('data', data);
       ref = data[data.length].correct;
-      for (j = 0, len = ref.length; j < len; j++) {
-        c = ref[j];
+      for (i = 0, len = ref.length; i < len; i++) {
+        c = ref[i];
         if (!c) {
           return true;
         }
@@ -366,9 +366,13 @@ initializeExperiment = function() {
     code: 'elephant'
   });
   check_returning = (function() {
-    var TEST_TRIALS, i, return_time, stage1, worker_id;
+    var return_time, stage1, worker_id;
     console.log('worker', uniqueId);
-    worker_id = uniqueId.split(':')[0];
+    if (DEBUG) {
+      worker_id = 'debugSRVTKD';
+    } else {
+      worker_id = uniqueId.split(':')[0];
+    }
     stage1 = (loadJson('static/json/stage1.json'))[worker_id];
     if (stage1 != null) {
       console.log('stage1.return_time', stage1.return_time);
@@ -376,24 +380,15 @@ initializeExperiment = function() {
       console.log('return_time', return_time);
       if (getTime() > return_time) {
         // Redefine test trials to match breakdown established in stage 1.
-        TEST_TRIALS = (function() {
-          var j, len, ref, results;
-          ref = stage1.test_idx;
-          results = [];
-          for (j = 0, len = ref.length; j < len; j++) {
-            i = ref[j];
-            results.push(TRIALS[i]);
-          }
-          return results;
-        })();
-        SCORE += stage1.score;
+        //TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
+        //SCORE += stage1.score
         return new Block({
           type: 'button-response',
           is_html: true,
           choices: ['Continue'],
           button_html: '<button id="return-continue" class="btn btn-primary btn-lg">%choice%</button>',
           stimulus: function() {
-            return markdown(`# Welcome back\n\nThanks for returning to complete Stage 2! Your current bonus is\n**$${calculateBonus().toFixed(2)}**. In this stage you'll have ${N_TEST} rounds to\nincrease your bonus.\n\nBefore you begin, you will review the instructions and take another\nquiz.`);
+            return markdown("# Welcome back\n\nThanks for returning to complete Stage 2!\n\nAfter practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.\n\nBefore you begin, let us give you a brief refresher of how the game works.");
           }
         });
       } else {
@@ -423,13 +418,13 @@ initializeExperiment = function() {
     choices: ['Continue'],
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>',
     stimulus: function() {
-      return markdown(`# You are beginning a two-stage experiment\n\nThis experiment has two stages which you will complete in separate HITs.\nThe total base payment for both HITs is $2.00.\n\nStage 1 takes about 5 minutes. It pays only  $0.10 but it makes you eligible\nto participate in Stage 2 where you can earn $1.90 in 10 minutes plus a **performance-dependent\nbonus** of up to $3.50 ($1.30 is a typical bonus). \nYou will complete Stage 2 in a second HIT which you can begin ${text.return_window()}.\nIf you do not begin the HIT within this time frame, you will not receive the\nsecond base payment or any bonus.\n\nBy completing both stages, you can make up to\n$5.50**.\n\n<div class="alert alert-warning">\n  Only continue if you can complete the second (~10 minute) HIT which\n  which will be available ${text.return_window()}.\n</div>`);
+      return markdown(`# You are beginning a two-stage experiment\n\nThis experiment has two stages which you will complete in separate HITs.\nThe total base payment for both HITs is $2.00.\n\nStage 1 takes about 5 minutes. It pays only  $0.10 but you can earn a performance-dependent but it makes you eligible\nto participate in Stage 2 where you can earn $1.90 in 10 minutes plus a performance-dependent\nbonus of up to $3.50 ($1.30 is a typical bonus). \nYou will complete Stage 2 in a second HIT which you can begin ${text.return_window()}.\nIf you do not begin the HIT within this time frame, you will not receive the\nsecond base payment or any bonus.           \n\nBy completing both stages, you can make up to\n$5.50, but if you don't complete Stage 2, you will lose your bonus from Stage 1 and the HIT would be a very bad deal for you.\n\n<div class="alert alert-warning">\n  Please do <b>NOT<b> continue unless you are certain that you will complete the second HIT which\n  which becomes available ${text.return_window()}. Completing only the first HIT would be a very bad deal for you (corresponding to a wage of $1.20/hour) and it would be bad for us too. You will be much better of if you complete both HITs (corresponding to a wage of about $15.20/hour.) and we need that for our experiment to work.\n</div>`);
     }
   });
   ask_email = new Block({
     type: 'survey-text',
     preamble: function() {
-      return markdown(`# You've completed Stage 1\n\nSo far, you've earned a bonus of **$${calculateBonus().toFixed(2)}**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the second HIT. If you don't complete\nthe second HIT, you will give up the bonus you have earned.\n\nThe HIT for Stage 2 will have the title "Part 2 of two-part decision-making experiment"\nRemember, you must begin the HIT ${text.return_window()}.\n**Note:** The official base pay on mTurk will be $0.01;\nyou'll receive the $1 base pay for Stage 2 as part of your bonus \n(in addition to the bonus you earn).`);
+      return markdown(`# You've completed Stage 1\n\nSo far, you've earned a bonus of **$${calculateBonus().toFixed(2)}**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the second HIT. If you don't complete\nthe second HIT, you will give up the bonus you have earned.\n\nThe HIT for Stage 2 will have the title "Part 2 of two-part decision-making experiment"\nRemember, you must begin the HIT ${text.return_window()}.\n**Note:** The official base pay on mTurk will be $0.01;\nyou'll receive the $1.90 base pay for Stage 2 as part of your bonus \n(in addition to the bonus you earn).`);
     },
     questions: ['If you would like a reminder email, you can optionally enter it here.'],
     button: 'Submit HIT'
@@ -634,6 +629,16 @@ initializeExperiment = function() {
       return markdown("## Get ready!\n\nYou are about to play your first round of Web of Cash. You will notice that the web used in this game is larger than the example you saw in the previous pictures. But that is the only difference, and everything else works as described. Good luck!\n\n<div align=\"center\"> Press <code>space</code> to continue. </div>\n");
     }
   });
+  refresher1 = new TextBlock({
+    text: function() {
+      return markdown("  <h1> Refresher 1</h1>\n\n  In this HIT, you will play a game called *Web of Cash*. You will guide a\n  money-loving spider through a spider web. When you land on a gray circle\n  (a ***node***) the value of the node is added to your score.\n\n  You will be able to move the spider with the arrow keys, but only in the direction\n  of the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.\n\n <img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+    }
+  });
+  refresher2 = new TextBlock({
+    text: function() {
+      return markdown("<h1> Refresher 2</h1>\n\nIt's hard to make good decision when you can't see what you will get!\nFortunately, you will have access to a ***node inspector*** which can reveal\nthe value of a node. To use the node inspector, simply ***click on a node***. The image below illustrates how this works, and you can try this out on the **next** screen. \n\n**Note:** you can only use the node inspector when you're on the first\nnode. \n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash.png'/>\n\nOne more thing: **You must spend *at least* 7 seconds on each round.**\nIf you finish a round early, you'll have to wait until 7 seconds have\npassed.      \n\n<div align=\"center\"> Press <code>space</code> to continue. </div>\n");
+    }
+  });
   pre_test = new MouselabBlock({
     minTime: 7,
     show_feedback: false,
@@ -779,6 +784,8 @@ initializeExperiment = function() {
       }
       if (STAGE2) {
         tl.push(check_returning);
+        tl.push(refresher1);
+        tl.push(refresher2);
       }
       //tl.push instruct_loop
       if (!STAGE2) {
@@ -809,6 +816,8 @@ initializeExperiment = function() {
       }
       if (STAGE2) {
         tl.push(check_returning);
+        tl.push(refresher1);
+        tl.push(refresher2);
       }
       //tl.push instruct_loop
       if (!STAGE2) {

@@ -12,7 +12,7 @@ getTrainingTrials = undefined
 getTestTrials = undefined
 
 
-DEBUG = no
+DEBUG = false
 TALK = no
 SHOW_PARTICIPANT = false
 STAGE = 1
@@ -63,7 +63,7 @@ PARAMS =
   condition: condition
   bonusRate: .002
   delay_hours: 24
-  delay_window: 4
+  delay_window: 12
   branching: '312'
   with_feedback: with_feedback
   condition: CONDITION   
@@ -313,7 +313,11 @@ initializeExperiment = ->
 
     check_returning = do ->
         console.log 'worker', uniqueId
-        worker_id = uniqueId.split(':')[0]
+        if DEBUG
+          worker_id = 'debugSRVTKD'
+        else
+          worker_id = uniqueId.split(':')[0]
+
         stage1 = (loadJson 'static/json/stage1.json')[worker_id]
         if stage1?
           console.log 'stage1.return_time', stage1.return_time
@@ -322,8 +326,8 @@ initializeExperiment = ->
 
           if getTime() > return_time
             # Redefine test trials to match breakdown established in stage 1.
-            TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
-            SCORE += stage1.score
+            #TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
+            #SCORE += stage1.score
 
             return new Block
               type: 'button-response'
@@ -333,12 +337,11 @@ initializeExperiment = ->
               stimulus: -> markdown """
                 # Welcome back
 
-                Thanks for returning to complete Stage 2! Your current bonus is
-                **$#{calculateBonus().toFixed(2)}**. In this stage you'll have #{N_TEST} rounds to
-                increase your bonus.
+                Thanks for returning to complete Stage 2!
 
-                Before you begin, you will review the instructions and take another
-                quiz.
+                After practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.
+
+                Before you begin, let us give you a brief refresher of how the game works.
               """
           else
             return new Block
@@ -378,19 +381,19 @@ initializeExperiment = ->
           This experiment has two stages which you will complete in separate HITs.
           The total base payment for both HITs is $2.00.
 
-          Stage 1 takes about 5 minutes. It pays only  $0.10 but it makes you eligible
-          to participate in Stage 2 where you can earn $1.90 in 10 minutes plus a **performance-dependent
-          bonus** of up to $3.50 ($1.30 is a typical bonus). 
+          Stage 1 takes about 5 minutes. It pays only  $0.10 but you can earn a performance-dependent but it makes you eligible
+          to participate in Stage 2 where you can earn $1.90 in 10 minutes plus a performance-dependent
+          bonus of up to $3.50 ($1.30 is a typical bonus). 
           You will complete Stage 2 in a second HIT which you can begin #{text.return_window()}.
           If you do not begin the HIT within this time frame, you will not receive the
-          second base payment or any bonus.
+          second base payment or any bonus.           
 
           By completing both stages, you can make up to
-          $5.50**.
+          $5.50, but if you don't complete Stage 2, you will lose your bonus from Stage 1 and the HIT would be a very bad deal for you.
 
           <div class="alert alert-warning">
-            Only continue if you can complete the second (~10 minute) HIT which
-            which will be available #{text.return_window()}.
+            Please do <b>NOT<b> continue unless you are certain that you will complete the second HIT which
+            which becomes available #{text.return_window()}. Completing only the first HIT would be a very bad deal for you (corresponding to a wage of $1.20/hour) and it would be bad for us too. You will be much better of if you complete both HITs (corresponding to a wage of about $15.20/hour.) and we need that for our experiment to work.
           </div>
         """
 
@@ -407,7 +410,7 @@ initializeExperiment = ->
             The HIT for Stage 2 will have the title "Part 2 of two-part decision-making experiment"
             Remember, you must begin the HIT #{text.return_window()}.
             **Note:** The official base pay on mTurk will be $0.01;
-            you'll receive the $1 base pay for Stage 2 as part of your bonus 
+            you'll receive the $1.90 base pay for Stage 2 as part of your bonus 
             (in addition to the bonus you earn).
           """
 
@@ -705,7 +708,45 @@ initializeExperiment = ->
           <div align="center"> Press <code>space</code> to continue. </div>
 
         """
+      
+      refresher1 = new TextBlock
+        text: ->
+          markdown """
+          <h1> Refresher 1</h1>
 
+          In this HIT, you will play a game called *Web of Cash*. You will guide a
+          money-loving spider through a spider web. When you land on a gray circle
+          (a ***node***) the value of the node is added to your score.
+
+          You will be able to move the spider with the arrow keys, but only in the direction
+          of the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.
+
+         <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash-unrevealed.png'/>
+
+        <div align="center">Press <code>space</code> to proceed.</div>
+        """    
+
+      refresher2 = new TextBlock
+        text: ->
+          markdown """
+          <h1> Refresher 2</h1>
+
+          It's hard to make good decision when you can't see what you will get!
+          Fortunately, you will have access to a ***node inspector*** which can reveal
+          the value of a node. To use the node inspector, simply ***click on a node***. The image below illustrates how this works, and you can try this out on the **next** screen. 
+
+          **Note:** you can only use the node inspector when you're on the first
+          node. 
+
+          <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash.png'/>
+
+          One more thing: **You must spend *at least* 7 seconds on each round.**
+          If you finish a round early, you'll have to wait until 7 seconds have
+          passed.      
+
+          <div align="center"> Press <code>space</code> to continue. </div>
+
+        """    
 
       pre_test = new MouselabBlock
         minTime: 7
@@ -855,6 +896,8 @@ initializeExperiment = ->
             tl.push retention_instruction
           if STAGE2
             tl.push check_returning
+            tl.push refresher1
+            tl.push refresher2
           #tl.push instruct_loop
           unless STAGE2
             tl.push train_basic1
@@ -878,6 +921,8 @@ initializeExperiment = ->
             tl.push retention_instruction
           if STAGE2
             tl.push check_returning
+            tl.push refresher1
+            tl.push refresher2
           #tl.push instruct_loop
           unless STAGE2
             tl.push train_basic1
