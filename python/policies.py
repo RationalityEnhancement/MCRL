@@ -109,7 +109,11 @@ class LiederPolicy(Policy):
             if a == self.env.term_action:
                 return self.env.expected_term_reward(self.env._state)
             else:
-                return np.dot(self.theta, self.env.action_features(a))
+                try:
+                    return np.dot(self.theta, self.env.action_features(a))
+                except:
+                    print(a, self.env.term_action)
+                    raise
         action = max(self.env.actions(state), key=Q)
         return action
 

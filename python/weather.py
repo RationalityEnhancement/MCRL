@@ -139,7 +139,7 @@ class TornadoEnv(gym.Env):
     
     @memoize(key=memo_key)
     def vpi(self, state):
-        return sum(self.vpi_action(state, a) for a in self.actions(state))    
+        return sum(self.vpi_action(state, a) for a in self._actions[:-1])    
     
     @memoize(key=memo_key)
     def vpi_action(self, state, action):
