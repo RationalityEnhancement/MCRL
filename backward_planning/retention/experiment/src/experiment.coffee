@@ -316,7 +316,7 @@ initializeExperiment = ->
     check_returning = do ->
         console.log 'worker', uniqueId
         if DEBUG
-          worker_id = 'debugSRVTKD'
+          worker_id = 'A13R19R7EQQNVA'
         else
           worker_id = uniqueId.split(':')[0]
 
