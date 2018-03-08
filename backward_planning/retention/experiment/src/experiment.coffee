@@ -322,7 +322,7 @@ initializeExperiment = ->
         if stage1?
           console.log 'stage1.return_time', stage1.return_time
           return_time = new Date stage1.return_time
-          console.log 'return_time', return_time
+          console.log 'return_time', return_time    
 
           if getTime() > return_time
             # Redefine test trials to match breakdown established in stage 1.
