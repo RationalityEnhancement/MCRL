@@ -74,7 +74,7 @@ PARAMS = {
   condition: condition,
   bonusRate: .002,
   delay_hours: 24,
-  delay_window: 4,
+  delay_window: 12,
   branching: '312',
   with_feedback: with_feedback,
   condition: CONDITION,
@@ -418,13 +418,13 @@ initializeExperiment = function() {
     choices: ['Continue'],
     button_html: '<button class="btn btn-primary btn-lg">%choice%</button>',
     stimulus: function() {
-      return markdown(`# You are beginning a two-stage experiment\n\nThis experiment has two stages which you will complete in separate HITs.\nThe total base payment for both HITs is $2.00.\n\nStage 1 takes about 5 minutes. It pays only  $0.10 but it makes you eligible\nto participate in Stage 2 where you can earn $1.90 in 10 minutes plus a performance-dependent\nbonus of up to $3.50 ($1.30 is a typical bonus). \nYou will complete Stage 2 in a second HIT which you can begin ${text.return_window()}.\nIf you do not begin the HIT within this time frame, you will not receive the\nsecond base payment or any bonus.\n\nBy completing both stages, you can make up to\n$5.50**.\n\n<div class="alert alert-warning">\n  **Please do NOT continue unless you are certain that you will complete the second (~10 minute) HIT which\n  which becomes available ${text.return_window()}. Completing only the first HIT would be a very bad deal for you (corresponding to a wage of $1.20/hour) and it would be bad for us too. You will be much better of if you complete both HITs (corresponding to a wage of about $13.20/hour.) and we need that for our experiment to work.\n</div>`);
+      return markdown(`# You are beginning a two-stage experiment\n\nThis experiment has two stages which you will complete in separate HITs.\nThe total base payment for both HITs is $2.00.\n\nStage 1 takes about 5 minutes. It pays only  $0.10 but you can earn a performance-dependent but it makes you eligible\nto participate in Stage 2 where you can earn $1.90 in 10 minutes plus a performance-dependent\nbonus of up to $3.50 ($1.30 is a typical bonus). \nYou will complete Stage 2 in a second HIT which you can begin ${text.return_window()}.\nIf you do not begin the HIT within this time frame, you will not receive the\nsecond base payment or any bonus.           \n\nBy completing both stages, you can make up to\n$5.50, but if you don't complete Stage 2, you will lose your bonus from Stage 1 and the HIT would be a very bad deal for you.\n\n<div class="alert alert-warning">\n  Please do <b>NOT<b> continue unless you are certain that you will complete the second HIT which\n  which becomes available ${text.return_window()}. Completing only the first HIT would be a very bad deal for you (corresponding to a wage of $1.20/hour) and it would be bad for us too. You will be much better of if you complete both HITs (corresponding to a wage of about $15.20/hour.) and we need that for our experiment to work.\n</div>`);
     }
   });
   ask_email = new Block({
     type: 'survey-text',
     preamble: function() {
-      return markdown(`# You've completed Stage 1\n\nSo far, you've earned a bonus of **$${calculateBonus().toFixed(2)}**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the second HIT. If you don't complete\nthe second HIT, you will give up the bonus you have earned.\n\nThe HIT for Stage 2 will have the title "Part 2 of two-part decision-making experiment"\nRemember, you must begin the HIT ${text.return_window()}.\n**Note:** The official base pay on mTurk will be $0.01;\nyou'll receive the $1 base pay for Stage 2 as part of your bonus \n(in addition to the bonus you earn).`);
+      return markdown(`# You've completed Stage 1\n\nSo far, you've earned a bonus of **$${calculateBonus().toFixed(2)}**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the second HIT. If you don't complete\nthe second HIT, you will give up the bonus you have earned.\n\nThe HIT for Stage 2 will have the title "Part 2 of two-part decision-making experiment"\nRemember, you must begin the HIT ${text.return_window()}.\n**Note:** The official base pay on mTurk will be $0.01;\nyou'll receive the $1.90 base pay for Stage 2 as part of your bonus \n(in addition to the bonus you earn).`);
     },
     questions: ['If you would like a reminder email, you can optionally enter it here.'],
     button: 'Submit HIT'

@@ -63,7 +63,7 @@ PARAMS =
   condition: condition
   bonusRate: .002
   delay_hours: 24
-  delay_window: 4
+  delay_window: 12
   branching: '312'
   with_feedback: with_feedback
   condition: CONDITION   
