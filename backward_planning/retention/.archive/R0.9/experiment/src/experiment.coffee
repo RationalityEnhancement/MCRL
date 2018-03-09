@@ -12,13 +12,15 @@ getTrainingTrials = undefined
 getTestTrials = undefined
 
 
-DEBUG = false
+DEBUG = no
 TALK = no
 SHOW_PARTICIPANT = false
 STAGE = 1
 
 STAGE1 = STAGE == 1
 STAGE2 = STAGE == 2
+
+RETURN_BONUS = 0
 
 if DEBUG
   console.log """
@@ -79,7 +81,7 @@ psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 psiturk.recordUnstructuredData 'condition', CONDITION   
 psiturk.recordUnstructuredData 'with_feedback', with_feedback
-
+psiturk.recordUnstructuredData 'return_time', RETURN_TIME
 
 
 delay = (time, func) -> setTimeout func, time
@@ -314,17 +316,18 @@ initializeExperiment = ->
     check_returning = do ->
         console.log 'worker', uniqueId
         if DEBUG
-          worker_id = 'debugSRVTKD'
+          worker_id = 'A13R19R7EQQNVA'
         else
           worker_id = uniqueId.split(':')[0]
 
         stage1 = (loadJson 'static/json/stage1.json')[worker_id]
+        RETURN_BONUS = stage1
         if stage1?
           console.log 'stage1.return_time', stage1.return_time
           return_time = new Date stage1.return_time
-          console.log 'return_time', return_time
+          console.log 'return_time', return_time    
 
-          if getTime() > return_time
+          if true  # getTime() > return_time   # TEMPORARY FIX
             # Redefine test trials to match breakdown established in stage 1.
             #TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
             #SCORE += stage1.score
@@ -446,8 +449,8 @@ initializeExperiment = ->
                 # You've completed the HIT
 
                 Thanks for participating. We hope you had fun! Based on your
-                performance, you will be awarded a bonus of
-                **$#{calculateBonus().toFixed(2)}**.
+                performance in Stage 1 and Stage 2, you will be awarded a bonus of
+                **$#{calculateBonus().toFixed(2)}** on top of your base pay of $2.
 
                 Please briefly answer the questions below before you submit the HIT.
                 """
@@ -946,7 +949,7 @@ initializeExperiment = ->
 
       # bonus is the total score multiplied by something
       calculateBonus = ->
-        bonus = SCORE * PARAMS.bonusRate
+        bonus = 1.89+SCORE * PARAMS.bonusRate + RETURN_BONUS
         bonus = (Math.round (bonus * 100)) / 100  # round to nearest cent
         return Math.max(0, bonus)
 

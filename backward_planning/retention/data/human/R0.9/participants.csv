@@ -1,48 +1,108 @@
 bonus,bonusRate,branching,completed,condition,delay_hours,delay_window,feedback,inspectCost,pid,startTime,variance,with_feedback,version
 0.66,0.002,312,True,1,24,12,True,1,0,Wed Mar 07 2018 15:02:46 GMT-0700 (Mountain Standard Time),2_4_24,True,R0.9
+4.53,0.002,312,True,1,24,12,True,1,0,Thu Mar 08 2018 11:24:29 GMT-0700 (Mountain Standard Time),2_4_24,True,R0.9
 0.83,0.002,312,True,0,24,12,False,1,1,Wed Mar 07 2018 17:49:25 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
 0.54,0.002,312,True,1,24,12,True,1,2,Wed Mar 07 2018 10:49:46 GMT-0600 (CST),2_4_24,True,R0.9
+4.24,0.002,312,True,0,24,12,False,1,2,Thu Mar 08 2018 20:24:39 GMT-0600 (CST),2_4_24,False,R0.9
+4.94,0.002,312,True,0,24,12,False,1,3,Thu Mar 08 2018 15:40:38 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
 0.97,0.002,312,True,1,24,12,True,1,3,Wed Mar 07 2018 12:59:46 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
-0.91,0.002,312,True,0,24,12,False,1,4,Wed Mar 07 2018 12:24:04 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
-0.75,0.002,312,True,0,24,12,False,1,5,Wed Mar 07 2018 12:33:20 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
-0.69,0.002,312,True,0,24,12,False,1,6,Wed Mar 07 2018 10:49:08 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
-0.64,0.002,312,True,1,24,12,True,1,7,Wed Mar 07 2018 23:18:46 GMT+0300 (EAT),2_4_24,True,R0.9
-0.76,0.002,312,True,1,24,12,True,1,8,Wed Mar 07 2018 11:54:33 GMT-0500 (EST),2_4_24,True,R0.9
-0.74,0.002,312,True,0,24,12,False,1,9,Wed Mar 07 2018 10:07:20 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
-0.85,0.002,312,True,1,24,12,True,1,10,Wed Mar 07 2018 11:22:30 GMT-0600 (CST),2_4_24,True,R0.9
-0.0,0.002,312,True,0,24,12,False,1,11,Wed Mar 07 2018 12:08:17 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
-0.53,0.002,312,True,1,24,12,True,1,12,Wed Mar 07 2018 14:44:31 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
-0.77,0.002,312,True,0,24,12,False,1,13,Wed Mar 07 2018 11:52:25 GMT-0500 (US Eastern Standard Time),2_4_24,False,R0.9
-0.0,0.002,312,True,0,24,12,False,1,14,Wed Mar 07 2018 16:21:11 GMT-0500 (EST),2_4_24,False,R0.9
-0.48,0.002,312,True,1,24,12,True,1,15,Wed Mar 07 2018 14:22:05 GMT-0800 (PST),2_4_24,True,R0.9
-0.74,0.002,312,True,0,24,12,False,1,16,Wed Mar 07 2018 12:48:13 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
-0.94,0.002,312,True,1,24,12,True,1,17,Wed Mar 07 2018 13:20:46 GMT-0600 (CST),2_4_24,True,R0.9
-0.0,0.002,312,True,0,24,12,False,1,18,Wed Mar 07 2018 14:06:42 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
-0.86,0.002,312,True,1,24,12,True,1,19,Wed Mar 07 2018 12:08:04 GMT-0500 (US Eastern Standard Time),2_4_24,True,R0.9
-0.86,0.002,312,True,1,24,12,True,1,20,Wed Mar 07 2018 13:38:01 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
-0.87,0.002,312,True,1,24,12,True,1,21,Wed Mar 07 2018 16:11:15 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
-0.82,0.002,312,True,1,24,12,True,1,22,Wed Mar 07 2018 16:49:12 GMT-0500 (Hora est&#225;ndar del Este),2_4_24,True,R0.9
-0.5,0.002,312,True,0,24,12,False,1,23,Wed Mar 07 2018 10:56:07 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
-0.0,0.002,312,True,0,24,12,False,1,24,Wed Mar 07 2018 11:56:36 GMT-0500 (EST),2_4_24,False,R0.9
-0.57,0.002,312,True,0,24,12,False,1,25,Wed Mar 07 2018 12:15:00 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
-0.81,0.002,312,True,0,24,12,False,1,26,Wed Mar 07 2018 18:47:52 GMT-0500 (EST),2_4_24,False,R0.9
-0.87,0.002,312,True,1,24,12,True,1,27,Wed Mar 07 2018 17:29:24 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
-0.0,0.002,312,True,0,24,12,False,1,28,Wed Mar 07 2018 11:51:09 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
-0.55,0.002,312,True,1,24,12,True,1,29,Wed Mar 07 2018 14:00:25 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
-0.58,0.002,312,True,1,24,12,True,1,30,Wed Mar 07 2018 17:26:03 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
-0.68,0.002,312,True,0,24,12,False,1,31,Wed Mar 07 2018 14:25:05 GMT-0800 (PST),2_4_24,False,R0.9
-0.88,0.002,312,True,1,24,12,True,1,32,Wed Mar 07 2018 16:00:41 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
-0.8,0.002,312,True,0,24,12,False,1,33,Wed Mar 07 2018 10:48:55 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
-0.58,0.002,312,True,1,24,12,True,1,34,Wed Mar 07 2018 17:40:41 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
-0.87,0.002,312,True,0,24,12,False,1,35,Wed Mar 07 2018 08:48:05 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
-0.31,0.002,312,True,0,24,12,False,1,36,Wed Mar 07 2018 12:41:38 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
-0.4,0.002,312,True,1,24,12,True,1,37,Wed Mar 07 2018 11:50:25 GMT-0500 (EST),2_4_24,True,R0.9
-0.85,0.002,312,True,1,24,12,True,1,38,Wed Mar 07 2018 16:07:16 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
-0.34,0.002,312,True,1,24,12,True,1,39,Wed Mar 07 2018 11:48:53 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
-0.24,0.002,312,True,0,24,12,False,1,40,Wed Mar 07 2018 15:58:36 GMT-0600 (CST),2_4_24,False,R0.9
-0.0,0.002,312,True,0,24,12,False,1,41,Wed Mar 07 2018 08:50:38 GMT-0800 (PST),2_4_24,False,R0.9
-0.96,0.002,312,True,1,24,12,True,1,42,Wed Mar 07 2018 10:50:06 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
-0.02,0.002,312,True,0,24,12,False,1,43,Wed Mar 07 2018 12:29:04 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
-0.97,0.002,312,True,0,24,12,False,1,44,Wed Mar 07 2018 11:50:01 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
-0.78,0.002,312,True,1,24,12,True,1,45,Wed Mar 07 2018 11:54:39 GMT-0500 (EST),2_4_24,True,R0.9
-0.83,0.002,312,True,1,24,12,True,1,46,Tue Mar 06 2018 18:22:55 GMT-0800 (PST),2_4_24,True,R0.9
+,0.002,312,True,1,24,12,True,1,4,Fri Mar 09 2018 12:28:30 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+2.7,0.002,312,True,1,24,12,True,1,5,Thu Mar 08 2018 12:17:30 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+0.91,0.002,312,True,0,24,12,False,1,5,Wed Mar 07 2018 12:24:04 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+4.59,0.002,312,True,1,24,12,True,1,6,Thu Mar 08 2018 12:53:21 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+0.75,0.002,312,True,0,24,12,False,1,6,Wed Mar 07 2018 12:33:20 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
+4.36,0.002,312,True,0,24,12,False,1,7,Thu Mar 08 2018 15:34:26 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
+0.69,0.002,312,True,0,24,12,False,1,7,Wed Mar 07 2018 10:49:08 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
+0.64,0.002,312,True,1,24,12,True,1,8,Wed Mar 07 2018 23:18:46 GMT+0300 (EAT),2_4_24,True,R0.9
+4.09,0.002,312,True,1,24,12,True,1,8,Thu Mar 08 2018 22:57:22 GMT+0300 (EAT),2_4_24,True,R0.9
+4.61,0.002,312,True,0,24,12,False,1,9,Thu Mar 08 2018 13:32:28 GMT-0500 (EST),2_4_24,False,R0.9
+0.76,0.002,312,True,1,24,12,True,1,9,Wed Mar 07 2018 11:54:33 GMT-0500 (EST),2_4_24,True,R0.9
+0.74,0.002,312,True,0,24,12,False,1,10,Wed Mar 07 2018 10:07:20 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
+4.39,0.002,312,True,1,24,12,True,1,10,Thu Mar 08 2018 10:29:47 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
+,0.002,312,True,0,24,12,False,1,11,Fri Mar 09 2018 13:42:43 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+,0.002,312,True,1,24,12,True,1,12,Fri Mar 09 2018 11:54:42 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+4.73,0.002,312,True,0,24,12,False,1,13,Thu Mar 08 2018 12:32:23 GMT-0600 (CST),2_4_24,False,R0.9
+0.85,0.002,312,True,1,24,12,True,1,13,Wed Mar 07 2018 11:22:30 GMT-0600 (CST),2_4_24,True,R0.9
+3.24,0.002,312,True,1,24,12,True,1,14,Thu Mar 08 2018 12:11:06 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
+0.0,0.002,312,True,0,24,12,False,1,14,Wed Mar 07 2018 12:08:17 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
+0.53,0.002,312,True,1,24,12,True,1,15,Wed Mar 07 2018 14:44:31 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+0.77,0.002,312,True,0,24,12,False,1,16,Wed Mar 07 2018 11:52:25 GMT-0500 (US Eastern Standard Time),2_4_24,False,R0.9
+4.83,0.002,312,True,0,24,12,False,1,16,Thu Mar 08 2018 12:50:55 GMT-0500 (US Eastern Standard Time),2_4_24,False,R0.9
+0.0,0.002,312,True,0,24,12,False,1,17,Wed Mar 07 2018 16:21:11 GMT-0500 (EST),2_4_24,False,R0.9
+3.53,0.002,312,True,0,24,12,False,1,17,Thu Mar 08 2018 13:36:04 GMT-0500 (EST),2_4_24,False,R0.9
+,0.002,312,True,0,24,12,False,1,18,Fri Mar 09 2018 09:26:16 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
+0.48,0.002,312,True,1,24,12,True,1,19,Wed Mar 07 2018 14:22:05 GMT-0800 (PST),2_4_24,True,R0.9
+3.82,0.002,312,True,0,24,12,False,1,19,Thu Mar 08 2018 11:20:24 GMT-0800 (PST),2_4_24,False,R0.9
+4.03,0.002,312,True,1,24,12,True,1,20,Thu Mar 08 2018 14:16:15 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+0.74,0.002,312,True,0,24,12,False,1,20,Wed Mar 07 2018 12:48:13 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+4.61,0.002,312,True,0,24,12,False,1,21,Thu Mar 08 2018 21:49:39 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
+0.94,0.002,312,True,1,24,12,True,1,21,Wed Mar 07 2018 13:20:46 GMT-0600 (CST),2_4_24,True,R0.9
+0.0,0.002,312,True,0,24,12,False,1,22,Wed Mar 07 2018 14:06:42 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
+3.44,0.002,312,True,1,24,12,True,1,22,Thu Mar 08 2018 11:16:53 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
+0.86,0.002,312,True,1,24,12,True,1,23,Wed Mar 07 2018 12:08:04 GMT-0500 (US Eastern Standard Time),2_4_24,True,R0.9
+5.0,0.002,312,True,0,24,12,False,1,23,Thu Mar 08 2018 13:02:33 GMT-0500 (US Eastern Standard Time),2_4_24,False,R0.9
+,0.002,312,True,0,24,12,False,1,24,Fri Mar 09 2018 12:54:50 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+,0.002,312,True,1,24,12,True,1,25,Fri Mar 09 2018 09:51:57 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
+,0.002,312,True,1,24,12,True,1,26,Fri Mar 09 2018 12:00:00 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+,0.002,312,True,0,24,12,False,1,27,Fri Mar 09 2018 11:54:41 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
+0.86,0.002,312,True,1,24,12,True,1,28,Wed Mar 07 2018 13:38:01 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+4.51,0.002,312,True,1,24,12,True,1,28,Thu Mar 08 2018 20:19:02 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+,0.002,312,True,1,24,12,True,1,29,Fri Mar 09 2018 13:33:28 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+4.66,0.002,312,True,0,24,12,False,1,30,Thu Mar 08 2018 13:16:08 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
+0.87,0.002,312,True,1,24,12,True,1,30,Wed Mar 07 2018 16:11:15 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
+,0.002,312,True,1,24,12,True,1,31,Fri Mar 09 2018 12:26:55 GMT-0500 (EST),2_4_24,True,R0.9
+,0.002,312,True,0,24,12,False,1,32,Fri Mar 09 2018 12:59:59 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+0.82,0.002,312,True,1,24,12,True,1,33,Wed Mar 07 2018 16:49:12 GMT-0500 (Hora est&#225;ndar del Este),2_4_24,True,R0.9
+4.75,0.002,312,True,1,24,12,True,1,33,Thu Mar 08 2018 16:51:08 GMT-0500 (Hora est&#225;ndar del Este),2_4_24,True,R0.9
+,0.002,312,True,0,24,12,False,1,34,Fri Mar 09 2018 09:26:50 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
+,0.002,312,True,0,24,12,False,1,35,Fri Mar 09 2018 12:49:18 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+,0.002,312,True,0,24,12,False,1,36,Fri Mar 09 2018 12:38:30 GMT-0500 (EST),2_4_24,False,R0.9
+,0.002,312,True,0,24,12,False,1,37,Fri Mar 09 2018 12:27:25 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+0.74,0.002,312,True,1,24,12,True,1,38,Thu Mar 08 2018 11:20:18 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+0.5,0.002,312,True,0,24,12,False,1,38,Wed Mar 07 2018 10:56:07 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
+1.69,0.002,312,True,0,24,12,False,1,39,Thu Mar 08 2018 13:05:45 GMT-0500 (EST),2_4_24,False,R0.9
+0.0,0.002,312,True,0,24,12,False,1,39,Wed Mar 07 2018 11:56:36 GMT-0500 (EST),2_4_24,False,R0.9
+0.57,0.002,312,True,0,24,12,False,1,40,Wed Mar 07 2018 12:15:00 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+4.45,0.002,312,True,1,24,12,True,1,41,Thu Mar 08 2018 18:48:55 GMT-0500 (EST),2_4_24,True,R0.9
+0.81,0.002,312,True,0,24,12,False,1,41,Wed Mar 07 2018 18:47:52 GMT-0500 (EST),2_4_24,False,R0.9
+5.0,0.002,312,True,1,24,12,True,1,42,Thu Mar 08 2018 20:50:34 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+0.87,0.002,312,True,1,24,12,True,1,42,Wed Mar 07 2018 17:29:24 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+0.0,0.002,312,True,0,24,12,False,1,43,Wed Mar 07 2018 11:51:09 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+4.24,0.002,312,True,1,24,12,True,1,43,Thu Mar 08 2018 13:32:07 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+,0.002,312,True,1,24,12,True,1,44,Fri Mar 09 2018 09:51:43 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
+4.12,0.002,312,True,1,24,12,True,1,45,Thu Mar 08 2018 15:19:27 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+0.55,0.002,312,True,1,24,12,True,1,45,Wed Mar 07 2018 14:00:25 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+0.58,0.002,312,True,1,24,12,True,1,46,Wed Mar 07 2018 17:26:03 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
+4.3,0.002,312,True,0,24,12,False,1,46,Thu Mar 08 2018 16:49:26 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
+4.16,0.002,312,True,0,24,12,False,1,47,Thu Mar 08 2018 12:45:58 GMT-0800 (PST),2_4_24,False,R0.9
+0.68,0.002,312,True,0,24,12,False,1,47,Wed Mar 07 2018 14:25:05 GMT-0800 (PST),2_4_24,False,R0.9
+4.91,0.002,312,True,0,24,12,False,1,48,Thu Mar 08 2018 16:18:15 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+0.88,0.002,312,True,1,24,12,True,1,48,Wed Mar 07 2018 16:00:41 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+0.8,0.002,312,True,0,24,12,False,1,49,Wed Mar 07 2018 10:48:55 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
+4.45,0.002,312,True,1,24,12,True,1,49,Thu Mar 08 2018 12:12:09 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+4.29,0.002,312,True,1,24,12,True,1,50,Thu Mar 08 2018 13:04:35 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+0.58,0.002,312,True,1,24,12,True,1,50,Wed Mar 07 2018 17:40:41 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+2.57,0.002,312,True,1,24,12,True,1,51,Thu Mar 08 2018 09:20:29 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
+0.87,0.002,312,True,0,24,12,False,1,51,Wed Mar 07 2018 08:48:05 GMT-0800 (Pacific Standard Time),2_4_24,False,R0.9
+,0.002,312,True,1,24,12,True,1,52,Fri Mar 09 2018 09:30:30 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
+0.31,0.002,312,True,0,24,12,False,1,53,Wed Mar 07 2018 12:41:38 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+2.42,0.002,312,True,0,24,12,False,1,53,Thu Mar 08 2018 12:59:37 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+0.4,0.002,312,True,1,24,12,True,1,54,Wed Mar 07 2018 11:50:25 GMT-0500 (EST),2_4_24,True,R0.9
+0.85,0.002,312,True,1,24,12,True,1,55,Wed Mar 07 2018 16:07:16 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+4.51,0.002,312,True,0,24,12,False,1,55,Thu Mar 08 2018 13:38:51 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+3.71,0.002,312,True,0,24,12,False,1,56,Thu Mar 08 2018 12:53:18 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+0.34,0.002,312,True,1,24,12,True,1,56,Wed Mar 07 2018 11:48:53 GMT-0500 (Eastern Standard Time),2_4_24,True,R0.9
+2.92,0.002,312,True,1,24,12,True,1,57,Thu Mar 08 2018 16:29:52 GMT-0600 (CST),2_4_24,True,R0.9
+0.24,0.002,312,True,0,24,12,False,1,57,Wed Mar 07 2018 15:58:36 GMT-0600 (CST),2_4_24,False,R0.9
+0.0,0.002,312,True,0,24,12,False,1,58,Wed Mar 07 2018 08:50:38 GMT-0800 (PST),2_4_24,False,R0.9
+4.78,0.002,312,True,0,24,12,False,1,59,Thu Mar 08 2018 12:16:16 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
+0.96,0.002,312,True,1,24,12,True,1,59,Wed Mar 07 2018 10:50:06 GMT-0600 (Central Standard Time),2_4_24,True,R0.9
+1.93,0.002,312,True,0,24,12,False,1,60,Thu Mar 08 2018 18:16:25 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+0.02,0.002,312,True,0,24,12,False,1,60,Wed Mar 07 2018 12:29:04 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+5.35,0.002,312,True,0,24,12,False,1,61,Thu Mar 08 2018 14:05:47 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+0.97,0.002,312,True,0,24,12,False,1,61,Wed Mar 07 2018 11:50:01 GMT-0500 (Eastern Standard Time),2_4_24,False,R0.9
+,0.002,312,True,1,24,12,True,1,62,Fri Mar 09 2018 10:06:47 GMT-0800 (Pacific Standard Time),2_4_24,True,R0.9
+4.13,0.002,312,True,1,24,12,True,1,63,Thu Mar 08 2018 13:23:20 GMT-0500 (EST),2_4_24,True,R0.9
+0.78,0.002,312,True,1,24,12,True,1,63,Wed Mar 07 2018 11:54:39 GMT-0500 (EST),2_4_24,True,R0.9
+0.39,0.002,312,True,0,24,12,False,1,64,Wed Mar 07 2018 18:35:53 GMT-0600 (Central Standard Time),2_4_24,False,R0.9
+0.83,0.002,312,True,1,24,12,True,1,65,Tue Mar 06 2018 18:22:55 GMT-0800 (PST),2_4_24,True,R0.9

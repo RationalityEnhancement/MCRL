@@ -12,7 +12,7 @@ getTrainingTrials = undefined
 getTestTrials = undefined
 
 
-DEBUG = false
+DEBUG = no
 TALK = no
 SHOW_PARTICIPANT = false
 STAGE = 1
@@ -81,7 +81,7 @@ psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 psiturk.recordUnstructuredData 'condition', CONDITION   
 psiturk.recordUnstructuredData 'with_feedback', with_feedback
-
+psiturk.recordUnstructuredData 'return_time', RETURN_TIME
 
 
 delay = (time, func) -> setTimeout func, time
@@ -449,8 +449,8 @@ initializeExperiment = ->
                 # You've completed the HIT
 
                 Thanks for participating. We hope you had fun! Based on your
-                performance, you will be awarded a bonus of
-                **$#{calculateBonus().toFixed(2)}**.
+                performance in Stage 1 and Stage 2, you will be awarded a bonus of
+                **$#{calculateBonus().toFixed(2)}** on top of your base pay of $2.
 
                 Please briefly answer the questions below before you submit the HIT.
                 """
@@ -949,7 +949,7 @@ initializeExperiment = ->
 
       # bonus is the total score multiplied by something
       calculateBonus = ->
-        bonus = SCORE * PARAMS.bonusRate + RETURN_BONUS
+        bonus = 1.89+SCORE * PARAMS.bonusRate + RETURN_BONUS
         bonus = (Math.round (bonus * 100)) / 100  # round to nearest cent
         return Math.max(0, bonus)
 

@@ -6,7 +6,7 @@ with data for the given participant. The coding is
 CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 */
-var BLOCKS, CONDITION, DEBUG, DEMO, DEMO_TRIALS, MIN_TIME, N_TRIAL, PARAMS, RETURN_TIME, SCORE, SHOW_PARTICIPANT, SHOW_PARTICIPANT_DATA, STAGE, STAGE1, STAGE2, STRUCTURE_TEST, STRUCTURE_TRAINING, TALK, TRIALS_TEST, TRIALS_TRAINING, calculateBonus, condition, createStartButton, delay, getTestTrials, getTrainingTrials, initializeExperiment, loadTimeout, psiturk, saveData, slowLoad, with_feedback, workerId;
+var BLOCKS, CONDITION, DEBUG, DEMO, DEMO_TRIALS, MIN_TIME, N_TRIAL, PARAMS, RETURN_BONUS, RETURN_TIME, SCORE, SHOW_PARTICIPANT, SHOW_PARTICIPANT_DATA, STAGE, STAGE1, STAGE2, STRUCTURE_TEST, STRUCTURE_TRAINING, TALK, TRIALS_TEST, TRIALS_TRAINING, calculateBonus, condition, createStartButton, delay, getTestTrials, getTrainingTrials, initializeExperiment, loadTimeout, psiturk, saveData, slowLoad, with_feedback, workerId;
 
 BLOCKS = void 0;
 
@@ -41,6 +41,8 @@ STAGE = 1;
 STAGE1 = STAGE === 1;
 
 STAGE2 = STAGE === 2;
+
+RETURN_BONUS = 0;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
@@ -91,6 +93,8 @@ psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
 psiturk.recordUnstructuredData('condition', CONDITION);
 
 psiturk.recordUnstructuredData('with_feedback', with_feedback);
+
+psiturk.recordUnstructuredData('return_time', RETURN_TIME);
 
 delay = function(time, func) {
   return setTimeout(func, time);
@@ -369,16 +373,17 @@ initializeExperiment = function() {
     var return_time, stage1, worker_id;
     console.log('worker', uniqueId);
     if (DEBUG) {
-      worker_id = 'debugSRVTKD';
+      worker_id = 'A13R19R7EQQNVA';
     } else {
       worker_id = uniqueId.split(':')[0];
     }
     stage1 = (loadJson('static/json/stage1.json'))[worker_id];
+    RETURN_BONUS = stage1;
     if (stage1 != null) {
       console.log('stage1.return_time', stage1.return_time);
       return_time = new Date(stage1.return_time);
       console.log('return_time', return_time);
-      if (getTime() > return_time) {
+      if (true) { // getTime() > return_time   # TEMPORARY FIX
         // Redefine test trials to match breakdown established in stage 1.
         //TEST_TRIALS = (TRIALS[i] for i in stage1.test_idx)
         //SCORE += stage1.score
@@ -443,7 +448,7 @@ initializeExperiment = function() {
     finish = new Block({
       type: 'survey-text',
       preamble: function() {
-        return markdown(`# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance, you will be awarded a bonus of\n**$${calculateBonus().toFixed(2)}**.\n\nPlease briefly answer the questions below before you submit the HIT.`);
+        return markdown(`# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance in Stage 1 and Stage 2, you will be awarded a bonus of\n**$${calculateBonus().toFixed(2)}** on top of your base pay of $2.\n\nPlease briefly answer the questions below before you submit the HIT.`);
       },
       questions: ['How did you go about planning the route of the airplane?', 'Did you learn anything about how to plan better?', 'How old are you?', 'Which gender do you identify with?'],
       rows: [4, 4, 1, 1],
@@ -847,7 +852,7 @@ initializeExperiment = function() {
   // bonus is the total score multiplied by something
   calculateBonus = function() {
     var bonus;
-    bonus = SCORE * PARAMS.bonusRate;
+    bonus = 1.89 + SCORE * PARAMS.bonusRate + RETURN_BONUS;
     bonus = (Math.round(bonus * 100)) / 100; // round to nearest cent
     return Math.max(0, bonus);
   };
