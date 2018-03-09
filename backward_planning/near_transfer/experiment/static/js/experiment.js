@@ -2,7 +2,7 @@
 // coffeelint: disable=max_line_length, indentation
 var BLOCKS, CONDITION, DEBUG, DEMO, DEMO_TRIALS, N_TRIAL, PARAMS, SCORE, SHOW_PARTICIPANT, STRUCTURE_TEST, STRUCTURE_TRAINING, TALK, TRIALS_TEST, TRIALS_TRAINING, calculateBonus, createStartButton, getTestTrials, getTrainingTrials, initializeExperiment, psiturk, saveData, with_feedback;
 
-DEBUG = true;
+DEBUG = false;
 
 TALK = false;
 
@@ -96,7 +96,7 @@ $(window).on('load', function() {
     PARAMS = {
       inspectCost: 1,
       startTime: Date(Date.now()),
-      bonusRate: .0025,
+      bonusRate: .002,
       // variance: ['2_4_24', '24_4_2'][CONDITION]
       branching: '312',
       with_feedback: with_feedback,
@@ -409,9 +409,9 @@ initializeExperiment = function() {
     var s;
     // if PARAMS.bonusRate isnt .01
     //   throw new Error('Incorrect bonus rate')
-    s = "**you will earn 5 cent for every $20 you make in the game.**";
+    s = "**you will earn 20 cent for every $100 you make in the game.**";
     if (long) {
-      s += " For example, if your final score is $400, you will receive a bonus of $1.";
+      s += " For example, if your final score is $500, you will receive a bonus of $1.";
     }
     return s;
   };
@@ -596,7 +596,20 @@ initializeExperiment = function() {
       case !TALK:
         return [talk_demo];
       default:
-        return [train_basic1, pre_test_intro1, pre_test_intro2, pre_test, divider_pretest_training, training, divider_training_test, test_block_intro, post_test, quiz, verbal_responses, finish];
+        return [
+          train_basic1,
+          pre_test_intro1,
+          pre_test_intro2,
+          pre_test,
+          divider_pretest_training,
+          training,
+          divider_training_test,
+          test_block_intro,
+          post_test,
+          //quiz
+          //verbal_responses
+          finish
+        ];
     }
   })();
   // ================================================ #
