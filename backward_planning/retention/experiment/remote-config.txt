@@ -1,7 +1,7 @@
 [HIT Configuration]
-title = Part 1 of two-part decision-making experiment
-description = Play a game now and come back tomorrow to play another game. Together, the two HITs will yield an hourly wage of about $9-$12 on average. Please only participate today if you know you can also participate tomorrow.
-allow_repeats = false
+title = Part 2 of two-part decision-making experiment
+description = You can participate only if you completed part 1 yesterday.
+allow_repeats = true
 amt_keywords = psychology, experiment
 lifetime = 24
 us_only = true
@@ -28,7 +28,7 @@ threads = 4
 
 [Task Parameters]
 experiment_code_version = R0.9
-num_conds = 2
+num_conds = 1
 num_counters = 1
 
 [Shell Parameters]

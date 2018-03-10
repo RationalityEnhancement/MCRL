@@ -967,9 +967,15 @@ initializeExperiment = ->
 
       # bonus is the total score multiplied by something
       calculateBonus = ->
-        bonus = 1.89+SCORE * PARAMS.bonusRate + RETURN_BONUS
-        bonus = (Math.round (bonus * 100)) / 100  # round to nearest cent
-        return Math.max(0, bonus)
+        if STAGE1
+            bonus = SCORE * PARAMS.bonusRate
+            bonus = (Math.round (bonus * 100)) / 100  # round to nearest cent
+            return Math.max(0, bonus)
+        
+        if STAGE2    
+            bonus = 1.89+SCORE * PARAMS.bonusRate + RETURN_BONUS
+            bonus = (Math.round (bonus * 100)) / 100  # round to nearest cent
+            return Math.max(0, bonus)
 
 
       reprompt = null
