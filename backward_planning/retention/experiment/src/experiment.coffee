@@ -12,10 +12,10 @@ getTrainingTrials = undefined
 getTestTrials = undefined
 
 
-DEBUG = no
+DEBUG = false
 TALK = no
 SHOW_PARTICIPANT = false
-STAGE = 1
+STAGE = 2
 
 STAGE1 = STAGE == 1
 STAGE2 = STAGE == 2
@@ -45,7 +45,7 @@ if mode is "{{ mode }}"
   # counterbalance = 0
  
 CONDITION = parseInt condition
-    
+
 _.mapObject = mapObject
 #_.compose = _.flowRight
 #SHOW_PARTICIPANT_DATA = '0/108'
@@ -57,21 +57,39 @@ CONDITION/PID and you can find the available codes
 in exp1/static/json/data/1B.0/traces
 ###
 
-with_feedback = CONDITION > 0    
+    
 
-PARAMS =
-  feedback: condition > 0
-  inspectCost: 1
-  condition: condition
-  bonusRate: .002
-  delay_hours: 24
-  delay_window: 12
-  branching: '312'
-  with_feedback: with_feedback
-  condition: CONDITION   
-  startTime: Date(Date.now())
-  variance: '2_4_24'    
+if STAGE1
+    with_feedback = CONDITION > 0
+    
+    PARAMS =
+      feedback: condition > 0
+      inspectCost: 1
+      condition: condition
+      bonusRate: .002
+      delay_hours: 24
+      delay_window: 12
+      branching: '312'
+      with_feedback: with_feedback
+      condition: CONDITION   
+      startTime: Date(Date.now())
+      variance: '2_4_24'
+      stage: 1    
 
+if STAGE2
+    
+    with_feedback = false
+    
+    PARAMS =
+      feedback: 0
+      inspectCost: 1
+      bonusRate: .002
+      delay_hours: 24
+      delay_window: 12
+      branching: '31123'
+      variance: '1_2_4_8_32'    
+      startTime: Date(Date.now())  
+      stage: 2    
 
 RETURN_TIME = new Date (getTime() + 1000 * 60 * 60 * PARAMS.delay_hours)
 
@@ -367,8 +385,8 @@ initializeExperiment = ->
               # Stage 1 not completed
 
               We can't find you in our database. This is the second part of a two-part
-              experiment. If you did not complete the first stage, please
-              return this HIT. If you did complete Stage 1, please email
+              experiment. If you did not complete the HIT "Part 1 of two-part decision-making experiment" yesterday, then please
+              return this HIT. If you did complete it, please email
               cocosci.turk@gmail.com to report the error.
             """
 
@@ -384,7 +402,7 @@ initializeExperiment = ->
           This experiment has two stages which you will complete in separate HITs.
           The total base payment for both HITs is $2.00.
 
-          Stage 1 takes about 5 minutes. It pays only  $0.10 but you can earn a performance-dependent but it makes you eligible
+          Stage 1 takes about 5 minutes. It pays only  $0.20 but you can earn a performance-dependent but it makes you eligible
           to participate in Stage 2 where you can earn $1.90 in 10 minutes plus a performance-dependent
           bonus of up to $3.50 ($1.30 is a typical bonus). 
           You will complete Stage 2 in a second HIT which you can begin #{text.return_window()}.
