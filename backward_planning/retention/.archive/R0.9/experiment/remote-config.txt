@@ -1,6 +1,7 @@
 [HIT Configuration]
-title = Web of Cash
-description = Earn money by navigating through a spider web in this psychology experiment.
+title = Part 1 of two-part decision-making experiment
+description = Play a game now and come back tomorrow to play another game. Together, the two HITs will yield an hourly wage of about $9-$12 on average. Please only participate today if you know you can also participate tomorrow.
+allow_repeats = false
 amt_keywords = psychology, experiment
 lifetime = 24
 us_only = true
