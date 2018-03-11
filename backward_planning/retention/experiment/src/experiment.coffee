@@ -360,6 +360,8 @@ initializeExperiment = ->
 
                 Thanks for returning to complete Stage 2!
 
+                If you have already completed Stage 2 of this experiment earlier today, then please return this HIT. You cannot be paid for Stage 2 twice.
+
                 After practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.
 
                 Before you begin, let us give you a brief refresher of how the game works.

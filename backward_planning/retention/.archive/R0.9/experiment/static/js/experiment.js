@@ -410,7 +410,7 @@ initializeExperiment = function() {
           choices: ['Continue'],
           button_html: '<button id="return-continue" class="btn btn-primary btn-lg">%choice%</button>',
           stimulus: function() {
-            return markdown("# Welcome back\n\nThanks for returning to complete Stage 2!\n\nAfter practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.\n\nBefore you begin, let us give you a brief refresher of how the game works.");
+            return markdown("# Welcome back\n\nThanks for returning to complete Stage 2!\n\nIf you have already completed Stage 2 of this experiment earlier today, then please return this HIT. You cannot be paid for Stage 2 twice.\n\nAfter practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.\n\nBefore you begin, let us give you a brief refresher of how the game works.");
           }
         });
       } else {
