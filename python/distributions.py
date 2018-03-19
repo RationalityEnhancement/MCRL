@@ -40,6 +40,30 @@ class Normal(Distribution):
             return Normal(self.mu + other.val, self.sigma)
         else:
             return Normal(self.mu + other, self.sigma)
+        
+    def __radd__(self, other):
+        # if isinstance(other, Normal):
+        if hasattr(other, 'mu'):
+            # print('add norm')
+            return Normal(self.mu + other.mu,
+                          (self.sigma ** 2 + other.sigma ** 2) ** 0.5)
+        # if isinstance(other, PointMass):
+        if hasattr(other, 'val'):
+            # print('add pointmass')
+            return Normal(self.mu + other.val, self.sigma)
+        else:
+            # print('add number')
+            return Normal(self.mu + other, self.sigma)
+        
+    def __mul__(self, other):
+        if not(hasattr(other, 'mu')):
+            # print('add number')
+            return Normal(self.mu * other, self.sigma * other)
+        
+    def __rmul__(self, other):
+        if not(hasattr(other, 'mu')):
+            # print('add number')
+            return Normal(self.mu * other, self.sigma * other)
 
     def to_sampledist(self, n=10000):
         d = SampleDist(self.sample(n))
@@ -394,3 +418,26 @@ class SampleDist(Distribution):
             return SampleDist(self._samples + other.sample(self.len))
         else:
             return SampleDist(self._samples + other)
+        
+    def __radd__(self, other):
+        if hasattr(other, '_samples'):
+            return SampleDist(self._samples + other._samples)
+        elif hasattr(other, 'sample'):
+            return SampleDist(self._samples + other.sample(self.len))
+        else:
+            return SampleDist(self._samples + other)
+    
+    def __mul__(self, other):
+        if hasattr(other, '_samples'):
+            return SampleDist(self._samples * other._samples)
+        elif hasattr(other, 'sample'):
+            return SampleDist(self._samples * other.sample(self.len))
+        else:
+            return SampleDist(self._samples * other)
+    def __rmul__(self, other):
+        if hasattr(other, '_samples'):
+            return SampleDist(self._samples * other._samples)
+        elif hasattr(other, 'sample'):
+            return SampleDist(self._samples * other.sample(self.len))
+        else:
+            return SampleDist(self._samples * other)
