@@ -1,0 +1,141 @@
+/* 
+Style sheet MouselabWEB editor
+version 1.00b
+*/
+.labelTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	color: #000000;
+	text-decoration: none;
+	vertical-align: middle;
+	background-color: #9DACBF;
+}
+
+/***********************************************/
+/* MLWEB Divs                                 */
+/***********************************************/
+.mlwebTD, .actTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	color: #000000;
+	text-decoration: none;
+	vertical-align: middle;
+	border: 1px inset black;
+	background-color: #FAFAFA;
+}
+
+.mlwebBox, .boxTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	color: #FFFFFF;
+	text-decoration: none;
+	vertical-align: middle;
+	border: 4px groove #CCCCCC;
+	background-color: #888888;
+}
+
+.mlheaderTD, .inactTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+	text-decoration: none;
+	vertical-align: middle;
+}
+
+/* old 
+.mlwebTD, .actTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	color: #000000;
+	text-decoration: none;
+	vertical-align: middle;
+	border: 1px inset black;
+	background-color: #FAFAFA;
+}
+
+.mlwebBox, .boxTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	color: #FFFFFF;
+	text-decoration: none;
+	vertical-align: middle;
+	border: 4px groove #CCCCCC;
+	background-color: #888888;
+}
+
+.mlheaderTD, .inactTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+	text-decoration: none;
+	vertical-align: middle;
+}
+*/
+.inpTD {
+	background-color: #C0CFE0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-style: normal;
+	color: #000000;
+	text-decoration: none;
+	vertical-align: middle;
+}
+
+	p, ul, TD
+	{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	color: #000000;
+	text-decoration: none;
+	}
+	h1 
+	{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	font-style: normal;
+	color: #000000;
+	text-decoration: none;
+	}
+	h2 
+	{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	color: #000000;
+	text-decoration: none;
+	}
+	h3 
+	{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	color: #000000;
+	text-decoration: none;
+	}
+	
+INPUT, TEXTAREA, SELECT, OPTION {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	}
+
+.tblStyle {
+	border: thin solid #7895B0;
+	padding: 0px;
+	background-color: #E3E9F1;
+	margin: 0px;
+}
+
+body {
+	background-color: #E3E9F1;
+	margin: 0px;
+	padding: 2px;
+	
+}

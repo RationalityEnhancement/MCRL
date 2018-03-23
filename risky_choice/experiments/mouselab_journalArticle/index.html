@@ -1,0 +1,581 @@
+<HTML>
+<HEAD>
+<script language="JavaScript" src="js/jquery-min.js"></script>
+<script language="JavaScript" src="js/jstat.js"></script>
+<script language="JavaScript" src="js/underscore.js"></script>
+<script language="JavaScript" src="js/mmturkey.js"></script>
+<script language="JavaScript" src="js/parameters.js"></script>
+<script language="JavaScript" src="js/jquery.lettering.js"></script>
+<script language="JavaScript" src="js/jquery.textillate.js"></script>
+<script language="JavaScript" src="js/MouseLabExperiments.js"></script>
+<script language="JavaScript" src="plugins/countdown.js"></script>
+<script language="JavaScript" src="js/trial_definition.js"></script>
+<script language="JavaScript" src="js/mlweb.js"></script>
+<!--<script type="text/javascript" src="js/PRs.js"> </script>-->
+<TITLE>TEST of MouseLab Cell</TITLE>
+<link rel="stylesheet" href="css/mlweb.css" type="text/css">    
+    <link rel="stylesheet" href="css/animate.css" type="text/css">    
+
+</head>
+
+<body align="center">
+
+    
+<!--BEGIN TABLE STRUCTURE-->
+<SCRIPT language="JavaScript">
+//override defaults
+    
+// for debugging    
+if (DEBUG){
+    SKIP_INSTRUCTIONS = true;
+}
+else{
+    SKIP_INSTRUCTIONS = false;
+}
+
+mlweb_outtype="CSV";
+mlweb_fname="mlwebform";
+
+
+CBCol = "1^1";
+CBRow = "0^1^1^1";
+W_Col = "200^200";
+H_Row = "50^80^80^80";
+
+chkchoice = false;
+btnFlg = 1;
+btnType = "button";
+btntxt = "Gamble 1^Gamble 2";
+btnstate = "1^1";
+btntag = "gamble1^gamble2";
+to_email = "falk.lieder@berkeley.edu";
+colFix = false;
+rowFix = false;
+CBpreset = true;
+evtOpen = 0;
+evtClose = 0;
+
+//What is this for?
+CBord = "0^1^0^1^2^3`"
++ "1^0^0^1^2^3`"
++ "0^1^0^1^3^2`"
++ "1^0^0^1^3^2`"
++ "0^1^0^2^3^1`"
++ "1^0^0^2^3^1`"
++ "0^1^0^3^2^1`"
++ "1^0^0^3^2^1";
+
+chkFrm=true;
+warningTxt = "Some questions have not been answered. Please answer all questions before continuing!";
+tmTotalSec = 0;
+tmStepSec = 0;
+tmWidthPx = 0;
+tmFill = false;
+tmShowTime = false;
+tmCurTime = 0;
+tmActive = false;
+tmDirectStart = false;
+tmMinLabel = "min";
+tmSecLabel = "sec";
+tmLabel = "timer: ";
+
+//The value in the c-th column of the r-th row is the delay (in ms) after which the contents of cell c will be revealed if cell c is hovered over after having opened cell r.
+//There is no delay for the very first cell that you hover over.
+//Delay: b0 b1 c0 c1 d0 d1
+delay = "1000^1000^1000^1000^1000^1000`"
+ + "1000^1000^1000^1000^1000^1000`"
+ + "1000^1000^1000^1000^1000^1000`"
+ + "1000^1000^1000^1000^1000^1000`"
+ + "1000^1000^1000^1000^1000^1000`"
+ + "1000^1000^1000^1000^1000^1000";
+activeClass = "actTD";
+inactiveClass = "inactTD";
+boxClass = "boxTD";
+cssname = "css/mlweb.css";
+nextURL = "difficult.php";
+expname = "camera";
+randomOrder = false;
+recOpenCells = false;
+masterCond = 1;
+
+loadMatrices();    
+//inside_matrix=txtcont;
+//name_matrix=tagcont;
+//outside_matrix=boxcont;
+//active_matrix=statecont;
+
+  //Counter-Balancing order?
+CBord = "0^1^0^1^2^3`"
+        + "1^0^0^1^2^3`"
+        + "0^1^0^1^3^2`"
+        + "1^0^0^1^3^2`"
+        + "0^1^0^2^3^1`"
+        + "1^0^0^2^3^1`"
+        + "0^1^0^3^2^1`"
+        + "1^0^0^3^2^1";
+
+var CBorder=ExpMatrix(CBord);
+     
+$(document).ready(function() {    
+    timefunction('onload','body','body')
+});                      
+
+nr_points=0;    
+    
+</SCRIPT>
+    
+<script language="JavaScript">
+        function validateForm(){
+            if (!document.getElementById('consent_checkbox').checked){
+                if (SKIP_INSTRUCTIONS){
+                    $("#consentForm").hide();
+                    $("#Gambling").show();
+                    start_block()
+                }
+                else{
+                    alert('To proceed to the experiment you have to consent to participate by checking the box left of "I consent to participate."')
+                }
+            }
+            else{
+                $("#consentForm").hide();
+                $("#Instructions").show();
+            }
+            return document.getElementById('consent_checkbox').checked
+        }
+</script>
+
+<script language="JavaScript">
+    $("#minutesPerBlock").html(minutes_per_block);
+    $("#MaxBonus").html(max_bonus);
+    $("#highStakes").html(high_range);
+    $("#lowStakes").html(1);
+    $("#NrRounds").html(nr_blocks);
+    
+</script>
+    
+<!--END TABLE STRUCTURE-->    
+    
+<FORM name="mlwebform" onSubmit="return checkForm(this)" method="POST" action="save.php">
+<INPUT type=hidden name="procdata" value="">
+<input type=hidden name="subject" value="">
+<input type=hidden name="expname" value="">
+<input type=hidden name="nextURL" value="">
+<input type=hidden name="choice" value="">
+<input type=hidden name="condnum" value="">
+<input type=hidden name="to_email" value="">
+</FORM>
+<!--BEGIN preHTML-->
+
+<div id="consentForm">
+      <div class='heading' align="center">Consent to Participate in Research</div>
+      <h3>Betting Game</h3>
+
+
+    <div class="block-text">This HIT is a psychology experiment being conducted by Paul Krueger from Professor Tom Griffiths's Computational Cognitive Science Lab at the University of California, Berkeley. In order to consent to participate, you MUST meet the following criteria:
+        <ul>
+            <li>18 years of age or older.</li>
+            <li>Fluent speaker of English.</li>
+            <li>Have not participated in this experiment before. </li>
+        </ul>
+
+         This study is designed to look at how people make decisions. In this task, you will be asked to make choices and answer questions related to those decisions. 
+    </div>
+
+    <p class="block-text">
+    The study will take about 30 minutes, and will pay &#36;1.50 plus a performance-dependent bonus of up to a maximum of &#36;9.99. The performance bonus is explained in more detail in the instructions that follow.</p>
+    <p class="block-text">
+    Your participation in this research is voluntary. You may refrain from answering any questions that make you uncomfortable and may withdraw your participation at any time without penalty by returning the HIT on MTurk and emailing the experimenter at the address provided below. 
+    </p>
+    <p class="block-text">
+    Other than monetary compensation, participating will provide no direct benefits to you. But, we hope that this research will benefit society at large. Many problems that people can solve very easily are very difficult to automate (to have computers solve). By revealing more about how humans learn and think, our research may help others to build and program computers that can solve these kinds of problems. 
+    </p>
+
+    <p class="block-text">
+    Your MTurk worker ID may be connected to individual responses, but we will not be asking for any additional personally identifying information, and we will handle responses as confidentially as possible. We cannot however guarantee the confidentiality of information transmitted over the Internet. We will be keeping data collected as part of this experiment indefinitely.
+    </p>
+
+    <p class="block-text">
+        If you have any questions about the study, feel free to contact Paul Krueger. He can be reached at paul.m.krueger@berkeley.edu. If you have concerns about your rights as a participant in this experiment, please contact UC Berkeley's Committee for Protection of Human Subjects at (510) 642-7461 or subjects@berkeley.edu.
+    </p>
+
+    <p class="block-text">      
+        By selecting the &quot;consent&quot; option below, I acknowledge that I am 18 or older, that I am a fluent speaker of English, that I have not completed this experiment before, that I have read this consent form, and that I agree to take part in the research. 
+    </p>
+    <div align="center">
+		  <input type="checkbox" name="consent" value="yes" id="consent_checkbox"/> I consent to participate.	
+          <button type="button" id="start" onclick="validateForm()">Start Experiment</button>       
+    </div>
+
+</div>
+    
+<div id="Instructions" style="display:none;">
+	<h1 align="center">Instructions</h1>
+
+    <div id="InstructionsDiv1">
+	<p class="block-text">
+        Welcome! In this HIT you will play a series of 20 betting games. In each game, you will choose one of seven bets. After you have placed your bet, a ball will be drawn from a lottery machine with 100 balls. In the example below, the bin contains 22 yellow balls, 14 brown balls, 30 blue balls, and 34 purple balls. Which kind of ball wins you the most money depends on the bet you chose.
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs.png" width="600">        
+    </div>
+
+        <div align="center">
+            <button onclick="$('#InstructionsDiv1').hide(); $('#InstructionsDiv2').show();">Next</button>        
+        </div>
+  </div>
+    
+  <div id="InstructionsDiv2" style="display:none">
+
+        
+	<p class="block-text">
+        
+    </p>
+	<p class="block-text">
+        <b>The value of each color ball is determined by which of the seven bets you make. Before making a bet, you may observe the value of any type of ball by clicking on the grey box corresponding to it.</b> The value hidden behind each grey box is unique. You may observe as many or as few values as you wish. This may help you decide which bet to make.
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv2').hide(); $('#InstructionsDiv1').show();">Previous</button>  
+            <button onclick="$('#InstructionsDiv2').hide(); $('#InstructionsDiv3').show();">Next</button>        
+        </div>
+
+    </div>    
+
+  <div id="InstructionsDiv3" style="display:none">
+	<p class="block-text">
+        For example, by clicking on the first box under Bet 1, it is revealed that the 22 yellow balls are each worth $4.50. (but the value of the yellow balls for other bets is different).
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_reveal1.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv3').hide(); $('#InstructionsDiv2').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv3').hide(); $('#InstructionsDiv4').show();">Next</button>        
+        </div>
+    </div>  
+    
+  <div id="InstructionsDiv4" style="display:none">
+	<p class="block-text">
+        Clicking on the second box reveals that Bet 1 wins $3.98 if a brown ball is drawn....
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_reveal2.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv4').hide(); $('#InstructionsDiv3').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv4').hide(); $('#InstructionsDiv5').show();">Next</button>        
+        </div>
+    </div>
+    
+  <div id="InstructionsDiv5" style="display:none">
+	<p class="block-text">
+        Bet 1 wins $8.57 if a blue ball is drawn...
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_reveal3.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv5').hide(); $('#InstructionsDiv4').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv5').hide(); $('#InstructionsDiv6').show();">Next</button>        
+        </div>
+    </div>
+    
+  <div id="InstructionsDiv6" style="display:none">
+	<p class="block-text">
+        And Bet 1 wins $6.74 if a purple ball is drawn. You may also wish to explore the value for the balls in other bins, for Bets 2 thru 7.  When you have finished revealing grey boxes, you will select a Bet by clicking on a red box. In this pretend example, let's imagine that you select Bet 1. You would do this by clicking on "Bet 1"...
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_reveal4.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv6').hide(); $('#InstructionsDiv5').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv6').hide(); $('#InstructionsDiv7').show();">Next</button>        
+        </div>
+    </div>
+    
+<div id="InstructionsDiv7" style="display:none">
+	<p class="block-text">
+        The outcome was a blue ball, and so you would have won $8.57, as indicated by the feedback. For the sake of curiosity, let's see the values that would have been revealed if you had clicked on all of the grey boxes...
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_reveal4_outcome.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv7').hide(); $('#InstructionsDiv6').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv7').hide();$('#InstructionsDiv8').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv8" style="display:none">
+	<p class="block-text">
+        It looks like $8.57 was a good win.
+    </p>
+	<p class="block-text">
+        After making a bet, you move-on to a new game. With each new game, <u>the value behind each grey box will change</u>. Also, <u>the number of yellow, brown, blue, and purple balls will change</u>, and therefore the most likely outcome may change, too.
+    </p>
+	<p class="block-text">
+        <b>You will win <u><i>real</i> money</u> for your bets:</b> You will play 20 seperate games, and therefore you will win 20 seperate rewards. At the end of the task, one of these 20 rewards will be randomly selected, and <b>and paid to you as real bonus money.</b>
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_revealAll.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv8').hide(); $('#InstructionsDiv7').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv8').hide();$('#instructions_text').html(instructions);$('#InstructionsDiv9').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv9" style="display:none">
+	<p class="block-text">
+        There are two more important things to understand:
+    </p>
+	<p class="block-text">
+        <span id='instructions_text'></span>
+    </p>
+	<p class="block-text">
+        2. In some games, there will be many more balls of a certain color than of all other colors combined. In the new example below, 86 out of 100 balls are brown. Therefore, a brown ball is much more likely to be drawn than any other ball. That is, for any Bet, 1 thru 7, the most likely outcome will come from the grey box under that bet in the <i>second</i> row.
+    </p>
+        
+    <div align="center">
+        <img src="images/unequalGambleProbs.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv9').hide(); $('#InstructionsDiv8').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv9').hide(); $('#InstructionsDiv10').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv10" style="display:none">
+	<p class="block-text">
+        Let's imagine you clicked on the grey boxes revealing the value of the brown ball for each of the seven gambles. You would see this:
+    </p>
+        
+    <div align="center">
+        <img src="images/unequalGambleProbs_reveal7.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv10').hide(); $('#InstructionsDiv9').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv10').hide();$('#InstructionsDiv11').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv11" style="display:none">
+	<p class="block-text">
+        Now let's imagine you clicked on "Bet 3". Good job! You won $7.42.
+    </p>
+        
+    <div align="center">
+        <img src="images/unequalGambleProbs_reveal7_outcome.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv11').hide(); $('#InstructionsDiv10').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv11').hide();$('#InstructionsDiv12').show();">Next</button>        
+        </div>
+</div>
+    
+ <div id="InstructionsDiv12" style="display:none">
+    <p class="block-text">
+        Just for fun, below you can see what all of the values were for that game. This game is high-stakes.
+    </p>
+
+<div align="center">
+    <img src="images/unequalGambleProbs_revealAll.png" width="600">        
+</div>
+    <div align="center">
+        <button onclick="$('#InstructionsDiv12').hide(); $('#InstructionsDiv11').show();">Previous</button> 
+        <button onclick="$('#InstructionsDiv12').hide();$('#InstructionsDiv13').show();">Next</button>        
+    </div>
+</div>
+         
+    <div id="InstructionsDiv13" style="display:none">
+        <p class="block-text">
+            You may either review the instructions, or take an entry quiz.
+        </p>         
+         
+        <div align="center">
+            <button onclick="$('#InstructionsDiv13').hide(); $('#InstructionsDiv1').show();">Re-read instructions</button> 
+            <button type="button" id="start" onclick="$('#InstructionsDiv13').hide();$('#Instructions').hide();$('#quiz').show();">Take quiz</button>  
+        </div>
+     </div>
+</div>
+    
+    
+<div id='quiz' style='display:none' class='block-text'>
+    <h1>Quiz</h1>
+    <div id='question1' class='block-text'>
+        <span id='quiz_intro'> True or false: <p>I can observe as many or as few of the values hidden behind the grey boxes as I wish.</p></span>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz1" id='Q1A1' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz1" id='Q1A2' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question2' style='display:none' class='block-text'>
+        True or false: <p>The number of balls of each color tells me which color is most likely to be drawn from the bin.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz2" id='Q2A1' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz2" id='Q2A2' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question3' style='display:none' class='block-text'>
+        True or false: <p>I will play 20 games, but the values hidden behind the grey boxes stay the same in each game.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz3" id='Q3A1' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz3" id='Q3A2' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question4' style='display:none' class='block-text'>
+        True or false: <p>In some games, the vast majority of balls will be one single color.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz4" id='Q4A1' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz4" id='Q4A2' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question5' style='display:none' class='block-text'>
+        True or false: <p>In "high-stakes" games, the range of possible values behind the grey boxes is $0.01 to $9.99.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz5" id='Q5A1' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz5" id='Q5A2' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question6' style='display:none' class='block-text'>
+        True or false: <p>The number of yellow, brown, blue and purple balls in the bin is the same in all 20 games.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz6" id='Q6A1' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz6" id='Q6A2' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question7' style='display:none' class='block-text'>
+        True or false: <p>In "low-stakes" games, the highest possible reward is $0.25</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz7" id='Q7A1' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz7" id='Q7A2' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+
+    <div align='center'> <button onclick='nextQuestion()'>Next</button></div>
+</div>
+    
+<div id='PassedQuiz' style='display:none; font-size:125%; color:green' class='block-text'>
+    Congratulations! You passed the entry quiz. You are now ready to start the game.
+    <div align='center'><button onclick="$('#PassedQuiz').hide();$('#Gambling').show();start_block()">Play</button></div>
+</div>
+    
+<div id='FailedQuiz' style='display:none; font-size:125%; color:red' class='block-text'>
+    Sorry, but you failed the quiz. Please read the instructions again and retake the quiz. We cannot let you play the game until you have demonstrated that you understand the rules. 
+    <div align='center'><button onclick='$("#FailedQuiz").hide();$("#Instructions").show();$("#InstructionsDiv13").hide();$("#InstructionsDiv1").show();'>Re-read instructions</button></div>
+</div>
+
+    
+<div id="HalfwayMessage" style="display:none">
+    <p class="block-text">
+        <br>You are halfway done. The second half is <font color='red'><b><u><span id="block2_stakes"></span></u></b></font>: the possible payoffs will range from <font color='red'><b><u>$<span id="payoff2Low">1</span></u></b></font> to <font color='red'><b><u>$<span id="payoff2High">1</span></u></b></font>.
+    </p>
+    <div align="center">
+        <button type="button" id="start" onclick="$('#HalfwayMessage').hide();start_block()">Continue</button>  
+    </div>
+ </div>
+
+    
+<div id="Gambling" style="display:none;">
+
+    <div id="trial" align="center">    
+    <table align="center">
+    <tr>
+
+    <td width='150' align='center'>
+        <br><h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Game <span id="trialNrDisplay" class="NrDisplay">1</span> of <span id="nrTrialsDisplay" class="NrDisplay">.</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color='red'><b><u><span id="block_stakes"></span></u></b></font>: Minimum value: <font color='red'> <b><u>$0.01</u></b></font>, Maximum value: <font color='red'><b><u>$<span id="payoffHigh"></span></u></b></font></h2>
+    </td>
+
+    </tr>
+    <tr height="40">
+        <td><div align='center' id="Outcome" style="font-size:24pt;"></div></td>
+    </tr> 
+    <tr height="40">
+        <td><div align='center' id="ClickCost" style="font-size:24pt;"></div></td>
+    </tr> 
+    <tr height="40">
+        <td><div align='center' id="Timer" style="font-size:18pt;"></div></td>
+    </tr> 
+    <tr><td><div id="MouseLabTable" align="center">empty</div></td><td width="50"></td> <td width="100" valign="top"> </td></tr></table>
+    <div id="NewGame" style="display:none">
+        <p class="block-text" align="center">
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Game over. Ready to play a new game?</b>
+        </p>
+        <div align="center">
+            <button type="button" id="start" onclick="$('#Outcome').hide();$('#ClickCost').hide();$('#NewGame').hide();start_trial(trial_nr);">Play again!</button>  
+        </div>
+    </div>
+</div>
+    
+
+    
+    <div id="Debriefing" style="display:none;">
+        <h2>Finished</h2>
+        You have completed our task. One of your 20 rewards was selected at random. You won: $<span id="bonus">0</span>. Thank you very much for participating in our experiment! This HIT will submit automatically within 10 seconds. We will review your submission shortly. If you submitted quality work, then you will receive your bonus.                 
+    </div>
+</div>
+
+</div>
+
+</body>
+
+<script language="JavaScript">
+$("#MaxBonus").html("$"+max_bonus)
+$("#MinutesPerBlock").html(minutes_per_block)
+</script>
+    
+</html>
