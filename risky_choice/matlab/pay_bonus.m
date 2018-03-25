@@ -1,19 +1,14 @@
+%addpath('~/Dropbox/PhD/MatlabTools/')
+%addpath('~/Dropbox/PhD/MatlabTools/parse_json/')
+%filename_metadata = '~/Dropbox/mouselab_cogsci17/data/mouselab_cogsci17_metadata.csv';
 
-    
-% cd ~/Dropbox/'Accelerating Learning with PRs'/
+%load ../data/Mouselab_data.mat
 
-addpath('~/Dropbox/PhD/MatlabTools/')
-addpath('~/Dropbox/PhD/MatlabTools/parse_json/')
-
-filename_metadata = '~/Dropbox/mouselab_cogsci17/data/mouselab_cogsci17_metadata.csv';
-
-load ../data/Mouselab_data.mat
-
-for s = [1:33,35:200]%length(data_by_sub)
+for s = length(data_by_sub)
     if ~isfield(data_by_sub{s},'bonus')
         bonus(s) = 3.53;
     else
-        bonus(s) = data_by_sub{s}.bonus;
+        bonus(s) = str2num(data_by_sub{s}.bonus);
     end
 end
 

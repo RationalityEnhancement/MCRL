@@ -25,13 +25,8 @@
 <SCRIPT language="JavaScript">
 //override defaults
     
-// for debugging    
-if (DEBUG){
-    SKIP_INSTRUCTIONS = true;
-}
-else{
-    SKIP_INSTRUCTIONS = false;
-}
+// for debugging
+SKIP_INSTRUCTIONS = true;
 
 mlweb_outtype="CSV";
 mlweb_fname="mlwebform";
@@ -130,7 +125,10 @@ nr_points=0;
                 if (SKIP_INSTRUCTIONS){
                     $("#consentForm").hide();
                     $("#Gambling").show();
-                    start_block()
+                    start_quizTime();
+                    end_quizTime();
+                    start_experimentTime();
+                    start_block();
                 }
                 else{
                     alert('To proceed to the experiment you have to consent to participate by checking the box left of "I consent to participate."')
@@ -139,6 +137,7 @@ nr_points=0;
             else{
                 $("#consentForm").hide();
                 $("#Instructions").show();
+                start_quizTime();
             }
             return document.getElementById('consent_checkbox').checked
         }
@@ -213,7 +212,7 @@ nr_points=0;
 
     <div id="InstructionsDiv1">
 	<p class="block-text">
-        Welcome! In this HIT you will play a series of 20 betting games. In each game, you will choose one of seven bets. After you have placed your bet, a ball will be drawn from a lottery machine with 100 balls. In the example below, the bin contains 22 yellow balls, 14 brown balls, 30 blue balls, and 34 purple balls. Which kind of ball wins you the most money depends on the bet you chose.
+        Welcome! In this HIT you will play a series of 20 betting games. In each game, you will choose one of seven bets. After you have placed your bet, a ball will be drawn from a lottery machine with 100 balls. In the example below, the bin contains 16 yellow balls, 33 brown balls, 18 blue balls, and 33 purple balls. Which kind of ball wins you the most money depends on the bet you chose.
     </p>
         
     <div align="center">
@@ -232,7 +231,7 @@ nr_points=0;
         
     </p>
 	<p class="block-text">
-        <b>The value of each color ball is determined by which of the seven bets you make. Before making a bet, you may observe the value of any type of ball by clicking on the grey box corresponding to it.</b> The value hidden behind each grey box is unique. You may observe as many or as few values as you wish. This may help you decide which bet to make.
+        <b>The value of each color ball is determined by which of the seven bets you make. Before making a bet, you may observe the value of any type of ball by clicking on the grey box corresponding to it.</b> The value hidden behind each grey box is unique. You may observe as many or as few values as you wish. This may help you decide which bet to make. However, there is a small price to pay for each observation: <b>each observation costs $0.01</b>.
     </p>
         
     <div align="center">
@@ -248,7 +247,7 @@ nr_points=0;
 
   <div id="InstructionsDiv3" style="display:none">
 	<p class="block-text">
-        For example, by clicking on the first box under Bet 1, it is revealed that the 22 yellow balls are each worth $4.50. (but the value of the yellow balls for other bets is different).
+        For example, by clicking on the first box under Bet 6, it is revealed that the 16 yellow balls are each worth $6.96. (But the value of the yellow balls for other bets is different).
     </p>
         
     <div align="center">
@@ -263,7 +262,7 @@ nr_points=0;
     
   <div id="InstructionsDiv4" style="display:none">
 	<p class="block-text">
-        Clicking on the second box reveals that Bet 1 wins $3.98 if a brown ball is drawn....
+        Clicking on the third box under Bet 2 reveals that Bet 2 wins $5.86 if a blue ball is drawn....
     </p>
         
     <div align="center">
@@ -278,7 +277,7 @@ nr_points=0;
     
   <div id="InstructionsDiv5" style="display:none">
 	<p class="block-text">
-        Bet 1 wins $8.57 if a blue ball is drawn...
+        Bet 2 wins $1.98 if a purple ball is drawn...
     </p>
         
     <div align="center">
@@ -293,7 +292,13 @@ nr_points=0;
     
   <div id="InstructionsDiv6" style="display:none">
 	<p class="block-text">
-        And Bet 1 wins $6.74 if a purple ball is drawn. You may also wish to explore the value for the balls in other bins, for Bets 2 thru 7.  When you have finished revealing grey boxes, you will select a Bet by clicking on a red box. In this pretend example, let's imagine that you select Bet 1. You would do this by clicking on "Bet 1"...
+        And Bet 6 wins $2.01 if a purple ball is drawn. You may also wish to explore other values. Note that you have paid $0.04 for making four observations.  
+    </p>
+	<p class="block-text">
+        <b>You will be required to wait at least 30 seconds before placing a bet.</b>
+    </p>
+	<p class="block-text">
+        When you have finished revealing grey boxes, you will select a Bet by clicking on a red box. In this pretend example, let's imagine that you select Bet 3. You would do this by clicking on "Bet 3"...
     </p>
         
     <div align="center">
@@ -308,7 +313,7 @@ nr_points=0;
     
 <div id="InstructionsDiv7" style="display:none">
 	<p class="block-text">
-        The outcome was a blue ball, and so you would have won $8.57, as indicated by the feedback. For the sake of curiosity, let's see the values that would have been revealed if you had clicked on all of the grey boxes...
+        The outcome was a purple ball, and you would have won $5.49, as indicated by the feedback. For the sake of curiosity, let's see the values that would have been revealed if you had clicked on all of the grey boxes...
     </p>
         
     <div align="center">
@@ -323,13 +328,7 @@ nr_points=0;
     
 <div id="InstructionsDiv8" style="display:none">
 	<p class="block-text">
-        It looks like $8.57 was a good win.
-    </p>
-	<p class="block-text">
-        After making a bet, you move-on to a new game. With each new game, <u>the value behind each grey box will change</u>. Also, <u>the number of yellow, brown, blue, and purple balls will change</u>, and therefore the most likely outcome may change, too.
-    </p>
-	<p class="block-text">
-        <b>You will win <u><i>real</i> money</u> for your bets:</b> You will play 20 seperate games, and therefore you will win 20 seperate rewards. At the end of the task, one of these 20 rewards will be randomly selected, and <b>and paid to you as real bonus money.</b>
+        Note that you would pay $0.28 for observing all 28 boxes.
     </p>
         
     <div align="center">
@@ -344,13 +343,27 @@ nr_points=0;
     
 <div id="InstructionsDiv9" style="display:none">
 	<p class="block-text">
+        After making a bet, you move-on to a new game. With each new game, <u>the value behind each grey box will change</u>. Also, <u>the number of yellow, brown, blue, and purple balls will change</u>, and therefore the most likely outcome may change, too.
+    </p>
+	<p class="block-text">
+        <b>You will win <u><i>real</i> money</u> for your bets:</b> You will play 20 seperate games, and therefore you will win 20 seperate rewards. At the end of the task, one of these 20 rewards will be randomly selected, and <b>paid to you as real bonus money.</b>
+    </p>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv9').hide(); $('#InstructionsDiv8').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv9').hide();$('#instructions_text').html(instructions);$('#InstructionsDiv10').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv10" style="display:none">
+	<p class="block-text">
         There are two more important things to understand:
     </p>
 	<p class="block-text">
         <span id='instructions_text'></span>
     </p>
 	<p class="block-text">
-        2. In some games, there will be many more balls of a certain color than of all other colors combined. In the new example below, 86 out of 100 balls are brown. Therefore, a brown ball is much more likely to be drawn than any other ball. That is, for any Bet, 1 thru 7, the most likely outcome will come from the grey box under that bet in the <i>second</i> row.
+        2. In some games, there will be many more balls of a certain color than of all other colors combined. In the new example below, 89 out of 100 balls are brown. Therefore, a brown ball is much more likely to be drawn than any other ball. That is, for any Bet, 1 thru 7, the most likely outcome will come from the grey box under that bet in the <i>second</i> row.
     </p>
         
     <div align="center">
@@ -358,33 +371,17 @@ nr_points=0;
     </div>
       
         <div align="center">
-            <button onclick="$('#InstructionsDiv9').hide(); $('#InstructionsDiv8').show();">Previous</button> 
-            <button onclick="$('#InstructionsDiv9').hide(); $('#InstructionsDiv10').show();">Next</button>        
-        </div>
-</div>
-    
-<div id="InstructionsDiv10" style="display:none">
-	<p class="block-text">
-        Let's imagine you clicked on the grey boxes revealing the value of the brown ball for each of the seven gambles. You would see this:
-    </p>
-        
-    <div align="center">
-        <img src="images/unequalGambleProbs_reveal7.png" width="600">        
-    </div>
-      
-        <div align="center">
             <button onclick="$('#InstructionsDiv10').hide(); $('#InstructionsDiv9').show();">Previous</button> 
-            <button onclick="$('#InstructionsDiv10').hide();$('#InstructionsDiv11').show();">Next</button>        
+            <button onclick="$('#InstructionsDiv10').hide(); $('#InstructionsDiv11').show();">Next</button>        
         </div>
 </div>
     
 <div id="InstructionsDiv11" style="display:none">
 	<p class="block-text">
-        Now let's imagine you clicked on "Bet 3". Good job! You won $7.42.
+        Let's imagine you clicked on seven grey boxes:
     </p>
-        
     <div align="center">
-        <img src="images/unequalGambleProbs_reveal7_outcome.png" width="600">        
+        <img src="images/unequalGambleProbs_reveal7.png" width="600">        
     </div>
       
         <div align="center">
@@ -393,28 +390,43 @@ nr_points=0;
         </div>
 </div>
     
- <div id="InstructionsDiv12" style="display:none">
+<div id="InstructionsDiv12" style="display:none">
+	<p class="block-text">
+        Now let's imagine you clicked on "Bet 5". A brown ball was selected and you won $0.29.
+    </p>
+        
+    <div align="center">
+        <img src="images/unequalGambleProbs_reveal7_outcome.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv12').hide(); $('#InstructionsDiv11').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv12').hide();$('#InstructionsDiv13').show();">Next</button>        
+        </div>
+</div>
+    
+ <div id="InstructionsDiv13" style="display:none">
     <p class="block-text">
-        Just for fun, below you can see what all of the values were for that game. This game is high-stakes.
+        Below you can see what all of the values were for that game. This game is high-stakes.
     </p>
 
 <div align="center">
     <img src="images/unequalGambleProbs_revealAll.png" width="600">        
 </div>
     <div align="center">
-        <button onclick="$('#InstructionsDiv12').hide(); $('#InstructionsDiv11').show();">Previous</button> 
-        <button onclick="$('#InstructionsDiv12').hide();$('#InstructionsDiv13').show();">Next</button>        
+        <button onclick="$('#InstructionsDiv13').hide(); $('#InstructionsDiv12').show();">Previous</button> 
+        <button onclick="$('#InstructionsDiv13').hide();$('#InstructionsDiv14').show();">Next</button>        
     </div>
 </div>
          
-    <div id="InstructionsDiv13" style="display:none">
+    <div id="InstructionsDiv14" style="display:none">
         <p class="block-text">
             You may either review the instructions, or take an entry quiz.
         </p>         
          
         <div align="center">
-            <button onclick="$('#InstructionsDiv13').hide(); $('#InstructionsDiv1').show();">Re-read instructions</button> 
-            <button type="button" id="start" onclick="$('#InstructionsDiv13').hide();$('#Instructions').hide();$('#quiz').show();">Take quiz</button>  
+            <button onclick="$('#InstructionsDiv14').hide(); $('#InstructionsDiv1').show();">Re-read instructions</button> 
+            <button type="button" id="start" onclick="$('#InstructionsDiv14').hide();$('#Instructions').hide();$('#quiz').show();">Take quiz</button>  
         </div>
      </div>
 </div>
@@ -511,7 +523,7 @@ nr_points=0;
     
 <div id='PassedQuiz' style='display:none; font-size:125%; color:green' class='block-text'>
     Congratulations! You passed the entry quiz. You are now ready to start the game.
-    <div align='center'><button onclick="$('#PassedQuiz').hide();$('#Gambling').show();start_block()">Play</button></div>
+    <div align='center'><button onclick="$('#PassedQuiz').hide();$('#Gambling').show();end_quizTime();start_experimentTime();start_block()">Play</button></div>
 </div>
     
 <div id='FailedQuiz' style='display:none; font-size:125%; color:red' class='block-text'>

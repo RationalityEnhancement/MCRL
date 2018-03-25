@@ -7,8 +7,10 @@ nr_trialsPerBlock = 10;
 nr_gambles = 7;
 nr_outcomes = 4;
 
+%version_nr = 1;
+
 versions = {'column_order','columns_all_equal','column_EV'};
-% version_nr = 2;
+version_nr = 2;
 
 figdir = '~/Dropbox/mouselab_cogsci17/figures/';
 SAVE = true;

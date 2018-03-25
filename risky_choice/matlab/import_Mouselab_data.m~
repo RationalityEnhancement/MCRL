@@ -1,5 +1,5 @@
 filename=['../data/03242018/DataExp',int2str(experiment_nr),'JSON.csv'];
-filename_metadata=['../data/03242018/MetaDataExp',int2str(experiment_nr),'.csv']
+filename_metadata=['../data/03242018/ /MetaDataExp',int2str(experiment_nr),'.csv']
 
 fid=fopen(filename);
 nr_subjects=linecount(fid)-1;
@@ -22,13 +22,11 @@ end
 fclose(fid)
 
 data=cellOfStructs2StructOfCells(data_by_sub)
-save(['../data/Mouselab_data_Experiment',int2str(experiment_nr),'.mat'], 'data_by_sub','data')
+save(['../data/Mouselab_data_Experiment','.mat'], {'data_by_sub','data'})
 
-%{
-% pay bonuses
+%% pay bonuses
 
 fid=fopen(filename_metadata)
-text = fileread(filename_metadata);
 %worker IDs
 worker_IDs=regexp(text,'[A-Z0-9]*(?=,Approved,)','match');
 nr_subjects=numel(worker_IDs);
@@ -37,4 +35,5 @@ temp=regexp(text,'html",[A-Z0-9]*','match');
 for s=1:numel(temp)
     assignment_IDs{s}=temp{s}(7:end);
 end
-%}
+
+

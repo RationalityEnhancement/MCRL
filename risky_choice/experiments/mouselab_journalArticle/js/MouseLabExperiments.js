@@ -4,8 +4,6 @@
      this script contains functions to generate online experiments comprising multiple trials with MouseLab elements 								
 */
 
-DEBUG = true
-
 //Some Initialization Code
 var block_nr=1;
 var newBlock = false;
@@ -17,6 +15,8 @@ var feedback=new Array();
 var decision_problems=new Array(nr_blocks);
 var choices=new Array(nr_blocks);
 var outcomes = new Array;
+var netPay = new Array;
+var observations = new Array;
 //var total_nr_points=0;
 var problem_type=new Array(nr_blocks);
 var range_nr_outcomes = [4, 4];
@@ -24,20 +24,20 @@ var range_nr_gambles = [7, 7];
 var isHighCompensatory = new Array();
 isHighCompensatory[0] = shuffle([1,1,1,1,1,0,0,0,0,0]);
 isHighCompensatory[1] = shuffle([1,1,1,1,1,0,0,0,0,0]);
-
-if (DEBUG){
-    var nr_trials = 2;
-}
-else
-{
-    var nr_trials = 20
-}
-
+var nr_trials = 2;
 var question_nr=1;
 var nr_questions=7;
 correct_answers = [1,1,0,1,1,0,1];
 var failed_quiz = new Array();
 var seconds_left = 0;
+var trialTime = new Array;
+var RTs = new Array(nr_trials);
+var startTime_RT, endTime_RT, startTime_trial, endTime_trial, quizTime, experimentTime
+var nr_outcomes = Math.floor(Math.random() * (range_nr_outcomes[1]+1 - range_nr_outcomes[0]) + range_nr_outcomes[0]);
+var nr_gambles = Math.floor(Math.random() * (range_nr_gambles[1]+1 - range_nr_gambles[0]) + range_nr_gambles[0]);
+for (o=0;o<nr_trials;o++){        
+    RTs[o]=fillArray(-1,nr_outcomes*nr_gambles);
+}
 
 //
 acquisitions=new Array(nr_blocks);
@@ -153,9 +153,11 @@ function start_block(){
 
 function start_trial(trial_nr){
     
+    start_RTtrial()
+    start_RT()
     if (trial_nr_total<=nr_trials){
         $('#trial').hide();
-        setTimeout(function(){start_trial2(trial_nr);},350);
+        setTimeout(function(){start_trial2(trial_nr);},100);
     }
     else{
         $("#trial").hide();
@@ -165,7 +167,7 @@ function start_trial(trial_nr){
 
 function start_trial2(trial_nr){
     
-    seconds_left = 30;
+    seconds_left = 30;//30;
     var interval = setInterval(function() {
         //document.getElementById('timer_div').innerHTML = --seconds_left;
         seconds_left--
@@ -343,9 +345,6 @@ function handleButtonClick(choice_name,choice_value,chosen_gamble){
 
 function generateGrid(range_nr_outcomes, range_nr_gambles){
     
-    nr_outcomes = Math.floor(Math.random() * (range_nr_outcomes[1]+1 - range_nr_outcomes[0]) + range_nr_outcomes[0]);
-    nr_gambles = Math.floor(Math.random() * (range_nr_gambles[1]+1 - range_nr_gambles[0]) + range_nr_gambles[0]);
-    
     probabilities=new Array(nr_outcomes);
     payoffs=new Array(nr_outcomes);
     revealed = new Array(nr_outcomes);
@@ -426,6 +425,7 @@ function generateGrid(range_nr_outcomes, range_nr_gambles){
 function generateMatrices(probabilities,payoffs,mu,sigma){
     
     clickCost = 0;
+    nr_observations = 0;
     
     nr_outcomes=probabilities.length;
     nr_gambles=payoffs[0].length;
@@ -502,6 +502,9 @@ function update_pseudorewards(matrices,dp){
         c = matrices.newly_revealed[1];
         if (dp.revealed[r][c]==false){
             sample_nr++;
+            end_RT();
+            RTs[trial_nr_total-1][sample_nr-1] = RT;
+            start_RT();
         }
         else{
             return matrices;
@@ -509,6 +512,7 @@ function update_pseudorewards(matrices,dp){
         dp.revealed[r][c] = true;
         dp.reveal_order[r][c] = sample_nr;
         clickCost++
+        nr_observations++
         if (clickCost<10){
             $("#ClickCost").html(["Click cost: $0.0"+clickCost]);
         }
@@ -558,9 +562,13 @@ function generate_feedback(probabilities,payoffs,chosen_gamble){
 }
 
 function hasChosen(gamble){
+    end_RTtrial();
+    trialTime[trial_nr_total-1] = RTtrial;
+    end_RT();
     feedback[block_nr-1][trial_nr-1]=generate_feedback(decision_problem.probabilities,decision_problem.payoffs,gamble);
     nr_points+=feedback[block_nr-1][trial_nr-1];
     outcomes[trial_nr_total-1] = parseFloat(feedback[block_nr-1][trial_nr-1])
+    observations[trial_nr_total-1] = nr_observations
 
     if (sampled_outcome==0){
         ball_html="<font color='yellow'>YELLOW.</font>"
@@ -581,6 +589,7 @@ function hasChosen(gamble){
         if (feedback[block_nr-1][trial_nr-1]>0){
             outcome_html=["The sampled ball is: "+ball_html+"&nbsp;&nbsp;&nbsp;You won $"+feedback[block_nr-1][trial_nr-1]]
             net_pay = feedback[block_nr-1][trial_nr-1] - clickCost/100
+            netPay[trial_nr_total-1] = net_pay
             net_pay = parseFloat(net_pay).toFixed(2);
             clickCost_html = ["Net earnings (winning minus click costs): <font color='green'><b>$"+net_pay+"</b></font>"]
             //win_sound.play();
@@ -613,7 +622,9 @@ function hasChosen(gamble){
 
 function saveAnswers(){
                 
-    bonus = outcomes[Math.floor(Math.random()*trial_nr_total)+1-1];
+    //bonus = outcomes[Math.floor(Math.random()*trial_nr_total)+1-1];
+    end_experimentTime();
+    bonus = Math.max(0,netPay[Math.floor(Math.random()*trial_nr_total)+1-1]);
     
     basic_info={
         nr_trials:nr_trials,
@@ -635,8 +646,14 @@ function saveAnswers(){
         decisions: choices,
         feedback: feedback,/////
         decision_problems: decision_problems,
-        process_data: process_data,
+        //process_data: process_data,
         outcomes: outcomes,
+        netPay: netPay,
+        observations: observations,
+        trialTime: trialTime,
+        RTs: RTs,
+        instructionQuizTime: quizTime,
+        experimentTime: experimentTime,
         basic_info: basic_info/////
     }
                 
@@ -953,6 +970,64 @@ function shuffle(a) {
         a[j] = x;
     }
     return a;
+}
+
+function start_RT() {
+  startTime_RT = new Date();
+};
+
+function end_RT() {
+  endTime_RT = new Date();
+  RT = (endTime_RT - startTime_RT)/1000;
+//  var RT = endTime_RT - startTime_RT; //in ms
+//  // strip the ms
+//  RT /= 1000;
+
+//  // get seconds 
+//  var seconds = Math.round(timeDiff);
+//  console.log(seconds + " seconds");
+}
+
+function start_RTtrial() {
+  startTime_trial = new Date();
+};
+
+function end_RTtrial() {
+  endTime_trial = new Date();
+  RTtrial = (endTime_trial - startTime_trial)/1000; //in ms
+//  var trial_time = endTime_trial - startTime_trial; //in ms
+//  // strip the ms
+//  trial_time /= 1000;
+
+//  // get seconds 
+//  var seconds = Math.round(timeDiff);
+//  console.log(seconds + " seconds");
+}
+
+function fillArray(value, len) {
+  if (len == 0) return [];
+  var a = [value];
+  while (a.length * 2 <= len) a = a.concat(a);
+  if (a.length < len) a = a.concat(a.slice(0, len - a.length));
+  return a;
+}
+
+function start_quizTime() {
+  startTime_quiz = new Date();
+};
+
+function end_quizTime() {
+  endTime_quiz = new Date();
+  quizTime = (endTime_quiz - startTime_quiz)/1000;
+}
+
+function start_experimentTime() {
+  startTime_experiment = new Date();
+};
+
+function end_experimentTime() {
+  endTime_experiment = new Date();
+  experimentTime = (endTime_experiment - startTime_experiment)/1000;
 }
 
 /////////////////////////
