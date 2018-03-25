@@ -12,6 +12,12 @@ catch
     pay_bonus
 end
 
+avg_completion_time = mean([data.experimentTime{:}])/60
+for s=1:numel(data_by_sub)
+     bonus(s) = str2num(data_by_sub{s}.bonus);
+end
+avg_bonus = mean(bonus)
+
 nr_blocks=numel(data.decision_problems{1});
 nr_trials_per_block=numel(data.decision_problems{1}{1});
 
@@ -314,19 +320,23 @@ data.consistent_with_TTB(~has_high_dispersion(:)))})
 disp(['As the dispersion increased, the proportion of trials in which people relied on TTB or SAT-TTB increased from ',...
     num2str(round(100*freq_fast_and_frugal_low_dispersion),2),'% to ', num2str(round(100*freq_fast_and_frugal_high_dispersion),2),'% (chi2(1)=',num2str(chi2),', p=',num2str(p),').'])
 
+mean(data.consistent_with_TTB(~has_high_dispersion(:)))
+mean(data.consistent_with_TTB(has_high_dispersion(:)))
 [p,chi2,df,cohens_w] = chi2test({data.consistent_with_TTB(has_high_dispersion(:)),...
 data.consistent_with_TTB(~has_high_dispersion(:))})
 
+mean(data.consistent_with_SAT_TTB(~has_high_dispersion(:)))
+mean(data.consistent_with_SAT_TTB(has_high_dispersion(:)))
 [p,chi2,df,cohens_w] = chi2test({data.consistent_with_SAT_TTB(has_high_dispersion(:)),...
 data.consistent_with_SAT_TTB(~has_high_dispersion(:))})
 
 
 %% Test prediction 2a: higher stakes --> more clicks
 avg_nr_clicks_high_stakes = mean(data.nr_acquisitions(has_high_stakes(:)))
-sem_nr_clicks_high_stakes = sem(data.nr_acquisitions(has_high_stakes(:)))
+std_nr_clicks_high_stakes = std(data.nr_acquisitions(has_high_stakes(:)))
 
 avg_nr_clicks_low_stakes = mean(data.nr_acquisitions(has_low_stakes(:)))
-sem_nr_clicks_low_stakes = sem(data.nr_acquisitions(has_low_stakes(:)))
+std_nr_clicks_low_stakes = std(data.nr_acquisitions(has_low_stakes(:)))
 
 [h,p,ci,stats]=ttest2(data.nr_acquisitions(has_high_stakes(:)),...
     data.nr_acquisitions(has_low_stakes(:)))
@@ -342,8 +352,11 @@ ld_ls = and(has_low_stakes(:), ~has_high_dispersion(:));
 
 data.consistent_with_FFH=or(data.consistent_with_SAT_TTB,data.consistent_with_TTB);
 
-freq_FFH_ls=mean(data.consistent_with_FFH(ld_ls));
-freq_FFH_hs=mean(data.consistent_with_FFH(ld_hs));
+freq_FFH_ls=mean(data.consistent_with_FFH(has_low_stakes));
+freq_FFH_hs=mean(data.consistent_with_FFH(has_high_stakes));
+
+freq_FFH_ld_ls=mean(data.consistent_with_FFH(ld_ls));
+freq_FFH_ld_hs=mean(data.consistent_with_FFH(ld_hs));
 
 [p_2b,chi2_2b,df_2b,cohens_w_2b] = chi2test({data.consistent_with_FFH(ld_ls),...
     data.consistent_with_FFH(ld_hs)})
@@ -353,18 +366,28 @@ disp(['Consistent with the predictions of our resource-rational analysis, ',...
     num2str(round(100*freq_FFH_ls,2)),'% vs. ',num2str(round(100*freq_FFH_hs,2)), '%, chi2(1)=',...
     num2str(chi2_2b),', p=',num2str(p_2b),').'])
 
+mean(data.consistent_with_random(~has_high_stakes))
+mean(data.consistent_with_random(has_high_stakes))
 [p_2b,chi2_2b,df_2b,cohens_w_2b] = chi2test({data.consistent_with_random(has_low_stakes),...
     data.consistent_with_random(has_high_stakes)})
 
+mean(data.consistent_with_SAT_TTB(~has_high_stakes))
+mean(data.consistent_with_SAT_TTB(has_high_stakes))
 [p_2b,chi2_2b,df_2b,cohens_w_2b] = chi2test({data.consistent_with_SAT_TTB(has_low_stakes),...
     data.consistent_with_SAT_TTB(has_high_stakes)})
 
+mean(data.consistent_with_TTB(~has_high_stakes))
+mean(data.consistent_with_TTB(has_high_stakes))
 [p_2b,chi2_2b,df_2b,cohens_w_2b] = chi2test({data.consistent_with_TTB(has_low_stakes),...
     data.consistent_with_TTB(has_high_stakes)})
 
+mean(data.consistent_with_SAT(~has_high_stakes))
+mean(data.consistent_with_SAT(has_high_stakes))
 [p_2b,chi2_2b,df_2b,cohens_w_2b] = chi2test({data.consistent_with_SAT(has_low_stakes),...
     data.consistent_with_SAT(has_high_stakes)})
 
+mean(data.consistent_with_WADD(has_low_stakes))
+mean(data.consistent_with_WADD(has_high_stakes))
 [p_2b,chi2_2b,df_2b,cohens_w_2b] = chi2test({data.consistent_with_WADD(has_low_stakes),...
     data.consistent_with_WADD(has_high_stakes)})
 

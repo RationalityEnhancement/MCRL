@@ -9,7 +9,14 @@ try
     load(['../data/Mouselab_data_Experiment',int2str(experiment_nr),'.mat'])
 catch
     import_Mouselab_data
+    pay_bonus
 end
+
+avg_completion_time = mean([data.experimentTime{:}])/60
+for s=1:numel(data_by_sub)
+     bonus(s) = str2num(data_by_sub{s}.bonus);
+end
+avg_bonus = mean(bonus)
 
 nr_blocks=numel(data.decision_problems{1});
 nr_trials_per_block=numel(data.decision_problems{1}{1});
@@ -313,16 +320,20 @@ data.consistent_with_TTB(~has_high_dispersion(:)))})
 disp(['As the dispersion increased, the proportion of trials in which people relied on TTB or SAT-TTB increased from ',...
     num2str(round(100*freq_fast_and_frugal_low_dispersion),2),'% to ', num2str(round(100*freq_fast_and_frugal_high_dispersion),2),'% (chi2(1)=',num2str(chi2),', p=',num2str(p),').'])
 
+mean(data.consistent_with_TTB(~has_high_dispersion(:)))
+mean(data.consistent_with_TTB(has_high_dispersion(:)))
 [p,chi2,df,cohens_w] = chi2test({data.consistent_with_TTB(has_high_dispersion(:)),...
 data.consistent_with_TTB(~has_high_dispersion(:))})
 
+mean(data.consistent_with_SAT_TTB(~has_high_dispersion(:)))
+mean(data.consistent_with_SAT_TTB(has_high_dispersion(:)))
 [p,chi2,df,cohens_w] = chi2test({data.consistent_with_SAT_TTB(has_high_dispersion(:)),...
 data.consistent_with_SAT_TTB(~has_high_dispersion(:))})
 
 
 %% Test prediction 2a: higher stakes --> more clicks
 avg_nr_clicks_high_stakes = mean(data.nr_acquisitions(has_high_stakes(:)))
-sem_nr_clicks_high_stakes = sem(data.nr_acquisitions(has_high_stakes(:)))
+std_nr_clicks_high_stakes = std(data.nr_acquisitions(has_high_stakes(:)))
 
 avg_nr_clicks_low_stakes = mean(data.nr_acquisitions(has_low_stakes(:)))
 sem_nr_clicks_low_stakes = sem(data.nr_acquisitions(has_low_stakes(:)))
@@ -364,6 +375,9 @@ disp(['Consistent with the predictions of our resource-rational analysis, ',...
 [p_2b,chi2_2b,df_2b,cohens_w_2b] = chi2test({data.consistent_with_SAT(has_low_stakes),...
     data.consistent_with_SAT(has_high_stakes)})
 
+[p_2b,chi2_2b,df_2b,cohens_w_2b] = chi2test({data.consistent_with_WADD(has_low_stakes),...
+    data.consistent_with_WADD(has_high_stakes)})
+
 %% Test prediction 2c: When the dispersion is high, then higher stakes decrease the frequency of SAT-TTB relative to the frequency of TTB.
 
 hd_hs = and(has_high_stakes(:), has_high_dispersion(:));
@@ -401,7 +415,9 @@ mean_delta_p_hs = mean(delta_p_hs);
 CI_delta_p_hs = quantile(delta_p_hs,[0.025,0.5,0.975])
 
 %Estimate the posterior on the 
- 
+
+mean(ratio_TTB_to_SATTTB_hs-ratio_TTB_to_SATTTB_ls)
+mean(ratio_TTB_to_SATTTB_ls),mean(ratio_TTB_to_SATTTB_hs)
 CI_delta_ratio = quantile(ratio_TTB_to_SATTTB_hs-ratio_TTB_to_SATTTB_ls,[0.025,0.50,0.975])
 disp(['In the high-dispersion environment increasing the stakes significantly increased the proportion of TTB sequences among all SAT-TTB  sequences from ',...
     int2str(round(100*mean(ratio_TTB_to_SATTTB_ls))),'% to ', int2str(round(100*mean(ratio_TTB_to_SATTTB_hs))),...
