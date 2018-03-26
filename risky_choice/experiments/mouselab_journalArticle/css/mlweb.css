@@ -1,0 +1,278 @@
+/****************************************/
+/* mlweb.css                            */
+/* Used for mouselabWEB pages           */
+/* Version 1.00b			            */
+/****************************************/
+
+/****************************************/
+/* HTML tag styles                      */
+/****************************************/ 
+
+/*
+#circleYellow {
+      width: 10px;
+      height: 10px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      background: yellow;
+    }
+*/
+
+input[type="number"] {
+   width:50px;
+}
+
+body{
+	color: #333333;
+	padding: 0px;
+	background-color: #E3E9F1;
+    padding: 0;
+	margin: 0;
+	font-family: Palatino Linotype, Bookman Antiqua, Palatino, serif;
+	font-size: 16px;
+	line-height: 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: Arial,sans-serif;
+}
+
+h1{
+ font-family: Verdana, Arial, sans-serif;
+ font-size: 100%;
+ text-align: center;
+ color: #3B4955;
+ font-size: 24pt;
+ padding-bottom: 10px; 
+ padding-top: 10px;
+}
+
+h2{
+	font-size: 114%;
+	color: #006699;
+	padding-bottom: 10px;
+}
+
+h3{
+ font-size: 100%;
+ color: #334d55;
+}
+
+h4{
+ font-size: 100%;
+ font-weight: normal;
+ color: #333333;
+}
+
+h5{
+ font-size: 100%;
+ color: #334d55;
+}
+
+P, ul, ol, TD {
+	font-size: 90%;
+	color: #334d55;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+ul{
+ list-style-type: square;
+}
+
+ul ul{
+ list-style-type: disc;
+}
+
+ul ul ul{
+ list-style-type: none;
+}
+
+label{
+ font: bold 100% Arial,sans-serif;
+ color: #334d55;
+}
+
+.block-text {
+  width: 600px;
+  text-align: justify;
+  margin: 0 auto;
+  margin-bottom: 1em;
+}
+
+input, select, button {font-family: Georgia, serif; font-size: 14px;}
+
+button {
+	background: url(../images/button-gradient.png);
+	border: 1px solid #999;
+	border-top: 1px solid #e0e0e0;
+	border-left: 1px solid #e0e0e0;
+	margin: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	height: 29px;
+	min-width: 70px;
+}
+button:active {
+	border-left: 1px solid #c9c9c9;
+	border-top: 1px solid #c9c9c9;
+	background: none;
+	background-color: #c9c9c9;
+}
+
+button[disabled] {
+	background: url(zen-button.png);
+	border: 1px solid #999;
+	border-top: 1px solid #e0e0e0;
+	border-left: 1px solid #e0e0e0;
+	cursor: not-allowed;
+}
+
+
+#maxPayoff{
+    color:#000000;
+    font-size:14pt;
+    font-weight:bold;
+}
+
+#minPayoff{
+    color:#000000;
+    font-size:14pt;
+    font-weight:bold;
+}
+
+.NrDisplay{
+    font-size:14pt;
+    font-weight:bold;
+}
+
+/***********************************************/
+/* MLWEB Divs                                 */
+/***********************************************/
+.mlwebTD, .actTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	color: #000000;
+	text-decoration: none;
+	vertical-align: middle;
+	border: 0px;  inset black;
+	background-color: #FAFAFA;
+}
+
+.mlwebBox, {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	color: #FFFFFF;
+	text-decoration: none;
+	vertical-align: middle;
+	border: 0px; /* groove #CCCCCC;*/
+	background-color: #888888;
+}
+
+.actBoxTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-style: bold;
+	color: #FFFFFF;
+	text-decoration: none;
+	vertical-align: middle;
+	border: 4px groove #CCCCCC;
+	background-color: #888888;
+}
+
+.inactBoxTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-style: normal;
+    font-weight: bold;
+	color: #000000;
+	text-decoration: none;
+	vertical-align: middle;
+	border: 0px groove #FFFFFF;
+	background-color: #E3E9F1; 
+}
+
+.choiceButton {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-style: normal;
+    font-weight: bold;
+	color: #110000;/* #FFFFFF; */
+	text-decoration: none;
+	vertical-align: middle;
+	border: 4px groove #000000;
+	background-color:#CC0000; /* #888888; */
+}
+
+.mlheaderTD, .inactTD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-decoration: none;
+	vertical-align: middle;
+    background-color:#CC0000; /* #888888; */
+
+}
+
+.btnStyle {
+   font-size:84%;
+   background-color:#F00;/*#EEE;*/
+   border:1px solid;
+   border-top-color:#FFF;
+   border-left-color:#FFF;
+   border-right-color:#444;
+   border-bottom-color:#444;
+}
+.pressedStyle {
+   background-color: #888888;
+   font-size:84%;
+   background-color:#CCC;
+   border:1px solid;
+   border-top-color: #003366;
+   border-left-color:#003366;
+   border-right-color: #FFF;
+   border-bottom-color:#FFF;
+}
+.btnhov{
+   border-top-color: #006699;
+   border-left-color:#006699;
+   border-right-color: #0099CC;
+   border-bottom-color:#0099CC;
+   }
+   
+.tmCont {
+	border: 1px solid #3B4955;
+	position: relative;	
+	z-index: 1;
+	height: 22px;
+	}
+	
+.tmBar {
+ 	background: #AAAAAA;
+	height: 18px;
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	z-index: 2;
+	
+}
+.tmTime {
+	height: 18px;
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	z-index: 3;
+	text-align: center;
+	color: #334d55;
+	background-image: none;
+}
+
+.MLWTableDiv {
+    height: 80px;
+    width: 200px;
+    left: 0px;
+    top: 0px;
+}

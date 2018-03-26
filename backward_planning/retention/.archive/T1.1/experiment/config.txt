@@ -1,0 +1,38 @@
+[HIT Configuration]
+title = Web of Cash Sandbox
+description = Science for the sake of science
+amt_keywords = psychology, experiment
+lifetime = 24
+us_only = true
+approve_requirement = 95
+contact_email_on_error = fredcallaway@berkeley.edu
+ad_group = psychology
+psiturk_keywords = psychology
+organization_name = UC Berkeley
+browser_exclude_rule = mobile, tablet
+
+[Database Parameters]
+database_url = sqlite:///participants.db
+table_name = participants
+
+[Server Parameters]
+host = localhost
+port = 22361
+cutoff_time = 60
+logfile = server.log
+loglevel = 0
+login_username = 
+login_pw = 
+threads = 4
+
+[Task Parameters]
+experiment_code_version = A
+num_conds = 1
+num_counters = 2
+
+[Shell Parameters]
+launch_in_sandbox_mode = false
+
+[psiTurk Access]
+psiturk_access_key_id = Rpe3tYQ22d4U55vKCSU7Vo
+psiturk_secret_access_id = 3sAVnHmPghEtwhkuVo38iN
