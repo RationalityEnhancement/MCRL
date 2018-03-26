@@ -593,7 +593,7 @@ initializeExperiment = ->
       train_basic1
       #train_inspector
       #train_inspect_cost
-      instructions1    
+      #instructions1    
       pre_test_intro
       pre_test
       #divider_pretest_training    
