@@ -96,6 +96,75 @@ class Normal(Distribution):
     @classmethod
     def fit(cls, samples):
         return cls(*scipy.stats.norm.fit(samples))
+    
+class TruncatedNormal(Distribution):
+    """Normal distribution."""
+    def __init__(self, mu, sigma, lower, upper):
+        super().__init__()
+        self.mu = mu
+        self.sigma = sigma
+        self.lower = lower
+        self.upper = upper
+
+    def __repr__(self):
+        return 'TNorm({:.2f}, {:.2f},[{:.2f),{:.2f}]'.format(self.mu, self.sigma, self.lower, self.upper)
+
+    def __add__(self, other):
+        if hasattr(other, 'mu') and hasattr(other, 'lower'):
+            return TruncatedNormal(self.mu + other.mu,
+                          (self.sigma ** 2 + other.sigma ** 2) ** 0.5, self.lower + other.lower, self.upper + other.upper)
+        if hasattr(other, 'mu'):
+            return Normal(self.mu + other.mu,
+                          (self.sigma ** 2 + other.sigma ** 2) ** 0.5)
+        # if isinstance(other, PointMass):
+        if hasattr(other, 'val'):
+            return TruncatedNormal(self.mu + other.val, self.sigma, self.lower + other.val, self.upper + other.val)
+        else:
+            return TruncatedNormal(self.mu + other, self.sigma, self.lower + other, self.upper + other)
+        
+    def __radd__(self, other):
+        if hasattr(other, 'mu') and hasattr(other, 'lower'):
+            return TruncatedNormal(self.mu + other.mu,
+                          (self.sigma ** 2 + other.sigma ** 2) ** 0.5, self.lower + other.lower, self.upper + other.upper)
+        if hasattr(other, 'mu'):
+            return Normal(self.mu + other.mu,
+                          (self.sigma ** 2 + other.sigma ** 2) ** 0.5)
+        # if isinstance(other, PointMass):
+        if hasattr(other, 'val'):
+            return TruncatedNormal(self.mu + other.val, self.sigma, self.lower + other.val, self.upper + other.val)
+        else:
+            return TruncatedNormal(self.mu + other, self.sigma, self.lower + other, self.upper + other)
+        
+    def __mul__(self, other):
+        if not(hasattr(other, 'mu')):
+            # print('add number')
+            return TruncatedNormal(self.mu * other, self.sigma * other, self.lower * other, self.upper * other)
+        
+    def __rmul__(self, other):
+        if not(hasattr(other, 'mu')):
+            # print('add number')
+            return TruncatedNormal(self.mu * other, self.sigma * other, self.lower * other, self.upper * other)
+        
+    def to_sampledist(self, n=10000):
+        d = SampleDist(self.sample(n))
+        d.expectation = lambda *args: self.mu
+        return d
+
+    def expectation(self):
+        return self.mu
+
+    def copy(self):
+        return TruncatedNormal(self.mu, self.sigma, self.lower, self.upper)
+
+    def sample(self, n=None):
+        return truncnorm.rvs(self.lower, self.upper, loc = self.mu, scale = self.sigma, size=n)
+
+    def sample_nocache(self):
+        return self.mu + self.sigma * np.random.randn()
+
+    @classmethod
+    def fit(cls, samples):
+        return cls(*scipy.stats.norm.fit(samples))
 
 class NormalMixture(Distribution):
     """Normal distribution."""
