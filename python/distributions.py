@@ -162,13 +162,6 @@ class TruncatedNormal(Distribution):
         a , b = (self.lower - self.mu) / self.sigma, (self.upper - self.mu) / self.sigma
         return scipy.stats.truncnorm.rvs(a, b, loc = self.mu, scale = self.sigma, size=n)
 
-    def sample_nocache(self):
-        return self.mu + self.sigma * np.random.randn()
-
-    @classmethod
-    def fit(cls, samples):
-        return cls(*scipy.stats.norm.fit(samples))
-
 class NormalMixture(Distribution):
     """Normal distribution."""
     def __init__(self, mu, sigma, weights):
