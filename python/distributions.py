@@ -107,8 +107,10 @@ class TruncatedNormal(Distribution):
         self.upper = upper
 
     def __repr__(self):
-        return 'TNorm({:.2f}, {:.2f},[{:.2f),{:.2f}]'.format(self.mu, self.sigma, self.lower, self.upper)
-
+        string = 'TNorm({:.2f}, {:.2f},[{:.2f},{:.2f}])'.format(self.mu, self.sigma, self.lower, self.upper)
+        print(string)
+        return string
+    
     def __add__(self, other):
         if hasattr(other, 'mu') and hasattr(other, 'lower'):
             return TruncatedNormal(self.mu + other.mu,
