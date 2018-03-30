@@ -207,8 +207,8 @@ class TruncOldMouselabEnv(gym.Env):
         k = np.max(mus_wo_g)
         m = self.mus[gamble]
         s = np.sqrt(self.vars[gamble])
-        a = self.lowers[gamble]
-        b = self.uppers[gamble]
+        a = (self.lowers[gamble] - m) / s
+        b = (self.uppers[gamble] - m) / s
         e_higher = integrate.quad(lambda x: x*truncnorm.pdf(x,a,b,m,s), k, np.inf)[0]
         e_val = k*norm.cdf(k,m,s) + e_higher
         return e_val - np.max(self.mus)
@@ -225,8 +225,8 @@ class TruncOldMouselabEnv(gym.Env):
         k = np.max(mus_wo_g)
         m = self.mus[gamble]
         s = self.reward.sigma*self.dist[outcome]
-        a = self.lowers[gamble]
-        b = self.uppers[gamble]
+        a = (self.lowers[gamble] - m) / s
+        b = (self.uppers[gamble] - m) / s
         e_higher = integrate.quad(lambda x: x*truncnorm.pdf(x,a,b,m,s), k, np.inf)[0]
         e_val = k*norm.cdf(k,m,s) + e_higher
         return e_val - np.max(self.mus)
