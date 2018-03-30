@@ -159,7 +159,8 @@ class TruncatedNormal(Distribution):
         return TruncatedNormal(self.mu, self.sigma, self.lower, self.upper)
 
     def sample(self, n=None):
-        return scipy.stats.truncnorm.rvs(self.lower, self.upper, loc = self.mu, scale = self.sigma, size=n)
+        a , b = (self.lower - self.mu) / self.sigma, (self.upper - self.mu) / self.sigma
+        return scipy.stats.truncnorm.rvs(a, b, loc = self.mu, scale = self.sigma, size=n)
 
     def sample_nocache(self):
         return self.mu + self.sigma * np.random.randn()
