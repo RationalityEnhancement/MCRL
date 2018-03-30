@@ -108,7 +108,7 @@ class TruncatedNormal(Distribution):
 
     def __repr__(self):
         string = 'TNorm({:.2f}, {:.2f},[{:.2f},{:.2f}])'.format(self.mu, self.sigma, self.lower, self.upper)
-        print(string)
+        # print(string)
         return string
     
     def __add__(self, other):
@@ -159,7 +159,7 @@ class TruncatedNormal(Distribution):
         return TruncatedNormal(self.mu, self.sigma, self.lower, self.upper)
 
     def sample(self, n=None):
-        return truncnorm.rvs(self.lower, self.upper, loc = self.mu, scale = self.sigma, size=n)
+        return scipy.stats.truncnorm.rvs(self.lower, self.upper, loc = self.mu, scale = self.sigma, size=n)
 
     def sample_nocache(self):
         return self.mu + self.sigma * np.random.randn()
