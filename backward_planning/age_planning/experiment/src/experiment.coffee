@@ -258,13 +258,13 @@ initializeExperiment = ->
       "<div style='text-align: center;'> Press <code>space</code> to continue.</div>"
 
   
-   divider_training_test  = new TextBlock
+  divider_training_test  = new TextBlock
     text: ->
       SCORE = 0
       "<div style='text-align: center;'> Congratulations! You have completed the training block. <br/>      
        <br/> Press <code>space</code> to start the test block.</div>"
 
-   test_block_intro  = new TextBlock
+  test_block_intro  = new TextBlock
     text: ->
       SCORE = 0        
       markdown """ 
@@ -275,17 +275,20 @@ initializeExperiment = ->
       """
     
     
-   divider_intro_training  = new TextBlock
+  divider_intro_training  = new TextBlock
     text: ->
       SCORE = 0
       "  <h1>Training</h1>  Congratulations! You have completed the instructions. Next, you will enter a training block where you can practice planning 10 times. After that, you will enter test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block."
 
-   divider_pretest_training  = new TextBlock
+  divider_pretest_training  = new TextBlock
     text: ->
       SCORE = 0
       "<h1>Training block</h1> <div style='text-align: center;'> You will now enter a training block where you can practice playing Web of Cash some more. After that, there will be a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block.</div>"
 
-        
+   
+  thanks = new TextBlock
+    text: ->
+      "<div style='text-align: center;'> Thanks for participating! Press <code>space</code> to end this HIT.</div>"
         
   train_basic1 = new TextBlock
     text: ->
@@ -511,7 +514,21 @@ initializeExperiment = ->
       else getTrials 20
     startScore: 50
     
-    
+  age_check = new Block
+    type: 'survey-text'
+    preamble: -> markdown """
+        # Please answer these questions
+
+      """
+
+    questions: [
+        'What gender do you identify as?'
+        'What is your age?'
+        'What country do you live in?'
+        'What is your current employment status?'
+        'How many people live in your household (including you)?'
+    ]
+    button: 'Submit Answers'
     
   verbal_responses = new Block
     type: 'survey-text'
@@ -545,7 +562,6 @@ initializeExperiment = ->
     questions: [
       'What did you learn?'    
       'Was anything confusing or hard to understand?'
-      'What is your age?'
       'Additional coments?'
     ]
     button: 'Submit HIT'
@@ -568,7 +584,33 @@ initializeExperiment = ->
         timeline: TRIALS.slice(10,14)
     ]
 
+  conditional_node = new Block
+    timeline: [main_experiment]
+    conditional_function: ->
+      data = jsPsych.data.getLastTrialData()
+      age_string = JSON.parse(data.responses).Q1
+      age = parseInt(age_string)
+      if isNaN(age)
+        age = 0
+      if age >= 50
+        true
+      else
+        false
 
+  main_experiment = [
+      train_basic1
+      #instructions1    
+      pre_test_intro
+      pre_test
+      #divider_pretest_training    
+      #training
+      #divider_training_test
+      #test_block_intro
+      #post_test
+      quiz
+      verbal_responses
+      finish
+  ]
   experiment_timeline = switch
     when SHOW_PARTICIPANT then [
       test
@@ -590,20 +632,9 @@ initializeExperiment = ->
       talk_demo
     ]
     else [
-      train_basic1
-      #train_inspector
-      #train_inspect_cost
-      #instructions1    
-      pre_test_intro
-      pre_test
-      #divider_pretest_training    
-      #training
-      #divider_training_test
-      #test_block_intro
-      #post_test
-      quiz
-      verbal_responses
-      finish
+      age_check
+      conditional_node
+      thanks
       ]
 
   # ================================================ #

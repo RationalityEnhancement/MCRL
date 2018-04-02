@@ -155,7 +155,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, bonus_text, divider, divider_intro_training, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, nodeValuesDescription, post_test, pre_test, pre_test_intro, prompt_resubmit, quiz, reprompt, reset_score, save_data, talk_demo, test_block_intro, text, train_basic1, training, verbal_responses;
+  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, age_check, bonus_text, conditional_node, divider, divider_intro_training, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, main_experiment, nodeValuesDescription, post_test, pre_test, pre_test_intro, prompt_resubmit, quiz, reprompt, reset_score, save_data, talk_demo, test_block_intro, text, thanks, train_basic1, training, verbal_responses;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   //  ======================== #
@@ -310,6 +310,11 @@ initializeExperiment = function() {
     text: function() {
       SCORE = 0;
       return "<h1>Training block</h1> <div style='text-align: center;'> You will now enter a training block where you can practice playing Web of Cash some more. After that, there will be a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block.</div>";
+    }
+  });
+  thanks = new TextBlock({
+    text: function() {
+      return "<div style='text-align: center;'> Thanks for participating! Press <code>space</code> to end this HIT.</div>";
     }
   });
   train_basic1 = new TextBlock({
@@ -502,6 +507,14 @@ initializeExperiment = function() {
     })(),
     startScore: 50
   });
+  age_check = new Block({
+    type: 'survey-text',
+    preamble: function() {
+      return markdown("# Please answer these questions\n");
+    },
+    questions: ['What gender do you identify as?', 'What is your age?', 'What country do you live in?', 'What is your current employment status?', 'How many people live in your household (including you)?'],
+    button: 'Submit Answers'
+  });
   verbal_responses = new Block({
     type: 'survey-text',
     preamble: function() {
@@ -516,7 +529,7 @@ initializeExperiment = function() {
     preamble: function() {
       return markdown(`# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance, you will be awarded a bonus of\n**$${calculateBonus().toFixed(2)}**.\n\nPlease briefly answer the questions below before you submit the HIT.`);
     },
-    questions: ['What did you learn?', 'Was anything confusing or hard to understand?', 'What is your age?', 'Additional coments?'],
+    questions: ['What did you learn?', 'Was anything confusing or hard to understand?', 'Additional coments?'],
     button: 'Submit HIT'
   });
   talk_demo = new Block({
@@ -537,6 +550,37 @@ initializeExperiment = function() {
       })
     ]
   });
+  conditional_node = new Block({
+    timeline: [main_experiment],
+    conditional_function: function() {
+      var age, age_string, data;
+      data = jsPsych.data.getLastTrialData();
+      age_string = JSON.parse(data.responses).Q1;
+      age = parseInt(age_string);
+      if (isNaN(age)) {
+        age = 0;
+      }
+      if (age >= 50) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  });
+  main_experiment = [
+    train_basic1,
+    //instructions1    
+    pre_test_intro,
+    pre_test,
+    //divider_pretest_training    
+    //training
+    //divider_training_test
+    //test_block_intro
+    //post_test
+    quiz,
+    verbal_responses,
+    finish
+  ];
   experiment_timeline = (function() {
     switch (false) {
       case !SHOW_PARTICIPANT:
@@ -546,22 +590,7 @@ initializeExperiment = function() {
       case !TALK:
         return [talk_demo];
       default:
-        return [
-          train_basic1,
-          //train_inspector
-          //train_inspect_cost
-          //instructions1    
-          pre_test_intro,
-          pre_test,
-          //divider_pretest_training    
-          //training
-          //divider_training_test
-          //test_block_intro
-          //post_test
-          quiz,
-          verbal_responses,
-          finish
-        ];
+        return [age_check, conditional_node, thanks];
     }
   })();
   // ================================================ #
