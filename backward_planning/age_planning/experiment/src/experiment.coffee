@@ -485,7 +485,7 @@ initializeExperiment = ->
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
       when DEBUG then TRIALS.slice(6, 7)
-      else getTrials 30
+      else getTrials 10
     startScore: 50        
 
         
@@ -585,32 +585,30 @@ initializeExperiment = ->
     ]
 
   conditional_node = new Block
-    timeline: [main_experiment]
+    timeline: [
+      train_basic1
+      #instructions1    
+      pre_test_intro
+      pre_test
+      divider_pretest_training    
+      training
+      divider_training_test
+      test_block_intro
+      post_test
+      quiz
+      verbal_responses
+      finish
+    ]
     conditional_function: ->
       data = jsPsych.data.getLastTrialData()
       age_string = JSON.parse(data.responses).Q1
       age = parseInt(age_string)
       if isNaN(age)
         age = 0
-      if age >= 50
-        true
-      else
-        false
+      age >= 50
 
-  main_experiment = [
-      train_basic1
-      #instructions1    
-      pre_test_intro
-      pre_test
-      #divider_pretest_training    
-      #training
-      #divider_training_test
-      #test_block_intro
-      #post_test
-      quiz
-      verbal_responses
-      finish
-  ]
+
+
   experiment_timeline = switch
     when SHOW_PARTICIPANT then [
       test

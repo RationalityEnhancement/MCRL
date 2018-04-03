@@ -155,7 +155,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, age_check, bonus_text, conditional_node, divider, divider_intro_training, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, main_experiment, nodeValuesDescription, post_test, pre_test, pre_test_intro, prompt_resubmit, quiz, reprompt, reset_score, save_data, talk_demo, test_block_intro, text, thanks, train_basic1, training, verbal_responses;
+  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, age_check, bonus_text, conditional_node, divider, divider_intro_training, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, nodeValuesDescription, post_test, pre_test, pre_test_intro, prompt_resubmit, quiz, reprompt, reset_score, save_data, talk_demo, test_block_intro, text, thanks, train_basic1, training, verbal_responses;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   //  ======================== #
@@ -466,7 +466,7 @@ initializeExperiment = function() {
         case !DEBUG:
           return TRIALS.slice(6, 7);
         default:
-          return getTrials(30);
+          return getTrials(10);
       }
     })(),
     startScore: 50
@@ -551,7 +551,20 @@ initializeExperiment = function() {
     ]
   });
   conditional_node = new Block({
-    timeline: [main_experiment],
+    timeline: [
+      train_basic1,
+      //instructions1    
+      pre_test_intro,
+      pre_test,
+      divider_pretest_training,
+      training,
+      divider_training_test,
+      test_block_intro,
+      post_test,
+      quiz,
+      verbal_responses,
+      finish
+    ],
     conditional_function: function() {
       var age, age_string, data;
       data = jsPsych.data.getLastTrialData();
@@ -560,27 +573,9 @@ initializeExperiment = function() {
       if (isNaN(age)) {
         age = 0;
       }
-      if (age >= 50) {
-        return true;
-      } else {
-        return false;
-      }
+      return age >= 50;
     }
   });
-  main_experiment = [
-    train_basic1,
-    //instructions1    
-    pre_test_intro,
-    pre_test,
-    //divider_pretest_training    
-    //training
-    //divider_training_test
-    //test_block_intro
-    //post_test
-    quiz,
-    verbal_responses,
-    finish
-  ];
   experiment_timeline = (function() {
     switch (false) {
       case !SHOW_PARTICIPANT:
