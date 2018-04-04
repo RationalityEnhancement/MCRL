@@ -76,7 +76,7 @@ $(window).on 'load', ->
     PARAMS =
       inspectCost: 1
       startTime: Date(Date.now())
-      bonusRate: .002
+      bonusRate: .0015
       # variance: ['2_4_24', '24_4_2'][CONDITION]
       branching: '312'
       with_feedback: with_feedback
@@ -280,7 +280,7 @@ initializeExperiment = ->
       markdown """ 
       Now you'll get a chance to try playing Web of Cash. 
 
-      To make things more interesting, you will earn real money based on how well you play the game. Specifically, #{bonus_text('long')}<br/> 
+      You will earn real money based on how well you play the game. Specifically, #{bonus_text('long')}<br/> 
 
       To thank you for your work so far, we'll start you off with **$50**.
       Good luck! 
@@ -317,7 +317,7 @@ initializeExperiment = ->
 
      <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash-unrevealed.png'/>
 
-      This HIT takes about 10 minutes to complete. If you complete it, you will recieve a bonus of $0.75 regardless of your final score.
+      This HIT takes about 10 minutes to complete. If you complete it, you will recieve a bonus of $0.45 plus an additional performance dependent bonus.
 
     <div align="center">Press <code>space</code> to proceed.</div>
     """
@@ -398,9 +398,9 @@ initializeExperiment = ->
   bonus_text = (long) ->
     # if PARAMS.bonusRate isnt .01
     #   throw new Error('Incorrect bonus rate')
-    s = "**you will earn 1 cent for every $5 you make in the game.**"
+    s = "**you will earn 1.5 cents for every $10 you make in the game.**"
     if long
-      s += " For example, if your final score is $1000, you will receive a bonus of $2."
+      s += " For example, if your final score is $1000, you will receive a bonus of $1.50."
     return s
 
 
@@ -458,10 +458,10 @@ initializeExperiment = ->
       ['$-4 to $4', '$-8 to $8', '$-48 to $48'],
       ['$-4 to $4', '$-8 to $8', '$-48 to $48'],
       ['$0', '$1', '$8', '$24'],    
-      ['1 cent for every $1 you make in the game plus 75 cents',
-       '1 cent for every $5 you make in the game plus 75 cents',
-       '5 cents for every $1 you make in the game plus 75 cents',
-       '5 cents for every $10 you make in the game plus 75 cents']
+      ['1 cent for every $1 you make in the game plus 45 cents',
+       '1 cent for every $5 you make in the game plus 45 cents',
+       '0.5 cents for every $1 you make in the game plus 45 cents',
+       '1.5 cents for every $10 you make in the game plus 45 cents']
     ]
 
   pre_test_intro = new TextBlock
@@ -569,8 +569,8 @@ initializeExperiment = ->
         Thanks for participating. We hope you had fun! Based on your
         performance, your current earnings are
         **$#{calculateBonus().toFixed(2)}**. 
-        After adding the $0.75 promised to you, you will be awarded a bonus of
-        **$#{(calculateBonus()+0.75).toFixed(2)}**.
+        After adding the $0.45 promised to you, you will be awarded a bonus of
+        **$#{(calculateBonus()+0.45).toFixed(2)}**.
 
         Please briefly answer the questions below before you submit the HIT.
       """
@@ -697,7 +697,7 @@ initializeExperiment = ->
       if DEBUG
         jsPsych.data.displayData()
       else
-        psiturk.recordUnstructuredData 'final_bonus', calculateBonus()+0.75
+        psiturk.recordUnstructuredData 'final_bonus', calculateBonus()+0.45
         save_data()
 
     on_data_update: (data) ->

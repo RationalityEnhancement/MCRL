@@ -90,7 +90,7 @@ $(window).on('load', function() {
     PARAMS = {
       inspectCost: 1,
       startTime: Date(Date.now()),
-      bonusRate: .002,
+      bonusRate: .0015,
       // variance: ['2_4_24', '24_4_2'][CONDITION]
       branching: '312',
       with_feedback: with_feedback,
@@ -303,7 +303,7 @@ initializeExperiment = function() {
   pre_test_only = new TextBlock({
     text: function() {
       SCORE = 0;
-      return markdown(`Now you'll get a chance to try playing Web of Cash. \n\nTo make things more interesting, you will earn real money based on how well you play the game. Specifically, ${bonus_text('long')}<br/> \n\nTo thank you for your work so far, we'll start you off with **$50**.\nGood luck! \n<div style='text-align: center;'> Press <code>space</code> to continue. </div>`);
+      return markdown(`Now you'll get a chance to try playing Web of Cash. \n\nYou will earn real money based on how well you play the game. Specifically, ${bonus_text('long')}<br/> \n\nTo thank you for your work so far, we'll start you off with **$50**.\nGood luck! \n<div style='text-align: center;'> Press <code>space</code> to continue. </div>`);
     }
   });
   divider_intro_training = new TextBlock({
@@ -326,7 +326,7 @@ initializeExperiment = function() {
   train_basic1 = new TextBlock({
     text: function() {
       SCORE = 0;
-      return markdown("  <h1> Web of Cash </h1>\n\n  In this HIT, you will play a game called *Web of Cash*. You will guide a\n  money-loving spider through a spider web. When you land on a gray circle\n  (a ***node***) the value of the node is added to your score.\n\n  You will be able to move the spider with the arrow keys, but only in the direction\n  of the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.\n\n <img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n  This HIT takes about 10 minutes to complete. If you complete it, you will recieve a bonus of $0.75 regardless of your final score.\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+      return markdown("  <h1> Web of Cash </h1>\n\n  In this HIT, you will play a game called *Web of Cash*. You will guide a\n  money-loving spider through a spider web. When you land on a gray circle\n  (a ***node***) the value of the node is added to your score.\n\n  You will be able to move the spider with the arrow keys, but only in the direction\n  of the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.\n\n <img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n  This HIT takes about 10 minutes to complete. If you complete it, you will recieve a bonus of $0.45 plus an additional performance dependent bonus.\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
     }
   });
   //lowerMessage: 'Move with the arrow keys.'
@@ -403,9 +403,9 @@ initializeExperiment = function() {
     var s;
     // if PARAMS.bonusRate isnt .01
     //   throw new Error('Incorrect bonus rate')
-    s = "**you will earn 1 cent for every $5 you make in the game.**";
+    s = "**you will earn 1.5 cents for every $10 you make in the game.**";
     if (long) {
-      s += " For example, if your final score is $1000, you will receive a bonus of $2.";
+      s += " For example, if your final score is $1000, you will receive a bonus of $1.50.";
     }
     return s;
   };
@@ -449,7 +449,7 @@ initializeExperiment = function() {
     },
     type: 'survey-multi-choice',
     questions: ["What is the range of node values in the first step?", "What is the range of node values in the last step?", "What is the cost of clicking?", "How much REAL money do you earn?"],
-    options: [['$-4 to $4', '$-8 to $8', '$-48 to $48'], ['$-4 to $4', '$-8 to $8', '$-48 to $48'], ['$0', '$1', '$8', '$24'], ['1 cent for every $1 you make in the game plus 75 cents', '1 cent for every $5 you make in the game plus 75 cents', '5 cents for every $1 you make in the game plus 75 cents', '5 cents for every $10 you make in the game plus 75 cents']]
+    options: [['$-4 to $4', '$-8 to $8', '$-48 to $48'], ['$-4 to $4', '$-8 to $8', '$-48 to $48'], ['$0', '$1', '$8', '$24'], ['1 cent for every $1 you make in the game plus 45 cents', '1 cent for every $5 you make in the game plus 45 cents', '0.5 cents for every $1 you make in the game plus 45 cents', '1.5 cents for every $10 you make in the game plus 45 cents']]
   });
   pre_test_intro = new TextBlock({
     text: function() {
@@ -533,7 +533,7 @@ initializeExperiment = function() {
   finish = new Block({
     type: 'survey-text',
     preamble: function() {
-      return markdown(`# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance, your current earnings are\n**$${calculateBonus().toFixed(2)}**. \nAfter adding the $0.75 promised to you, you will be awarded a bonus of\n**$${(calculateBonus() + 0.75).toFixed(2)}**.\n\nPlease briefly answer the questions below before you submit the HIT.`);
+      return markdown(`# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance, your current earnings are\n**$${calculateBonus().toFixed(2)}**. \nAfter adding the $0.45 promised to you, you will be awarded a bonus of\n**$${(calculateBonus() + 0.45).toFixed(2)}**.\n\nPlease briefly answer the questions below before you submit the HIT.`);
     },
     questions: ['What did you learn?', 'Was anything confusing or hard to understand?', 'Additional coments?'],
     button: 'Submit HIT'
@@ -636,7 +636,7 @@ initializeExperiment = function() {
       if (DEBUG) {
         return jsPsych.data.displayData();
       } else {
-        psiturk.recordUnstructuredData('final_bonus', calculateBonus() + 0.75);
+        psiturk.recordUnstructuredData('final_bonus', calculateBonus() + 0.45);
         return save_data();
       }
     },
