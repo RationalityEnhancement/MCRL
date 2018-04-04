@@ -172,7 +172,7 @@ def reformat_data(version):
             df = df[['pid', 'responses', 'rt', 'time_elapsed']].dropna(axis=0)
             pd.DataFrame(list(df.groupby('pid').responses.apply(
                 lambda x: list(concat(json.loads(o).values() for o in x))
-            ))).to_csv('../experiment/data/human/{}/survey.csv'
+            ))).to_csv('data/human/{}/survey.csv'
                        .format(version))
         else:
             df = df.dropna(axis=1)

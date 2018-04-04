@@ -1,0 +1,70 @@
+pid,responses,rt,time_elapsed
+0,"{""Q0"":""male"",""Q1"":""28"",""Q2"":""United States"",""Q3"":""self-employed"",""Q4"":""3""}",26562,26714
+1,"{""Q0"":""female"",""Q1"":""36"",""Q2"":""USA"",""Q3"":""self employed"",""Q4"":""4""}",9631,9642
+2,"{""Q0"":""Male"",""Q1"":""30"",""Q2"":""USA"",""Q3"":""Employed Full-Time"",""Q4"":""3""}",19155,19166
+3,"{""Q0"":""Male"",""Q1"":""50"",""Q2"":""USA"",""Q3"":""Employed full time"",""Q4"":""1""}",14117,14131
+3,"{""Q0"":""guessing"",""Q1"":""same"",""Q2"":""when i reached the end"",""Q3"":""right"",""Q4"":""towards the end I realized its better to pay for the sneak peek""}",37378,452056
+3,"{""Q0"":""pay a little upfront to get better results"",""Q1"":""no"",""Q2"":""no""}",20909,473972
+4,"{""Q0"":""Female"",""Q1"":""29"",""Q2"":""United States"",""Q3"":""Self-Employed"",""Q4"":""5""}",21226,21272
+5,"{""Q0"":""non-binary"",""Q1"":""32"",""Q2"":""United States of America"",""Q3"":""Self-Employed"",""Q4"":""4""}",21159,21195
+6,"{""Q0"":""Male"",""Q1"":""27"",""Q2"":""United States"",""Q3"":""Self-employed"",""Q4"":""3""}",12435,12450
+7,"{""Q0"":""Male"",""Q1"":""26"",""Q2"":""USA"",""Q3"":""Self-Employed"",""Q4"":""2""}",28089,28105
+8,"{""Q0"":""Female"",""Q1"":""38"",""Q2"":""United States"",""Q3"":""Self-employed/ part-time"",""Q4"":""4""}",34725,34751
+9,"{""Q0"":""Male"",""Q1"":""29"",""Q2"":""USA"",""Q3"":""Full-time Employed"",""Q4"":""2""}",30582,30600
+10,"{""Q0"":""Man"",""Q1"":""25"",""Q2"":""USA"",""Q3"":""Self employed"",""Q4"":""3""}",10289,10297
+11,"{""Q0"":""male"",""Q1"":""30"",""Q2"":""USA"",""Q3"":""Employed full time"",""Q4"":""1""}",28753,28774
+12,"{""Q0"":""Male"",""Q1"":""36"",""Q2"":""USA"",""Q3"":""Full-Time"",""Q4"":""1""}",13132,13146
+13,"{""Q0"":""female"",""Q1"":""23"",""Q2"":""USA"",""Q3"":""part time employed"",""Q4"":""6""}",21641,21669
+13,"{""Q0"":""i decided to go for it and click all the nodes to see the best money making path"",""Q1"":""i clicked all"",""Q2"":""i clicked all to see all options"",""Q3"":""left to right"",""Q4"":""clicked all ""}",52839,636488
+13,"{""Q0"":""not sure"",""Q1"":""none"",""Q2"":""none""}",12775,650299
+14,"{""Q0"":""Female"",""Q1"":""36"",""Q2"":""United States"",""Q3"":""Self-employed"",""Q4"":""2""}",15558,15566
+15,"{""Q0"":""Female"",""Q1"":""27"",""Q2"":""United States"",""Q3"":""Employed"",""Q4"":""4""}",16734,16748
+16,"{""Q0"":""female"",""Q1"":""23"",""Q2"":""usa"",""Q3"":""student"",""Q4"":""4""}",10370,10389
+16,"{""Q0"":""I just guessed at first and then decided to click on the final buttons or all buttons one direction."",""Q1"":""the middles were useless for clicking."",""Q2"":""When I got to the highest possible amount in a corner."",""Q3"":""the ends"",""Q4"":""no""}",46765,489614
+16,"{""Q0"":""to click the final box"",""Q1"":""NO"",""Q2"":""N/A""}",16790,507422
+17,"{""Q0"":""female"",""Q1"":""54"",""Q2"":""USA"",""Q3"":""employed"",""Q4"":""3""}",20499,20557
+17,"{""Q0"":""node selector"",""Q1"":""node selector"",""Q2"":""when I got to the end"",""Q3"":""to the right"",""Q4"":""I didn't use any strategy""}",55987,556889
+17,"{""Q0"":""nothing"",""Q1"":""no"",""Q2"":""no""}",16291,574200
+18,"{""Q0"":""male"",""Q1"":""44"",""Q2"":""USA"",""Q3"":""part time"",""Q4"":""4""}",20843,20863
+19,"{""Q0"":""Male"",""Q1"":""25"",""Q2"":""America"",""Q3"":""Full-time"",""Q4"":""2""}",19781,19799
+20,"{""Q0"":""Male"",""Q1"":""36"",""Q2"":""USA"",""Q3"":""Full Time"",""Q4"":""2""}",10950,10978
+21,"{""Q0"":""Female"",""Q1"":""50"",""Q2"":""USA"",""Q3"":""Full-time employed"",""Q4"":""2""}",14980,14994
+21,"{""Q0"":""I just figured out the last value was better"",""Q1"":""First moves and second to last moves not important"",""Q2"":""When I found the biggest value"",""Q3"":""On far circles"",""Q4"":""Took about 3 rounds to get it""}",64236,694265
+21,"{""Q0"":""There was a pattern to follow"",""Q1"":""No"",""Q2"":""This was fun!""}",20250,715520
+22,"{""Q0"":""FEMALE"",""Q1"":""29"",""Q2"":""USA"",""Q3"":""FULL TIME"",""Q4"":""2""}",13157,13173
+23,"{""Q0"":""Female"",""Q1"":""44"",""Q2"":""United States"",""Q3"":""Full-time"",""Q4"":""2""}",14938,14970
+24,"{""Q0"":""female"",""Q1"":""44"",""Q2"":""US"",""Q3"":""self employed"",""Q4"":""2""}",72317,72331
+25,"{""Q0"":""female"",""Q1"":""47"",""Q2"":""USA"",""Q3"":""employed"",""Q4"":""3""}",18048,18074
+26,"{""Q0"":""Female"",""Q1"":""42"",""Q2"":""USA"",""Q3"":""part-time freelance"",""Q4"":""3""}",46942,47011
+27,"{""Q0"":""Male"",""Q1"":""44"",""Q2"":""USA"",""Q3"":""Employed "",""Q4"":""6""}",34918,34956
+28,"{""Q0"":""Female"",""Q1"":""28"",""Q2"":""USA"",""Q3"":""Employed"",""Q4"":""3""}",17014,17038
+29,"{""Q0"":""male"",""Q1"":""34"",""Q2"":""usa"",""Q3"":""employeed"",""Q4"":""2""}",24901,24911
+30,"{""Q0"":""female"",""Q1"":""25"",""Q2"":""USA"",""Q3"":""unemployed"",""Q4"":""3""}",17948,17965
+31,"{""Q0"":""Male"",""Q1"":""32"",""Q2"":""United States of America"",""Q3"":""Full Time Employee"",""Q4"":""2""}",23821,23831
+32,"{""Q0"":""Female"",""Q1"":""19"",""Q2"":""USA"",""Q3"":""full-time university student"",""Q4"":""4""}",28087,28096
+32,"{""Q0"":""I clicked on the \""end nodes\"", knowing that there were only four of them and that would be the most economical way to determine where there would be a positive monetary value."",""Q1"":""I decided I wouldn't click on any nodes along the way, as the \""end nodes\"" had the most value."",""Q2"":""I stopped clicking either when I saw a positive monetary value or the largest positive value possible, 48 (depending on how much money I had that round)"",""Q3"":""I was most likely to click on the leftmost \""end nodes\""."",""Q4"":""""}",118074,521732
+32,"{""Q0"":""I learned that I'm not as strategic as I thought I was (it took me quite a few rounds to develop a strategy)."",""Q1"":""At first I was confused about the directions in which the spider could move."",""Q2"":""""}",54239,576978
+33,"{""Q0"":""Female"",""Q1"":""36"",""Q2"":""USA"",""Q3"":""Self-Employed"",""Q4"":""4""}",18362,18381
+34,"{""Q0"":""Male"",""Q1"":""27"",""Q2"":""USA"",""Q3"":""Employed"",""Q4"":""1""}",11938,11954
+35,"{""Q0"":""female"",""Q1"":""39"",""Q2"":""usa"",""Q3"":""full time"",""Q4"":""3""}",18264,18276
+36,"{""Q0"":""Male"",""Q1"":""19"",""Q2"":""United States of America"",""Q3"":""Employed part-time"",""Q4"":""4""}",41485,41497
+36,"{""Q0"":""The final ones to see which one held the highest amount"",""Q1"":""If the 48 was already found"",""Q2"":""When I found the 48 or best route"",""Q3"":""top right"",""Q4"":""Just aim for 48 no matter the path""}",75618,1048030
+36,"{""Q0"":""Get through smaller hits to pay for the bigger amount of 48."",""Q1"":""No"",""Q2"":""Most fun survey I have had thus far""}",76467,1125504
+37,"{""Q0"":""female"",""Q1"":""58"",""Q2"":""United States"",""Q3"":""Employed Full Time"",""Q4"":""3""}",18498,18516
+37,"{""Q0"":""I decided that the last nodes were the most important since they held the highest values."",""Q1"":""If I found the positive highest amount on the last node, I didn't click anymore."",""Q2"":""If I found the positive highest amount on the last node, I didn't click anymore because I didn't feel like I needed to."",""Q3"":""On one of the outermost nodes. "",""Q4"":""I just tried to find the highest positive value and head towards it.""}",87324,548724
+37,"{""Q0"":""I learned that it was important to find the highest positive value in the outer nodes, even if it meant spending money to do so. "",""Q1"":""No"",""Q2"":""""}",40872,590608
+38,"{""Q0"":""Male"",""Q1"":""35"",""Q2"":""United States"",""Q3"":""Part-time"",""Q4"":""3""}",18814,18856
+39,"{""Q0"":""Female"",""Q1"":""27"",""Q2"":""USA"",""Q3"":""Part-time"",""Q4"":""3""}",23335,23344
+40,"{""Q0"":""Female"",""Q1"":""25"",""Q2"":""USA"",""Q3"":""Employed Full Time"",""Q4"":""2""}",17599,17613
+41,"{""Q0"":""Male"",""Q1"":""22"",""Q2"":""USA"",""Q3"":""Student"",""Q4"":""2""}",12029,12041
+41,"{""Q0"":""Lowest cost and seeing a pattern"",""Q1"":""Same logic as why I did"",""Q2"":""When I got to a stop point"",""Q3"":""Yes?"",""Q4"":""Once I saw a 48 I just went to it because the path to it couldn't be worse""}",75302,548779
+41,"{""Q0"":""N/A"",""Q1"":""N/A"",""Q2"":""Neat task!""}",23514,573296
+42,"{""Q0"":""Male"",""Q1"":""27"",""Q2"":""USA"",""Q3"":""Full-time"",""Q4"":""2""}",13065,13105
+43,"{""Q0"":""Male"",""Q1"":""27"",""Q2"":""United States"",""Q3"":""Full Time Employee"",""Q4"":""4""}",18324,18340
+44,"{""Q0"":""Female "",""Q1"":""21"",""Q2"":""United States"",""Q3"":""Part-time"",""Q4"":""3""}",17095,17106
+44,"{""Q0"":""I clicked on the higher paying nodes first and then depending on where the 48 value ones were I clicked on the path that lead there."",""Q1"":""I did not click towards a path where I saw only negative values "",""Q2"":""When a path with an end node of 48 with the least amount of negatives in the path appeared "",""Q3"":""The highest value nodes"",""Q4"":""None""}",95924,862871
+44,"{""Q0"":""I learned we come up with strategies especially when money is at stake."",""Q1"":""None"",""Q2"":""Very fun and interesting ""}",54926,918814
+45,"{""Q0"":""female"",""Q1"":""39"",""Q2"":""United States"",""Q3"":""homemaker"",""Q4"":""6""}",15681,15695
+46,"{""Q0"":"""",""Q1"":""22"",""Q2"":"""",""Q3"":"""",""Q4"":""""}",5532,5598
+46,"{""Q0"":"""",""Q1"":"""",""Q2"":"""",""Q3"":"""",""Q4"":""""}",2662,471530
+46,"{""Q0"":"""",""Q1"":"""",""Q2"":""""}",36118,508670
