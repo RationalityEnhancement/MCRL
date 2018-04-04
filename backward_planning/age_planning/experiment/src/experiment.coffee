@@ -317,6 +317,8 @@ initializeExperiment = ->
 
      <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash-unrevealed.png'/>
 
+      This HIT takes about 10 minutes to complete. If you complete it, you will recieve a bonus of $0.75 regardless of your final score.
+
     <div align="center">Press <code>space</code> to proceed.</div>
     """
     #lowerMessage: 'Move with the arrow keys.'
@@ -456,10 +458,10 @@ initializeExperiment = ->
       ['$-4 to $4', '$-8 to $8', '$-48 to $48'],
       ['$-4 to $4', '$-8 to $8', '$-48 to $48'],
       ['$0', '$1', '$8', '$24'],    
-      ['1 cent for every $1 you make in the game',
-       '1 cent for every $5 you make in the game',
-       '5 cents for every $1 you make in the game',
-       '5 cents for every $10 you make in the game']
+      ['1 cent for every $1 you make in the game plus 75 cents',
+       '1 cent for every $5 you make in the game plus 75 cents',
+       '5 cents for every $1 you make in the game plus 75 cents',
+       '5 cents for every $10 you make in the game plus 75 cents']
     ]
 
   pre_test_intro = new TextBlock
@@ -523,7 +525,7 @@ initializeExperiment = ->
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
       when DEBUG then TRIALS.slice(6, 8)
-      else getTrials 30
+      else getTrials 3
     startScore: 50
     
   age_check = new Block
@@ -565,8 +567,10 @@ initializeExperiment = ->
         # You've completed the HIT
 
         Thanks for participating. We hope you had fun! Based on your
-        performance, you will be awarded a bonus of
-        **$#{calculateBonus().toFixed(2)}**.
+        performance, your current earnings are
+        **$#{calculateBonus().toFixed(2)}**. 
+        After adding the $0.75 promised to you, you will be awarded a bonus of
+        **$#{(calculateBonus()+0.75).toFixed(2)}**.
 
         Please briefly answer the questions below before you submit the HIT.
       """
@@ -693,7 +697,7 @@ initializeExperiment = ->
       if DEBUG
         jsPsych.data.displayData()
       else
-        psiturk.recordUnstructuredData 'final_bonus', calculateBonus()
+        psiturk.recordUnstructuredData 'final_bonus', calculateBonus()+0.75
         save_data()
 
     on_data_update: (data) ->
