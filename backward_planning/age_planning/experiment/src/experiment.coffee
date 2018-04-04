@@ -273,7 +273,19 @@ initializeExperiment = ->
       Good luck! 
       <div style='text-align: center;'> Press <code>space</code> to continue. </div>
       """
-    
+
+  pre_test_only = new TextBlock
+    text: ->
+      SCORE = 0        
+      markdown """ 
+      Now you'll get a chance to try playing Web of Cash. 
+
+      To make things more interesting, you will earn real money based on how well you play the game. Specifically, #{bonus_text('long')}<br/> 
+
+      To thank you for your work so far, we'll start you off with **$50**.
+      Good luck! 
+      <div style='text-align: center;'> Press <code>space</code> to continue. </div>
+      """
     
   divider_intro_training  = new TextBlock
     text: ->
@@ -511,7 +523,7 @@ initializeExperiment = ->
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
       when DEBUG then TRIALS.slice(6, 8)
-      else getTrials 20
+      else getTrials 30
     startScore: 50
     
   age_check = new Block
@@ -586,14 +598,14 @@ initializeExperiment = ->
 
   conditional_node = new Block
     timeline: [
-      train_basic1
-      #instructions1    
+      train_basic1    
       pre_test_intro
-      pre_test
-      divider_pretest_training    
-      training
-      divider_training_test
-      test_block_intro
+      pre_test_only
+      #pre_test
+      #divider_pretest_training    
+      #training
+      #divider_training_test
+      #test_block_intro
       post_test
       quiz
       verbal_responses
@@ -605,7 +617,7 @@ initializeExperiment = ->
       age = parseInt(age_string)
       if isNaN(age)
         age = 0
-      age >= 50
+      (age >= 48) or (age<25)
 
 
 

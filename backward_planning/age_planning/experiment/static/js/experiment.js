@@ -155,7 +155,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, age_check, bonus_text, conditional_node, divider, divider_intro_training, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, nodeValuesDescription, post_test, pre_test, pre_test_intro, prompt_resubmit, quiz, reprompt, reset_score, save_data, talk_demo, test_block_intro, text, thanks, train_basic1, training, verbal_responses;
+  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, age_check, bonus_text, conditional_node, divider, divider_intro_training, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, nodeValuesDescription, post_test, pre_test, pre_test_intro, pre_test_only, prompt_resubmit, quiz, reprompt, reset_score, save_data, talk_demo, test_block_intro, text, thanks, train_basic1, training, verbal_responses;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   //  ======================== #
@@ -298,6 +298,12 @@ initializeExperiment = function() {
     text: function() {
       SCORE = 0;
       return markdown(` <h1>Test block</h1>\nWelcome to the test block! Here, you can use what you have learned to earn a bonus. Concretely, ${bonus_text('long')} <br/> To thank you for your work so far, we'll start you off with **$50**.\n Good luck! \n <div style='text-align: center;'> Press <code>space</code> to continue. </div>`);
+    }
+  });
+  pre_test_only = new TextBlock({
+    text: function() {
+      SCORE = 0;
+      return markdown(`Now you'll get a chance to try playing Web of Cash. \n\nTo make things more interesting, you will earn real money based on how well you play the game. Specifically, ${bonus_text('long')}<br/> \n\nTo thank you for your work so far, we'll start you off with **$50**.\nGood luck! \n<div style='text-align: center;'> Press <code>space</code> to continue. </div>`);
     }
   });
   divider_intro_training = new TextBlock({
@@ -502,7 +508,7 @@ initializeExperiment = function() {
         case !DEBUG:
           return TRIALS.slice(6, 8);
         default:
-          return getTrials(20);
+          return getTrials(30);
       }
     })(),
     startScore: 50
@@ -553,13 +559,13 @@ initializeExperiment = function() {
   conditional_node = new Block({
     timeline: [
       train_basic1,
-      //instructions1    
       pre_test_intro,
-      pre_test,
-      divider_pretest_training,
-      training,
-      divider_training_test,
-      test_block_intro,
+      pre_test_only,
+      //pre_test
+      //divider_pretest_training    
+      //training
+      //divider_training_test
+      //test_block_intro
       post_test,
       quiz,
       verbal_responses,
@@ -573,7 +579,7 @@ initializeExperiment = function() {
       if (isNaN(age)) {
         age = 0;
       }
-      return age >= 50;
+      return (age >= 48) || (age < 25);
     }
   });
   experiment_timeline = (function() {
