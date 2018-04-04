@@ -76,7 +76,7 @@ $(window).on 'load', ->
     PARAMS =
       inspectCost: 1
       startTime: Date(Date.now())
-      bonusRate: .002
+      bonusRate: .0015
       # variance: ['2_4_24', '24_4_2'][CONDITION]
       branching: '312'
       with_feedback: with_feedback
@@ -258,13 +258,13 @@ initializeExperiment = ->
       "<div style='text-align: center;'> Press <code>space</code> to continue.</div>"
 
   
-   divider_training_test  = new TextBlock
+  divider_training_test  = new TextBlock
     text: ->
       SCORE = 0
       "<div style='text-align: center;'> Congratulations! You have completed the training block. <br/>      
        <br/> Press <code>space</code> to start the test block.</div>"
 
-   test_block_intro  = new TextBlock
+  test_block_intro  = new TextBlock
     text: ->
       SCORE = 0        
       markdown """ 
@@ -273,19 +273,34 @@ initializeExperiment = ->
       Good luck! 
       <div style='text-align: center;'> Press <code>space</code> to continue. </div>
       """
+
+  pre_test_only = new TextBlock
+    text: ->
+      SCORE = 0        
+      markdown """ 
+      Now you'll get a chance to try playing Web of Cash. 
+
+      You will earn real money based on how well you play the game. Specifically, #{bonus_text('long')}<br/> 
+
+      To thank you for your work so far, we'll start you off with **$50**.
+      Good luck! 
+      <div style='text-align: center;'> Press <code>space</code> to continue. </div>
+      """
     
-    
-   divider_intro_training  = new TextBlock
+  divider_intro_training  = new TextBlock
     text: ->
       SCORE = 0
       "  <h1>Training</h1>  Congratulations! You have completed the instructions. Next, you will enter a training block where you can practice planning 10 times. After that, you will enter test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block."
 
-   divider_pretest_training  = new TextBlock
+  divider_pretest_training  = new TextBlock
     text: ->
       SCORE = 0
       "<h1>Training block</h1> <div style='text-align: center;'> You will now enter a training block where you can practice playing Web of Cash some more. After that, there will be a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block.</div>"
 
-        
+   
+  thanks = new TextBlock
+    text: ->
+      "<div style='text-align: center;'> Thanks for participating! Press <code>space</code> to end this HIT.</div>"
         
   train_basic1 = new TextBlock
     text: ->
@@ -301,6 +316,8 @@ initializeExperiment = ->
       of the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.
 
      <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash-unrevealed.png'/>
+
+      This HIT takes about 10 minutes to complete. If you complete it, you will recieve a bonus of $0.45 plus an additional performance dependent bonus.
 
     <div align="center">Press <code>space</code> to proceed.</div>
     """
@@ -381,9 +398,9 @@ initializeExperiment = ->
   bonus_text = (long) ->
     # if PARAMS.bonusRate isnt .01
     #   throw new Error('Incorrect bonus rate')
-    s = "**you will earn 1 cent for every $5 you make in the game.**"
+    s = "**you will earn 1.5 cents for every $10 you make in the game.**"
     if long
-      s += " For example, if your final score is $1000, you will receive a bonus of $2."
+      s += " For example, if your final score is $1000, you will receive a bonus of $1.50."
     return s
 
 
@@ -441,10 +458,10 @@ initializeExperiment = ->
       ['$-4 to $4', '$-8 to $8', '$-48 to $48'],
       ['$-4 to $4', '$-8 to $8', '$-48 to $48'],
       ['$0', '$1', '$8', '$24'],    
-      ['1 cent for every $1 you make in the game',
-       '1 cent for every $5 you make in the game',
-       '5 cents for every $1 you make in the game',
-       '5 cents for every $10 you make in the game']
+      ['1 cent for every $1 you make in the game plus 45 cents',
+       '1 cent for every $5 you make in the game plus 45 cents',
+       '0.5 cents for every $1 you make in the game plus 45 cents',
+       '1.5 cents for every $10 you make in the game plus 45 cents']
     ]
 
   pre_test_intro = new TextBlock
@@ -482,7 +499,7 @@ initializeExperiment = ->
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
       when DEBUG then TRIALS.slice(6, 7)
-      else getTrials 30
+      else getTrials 10
     startScore: 50        
 
         
@@ -508,10 +525,24 @@ initializeExperiment = ->
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
       when DEBUG then TRIALS.slice(6, 8)
-      else getTrials 20
+      else getTrials 30
     startScore: 50
     
-    
+  age_check = new Block
+    type: 'survey-text'
+    preamble: -> markdown """
+        # Please answer these questions
+
+      """
+
+    questions: [
+        'What gender do you identify as?'
+        'What is your age?'
+        'What country do you live in?'
+        'What is your current employment status?'
+        'How many people live in your household (including you)?'
+    ]
+    button: 'Submit Answers'
     
   verbal_responses = new Block
     type: 'survey-text'
@@ -536,8 +567,10 @@ initializeExperiment = ->
         # You've completed the HIT
 
         Thanks for participating. We hope you had fun! Based on your
-        performance, you will be awarded a bonus of
-        **$#{calculateBonus().toFixed(2)}**.
+        performance, your current earnings are
+        **$#{calculateBonus().toFixed(2)}**. 
+        After adding the $0.45 promised to you, you will be awarded a bonus of
+        **$#{(calculateBonus()+0.45).toFixed(2)}**.
 
         Please briefly answer the questions below before you submit the HIT.
       """
@@ -545,7 +578,6 @@ initializeExperiment = ->
     questions: [
       'What did you learn?'    
       'Was anything confusing or hard to understand?'
-      'What is your age?'
       'Additional coments?'
     ]
     button: 'Submit HIT'
@@ -568,42 +600,47 @@ initializeExperiment = ->
         timeline: TRIALS.slice(10,14)
     ]
 
+  conditional_node = new Block
+    timeline: [
+      train_basic1    
+      pre_test_intro
+      pre_test_only
+      #pre_test
+      #divider_pretest_training    
+      #training
+      #divider_training_test
+      #test_block_intro
+      post_test
+      quiz
+      verbal_responses
+      finish
+    ]
+    conditional_function: ->
+      data = jsPsych.data.getLastTrialData()
+      age_string = JSON.parse(data.responses).Q1
+      age = parseInt(age_string)
+      if isNaN(age)
+        age = 0
+      (age >= 48) or (age<25)
+
+
 
   experiment_timeline = switch
     when SHOW_PARTICIPANT then [
       test
     ]
     when DEBUG then [
-      train_basic1
-      pre_test_intro
-      pre_test
-      divider_pretest_training    
-      training
-      divider_training_test
-      test_block_intro
-      post_test
-      quiz
-      verbal_responses
-      finish
+      age_check
+      conditional_node
+      thanks
     ]
     when TALK then [
       talk_demo
     ]
     else [
-      train_basic1
-      #train_inspector
-      #train_inspect_cost
-      #instructions1    
-      pre_test_intro
-      pre_test
-      #divider_pretest_training    
-      #training
-      #divider_training_test
-      #test_block_intro
-      #post_test
-      quiz
-      verbal_responses
-      finish
+      age_check
+      conditional_node
+      thanks
       ]
 
   # ================================================ #
@@ -652,7 +689,7 @@ initializeExperiment = ->
       if DEBUG
         jsPsych.data.displayData()
       else
-        psiturk.recordUnstructuredData 'final_bonus', calculateBonus()
+        psiturk.recordUnstructuredData 'final_bonus', calculateBonus()+0.45
         save_data()
 
     on_data_update: (data) ->

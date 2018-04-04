@@ -90,7 +90,7 @@ $(window).on('load', function() {
     PARAMS = {
       inspectCost: 1,
       startTime: Date(Date.now()),
-      bonusRate: .002,
+      bonusRate: .0015,
       // variance: ['2_4_24', '24_4_2'][CONDITION]
       branching: '312',
       with_feedback: with_feedback,
@@ -155,7 +155,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, bonus_text, divider, divider_intro_training, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, nodeValuesDescription, post_test, pre_test, pre_test_intro, prompt_resubmit, quiz, reprompt, reset_score, save_data, talk_demo, test_block_intro, text, train_basic1, training, verbal_responses;
+  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, age_check, bonus_text, conditional_node, divider, divider_intro_training, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, nodeValuesDescription, post_test, pre_test, pre_test_intro, pre_test_only, prompt_resubmit, quiz, reprompt, reset_score, save_data, talk_demo, test_block_intro, text, thanks, train_basic1, training, verbal_responses;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   //  ======================== #
@@ -300,6 +300,12 @@ initializeExperiment = function() {
       return markdown(` <h1>Test block</h1>\nWelcome to the test block! Here, you can use what you have learned to earn a bonus. Concretely, ${bonus_text('long')} <br/> To thank you for your work so far, we'll start you off with **$50**.\n Good luck! \n <div style='text-align: center;'> Press <code>space</code> to continue. </div>`);
     }
   });
+  pre_test_only = new TextBlock({
+    text: function() {
+      SCORE = 0;
+      return markdown(`Now you'll get a chance to try playing Web of Cash. \n\nYou will earn real money based on how well you play the game. Specifically, ${bonus_text('long')}<br/> \n\nTo thank you for your work so far, we'll start you off with **$50**.\nGood luck! \n<div style='text-align: center;'> Press <code>space</code> to continue. </div>`);
+    }
+  });
   divider_intro_training = new TextBlock({
     text: function() {
       SCORE = 0;
@@ -312,10 +318,15 @@ initializeExperiment = function() {
       return "<h1>Training block</h1> <div style='text-align: center;'> You will now enter a training block where you can practice playing Web of Cash some more. After that, there will be a test block where you can use what you have learned to earn a bonus. <br/> Press <code>space</code> to start the training block.</div>";
     }
   });
+  thanks = new TextBlock({
+    text: function() {
+      return "<div style='text-align: center;'> Thanks for participating! Press <code>space</code> to end this HIT.</div>";
+    }
+  });
   train_basic1 = new TextBlock({
     text: function() {
       SCORE = 0;
-      return markdown("  <h1> Web of Cash </h1>\n\n  In this HIT, you will play a game called *Web of Cash*. You will guide a\n  money-loving spider through a spider web. When you land on a gray circle\n  (a ***node***) the value of the node is added to your score.\n\n  You will be able to move the spider with the arrow keys, but only in the direction\n  of the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.\n\n <img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+      return markdown("  <h1> Web of Cash </h1>\n\n  In this HIT, you will play a game called *Web of Cash*. You will guide a\n  money-loving spider through a spider web. When you land on a gray circle\n  (a ***node***) the value of the node is added to your score.\n\n  You will be able to move the spider with the arrow keys, but only in the direction\n  of the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.\n\n <img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n  This HIT takes about 10 minutes to complete. If you complete it, you will recieve a bonus of $0.45 plus an additional performance dependent bonus.\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
     }
   });
   //lowerMessage: 'Move with the arrow keys.'
@@ -392,9 +403,9 @@ initializeExperiment = function() {
     var s;
     // if PARAMS.bonusRate isnt .01
     //   throw new Error('Incorrect bonus rate')
-    s = "**you will earn 1 cent for every $5 you make in the game.**";
+    s = "**you will earn 1.5 cents for every $10 you make in the game.**";
     if (long) {
-      s += " For example, if your final score is $1000, you will receive a bonus of $2.";
+      s += " For example, if your final score is $1000, you will receive a bonus of $1.50.";
     }
     return s;
   };
@@ -438,7 +449,7 @@ initializeExperiment = function() {
     },
     type: 'survey-multi-choice',
     questions: ["What is the range of node values in the first step?", "What is the range of node values in the last step?", "What is the cost of clicking?", "How much REAL money do you earn?"],
-    options: [['$-4 to $4', '$-8 to $8', '$-48 to $48'], ['$-4 to $4', '$-8 to $8', '$-48 to $48'], ['$0', '$1', '$8', '$24'], ['1 cent for every $1 you make in the game', '1 cent for every $5 you make in the game', '5 cents for every $1 you make in the game', '5 cents for every $10 you make in the game']]
+    options: [['$-4 to $4', '$-8 to $8', '$-48 to $48'], ['$-4 to $4', '$-8 to $8', '$-48 to $48'], ['$0', '$1', '$8', '$24'], ['1 cent for every $1 you make in the game plus 45 cents', '1 cent for every $5 you make in the game plus 45 cents', '0.5 cents for every $1 you make in the game plus 45 cents', '1.5 cents for every $10 you make in the game plus 45 cents']]
   });
   pre_test_intro = new TextBlock({
     text: function() {
@@ -461,7 +472,7 @@ initializeExperiment = function() {
         case !DEBUG:
           return TRIALS.slice(6, 7);
         default:
-          return getTrials(30);
+          return getTrials(10);
       }
     })(),
     startScore: 50
@@ -497,10 +508,18 @@ initializeExperiment = function() {
         case !DEBUG:
           return TRIALS.slice(6, 8);
         default:
-          return getTrials(20);
+          return getTrials(30);
       }
     })(),
     startScore: 50
+  });
+  age_check = new Block({
+    type: 'survey-text',
+    preamble: function() {
+      return markdown("# Please answer these questions\n");
+    },
+    questions: ['What gender do you identify as?', 'What is your age?', 'What country do you live in?', 'What is your current employment status?', 'How many people live in your household (including you)?'],
+    button: 'Submit Answers'
   });
   verbal_responses = new Block({
     type: 'survey-text',
@@ -514,9 +533,9 @@ initializeExperiment = function() {
   finish = new Block({
     type: 'survey-text',
     preamble: function() {
-      return markdown(`# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance, you will be awarded a bonus of\n**$${calculateBonus().toFixed(2)}**.\n\nPlease briefly answer the questions below before you submit the HIT.`);
+      return markdown(`# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance, your current earnings are\n**$${calculateBonus().toFixed(2)}**. \nAfter adding the $0.45 promised to you, you will be awarded a bonus of\n**$${(calculateBonus() + 0.45).toFixed(2)}**.\n\nPlease briefly answer the questions below before you submit the HIT.`);
     },
-    questions: ['What did you learn?', 'Was anything confusing or hard to understand?', 'What is your age?', 'Additional coments?'],
+    questions: ['What did you learn?', 'Was anything confusing or hard to understand?', 'Additional coments?'],
     button: 'Submit HIT'
   });
   talk_demo = new Block({
@@ -537,31 +556,42 @@ initializeExperiment = function() {
       })
     ]
   });
+  conditional_node = new Block({
+    timeline: [
+      train_basic1,
+      pre_test_intro,
+      pre_test_only,
+      //pre_test
+      //divider_pretest_training    
+      //training
+      //divider_training_test
+      //test_block_intro
+      post_test,
+      quiz,
+      verbal_responses,
+      finish
+    ],
+    conditional_function: function() {
+      var age, age_string, data;
+      data = jsPsych.data.getLastTrialData();
+      age_string = JSON.parse(data.responses).Q1;
+      age = parseInt(age_string);
+      if (isNaN(age)) {
+        age = 0;
+      }
+      return (age >= 48) || (age < 25);
+    }
+  });
   experiment_timeline = (function() {
     switch (false) {
       case !SHOW_PARTICIPANT:
         return [test];
       case !DEBUG:
-        return [train_basic1, pre_test_intro, pre_test, divider_pretest_training, training, divider_training_test, test_block_intro, post_test, quiz, verbal_responses, finish];
+        return [age_check, conditional_node, thanks];
       case !TALK:
         return [talk_demo];
       default:
-        return [
-          train_basic1,
-          //train_inspector
-          //train_inspect_cost
-          //instructions1    
-          pre_test_intro,
-          pre_test,
-          //divider_pretest_training    
-          //training
-          //divider_training_test
-          //test_block_intro
-          //post_test
-          quiz,
-          verbal_responses,
-          finish
-        ];
+        return [age_check, conditional_node, thanks];
     }
   })();
   // ================================================ #
@@ -606,7 +636,7 @@ initializeExperiment = function() {
       if (DEBUG) {
         return jsPsych.data.displayData();
       } else {
-        psiturk.recordUnstructuredData('final_bonus', calculateBonus());
+        psiturk.recordUnstructuredData('final_bonus', calculateBonus() + 0.45);
         return save_data();
       }
     },
