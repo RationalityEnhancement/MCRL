@@ -525,7 +525,7 @@ initializeExperiment = ->
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
       when DEBUG then TRIALS.slice(6, 8)
-      else getTrials 3
+      else getTrials 30
     startScore: 50
     
   age_check = new Block

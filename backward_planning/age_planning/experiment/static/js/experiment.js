@@ -508,7 +508,7 @@ initializeExperiment = function() {
         case !DEBUG:
           return TRIALS.slice(6, 8);
         default:
-          return getTrials(3);
+          return getTrials(30);
       }
     })(),
     startScore: 50
