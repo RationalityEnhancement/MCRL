@@ -630,17 +630,9 @@ initializeExperiment = ->
       test
     ]
     when DEBUG then [
-      train_basic1
-      pre_test_intro
-      pre_test
-      divider_pretest_training    
-      training
-      divider_training_test
-      test_block_intro
-      post_test
-      quiz
-      verbal_responses
-      finish
+      age_check
+      conditional_node
+      thanks
     ]
     when TALK then [
       talk_demo
