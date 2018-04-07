@@ -304,14 +304,14 @@ if __name__ == '__main__':
 
     for version in args.version:
         version = version.split('data/human_raw/')[-1]
-        print('Approving and bonusing participants for {version}')
+        print(f'Approving and bonusing participants for {version}')
         try:
-            identifiers = pd.read_csv('data/human_raw/{version}/identifiers.csv').set_index('pid')
-            pdf = pd.read_csv('data/human/{version}/participants.csv').set_index('pid')
+            identifiers = pd.read_csv(f'data/human_raw/{version}/identifiers.csv').set_index('pid')
+            pdf = pd.read_csv(f'data/human/{version}/participants.csv').set_index('pid')
             pdf = pdf.join(identifiers).reset_index()
 
             try:
-                payment = pd.read_csv('data/human_raw/{version}/payment.csv').set_index('worker_id')
+                payment = pd.read_csv(f'data/human_raw/{version}/payment.csv').set_index('worker_id')
                 pdf = pdf.set_index('worker_id')
                 pdf['status'] = payment['status'].fillna('submitted')
                 pdf = pdf.reset_index()
@@ -321,7 +321,7 @@ if __name__ == '__main__':
             pdf.bonus = pdf.bonus.clip(lower=0) + args.extra
             total = pdf.query('status != "bonused"').bonus.sum()
             if not args.y:
-                response = input('Assigning ${total:.2f} in bonuses. Continue? y/[n]:  ')
+                response = input(f'Assigning ${total:.2f} in bonuses. Continue? y/[n]:  ')
                 if response != 'y':
                     print('Exiting.')
                     exit(0)
@@ -343,7 +343,7 @@ if __name__ == '__main__':
                                 row.status = 'bonused'
                     yield row[['pid', 'worker_id', 'assignment_id', 'bonus', 'status']]
 
-            pd.DataFrame(run()).to_csv('data/human_raw/{version}/payment.csv', index=False)
+            pd.DataFrame(run()).to_csv(f'data/human_raw/{version}/payment.csv', index=False)
 
         except Exception as e:
             if args.f:
