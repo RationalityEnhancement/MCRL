@@ -8,7 +8,7 @@ import random
 import itertools as it
 from agents import Agent
 from evaluation import *
-from distributions import cmax, smax, sample, expectation, Normal, PointMass, SampleDist, Normal, Categorical
+from distributions import cmax, smax, sample, expectation, PointMass, Normal, Categorical
 
 ZERO = PointMass(0)
 
@@ -178,15 +178,19 @@ class OldMouselabEnv(gym.Env):
         return gamble
     
     def vpi(self,state=None):
-        gambles = [Normal(self.mus[i],np.sqrt(self.vars[i])) for i in range(self.gambles)]
-        samples_max = np.amax([[self.gsample(gambles[i]) for i in range(self.gambles)] for _ in range(2500)],1)
+        gambles = [Normal(self.mus[i],np.sqrt(self.vars[i])) 
+                   for i in range(self.gambles)]
+        samples_max = np.amax([[self.gsample(gambles[i]) 
+                                for i in range(self.gambles)] 
+                               for _ in range(2500)],1)
         return np.mean(samples_max) - np.max(self.mus)
     
     def vpi2(self,state=None):
         state = state if state is not None else self._state
         grid = np.array(self._state).reshape(self.gambles,self.outcomes)
         gambles = grid.dot(self.dist)
-        samples_max = np.amax([[self.gsample(gambles[i]) for i in range(self.gambles)] for _ in range(2500)],1)
+        samples_max = np.amax([[self.gsample(gambles[i]) 
+                                for i in range(self.gambles)] for _ in range(2500)],1)
         return np.mean(samples_max) - np.max(self.mus)
     
     def grid(self,state=None):
@@ -228,7 +232,8 @@ class OldMouselabEnv(gym.Env):
         state = state if state is not None else self._state
         grid = np.array(state).reshape(self.gambles,self.outcomes)
         best_idx = np.argmax(self.mus)
-#         best_gamble = max((self.dist*grid[g] for g in range(self.gambles)), default=ZERO, key=lambda x: sum(map(expectation,x)))
+        best_gamble = max((self.dist*grid[g] for g in range(self.gambles)), 
+                          default=ZERO, key=lambda x: sum(map(expectation,x)))
         return grid[best_idx]
     
     
