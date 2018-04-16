@@ -1,0 +1,6 @@
+action_times,actions,block,button_pressed,key_press,path,queries,responses,rewards,rt,score,simulation_mode,stimulus,time_elapsed,trial_index,trial_id,trial_type,pid
+,,,,,,,"{""Q0"":""no"",""Q1"":""Try to select the first and last move"",""Q2"":""33"",""Q3"":""""}",,25189,,,,1056527,,,survey-text,1
+,,,,,,,"{""Q0"":"""",""Q1"":""I always selected the nodes that split off in to more nodes."",""Q2"":""21"",""Q3"":""Very fun hit""}",,41045,,,,648298,,,survey-text,2
+,,,,,,,"{""Q0"":""no"",""Q1"":""try to get the highest number i could but no more than 3 nodes clicked"",""Q2"":""40"",""Q3"":""""}",,32432,,,,596740,,,survey-text,3
+,,,,,,,"{""Q0"":""I thought it was fun and challenging! "",""Q1"":""I started with the 4 next to you to see if there were positive numbers, also used random guessing at some points"",""Q2"":""20"",""Q3"":""I hope my data is helpful! thanks for your study :)""}",,30560,,,,1062531,,,survey-text,4
+,,,,,,,"{""Q0"":""no, nothing was hard"",""Q1"":""highest path, ones that look profitable without revealing too many"",""Q2"":""30"",""Q3"":""no""}",,43379,,,,522086,,,survey-text,5
