@@ -327,7 +327,11 @@ class MouselabEnv(gym.Env):
 
     @classmethod
     def new_symmetric(cls, branching, reward, seed=None, **kwargs):
-        """Returns a MouselabEnv with a symmetric structure."""
+        """Returns a MouselabEnv with a symmetric structure.
+        
+        Arguments:
+            branching: a list that specifies the branching factor at each depth.
+            reward: a function that returns the reward distribution at a given depth."""
         if seed is not None:
             np.random.seed(seed)
         if not callable(reward):
