@@ -40,7 +40,7 @@ RETURN_BONUS = 0;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 1;
+  condition = 0;
   workerId = ['debugFRED'];
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
@@ -49,7 +49,7 @@ if (DEBUG) {
 if (mode === "{{ mode }}") {
   // Viewing experiment not through the PsiTurk server
   DEMO = true;
-  condition = 1;
+  condition = 0;
   workerId = ['debugFRED'];
 }
 
@@ -247,7 +247,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, ask_email, bonus_text, check_code, check_returning, divider, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, post_test, pre_test, pre_test_intro1, pre_test_intro2, principle1, principle2, prompt_resubmit, quiz, refresher1, refresher2, reprompt, reset_score, retention_instruction, save_data, talk_demo, test_block_intro, text, train_basic1, train_basic2, train_basic3, training, verbal_responses;
+  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, ask_email, bonus_text, check_code, check_returning, demo, demo_basic1, demo_basic2, demo_basic3, demo_basic4, divider, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, post_test, pre_test, pre_test_intro1, pre_test_intro2, principle1, principle2, prompt_resubmit, quiz, refresher1, refresher2, reprompt, reset_score, retention_instruction, save_data, talk_demo, test_block_intro, text, train_basic1, train_basic2, train_basic3, training, verbal_responses;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   //  ======================== #
@@ -510,19 +510,42 @@ initializeExperiment = function() {
   train_basic1 = new TextBlock({
     text: function() {
       SCORE = 0;
-      return markdown("<h1> Practice makes perfect </h1>\n\nIn this HIT, you can try out and practice the goal-setting principle to make better decisions in a simple \ngame called *Flight Planning*. You will navigate an airplane across a network of airports (gray circles). The  value inside each circle shows you how profitable it is to fly there. When you land on a gray circle\n(a ***node***) the value of the node is added to your score.\n\nYou will be able to move the plane with the arrow keys, but only in the direction\nof the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+      return markdown("<h1> Practice makes perfect </h1>\n\nIn this HIT, you can try out and practice the goal-setting principle to make better decisions in a simple \ngame called *Flight Planning*. You will navigate an airplane across a network of airports (gray circles). The  value inside each circle shows you how profitable it is to fly there. When you land on a gray circle\n(a ***node***) the value of the node is added to your score.\n\nYou will be able to move the plane with the arrow keys, but only in the direction\nof the arrows between the nodes. The image below shows the network of airports.\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
     }
   });
   train_basic2 = new TextBlock({
     text: function() {
       SCORE = 0;
-      return markdown("<h1> Flight Planning </h1>\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-revealed.png'/>\n\nThe central circle that you start from represents your present circumstances. The six circles at the end of each path represent your possible futures. The circles in-between show the different paths you can take and how rewarding or unrewarding they are in the short-term.\n\nConcretely, whenever you make a move, we will add the value inside the circle you moved into to your total score.\n        \n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+      return markdown("<h1> Flight Planning </h1>\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-revealed.png'/>\n\nThe flight planning game is a metaphor for life.    \nThe central circle that you start from represents your present circumstances. The six circles at the end of each path represent your possible futures. The circles in-between show the different paths you can take and how rewarding or unrewarding they are in the short-term.\n\nWhenever you make a move, the value inside the circle that you moved to is added to your total score.        \n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
     }
   });
   train_basic3 = new TextBlock({
     text: function() {
       SCORE = 0;
       return markdown("   <h1> Node Inspector </h1>\n\n   Initially, all of the rewards will be hidden. It is hard to decide where to go when you don't know the rewards. Fortunately, you will have access to a ***node inspector*** which can reveal\n the value of a node. To use the node inspector, simply ***click on a node***. The image below illustrates how this works, and you can try this out on the **next** screen. \n\n **Note:** you can only use the node inspector when you're on the first\n node. \n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash.png'/>\n\n One more thing: **You must spend *at least* 7 seconds on each round.**\n If you finish a round early, you'll have to wait until 7 seconds have\n passed.      \n");
+    }
+  }, demo_basic1 = new TextBlock, {
+    text: function() {
+      SCORE = 0;
+      return markdown("<h1> Application to Flight Planning </h1>\n\nIn this HIT, we will illustrate the goal-setting principle by applying it to a simple \ngame called *Flight Planning*. In this game, the flight planner navigates an airplane across a network of airports (gray circles). The  value inside each circle shows you how profitable it is to fly there. When you land on a gray circle\n(a ***node***) the value of the node is added to your score.\n\nThe player can move the plane with the arrow keys, but only in the direction\nof the arrows between the nodes. The image below shows the network of airports.\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+    }
+  });
+  demo_basic2 = new TextBlock({
+    text: function() {
+      SCORE = 0;
+      return markdown("<h1> Flight Planning </h1>\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-revealed.png'/>\nThe flight planning game is a metaphor for life.    \nThe central circle that you start from represents your present circumstances. The six circles at the end of each path represent your possible futures. The circles in-between show the different paths you can take and how rewarding or unrewarding they are in the short-term.\n\nWhenever you make a move, the value inside the circle that you moved to is added to your total score.\n        \n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+    }
+  });
+  demo_basic3 = new TextBlock({
+    text: function() {
+      SCORE = 0;
+      return markdown("   <h1> Node Inspector </h1>\n\n   Initially, all of the rewards will be hidden. It is hard to decide where to go when you don't know the rewards. Fortunately, the player can use a ***node inspector*** to reveal\n the value of a node. To use the node inspector, the player can simply ***click on a node***. The image below illustrates how this works. \n\n **Note:** you can only use the node inspector when you're on the first\n node. \n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash.png'/>\n\n One more thing: **The player must spend *at least* 7 seconds on each round.**\n If they finish a round early, they have to wait until 7 seconds have\n passed.      \n");
+    }
+  });
+  demo_basic4 = new TextBlock({
+    text: function() {
+      SCORE = 0;
+      return markdown("<h1> Demonstration of the goal-setting principle </h1>\n\n<div align=\"center\">Press <code>space</code> to see a demonstration of the goal setting principle. </div>");
     }
   });
   
@@ -729,6 +752,29 @@ initializeExperiment = function() {
       return this.trialCount = 0;
     }
   });
+  demo = new MouselabBlock({
+    minTime: 7,
+    show_feedback: with_feedback,
+    blockName: 'training',
+    stateDisplay: 'click',
+    stateClickCost: PARAMS.inspectCost,
+    timeline: (function() {
+      switch (false) {
+        case !SHOW_PARTICIPANT:
+          return DEMO_TRIALS;
+        case !DEBUG:
+          return getTrainingTrials(2);
+        default:
+          return getTrainingTrials(10);
+      }
+    })(),
+    startScore: 50,
+    _init: function() {
+      _.extend(this, STRUCTURE_TRAINING);
+      this.playerImage = 'static/images/plane.png';
+      return this.trialCount = 0;
+    }
+  });
   post_test = new MouselabBlock({
     minTime: 7,
     show_feedback: false,
@@ -875,6 +921,12 @@ initializeExperiment = function() {
           //tl.push pre_test     
           //tl.push divider_pretest_training    
           tl.push(training);
+        } else {
+          tl.push(demo_basic1);
+          tl.push(demo_basic2);
+          tl.push(demo_basic3);
+          tl.push(demo_basic4);
+          tl.push(demo);
         }
       }
       if (!STAGE1) {

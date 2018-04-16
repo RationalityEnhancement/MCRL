@@ -28,7 +28,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 1
+  condition = 0
   workerId = ['debugFRED']
   
 else
@@ -40,7 +40,7 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 1
+  condition = 0
   workerId = ['debugFRED']
   # counterbalance = 0
  
@@ -544,7 +544,7 @@ initializeExperiment = ->
           (a ***node***) the value of the node is added to your score.
 
           You will be able to move the plane with the arrow keys, but only in the direction
-          of the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.
+          of the arrows between the nodes. The image below shows the network of airports.
 
           <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash-unrevealed.png'/>
 
@@ -559,10 +559,10 @@ initializeExperiment = ->
 
           <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash-revealed.png'/>
 
+          The flight planning game is a metaphor for life.    
           The central circle that you start from represents your present circumstances. The six circles at the end of each path represent your possible futures. The circles in-between show the different paths you can take and how rewarding or unrewarding they are in the short-term.
 
-          Concretely, whenever you make a move, we will add the value inside the circle you moved into to your total score.
-        
+          Whenever you make a move, the value inside the circle that you moved to is added to your total score.        
 
           <div align="center">Press <code>space</code> to proceed.</div>
         """   
@@ -587,6 +587,70 @@ initializeExperiment = ->
 
                 """
         
+        
+        demo_basic1 = new TextBlock
+        text: ->
+          SCORE = 0
+          markdown """
+          <h1> Application to Flight Planning </h1>
+
+          In this HIT, we will illustrate the goal-setting principle by applying it to a simple 
+          game called *Flight Planning*. In this game, the flight planner navigates an airplane across a network of airports (gray circles). The  value inside each circle shows you how profitable it is to fly there. When you land on a gray circle
+          (a ***node***) the value of the node is added to your score.
+
+          The player can move the plane with the arrow keys, but only in the direction
+          of the arrows between the nodes. The image below shows the network of airports.
+
+          <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash-unrevealed.png'/>
+
+          <div align="center">Press <code>space</code> to proceed.</div>
+        """
+        
+      demo_basic2 = new TextBlock
+        text: ->
+          SCORE = 0
+          markdown """
+          <h1> Flight Planning </h1>
+
+          <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash-revealed.png'/>
+          The flight planning game is a metaphor for life.    
+          The central circle that you start from represents your present circumstances. The six circles at the end of each path represent your possible futures. The circles in-between show the different paths you can take and how rewarding or unrewarding they are in the short-term.
+
+          Whenever you make a move, the value inside the circle that you moved to is added to your total score.
+        
+
+          <div align="center">Press <code>space</code> to proceed.</div>
+        """   
+            
+     demo_basic3 = new TextBlock
+        text: ->    
+            SCORE = 0
+            markdown """
+            <h1> Node Inspector </h1>
+
+            Initially, all of the rewards will be hidden. It is hard to decide where to go when you don't know the rewards. Fortunately, the player can use a ***node inspector*** to reveal
+          the value of a node. To use the node inspector, the player can simply ***click on a node***. The image below illustrates how this works. 
+
+          **Note:** you can only use the node inspector when you're on the first
+          node. 
+
+         <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash.png'/>
+
+          One more thing: **The player must spend *at least* 7 seconds on each round.**
+          If they finish a round early, they have to wait until 7 seconds have
+          passed.      
+
+                """
+            
+    demo_basic4 = new TextBlock
+        text: ->    
+            SCORE = 0
+            markdown """
+            <h1> Demonstration of the goal-setting principle </h1>
+
+            <div align="center">Press <code>space</code> to see a demonstration of the goal setting principle. </div>
+                """    
+            
         #lowerMessage: 'Move with the arrow keys.'
         #stateDisplay: 'never'
         #timeline: getTrials 0
@@ -826,8 +890,8 @@ initializeExperiment = ->
 
                     You too can apply this goal-setting principle to make better decisions. Here is how:
                     <ol>    
-                    <li>Think about what your life could be like in the future. </li>
-                    <li>Decide which of those futures you want to create.</li>
+                    <li>Imagine about what your life could be like in the future. </li>
+                    <li>Choose which of those futures you want to create.</li>
                     <li>Set yourself the goal to make that happen.</li>
                     <li>Plan how to achieve the goal and act accordingly.</li>
                     </ol>
@@ -854,6 +918,23 @@ initializeExperiment = ->
 
 
       training = new MouselabBlock
+        minTime: 7
+        show_feedback: with_feedback
+        blockName: 'training'
+        stateDisplay: 'click'
+        stateClickCost: PARAMS.inspectCost
+        timeline: switch
+          when SHOW_PARTICIPANT then DEMO_TRIALS
+          when DEBUG then getTrainingTrials 2
+          else getTrainingTrials 10
+        startScore: 50
+        _init: ->
+          _.extend(this, STRUCTURE_TRAINING)
+          @playerImage = 'static/images/plane.png'
+          @trialCount = 0
+            
+    
+    demo = new MouselabBlock
         minTime: 7
         show_feedback: with_feedback
         blockName: 'training'
@@ -1024,6 +1105,12 @@ initializeExperiment = ->
                 #tl.push pre_test     
                 #tl.push divider_pretest_training    
                 tl.push training
+            else
+                tl.push demo_basic1
+                tl.push demo_basic2
+                tl.push demo_basic3
+                tl.push demo_basic4
+                tl.push demo
                 
           unless STAGE1
             tl.push test_block_intro
