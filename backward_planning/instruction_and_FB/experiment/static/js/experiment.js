@@ -40,7 +40,7 @@ RETURN_BONUS = 0;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 0;
+  condition = 1;
   workerId = ['debugFRED'];
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
@@ -49,7 +49,7 @@ if (DEBUG) {
 if (mode === "{{ mode }}") {
   // Viewing experiment not through the PsiTurk server
   DEMO = true;
-  condition = 0;
+  condition = 1;
   workerId = ['debugFRED'];
 }
 
@@ -704,7 +704,7 @@ initializeExperiment = function() {
   });
   principle2 = new TextBlock({
     text: function() {
-      return markdown("# A principle for making better decisions\n\nYou too can apply this goal-setting principle to make better decisions. Here is how:\n<ol>    \n<li>Think about what your life could be like in the future. </li>\n<li>Decide which of those futures you want to create.</li>\n<li>Set yourself the goal to make that happen.</li>\n<li>Plan how to achieve the goal and act accordingly.</li>\n</ol>\n\n<div align=\"center\"> Press <code>space</code> to continue. </div>\n");
+      return markdown("# A principle for making better decisions\n\nYou too can apply this goal-setting principle to make better decisions. Here is how:\n<ol>    \n<li>Imagine about what your life could be like in the future. </li>\n<li>Choose which of those futures you want to create.</li>\n<li>Set yourself the goal to make that happen.</li>\n<li>Plan how to achieve the goal and act accordingly.</li>\n</ol>\n\n<div align=\"center\"> Press <code>space</code> to continue. </div>\n");
     }
   });
   pre_test = new MouselabBlock({

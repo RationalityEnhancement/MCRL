@@ -28,7 +28,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 0
+  condition = 1
   workerId = ['debugFRED']
   
 else
@@ -40,7 +40,7 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 0
+  condition = 1
   workerId = ['debugFRED']
   # counterbalance = 0
  
