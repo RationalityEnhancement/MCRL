@@ -12,7 +12,7 @@ getTrainingTrials = undefined
 getTestTrials = undefined
 
 
-DEBUG = yes
+DEBUG = no
 TALK = no
 SHOW_PARTICIPANT = false
 STAGE = 1
@@ -28,7 +28,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  condition = 1
+  condition = 0
   workerId = ['debugFRED']
   
 else
@@ -40,7 +40,7 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 1
+  condition = 0
   workerId = ['debugFRED']
   # counterbalance = 0
  
@@ -430,7 +430,7 @@ initializeExperiment = ->
             So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
             You will receive this bonus, along with the additional bonus you earn 
             in Stage 2 when you complete the second HIT. If you don't complete
-            the second HIT, you will give up the bonus you have earned.
+            the second HIT, you lose the bonus you have already earned.
 
             The HIT for Stage 2 will have the title "Part 2 of two-part decision-making experiment"
             Remember, you must begin the HIT #{text.return_window()}.
@@ -590,14 +590,16 @@ initializeExperiment = ->
                 """
         
         
-        demo_basic1 = new TextBlock
+    demo_basic1 = new TextBlock
         text: ->
           SCORE = 0
           markdown """
           <h1> Application to Flight Planning </h1>
 
           In this HIT, we will illustrate the goal-setting principle by applying it to a simple 
-          game called *Flight Planning*. In this game, the flight planner navigates an airplane across a network of airports (gray circles). The  value inside each circle shows you how profitable it is to fly there. When you land on a gray circle
+          game called *Flight Planning*. 
+
+In this game, the flight player navigates an airplane across a network of airports (gray circles). The  value inside each circle shows you how profitable it is to fly there. When you land on a gray circle
           (a ***node***) the value of the node is added to your score.
 
           The player can move the plane with the arrow keys, but only in the direction
@@ -939,10 +941,10 @@ initializeExperiment = ->
     demo = new MouselabBlock
         minTime: 7
         show_feedback: with_feedback
-        blockName: 'training'
+        blockName: 'demo'
         stateDisplay: 'click'
         stateClickCost: PARAMS.inspectCost
-        timeline: DEMO_TRIALS
+        timeline: DEMO_TRIALS.slice(0,10)
         startScore: 50
         _init: ->
           _.extend(this, STRUCTURE_TRAINING)
@@ -1024,8 +1026,7 @@ initializeExperiment = ->
 
       if DEBUG
         experiment_timeline = do ->
-          return [demo]
-
+        #  return [demo]
           tl = []
           if STAGE1
             tl.push retention_instruction
@@ -1034,13 +1035,24 @@ initializeExperiment = ->
             tl.push refresher1
             tl.push refresher2
           #tl.push instruct_loop
-          unless STAGE2
-            tl.push train_basic1
-            tl.push pre_test_intro1
-            tl.push pre_test_intro2
-            tl.push pre_test     
-            tl.push divider_pretest_training    
-            tl.push training
+          unless STAGE2    
+            tl.push principle1
+            tl.push principle2
+            
+            if with_feedback
+                tl.push train_basic1
+                tl.push train_basic2
+                tl.push train_basic3
+                #tl.push pre_test     
+                #tl.push divider_pretest_training    
+                tl.push training
+            else
+                tl.push demo_basic1
+                tl.push demo_basic2
+                tl.push demo_basic3
+                tl.push demo_basic4
+                tl.push demo
+            
           unless STAGE1
             tl.push test_block_intro
             tl.push post_test
@@ -1049,6 +1061,7 @@ initializeExperiment = ->
           else
             tl.push finish
           return tl
+        
       else
         experiment_timeline = do ->
           tl = []

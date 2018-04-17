@@ -24,7 +24,7 @@ getTrainingTrials = void 0;
 
 getTestTrials = void 0;
 
-DEBUG = true;
+DEBUG = false;
 
 TALK = false;
 
@@ -40,7 +40,7 @@ RETURN_BONUS = 0;
 
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
-  condition = 1;
+  condition = 0;
   workerId = ['debugFRED'];
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
@@ -49,7 +49,7 @@ if (DEBUG) {
 if (mode === "{{ mode }}") {
   // Viewing experiment not through the PsiTurk server
   DEMO = true;
-  condition = 1;
+  condition = 0;
   workerId = ['debugFRED'];
 }
 
@@ -448,7 +448,7 @@ initializeExperiment = function() {
   ask_email = new Block({
     type: 'survey-text',
     preamble: function() {
-      return markdown(`# You've completed Stage 1\n\nSo far, you've earned a bonus of **$${calculateBonus().toFixed(2)}**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the second HIT. If you don't complete\nthe second HIT, you will give up the bonus you have earned.\n\nThe HIT for Stage 2 will have the title "Part 2 of two-part decision-making experiment"\nRemember, you must begin the HIT ${text.return_window()}.\n**Note:** The official base pay on mTurk will be $0.01;\nyou'll receive the $1.90 base pay for Stage 2 as part of your bonus \n(in addition to the bonus you earn).`);
+      return markdown(`# You've completed Stage 1\n\nSo far, you've earned a bonus of **$${calculateBonus().toFixed(2)}**.\nYou will receive this bonus, along with the additional bonus you earn \nin Stage 2 when you complete the second HIT. If you don't complete\nthe second HIT, you lose the bonus you have already earned.\n\nThe HIT for Stage 2 will have the title "Part 2 of two-part decision-making experiment"\nRemember, you must begin the HIT ${text.return_window()}.\n**Note:** The official base pay on mTurk will be $0.01;\nyou'll receive the $1.90 base pay for Stage 2 as part of your bonus \n(in addition to the bonus you earn).`);
     },
     questions: ['If you would like a reminder email, you can optionally enter it here.'],
     button: 'Submit HIT'
@@ -526,10 +526,11 @@ initializeExperiment = function() {
       SCORE = 0;
       return markdown("   <h1> Node Inspector </h1>\n\n   Initially, all of the rewards will be hidden. It is hard to decide where to go when you don't know the rewards. Fortunately, you will have access to a ***node inspector*** which can reveal\n the value of a node. To use the node inspector, simply ***click on a node***. The image below illustrates how this works, and you can try this out on the **next** screen. \n\n **Note:** you can only use the node inspector when you're on the first\n node. \n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash.png'/>\n\n One more thing: **You must spend *at least* 7 seconds on each round.**\n If you finish a round early, you'll have to wait until 7 seconds have\n passed.      \n");
     }
-  }, demo_basic1 = new TextBlock, {
+  });
+  demo_basic1 = new TextBlock({
     text: function() {
       SCORE = 0;
-      return markdown("<h1> Application to Flight Planning </h1>\n\nIn this HIT, we will illustrate the goal-setting principle by applying it to a simple \ngame called *Flight Planning*. In this game, the flight planner navigates an airplane across a network of airports (gray circles). The  value inside each circle shows you how profitable it is to fly there. When you land on a gray circle\n(a ***node***) the value of the node is added to your score.\n\nThe player can move the plane with the arrow keys, but only in the direction\nof the arrows between the nodes. The image below shows the network of airports.\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+      return markdown("<h1> Application to Flight Planning </h1>\n\nIn this HIT, we will illustrate the goal-setting principle by applying it to a simple \ngame called *Flight Planning*. \n\nIn this game, the flight player navigates an airplane across a network of airports (gray circles). The  value inside each circle shows you how profitable it is to fly there. When you land on a gray circle\n(a ***node***) the value of the node is added to your score.\n\nThe player can move the plane with the arrow keys, but only in the direction\nof the arrows between the nodes. The image below shows the network of airports.\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
     }
   });
   demo_basic2 = new TextBlock({
@@ -757,10 +758,10 @@ initializeExperiment = function() {
   demo = new MouselabBlock({
     minTime: 7,
     show_feedback: with_feedback,
-    blockName: 'training',
+    blockName: 'demo',
     stateDisplay: 'click',
     stateClickCost: PARAMS.inspectCost,
-    timeline: DEMO_TRIALS,
+    timeline: DEMO_TRIALS.slice(0, 10),
     startScore: 50,
     _init: function() {
       _.extend(this, STRUCTURE_TRAINING);
@@ -827,7 +828,7 @@ initializeExperiment = function() {
   if (DEBUG) {
     experiment_timeline = (function() {
       var tl;
-      return [demo];
+      //  return [demo]
       tl = [];
       if (STAGE1) {
         tl.push(retention_instruction);
@@ -839,12 +840,22 @@ initializeExperiment = function() {
       }
       //tl.push instruct_loop
       if (!STAGE2) {
-        tl.push(train_basic1);
-        tl.push(pre_test_intro1);
-        tl.push(pre_test_intro2);
-        tl.push(pre_test);
-        tl.push(divider_pretest_training);
-        tl.push(training);
+        tl.push(principle1);
+        tl.push(principle2);
+        if (with_feedback) {
+          tl.push(train_basic1);
+          tl.push(train_basic2);
+          tl.push(train_basic3);
+          //tl.push pre_test     
+          //tl.push divider_pretest_training    
+          tl.push(training);
+        } else {
+          tl.push(demo_basic1);
+          tl.push(demo_basic2);
+          tl.push(demo_basic3);
+          tl.push(demo_basic4);
+          tl.push(demo);
+        }
       }
       if (!STAGE1) {
         tl.push(test_block_intro);
