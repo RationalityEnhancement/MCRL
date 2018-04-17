@@ -286,10 +286,17 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @clickState @states[c], c
         @canvas.renderAll()
       
-      for a in @actions
-        await sleep 700
-        s = _.last @data.path
-        @handleKey s, a
+      if @actions?
+        for a in @actions
+          await sleep 700
+          s = _.last @data.path
+          @handleKey s, a
+      else
+        for s1 in @demoStates
+          await sleep 700
+          @move s, null, s1
+          s = s1
+          
           
 
     startTimer: =>
