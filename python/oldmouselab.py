@@ -17,9 +17,10 @@ class OldMouselabEnv(gym.Env):
     
     term_state = '__term_state__'
     def __init__(self, gambles=4, attributes=5, reward=None, cost=0,
-                 ground_truth=None, initial_states=None, randomness=1):
+                 ground_truth=None, initial_states=None, randomness=1, quantization=4):
         
         self.gambles = gambles # number of gambles
+        self.quantization = quantization
         
         # distribution and number of attributes
         if hasattr(attributes, '__len__'):
@@ -39,11 +40,11 @@ class OldMouselabEnv(gym.Env):
         self.cost = - abs(cost)
         self.initial_states = initial_states
         self.max = cmax
-        self.init = np.array([self.reward,] * (self.gambles*self.outcomes))
+        self.init = tuple([self.reward,] * (self.gambles*self.outcomes))
         
         if ground_truth is False:
-            self.ground_truth = ()
-        elif ground_truth is not None:
+            self.ground_truth = False
+        elif a is not None:
             self.ground_truth = np.array(ground_truth)
         else:
             self.ground_truth = np.array(list(map(sample, self.init)))
@@ -82,7 +83,7 @@ class OldMouselabEnv(gym.Env):
         if action == self.term_action:
             # self._state = self.term_state
             if self.sample_term_reward:
-                if self.ground_truth is not None:
+                if self.ground_truth is not False:
                     gamble = self.best_gamble()
                     reward = self.ground_truth[gamble].sum()
                 else:
@@ -104,7 +105,7 @@ class OldMouselabEnv(gym.Env):
 
     def _observe(self, action):
 #         print('obs ' + str(action))
-        if self.ground_truth is not None:
+        if self.ground_truth is not False:
             result = self.ground_truth[action]
         else:
             result = self._state[action].sample()
@@ -140,7 +141,7 @@ class OldMouselabEnv(gym.Env):
             # return cross(S1, R)
             yield (1, self.term_state, self.expected_term_reward(state))
         else:
-            for r, p in state[action]:
+            for r, p in state[action].to_discrete(self.quantization):
                 s1 = list(state)
                 s1[action] = r
                 yield (p, tuple(s1), self.cost)
@@ -171,6 +172,11 @@ class OldMouselabEnv(gym.Env):
             self.vpi(state),
             self.expected_term_reward(state)
         ])
+
+    def gamble_dists(self, state=None):
+        state = state if state is not None else self._state
+        grid = np.array(state).reshape(self.gambles, self.outcomes)
+        return np.dot(grid, self.dist)
     
     def gsample(self,gamble):
         if hasattr(gamble, 'sample'):
@@ -239,7 +245,6 @@ class OldMouselabEnv(gym.Env):
     
     def term_reward(self, state=None):
         state = state if state is not None else self._state
-        assert state is not None
         state_value = self.state_value(state)
         return state_value  
     
@@ -250,6 +255,9 @@ class OldMouselabEnv(gym.Env):
         return np.sum(best_gamble)   
     
     def expected_term_reward(self, state=None):
+        state = state if state is not None else self._state
+        return max(map(expectation, self.gamble_dists(state)))
+
         sum_bg = self.term_reward(state)
         if hasattr(sum_bg, 'sample'):
             return sum_bg.expectation()
