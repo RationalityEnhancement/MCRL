@@ -152,11 +152,12 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       // @transition=null  # function `(s0, a, s1, r) -> null` called after each transition
       
       // leftMessage="Round: #{TRIAL_INDEX}/#{N_TRIAL}"
-      ({display: this.display, graph: this.graph, layout: this.layout, initial: this.initial, stateLabels: this.stateLabels = 'reward', stateDisplay: this.stateDisplay = 'never', stateClickCost: this.stateClickCost = 0, edgeLabels: this.edgeLabels = 'never', edgeDisplay: this.edgeDisplay = 'always', edgeClickCost: this.edgeClickCost = 0, stateRewards: this.stateRewards = null, clickDelay: this.clickDelay = 0, moveDelay: this.moveDelay = 500, clickEnergy: this.clickEnergy = 0, moveEnergy: this.moveEnergy = 0, startScore: this.startScore = 0, actions: this.actions = null, clicks: this.clicks = null, pid: this.pid = null, allowSimulation: this.allowSimulation = false, revealRewards: this.revealRewards = true, training: this.training = false, special: this.special = '', timeLimit: this.timeLimit = null, minTime: this.minTime = null, energyLimit: this.energyLimit = null, qs: this.qs = null, keys: this.keys = KEYS, trialIndex: this.trialIndex = TRIAL_INDEX, playerImage: this.playerImage = 'static/images/plane.png', size = 80, trial_id = null, blockName = 'none', prompt = '&nbsp;', leftMessage = '&nbsp;', centerMessage = '&nbsp;', rightMessage = RIGHT_MESSAGE, lowerMessage = '&nbsp;'} = config); // html display element // defines transition and reward functions // defines position of states // initial state of player // object mapping from state names to labels // one of 'never', 'hover', 'click', 'always' // subtracted from score every time a state is clicked // object mapping from edge names (s0 + '__' + s1) to labels // one of 'never', 'hover', 'click', 'always' // subtracted from score every time an edge is clicked // mapping from actions to keycodes // number of trial (starts from 1) // determines the size of states, text, etc...
+      ({display: this.display, graph: this.graph, layout: this.layout, initial: this.initial, stateLabels: this.stateLabels = 'reward', stateDisplay: this.stateDisplay = 'never', stateClickCost: this.stateClickCost = 0, edgeLabels: this.edgeLabels = 'never', edgeDisplay: this.edgeDisplay = 'always', edgeClickCost: this.edgeClickCost = 0, stateRewards: this.stateRewards = null, clickDelay: this.clickDelay = 0, moveDelay: this.moveDelay = 500, clickEnergy: this.clickEnergy = 0, moveEnergy: this.moveEnergy = 0, startScore: this.startScore = 0, actions: this.actions = null, demoStates: this.demoStates = null, clicks: this.clicks = null, pid: this.pid = null, allowSimulation: this.allowSimulation = false, revealRewards: this.revealRewards = true, training: this.training = false, special: this.special = '', timeLimit: this.timeLimit = null, minTime: this.minTime = null, energyLimit: this.energyLimit = null, qs: this.qs = null, keys: this.keys = KEYS, trialIndex: this.trialIndex = TRIAL_INDEX, playerImage: this.playerImage = 'static/images/plane.png', size = 80, trial_id = null, blockName = 'none', prompt = '&nbsp;', leftMessage = '&nbsp;', centerMessage = '&nbsp;', rightMessage = RIGHT_MESSAGE, lowerMessage = '&nbsp;'} = config); // html display element // defines transition and reward functions // defines position of states // initial state of player // object mapping from state names to labels // one of 'never', 'hover', 'click', 'always' // subtracted from score every time a state is clicked // object mapping from edge names (s0 + '__' + s1) to labels // one of 'never', 'hover', 'click', 'always' // subtracted from score every time an edge is clicked // mapping from actions to keycodes // number of trial (starts from 1) // determines the size of states, text, etc...
       this.termAction = `${this.stateRewards.length}`;
-      if (this.pid != null) {
-        this.showParticipant = true;
-        centerMessage = `Participant ${this.pid}`;
+      if (this.pid) {
+        this.showDemo = true;
+        // centerMessage = "Participant #{@pid}"
+        centerMessage = 'Optimal Planning';
       }
       SIZE = size;
       _.extend(this, config);
@@ -297,26 +298,37 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     }
 
     async runDemo() {
-      var a, c, i, j, len, len1, ref, ref1, results, s;
+      var a, c, i, j, l, len, len1, len2, ref, ref1, ref2, results, results1, s, s1;
       this.timeLeft = 1;
       console.log('runDemo');
       ref = this.clicks;
       for (i = 0, len = ref.length; i < len; i++) {
         c = ref[i];
         await sleep(1000);
-        console.log('click', c);
         this.clickState(this.states[c], c);
         this.canvas.renderAll();
       }
-      ref1 = this.actions;
-      results = [];
-      for (j = 0, len1 = ref1.length; j < len1; j++) {
-        a = ref1[j];
-        await sleep(700);
-        s = _.last(this.data.path);
-        results.push(this.handleKey(s, a));
+      if (this.actions != null) {
+        ref1 = this.actions;
+        results = [];
+        for (j = 0, len1 = ref1.length; j < len1; j++) {
+          a = ref1[j];
+          await sleep(700);
+          s = _.last(this.data.path);
+          results.push(this.handleKey(s, a));
+        }
+        return results;
+      } else {
+        ref2 = this.demoStates;
+        results1 = [];
+        for (l = 0, len2 = ref2.length; l < len2; l++) {
+          s1 = ref2[l];
+          await sleep(700);
+          this.move(s, null, s1);
+          results1.push(s = s1);
+        }
+        return results1;
       }
-      return results;
     }
 
     startTimer() {
@@ -670,7 +682,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         this.checkFinished();
         return;
       }
-      if (!mdp.showParticipant) {
+      if (!mdp.showDemo) {
         // Start key listener.
         return this.keyListener = jsPsych.pluginAPI.getKeyboardResponse({
           valid_responses: keys,
@@ -736,7 +748,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         this.initTime = Date.now();
         return this.arrive(this.initial);
       }));
-      if (this.showParticipant) {
+      if (this.showDemo) {
         return this.runDemo();
       }
     }
@@ -875,7 +887,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       mdp.canvas.add(this.circle);
       
       // @setLabel conf.label
-      if (!mdp.showParticipant) {
+      if (!mdp.showDemo) {
         this.circle.on('mousedown', () => {
           return mdp.clickState(this, this.name);
         });

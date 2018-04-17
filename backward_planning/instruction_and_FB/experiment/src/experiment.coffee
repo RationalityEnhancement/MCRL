@@ -12,7 +12,7 @@ getTrainingTrials = undefined
 getTestTrials = undefined
 
 
-DEBUG = false
+DEBUG = yes
 TALK = no
 SHOW_PARTICIPANT = false
 STAGE = 1
@@ -163,6 +163,8 @@ $(window).on 'load', ->
     console.log "loaded #{TRIALS_TEST?.length} test trials"
     TRIALS_TRAINING = loadJson "static/json/mcrl_trials/increasing.json"
     console.log "loaded #{TRIALS_TRAINING?.length} training trials"
+    DEMO_TRIALS = _.shuffle loadJson "static/json/demo/exp2_312_optimal.json"
+    console.log "loaded #{DEMO_TRIALS?.length} demo trials"
 
     getTrainingTrials = do ->
       t = _.shuffle TRIALS_TRAINING
@@ -940,10 +942,7 @@ initializeExperiment = ->
         blockName: 'training'
         stateDisplay: 'click'
         stateClickCost: PARAMS.inspectCost
-        timeline: switch
-          when SHOW_PARTICIPANT then DEMO_TRIALS
-          when DEBUG then getTrainingTrials 2
-          else getTrainingTrials 10
+        timeline: DEMO_TRIALS
         startScore: 50
         _init: ->
           _.extend(this, STRUCTURE_TRAINING)
@@ -1023,44 +1022,10 @@ initializeExperiment = ->
         ]
 
 
-    #  experiment_timeline = switch
-    #    when SHOW_PARTICIPANT then [
-    #      test
-    #    ]
-    #    when DEBUG then [
-    #      train_basic1
-    #      pre_test_intro1
-    #      pre_test_intro2
-    #      pre_test
-    #      divider_pretest_training    
-    #      training
-    #      divider_training_test
-    #      test_block_intro
-    #      post_test
-    #      #quiz
-    #      #verbal_responses
-    #      finish
-    #    ]
-    #    when TALK then [
-    #      talk_demo
-    #    ]
-    #    else [
-    #      train_basic1
-    #      pre_test_intro1
-    #      pre_test_intro2
-    #      pre_test
-    #      divider_pretest_training    
-    #      training
-    #      divider_training_test
-    #      test_block_intro
-    #      post_test
-    #      #quiz
-    #      #verbal_responses
-    #      finish
-    #      ]
-
       if DEBUG
         experiment_timeline = do ->
+          return [demo]
+
           tl = []
           if STAGE1
             tl.push retention_instruction

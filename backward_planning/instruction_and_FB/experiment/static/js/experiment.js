@@ -24,7 +24,7 @@ getTrainingTrials = void 0;
 
 getTestTrials = void 0;
 
-DEBUG = false;
+DEBUG = true;
 
 TALK = false;
 
@@ -188,6 +188,8 @@ $(window).on('load', function() {
     console.log(`loaded ${(TRIALS_TEST != null ? TRIALS_TEST.length : void 0)} test trials`);
     TRIALS_TRAINING = loadJson("static/json/mcrl_trials/increasing.json");
     console.log(`loaded ${(TRIALS_TRAINING != null ? TRIALS_TRAINING.length : void 0)} training trials`);
+    DEMO_TRIALS = _.shuffle(loadJson("static/json/demo/exp2_312_optimal.json"));
+    console.log(`loaded ${(DEMO_TRIALS != null ? DEMO_TRIALS.length : void 0)} demo trials`);
     getTrainingTrials = (function() {
       var idx, t;
       t = _.shuffle(TRIALS_TRAINING);
@@ -704,7 +706,7 @@ initializeExperiment = function() {
   });
   principle2 = new TextBlock({
     text: function() {
-      return markdown("# A principle for making better decisions\n\nYou too can apply this goal-setting principle to make better decisions. Here is how:\n<ol>    \n<li>Think about what your life could be like in the future. </li>\n<li>Decide which of those futures you want to create.</li>\n<li>Set yourself the goal to make that happen.</li>\n<li>Plan how to achieve the goal and act accordingly.</li>\n</ol>\n\n<div align=\"center\"> Press <code>space</code> to continue. </div>\n");
+      return markdown("# A principle for making better decisions\n\nYou too can apply this goal-setting principle to make better decisions. Here is how:\n<ol>    \n<li>Imagine about what your life could be like in the future. </li>\n<li>Choose which of those futures you want to create.</li>\n<li>Set yourself the goal to make that happen.</li>\n<li>Plan how to achieve the goal and act accordingly.</li>\n</ol>\n\n<div align=\"center\"> Press <code>space</code> to continue. </div>\n");
     }
   });
   pre_test = new MouselabBlock({
@@ -758,16 +760,7 @@ initializeExperiment = function() {
     blockName: 'training',
     stateDisplay: 'click',
     stateClickCost: PARAMS.inspectCost,
-    timeline: (function() {
-      switch (false) {
-        case !SHOW_PARTICIPANT:
-          return DEMO_TRIALS;
-        case !DEBUG:
-          return getTrainingTrials(2);
-        default:
-          return getTrainingTrials(10);
-      }
-    })(),
+    timeline: DEMO_TRIALS,
     startScore: 50,
     _init: function() {
       _.extend(this, STRUCTURE_TRAINING);
@@ -831,44 +824,10 @@ initializeExperiment = function() {
       })
     ]
   });
-  //  experiment_timeline = switch
-  //    when SHOW_PARTICIPANT then [
-  //      test
-  //    ]
-  //    when DEBUG then [
-  //      train_basic1
-  //      pre_test_intro1
-  //      pre_test_intro2
-  //      pre_test
-  //      divider_pretest_training    
-  //      training
-  //      divider_training_test
-  //      test_block_intro
-  //      post_test
-  //      #quiz
-  //      #verbal_responses
-  //      finish
-  //    ]
-  //    when TALK then [
-  //      talk_demo
-  //    ]
-  //    else [
-  //      train_basic1
-  //      pre_test_intro1
-  //      pre_test_intro2
-  //      pre_test
-  //      divider_pretest_training    
-  //      training
-  //      divider_training_test
-  //      test_block_intro
-  //      post_test
-  //      #quiz
-  //      #verbal_responses
-  //      finish
-  //      ]
   if (DEBUG) {
     experiment_timeline = (function() {
       var tl;
+      return [demo];
       tl = [];
       if (STAGE1) {
         tl.push(retention_instruction);

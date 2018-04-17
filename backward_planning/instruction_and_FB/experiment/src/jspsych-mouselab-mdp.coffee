@@ -117,6 +117,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @startScore=0
 
         @actions=null
+        @demoStates=null
         @clicks=null
         @pid=null
 
@@ -146,9 +147,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       } = config
 
       @termAction = "#{@stateRewards.length}"
-      if @pid?
-        @showParticipant = true
-        centerMessage = "Participant #{@pid}"
+      if @pid
+        @showDemo = true
+        # centerMessage = "Participant #{@pid}"
+        centerMessage = 'Optimal Planning'
 
       SIZE = size
 
@@ -282,14 +284,19 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       console.log 'runDemo'
       for c in @clicks
         await sleep 1000
-        console.log 'click', c
         @clickState @states[c], c
         @canvas.renderAll()
       
-      for a in @actions
-        await sleep 700
-        s = _.last @data.path
-        @handleKey s, a
+      if @actions?
+        for a in @actions
+          await sleep 700
+          s = _.last @data.path
+          @handleKey s, a
+      else
+        for s1 in @demoStates
+          await sleep 700
+          @move s, null, s1
+          s = s1
           
 
     startTimer: =>
@@ -600,7 +607,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @checkFinished()
         return
 
-      unless mdp.showParticipant
+      unless mdp.showDemo
         # Start key listener.
         @keyListener = jsPsych.pluginAPI.getKeyboardResponse
           valid_responses: keys
@@ -659,7 +666,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @initTime = Date.now()
         @arrive @initial
       )
-      if @showParticipant
+      if @showDemo
         @runDemo()
     # Draw object on the canvas.
     draw: (obj) =>
@@ -777,7 +784,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       mdp.canvas.add(@circle)
       
       # @setLabel conf.label
-      unless mdp.showParticipant
+      unless mdp.showDemo
         @circle.on('mousedown', => mdp.clickState this, @name)
         @circle.on('mouseover', => mdp.mouseoverState this, @name)
         @circle.on('mouseout', => mdp.mouseoutState this, @name)
