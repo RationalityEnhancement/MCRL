@@ -12,7 +12,7 @@ getTrainingTrials = undefined
 getTestTrials = undefined
 
 
-DEBUG = no
+DEBUG = false
 TALK = no
 SHOW_PARTICIPANT = false
 STAGE = 1
@@ -40,7 +40,7 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 0
+  condition = 2
   workerId = ['debugFRED']
   # counterbalance = 0
  
@@ -60,14 +60,18 @@ in exp1/static/json/data/1B.0/traces
     
 
 if STAGE1
-    with_feedback = CONDITION > 0
+    with_feedback = CONDITION == 2
+    with_demo = CONDITION == 1
+    principle_only = CONDITION == 0
     
     PARAMS =
-      feedback: condition > 0
+      feedback: with_feedback
+      demo: with_demo
+      principle_only: principle_only
       inspectCost: 1
       condition: condition
       bonusRate: .002
-      delay_hours: 24
+      delay_hours: 20
       delay_window: 12
       branching: '312'
       with_feedback: with_feedback
@@ -366,7 +370,7 @@ initializeExperiment = ->
 
                 After practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.
 
-                Before you begin, let us give you a brief refresher of how the game works.
+                Before you begin, let us give you a brief refresher on how the game works.
               """
           else
             return new Block
@@ -406,12 +410,12 @@ initializeExperiment = ->
           This experiment has two stages which you will complete in separate HITs.
           The total base payment for both HITs is $2.00.
 
-          Stage 1 takes about 5 minutes. It pays only  $0.20 but you can earn a performance-dependent but it makes you eligible
+          Stage 1 takes about 5 minutes. Its base pay is only $0.20. But you will also earn a $0.55 bonus and it makes you eligible
           to participate in Stage 2 where you can earn $1.90 in 10 minutes plus a performance-dependent
           bonus of up to $3.50 ($1.30 is a typical bonus). 
           You will complete Stage 2 in a second HIT which you can begin #{text.return_window()}.
-          If you do not begin the HIT within this time frame, you will not receive the
-          second base payment or any bonus.           
+          If you do not begin the HIT within this time frame, you lose the bonus from Stage 1 and will miss out on the
+          much more lucrative second part of this experiment.           
 
           By completing both stages, you can make up to
           $5.50, but if you don't complete Stage 2, you will lose your bonus from Stage 1 and the HIT would be a very bad deal for you.
@@ -452,7 +456,7 @@ initializeExperiment = ->
                 Remember to come back #{text.return_window()} to complete Stage 2.
                 The HIT will be titled "Part 2 of two-part decision-making
                 experiment". **Note:** The official base pay on mTurk will be $0.01;
-                you'll receive the $1 base pay for Stage 2 as part of your bonus 
+                you'll receive the $1.90 base pay for Stage 2 as part of your bonus 
                 (in addition to the bonus you earn).
 
                 So far, you've earned a bonus of **$#{calculateBonus().toFixed(2)}**.
@@ -472,7 +476,7 @@ initializeExperiment = ->
 
                 Thanks for participating. We hope you had fun! Based on your
                 performance in Stage 1 and Stage 2, you will be awarded a bonus of
-                **$#{calculateBonus().toFixed(2)}** on top of your base pay of $2.
+                **$#{calculateBonus().toFixed(2)}** on top of your base pay of $1.90.
 
                 Please briefly answer the questions below before you submit the HIT.
                 """
@@ -564,7 +568,7 @@ initializeExperiment = ->
           The flight planning game is a metaphor for life.    
           The central circle that you start from represents your present circumstances. The six circles at the end of each path represent your possible futures. The circles in-between show the different paths you can take and how rewarding or unrewarding they are in the short-term.
 
-          Whenever you make a move, the value inside the circle that you moved to is added to your total score.        
+          Whenever you move to the circle the value inside of it is added to your total score.        
 
           <div align="center">Press <code>space</code> to proceed.</div>
         """   
@@ -588,6 +592,20 @@ initializeExperiment = ->
           passed.      
 
                 """
+            
+     train_basic4 = new TextBlock
+        text: ->    
+            SCORE = 0
+            markdown """
+            <h1> Practice the goal-setting principle </h1>
+
+            We will now let you practice applying the goal setting principle in the Flight Planning game. You will find that correctly applying this principle will give you the best possible results in this game.
+
+Furthermore, we will give you click-by-click feedback on whether you applied the goal setting principle correctly.
+
+After having practiced this principle 10 times you will hopefully be able to apply this principle to your own life if you want to.
+
+                """            
         
         
     demo_basic1 = new TextBlock
@@ -652,7 +670,11 @@ In this game, the flight player navigates an airplane across a network of airpor
             markdown """
             <h1> Demonstration of the goal-setting principle </h1>
 
-            <div align="center">Press <code>space</code> to see a demonstration of the goal setting principle. </div>
+             Next, you will see a demonstration of the goal setting principle applied to the Flight Planning game. In this demonstration, you can watch what an optimal decision-maker would think about to figure out what to do. Concretely, you will see which nodes they would click on in which order, when they would stop thinking, and which actions they take based on the information they collected. </div>
+
+After having seen 10 demonstrations of this principle you will hopefully be able to apply this principle to your own life if you want to.
+
+<div align="center">Press <code>space</code> to start the demonstration.
                 """    
             
         #lowerMessage: 'Move with the arrow keys.'
@@ -883,7 +905,7 @@ In this game, the flight player navigates an airplane across a network of airpor
 
                 As we go through our lives we are often drawn to immediate pleasures and avoid doing things that are unpleasant. For instance, we watch a Youtube video because it promises immediate fun, but we put off filing our taxes because that feels difficult.
 
-                Highly successful people, like Elon Musk, make their decisions very differently: They first think about all the things they could achieve in the long-term, pick one of them as their goal, and then take the actions required to get there -- even if they are painful in the short-run. 
+                Highly successful people, like Elon Musk, make their decisions very differently: They **first think about all the things they could achieve in the long-term**, **pick one of them as their goal**, and then **do what it takes to get there** -- even if they are painful in the short-run. 
 
                 <div align="center"> Press <code>space</code> to continue. </div>
                 """
@@ -894,16 +916,47 @@ In this game, the flight player navigates an airplane across a network of airpor
 
                     You too can apply this goal-setting principle to make better decisions. Here is how:
                     <ol>    
-                    <li>Imagine about what your life could be like in the future. </li>
+                    <li><b>Imagine what your life could be like in the future.</b> </li>
+                    <li><b>Choose which of those futures you want to create.</b></li>
+                    <li><b>Set yourself the goal to make that happen.</b></li>
+                    <li><b>Plan how to achieve the goal and act accordingly.</b></li>
+                    </ol>
+
+                    <div align="center"> Press <code>space</code> to continue. </div>
+
+                """
+    principle3 = new Block         
+        type: 'survey-text'
+        preamble: -> markdown """
+            # A principle for making better decisions
+
+          """
+
+        questions: ['Please summarize the principle we just told you about in your own words.']
+        button: 'Next'
+        
+    principle4 = new TextBlock
+                text: ->
+                    markdown """
+                    # A principle for making better decisions
+
+                    If you had any difficulty remembering the principle, then please take another loook at it:
+                    <ol>    
+                    <li>Imagine what your life could be like in the future. </li>
                     <li>Choose which of those futures you want to create.</li>
                     <li>Set yourself the goal to make that happen.</li>
                     <li>Plan how to achieve the goal and act accordingly.</li>
                     </ol>
 
                     <div align="center"> Press <code>space</code> to continue. </div>
-
+                    """
+    
+      principle5 = new TextBlock
+            text: ->
+                markdown """
+                    Now that you have learned about this principle, you can hopefully apply it to make better decisions in your own life if you want to.
                 """
-                    
+    
                 
       pre_test = new MouselabBlock
         minTime: 7
@@ -999,6 +1052,7 @@ In this game, the flight player navigates an airplane across a network of airpor
 
         questions: [
           'What did you learn?'    
+          'Did you apply the principle in your own life? If so, which decision(s) did you use it for?' 
           'Was anything confusing or hard to understand?'
           'What is your age?'
           'Additional coments?'
@@ -1038,20 +1092,25 @@ In this game, the flight player navigates an airplane across a network of airpor
           unless STAGE2    
             tl.push principle1
             tl.push principle2
+            tl.push principle3
+            tl.push principle4
             
             if with_feedback
                 tl.push train_basic1
                 tl.push train_basic2
                 tl.push train_basic3
+                tl.push train_basic4
                 #tl.push pre_test     
                 #tl.push divider_pretest_training    
                 tl.push training
-            else
+            if with_demo
                 tl.push demo_basic1
                 tl.push demo_basic2
                 tl.push demo_basic3
                 tl.push demo_basic4
                 tl.push demo
+            if principle_only    
+                tl.push principle5
             
           unless STAGE1
             tl.push test_block_intro
@@ -1064,6 +1123,7 @@ In this game, the flight player navigates an airplane across a network of airpor
         
       else
         experiment_timeline = do ->
+        #  return [demo]
           tl = []
           if STAGE1
             tl.push retention_instruction
@@ -1075,21 +1135,26 @@ In this game, the flight player navigates an airplane across a network of airpor
           unless STAGE2    
             tl.push principle1
             tl.push principle2
+            tl.push principle3
+            tl.push principle4
             
             if with_feedback
                 tl.push train_basic1
                 tl.push train_basic2
                 tl.push train_basic3
+                tl.push train_basic4
                 #tl.push pre_test     
                 #tl.push divider_pretest_training    
                 tl.push training
-            else
+            if with_demo
                 tl.push demo_basic1
                 tl.push demo_basic2
                 tl.push demo_basic3
                 tl.push demo_basic4
                 tl.push demo
-                
+            if principle_only    
+                tl.push principle5
+            
           unless STAGE1
             tl.push test_block_intro
             tl.push post_test
@@ -1098,15 +1163,10 @@ In this game, the flight player navigates an airplane across a network of airpor
           else
             tl.push finish
           return tl
-
-      # ================================================ #
-      # ========= START AND END THE EXPERIMENT ========= #
-      # ================================================ #
-
-      # bonus is the total score multiplied by something
+        
       calculateBonus = ->
         if STAGE1
-            bonus = SCORE * PARAMS.bonusRate
+            bonus = 0.55 #SCORE * PARAMS.bonusRate
             bonus = (Math.round (bonus * 100)) / 100  # round to nearest cent
             return Math.max(0, bonus)
         
