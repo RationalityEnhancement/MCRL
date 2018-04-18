@@ -1,16 +1,16 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import scipy.stats
 from scipy.stats import norm
 import scipy.integrate as integrate
 import gym
 import random
-import itertools as it
+from functools import lru_cache
 from agents import Agent
 from evaluation import *
 from distributions import cmax, smax, sample, expectation, PointMass, Normal, Categorical
 
-ZERO = PointMass(0)
+ZERO = PointMass(0)   
+
+    
 
 class OldMouselabEnv(gym.Env):
     """MetaMDP for the Mouselab task."""
@@ -74,10 +74,11 @@ class OldMouselabEnv(gym.Env):
         # todo: include max_mu
         # tmp: Works only for Normal
         self.vars = np.sum(self.dist**2*self.reward.sigma**2)*np.ones(self.gambles)
-        return self.features(self._state)
+        return self._state
 
     def _step(self, action):
-#         print('step ' + str(action))
+        self.vpi.cache_clear()
+        self.vpi_action.cache_clear()
         if self._state is self.term_state:
             assert 0, 'state is terminal'
             # return None, 0, True, {}
@@ -103,7 +104,7 @@ class OldMouselabEnv(gym.Env):
             self._state = self._observe(action)
             reward = self.cost
             done = False
-        return self.features(self._state), reward, done, {}
+        return self._state, reward, done, {}
 
     def _observe(self, action):
 #         print('obs ' + str(action))
@@ -119,12 +120,11 @@ class OldMouselabEnv(gym.Env):
         s[action] = result
         return tuple(s)
 
-    def actions(self, state=None):
+    def actions(self, state):
         """Yields actions that can be taken in the given state.
 
         Actions include observing the value of each unobserved node and terminating.
         """
-        state = state if state is not None else self._state
         if state is self.term_state:
             return
         for i, v in enumerate(state):
@@ -148,10 +148,6 @@ class OldMouselabEnv(gym.Env):
                 s1[action] = r
                 yield (p, tuple(s1), self.cost)
 
-    def features(self, state=None):
-        state = state if state is not None else self._state
-        return state
-
 
     def action_features(self, action, state=None):
         state = state if state is not None else self._state
@@ -166,21 +162,22 @@ class OldMouselabEnv(gym.Env):
                 0,
                 self.expected_term_reward(state)
             ])
+        else:
+            gamble = action // self.outcomes
+            return np.array([
+                self.cost,
+                self.myopic_voi(action),
+                self.vpi_action(gamble),
+                self.vpi(),
+                self.expected_term_reward(state)
+            ])
 
-        return np.array([
-            self.cost,
-            self.myopic_voi(action, state),
-            self.vpi_action(action, state),
-            self.vpi(state),
-            self.expected_term_reward(state)
-        ])
-
-    def gamble_dists(self, state=None):
-        state = state if state is not None else self._state
+    def gamble_dists(self, state):
         grid = np.array(state).reshape(self.gambles, self.outcomes)
         return np.dot(grid, self.dist)
 
-    def vpi(self,state=None):
+    @lru_cache(None)
+    def vpi(self):
         gambles = [Normal(self.mus[i],np.sqrt(self.vars[i]))
                    for i in range(self.gambles)]
         samples_max = np.amax([[sample(gambles[i])
@@ -202,11 +199,9 @@ class OldMouselabEnv(gym.Env):
             return np.array(self.last_state).reshape(self.gambles,self.outcomes)
         return np.array(self._state).reshape(self.gambles,self.outcomes)
 
-    def vpi_action(self, action, state=None):
-        #todo add action check
-        state = state if state is not None else self._state
+    @lru_cache(None)
+    def vpi_action(self, gamble):
         #E[value if gamble corresponding to action is fully known]
-        gamble = action//self.outcomes
         mus_wo_g = np.delete(self.mus,gamble)
         k = np.max(mus_wo_g)
         m = self.mus[gamble]
@@ -216,11 +211,8 @@ class OldMouselabEnv(gym.Env):
         return e_val - np.max(self.mus)
 
     #todo edit
-    def myopic_voi(self, action, state=None):
-        #todo add action check
-        state = state if state is not None else self._state
+    def myopic_voi(self, action):
         #E[value if gamble corresponding to action is fully known]
-#         print(action)
         gamble = action // self.outcomes
         outcome = action % self.outcomes
         mus_wo_g = np.delete(self.mus,gamble)
