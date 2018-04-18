@@ -44,7 +44,7 @@ class OldMouselabEnv(gym.Env):
         
         if ground_truth is False:
             self.ground_truth = False
-        elif a is not None:
+        elif ground_truth is not None:
             self.ground_truth = np.array(ground_truth)
         else:
             self.ground_truth = np.array(list(map(sample, self.init)))
@@ -173,8 +173,7 @@ class OldMouselabEnv(gym.Env):
             self.expected_term_reward(state)
         ])
 
-    def gamble_dists(self, state=None):
-        state = state if state is not None else self._state
+    def gamble_dists(self, state):
         grid = np.array(state).reshape(self.gambles, self.outcomes)
         return np.dot(grid, self.dist)
     
