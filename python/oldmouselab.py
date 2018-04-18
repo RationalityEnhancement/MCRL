@@ -14,14 +14,15 @@ ZERO = PointMass(0)
 
 class OldMouselabEnv(gym.Env):
     """MetaMDP for the Mouselab task."""
-    
+
     term_state = '__term_state__'
     def __init__(self, gambles=4, attributes=5, reward=None, cost=0,
-                 ground_truth=None, initial_states=None, randomness=1, quantization=None):
-        
+                 ground_truth=None, initial_states=None, randomness=1, quantization=4,
+                 sample_term_reward=False):
+
         self.gambles = gambles # number of gambles
         self.quantization = quantization
-        
+
         # distribution and number of attributes
         if hasattr(attributes, '__len__'):
             self.outcomes = len(attributes)
@@ -31,30 +32,25 @@ class OldMouselabEnv(gym.Env):
             self.dist = np.random.dirichlet(np.ones(attributes)*randomness,size=1)[0]
         # reward for the payoffs
         self.reward = reward if reward is not None else Normal(1, 1)
-        if quantization:
-            self.discrete_reward = self.reward.to_discrete(quantization)
-        
+
         if hasattr(reward, 'sample'):
             self.iid_rewards = True
         else:
             self.iid_rewards = False
-            
+
         self.cost = - abs(cost)
         self.initial_states = initial_states
         self.max = cmax
         self.init = tuple([self.reward,] * (self.gambles*self.outcomes))
-        
+
         if ground_truth is False:
             self.ground_truth = False
         elif ground_truth is not None:
             self.ground_truth = np.array(ground_truth)
         else:
-            if self.quantization:
-                self.ground_truth = np.array([self.discrete_reward.sample() for _ in self.init])
-            else:
-                self.ground_truth = np.array(list(map(sample, self.init)))
-            
-        self.sample_term_reward = False
+            self.ground_truth = np.array(list(map(sample, self.init)))
+
+        self.sample_term_reward = sample_term_reward
         self.term_action = self.gambles*self.outcomes
         self.reset()
 #         self.ground_truth = np.array(ground_truth) if ground_truth is not None else None
@@ -89,10 +85,11 @@ class OldMouselabEnv(gym.Env):
             # self._state = self.term_state
             if self.sample_term_reward:
                 if self.ground_truth is not False:
-                    gamble = self.best_gamble()
-                    reward = self.ground_truth[gamble].sum()
+                    best_idx = np.argmax(self.mus)
+                    gt_grid = self.ground_truth.reshape(self.gambles,self.outcomes)
+                    reward = self.dist.dot(gt_grid[best_idx])
                 else:
-                    reward = self.term_reward().sample()
+                    reward = sample(self.term_reward())
             else:
                 reward = self.expected_term_reward()
             self.last_state = self._state
@@ -112,15 +109,12 @@ class OldMouselabEnv(gym.Env):
 #         print('obs ' + str(action))
         if self.ground_truth is not False:
             result = self.ground_truth[action]
-        elif self.quantization:
-            assert hasattr(self._state[action], 'sample')
-            result = self.discrete_reward.sample()
         else:
             result = self._state[action].sample()
         s = list(self._state)
         gamble = action // self.outcomes
         option = action % self.outcomes
-        self.mus[gamble] += self.dist[option]*(result - self.reward.mu)
+        self.mus[gamble] += self.dist[option]*(result - self.reward.expectation())
         self.vars[gamble] = max(0,self.vars[gamble] - self.dist[option]**2*self.reward.sigma**2)
         s[action] = result
         return tuple(s)
@@ -181,36 +175,33 @@ class OldMouselabEnv(gym.Env):
             self.expected_term_reward(state)
         ])
 
-    def gamble_dists(self, state):
+    def gamble_dists(self, state=None):
+        state = state if state is not None else self._state
         grid = np.array(state).reshape(self.gambles, self.outcomes)
         return np.dot(grid, self.dist)
-    
-    def gsample(self,gamble):
-        if hasattr(gamble, 'sample'):
-            return gamble.sample()
-        return gamble
-    
+
     def vpi(self,state=None):
-        gambles = [Normal(self.mus[i],np.sqrt(self.vars[i])) 
+        gambles = [Normal(self.mus[i],np.sqrt(self.vars[i]))
                    for i in range(self.gambles)]
-        samples_max = np.amax([[self.gsample(gambles[i]) 
-                                for i in range(self.gambles)] 
+        samples_max = np.amax([[sample(gambles[i])
+                                for i in range(self.gambles)]
                                for _ in range(2500)],1)
         return np.mean(samples_max) - np.max(self.mus)
-    
+
     def vpi2(self,state=None):
         state = state if state is not None else self._state
-        grid = np.array(self._state).reshape(self.gambles,self.outcomes)
-        gambles = grid.dot(self.dist)
-        samples_max = np.amax([[self.gsample(gambles[i]) 
+        # grid = np.array(self._state).reshape(self.gambles,self.outcomes)
+        # gambles = grid.dot(self.dist)
+        gambles = self.gamble_dists(state)
+        samples_max = np.amax([[sample(gambles[i])
                                 for i in range(self.gambles)] for _ in range(2500)],1)
         return np.mean(samples_max) - np.max(self.mus)
-    
+
     def grid(self,state=None):
-        if self._state == self.term_state:
+        if self._state is self.term_state:
             return np.array(self.last_state).reshape(self.gambles,self.outcomes)
         return np.array(self._state).reshape(self.gambles,self.outcomes)
-   
+
     def vpi_action(self, action, state=None):
         #todo add action check
         state = state if state is not None else self._state
@@ -223,7 +214,7 @@ class OldMouselabEnv(gym.Env):
         e_higher = integrate.quad(lambda x: x*norm.pdf(x,m,s), k, np.inf)[0]
         e_val = k*norm.cdf(k,m,s) + e_higher
         return e_val - np.max(self.mus)
-    
+
     #todo edit
     def myopic_voi(self, action, state=None):
         #todo add action check
@@ -240,32 +231,12 @@ class OldMouselabEnv(gym.Env):
         e_val = k*norm.cdf(k,m,s) + e_higher
         return e_val - np.max(self.mus)
 
-    
-    def best_gamble(self, state=None):
+    def term_reward(self, state=None):
         state = state if state is not None else self._state
         grid = np.array(state).reshape(self.gambles,self.outcomes)
         best_idx = np.argmax(self.mus)
-        best_gamble = max((self.dist*grid[g] for g in range(self.gambles)), 
-                          default=ZERO, key=lambda x: sum(map(expectation,x)))
-        return grid[best_idx]
-    
-    
-    def term_reward(self, state=None):
-        state = state if state is not None else self._state
-        state_value = self.state_value(state)
-        return state_value  
-    
-    def state_value(self, state=None):
-        """A distribution over total rewards after the given node."""
-        state = state if state is not None else self._state
-        best_gamble = self.dist * self.best_gamble(state)
-        return np.sum(best_gamble)   
-    
+        return self.dist.dot(grid[best_idx])
+
     def expected_term_reward(self, state=None):
         state = state if state is not None else self._state
         return max(map(expectation, self.gamble_dists(state)))
-
-        sum_bg = self.term_reward(state)
-        if hasattr(sum_bg, 'sample'):
-            return sum_bg.expectation()
-        return sum_bg
