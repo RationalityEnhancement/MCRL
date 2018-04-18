@@ -31,11 +31,8 @@ class OldMouselabEnv(gym.Env):
             self.dist = np.random.dirichlet(np.ones(attributes)*randomness,size=1)[0]
         # reward for the payoffs
         self.reward = reward if reward is not None else Normal(1, 1)
-        self.reward_mu = reward.mu
-        self.reward_sigma = reward.sigma
         if quantization:
-            self.reward = self.reward.to_discrete(quantization)
-
+            self.discrete_reward = self.reward.to_discrete(quantization)
         
         if hasattr(reward, 'sample'):
             self.iid_rewards = True
@@ -52,7 +49,10 @@ class OldMouselabEnv(gym.Env):
         elif ground_truth is not None:
             self.ground_truth = np.array(ground_truth)
         else:
-            self.ground_truth = np.array(list(map(sample, self.init)))
+            if self.quantization:
+                self.ground_truth = np.array([self.discrete_reward.sample() for _ in self.init])
+            else:
+                self.ground_truth = np.array(list(map(sample, self.init)))
             
         self.sample_term_reward = False
         self.term_action = self.gambles*self.outcomes
@@ -77,7 +77,7 @@ class OldMouselabEnv(gym.Env):
         self.mus = [expectation(np.sum(self.dist*grid[g])) for g in range(self.gambles)]
         # todo: include max_mu
         # tmp: Works only for Normal
-        self.vars = np.sum(self.dist**2*self.reward_sigma**2)*np.ones(self.gambles)
+        self.vars = np.sum(self.dist**2*self.reward.sigma**2)*np.ones(self.gambles)
         return self.features(self._state)
 
     def _step(self, action):
@@ -112,13 +112,16 @@ class OldMouselabEnv(gym.Env):
 #         print('obs ' + str(action))
         if self.ground_truth is not False:
             result = self.ground_truth[action]
+        elif self.quantization:
+            assert hasattr(self._state[action], 'sample')
+            result = self.discrete_reward.sample()
         else:
             result = self._state[action].sample()
         s = list(self._state)
         gamble = action // self.outcomes
         option = action % self.outcomes
-        self.mus[gamble] += self.dist[option]*(result - self.reward_mu)
-        self.vars[gamble] = max(0,self.vars[gamble] - self.dist[option]**2*self.reward_sigma**2)
+        self.mus[gamble] += self.dist[option]*(result - self.reward.mu)
+        self.vars[gamble] = max(0,self.vars[gamble] - self.dist[option]**2*self.reward.sigma**2)
         s[action] = result
         return tuple(s)
 
@@ -232,7 +235,7 @@ class OldMouselabEnv(gym.Env):
         mus_wo_g = np.delete(self.mus,gamble)
         k = np.max(mus_wo_g)
         m = self.mus[gamble]
-        s = self.reward_sigma*self.dist[outcome]
+        s = self.reward.sigma*self.dist[outcome]
         e_higher = integrate.quad(lambda x: x*norm.pdf(x,m,s), k, np.inf)[0]
         e_val = k*norm.cdf(k,m,s) + e_higher
         return e_val - np.max(self.mus)
