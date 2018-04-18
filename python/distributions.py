@@ -176,6 +176,12 @@ class NormalMixture(Distribution):
     def __repr__(self):
         return 'NormMix'
 
+    @classmethod
+    def mix(cls, dists, weights):
+        dists = [d if hasattr(d, 'sample') else Normal(d, 0)
+                 for d in dists]
+        return cls([d.mu for d in dists], [d.sigma for d in dists], weights)
+
     def to_sampledist(self, n=10000):
         d = SampleDist(self.sample(n))
         ev = self.mu @ self.weights
@@ -183,7 +189,12 @@ class NormalMixture(Distribution):
         return d
 
     def expectation(self):
-        return self.mu
+        return np.dot(self.mu, self.weights)
+
+    def variance(self):
+        return (np.dot(self.weights, (self.sigma ** 2 + self.mu ** 2))
+                - self.expectation() ** 2)
+        # sigma^2_{g} = sigma^2_R*sum_{o in unobserved(g)} p_o^2
 
     def copy(self):
         return NormalMixture(self.mu, self.sigma, self.weights)
