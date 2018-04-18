@@ -49,7 +49,7 @@ if (DEBUG) {
 if (mode === "{{ mode }}") {
   // Viewing experiment not through the PsiTurk server
   DEMO = true;
-  condition = 2;
+  condition = 0;
   workerId = ['debugFRED'];
 }
 
@@ -735,7 +735,7 @@ initializeExperiment = function() {
   });
   principle5 = new TextBlock({
     text: function() {
-      return markdown("Now that you have learned about this principle, you can hopefully apply it to make better decisions in your own life if you want to.");
+      return markdown("Now that you have learned about this principle, you can hopefully apply it to make better decisions in your own life if you want to\n<div align=\"center\"> Please press <code>space</code> to continue. </div>");
     }
   });
   pre_test = new MouselabBlock({

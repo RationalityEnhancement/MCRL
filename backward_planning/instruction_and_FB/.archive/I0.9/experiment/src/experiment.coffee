@@ -40,7 +40,7 @@ else
 if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
-  condition = 2
+  condition = 0
   workerId = ['debugFRED']
   # counterbalance = 0
  
@@ -954,7 +954,8 @@ After having seen 10 demonstrations of this principle you will hopefully be able
       principle5 = new TextBlock
             text: ->
                 markdown """
-                    Now that you have learned about this principle, you can hopefully apply it to make better decisions in your own life if you want to.
+                    Now that you have learned about this principle, you can hopefully apply it to make better decisions in your own life if you want to
+<div align="center"> Please press <code>space</code> to continue. </div>
                 """
     
                 

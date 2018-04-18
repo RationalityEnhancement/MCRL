@@ -1,7 +1,7 @@
 [HIT Configuration]
 title = Part 1 of two-part decision-making experiment
 description = Please participate only if you will also participate in Part 2.
-allow_repeats = false
+allow_repeats = true
 amt_keywords = psychology, experiment
 lifetime = 24
 us_only = true
