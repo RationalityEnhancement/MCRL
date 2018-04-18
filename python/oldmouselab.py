@@ -8,9 +8,9 @@ from agents import Agent
 from evaluation import *
 from distributions import cmax, smax, sample, expectation, PointMass, Normal, Categorical
 
-ZERO = PointMass(0)   
+ZERO = PointMass(0)
 
-    
+
 
 class OldMouselabEnv(gym.Env):
     """MetaMDP for the Mouselab task."""
@@ -120,11 +120,12 @@ class OldMouselabEnv(gym.Env):
         s[action] = result
         return tuple(s)
 
-    def actions(self, state):
+    def actions(self, state=None):
         """Yields actions that can be taken in the given state.
 
         Actions include observing the value of each unobserved node and terminating.
         """
+        state = state if state is not None else self._state
         if state is self.term_state:
             return
         for i, v in enumerate(state):
