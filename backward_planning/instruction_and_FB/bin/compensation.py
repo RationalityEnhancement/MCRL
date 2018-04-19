@@ -306,8 +306,8 @@ if __name__ == '__main__':
         version = version.split('data/human_raw/')[-1]
         print(f'Approving and bonusing participants for {version}')
         try:
-            identifiers = pd.read_csv(f'data/human_raw/{version}/identifiers.csv').set_index('pid')
-            pdf = pd.read_csv(f'data/human/{version}/participants.csv').set_index('pid')
+            identifiers = pd.read_csv(f'data/human_raw/{version}/unique_identifiers.csv').set_index('pid')
+            pdf = pd.read_csv(f'data/human/{version}/participants_trimmed.csv').set_index('pid')
             pdf = pdf.join(identifiers).reset_index()
 
             try:

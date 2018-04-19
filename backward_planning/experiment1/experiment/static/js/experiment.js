@@ -542,22 +542,7 @@ initializeExperiment = function() {
       case !SHOW_PARTICIPANT:
         return [test];
       case !DEBUG:
-        return [
-          train_basic1,
-          //train_inspector
-          //train_inspect_cost
-          //instructions1    
-          pre_test_intro,
-          pre_test,
-          divider_pretest_training,
-          training,
-          divider_training_test,
-          test_block_intro,
-          post_test,
-          quiz,
-          verbal_responses,
-          finish
-        ];
+        return [train_basic1, pre_test_intro, pre_test, divider_pretest_training, training, divider_training_test, test_block_intro, post_test, quiz, verbal_responses, finish];
       case !TALK:
         return [talk_demo];
       default:

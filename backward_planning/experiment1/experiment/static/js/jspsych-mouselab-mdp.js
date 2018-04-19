@@ -297,7 +297,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     }
 
     async runDemo() {
-      var a, c, i, j, len, len1, ref, ref1, results, s;
+      var a, c, i, j, l, len, len1, len2, ref, ref1, ref2, results, results1, s, s1;
       this.timeLeft = 1;
       console.log('runDemo');
       ref = this.clicks;
@@ -308,15 +308,27 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         this.clickState(this.states[c], c);
         this.canvas.renderAll();
       }
-      ref1 = this.actions;
-      results = [];
-      for (j = 0, len1 = ref1.length; j < len1; j++) {
-        a = ref1[j];
-        await sleep(700);
-        s = _.last(this.data.path);
-        results.push(this.handleKey(s, a));
+      if (this.actions != null) {
+        ref1 = this.actions;
+        results = [];
+        for (j = 0, len1 = ref1.length; j < len1; j++) {
+          a = ref1[j];
+          await sleep(700);
+          s = _.last(this.data.path);
+          results.push(this.handleKey(s, a));
+        }
+        return results;
+      } else {
+        ref2 = this.demoStates;
+        results1 = [];
+        for (l = 0, len2 = ref2.length; l < len2; l++) {
+          s1 = ref2[l];
+          await sleep(700);
+          this.move(s, null, s1);
+          results1.push(s = s1);
+        }
+        return results1;
       }
-      return results;
     }
 
     startTimer() {

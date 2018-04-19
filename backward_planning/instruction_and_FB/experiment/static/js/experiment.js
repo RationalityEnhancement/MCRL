@@ -24,13 +24,13 @@ getTrainingTrials = void 0;
 
 getTestTrials = void 0;
 
-DEBUG = false;
+DEBUG = true;
 
 TALK = false;
 
 SHOW_PARTICIPANT = false;
 
-STAGE = 1;
+STAGE = 2;
 
 STAGE1 = STAGE === 1;
 
@@ -41,7 +41,7 @@ RETURN_BONUS = 0;
 if (DEBUG) {
   console.log("X X X X X X X X X X X X X X X X X\n X X X X X DEBUG  MODE X X X X X\nX X X X X X X X X X X X X X X X X");
   condition = 0;
-  workerId = ['debugFRED'];
+  workerId = ['debugV3Vl2'];
 } else {
   console.log("# =============================== #\n# ========= NORMAL MODE ========= #\n# =============================== #");
 }
@@ -50,7 +50,7 @@ if (mode === "{{ mode }}") {
   // Viewing experiment not through the PsiTurk server
   DEMO = true;
   condition = 0;
-  workerId = ['debugFRED'];
+  workerId = ['debugV3Vl2'];
 }
 
 // counterbalance = 0
@@ -396,7 +396,7 @@ initializeExperiment = function() {
     var return_time, stage1, worker_id;
     console.log('worker', uniqueId);
     if (DEBUG) {
-      worker_id = 'A13R19R7EQQNVA';
+      worker_id = 'debugV3Vl2';
     } else {
       worker_id = uniqueId.split(':')[0];
     }
@@ -416,7 +416,7 @@ initializeExperiment = function() {
           choices: ['Continue'],
           button_html: '<button id="return-continue" class="btn btn-primary btn-lg">%choice%</button>',
           stimulus: function() {
-            return markdown("# Welcome back\n\nThanks for returning to complete Stage 2!\n\nIf you have already completed Stage 2 of this experiment earlier today, then please return this HIT. You cannot be paid for Stage 2 twice.\n\nAfter practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.\n\nBefore you begin, let us give you a brief refresher on how the game works.");
+            return markdown("# Welcome back\n\nThanks for returning to complete Stage 2!\n\nIf you have already completed Stage 2 of this experiment earlier today, then please return this HIT. You cannot be paid for Stage 2 twice.");
           }
         });
       } else {
@@ -500,7 +500,7 @@ initializeExperiment = function() {
   test_block_intro = new TextBlock({
     text: function() {
       SCORE = 0;
-      return markdown(` <h1>Test block</h1>\nWelcome to the test block! Here, you can use what you have learned to earn a bonus. Concretely, ${bonus_text('long')} <br/> To thank you for your work so far, we'll start you off with **$100**.\n Good luck! \n <div style='text-align: center;'> Press <code>space</code> to continue. </div>`);
+      return markdown(`<h1>Web of Cash</h1>\nGet ready to play Web of Cash! \nIn this game ${bonus_text('long')} <br/> \nTo thank you for your work so far, we'll start you off with **$100**.\nGood luck! \n<div style='text-align: center;'> Press <code>space</code> to continue. </div>`);
     }
   });
   //divider_intro_training  = new TextBlock
@@ -516,19 +516,19 @@ initializeExperiment = function() {
   train_basic1 = new TextBlock({
     text: function() {
       SCORE = 0;
-      return markdown("<h1> Practice makes perfect </h1>\n\nIn this HIT, you can try out and practice the goal-setting principle to make better decisions in a simple \ngame called *Flight Planning*. You will navigate an airplane across a network of airports (gray circles). The  value inside each circle shows you how profitable it is to fly there. When you land on a gray circle\n(a ***node***) the value of the node is added to your score.\n\nYou will be able to move the plane with the arrow keys, but only in the direction\nof the arrows between the nodes. The image below shows the network of airports.\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+      return markdown("<h1> Practice makes perfect </h1>\n\nIn this HIT, you can try out and practice the goal-setting principle to make better decisions in a simple \ngame called *Flight Planning*. You will navigate an airplane across a network of airports (gray circles). The  value inside each circle shows you how profitable it is to fly there. When you land on a gray circle\n(a ***node***) the value of the node is added to your score.\n\nYou will be able to move the plane with the arrow keys, but only in the direction\nof the arrows between the nodes. The image below shows the network of airports.\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/flight-planning-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
     }
   });
   train_basic2 = new TextBlock({
     text: function() {
       SCORE = 0;
-      return markdown("<h1> Flight Planning </h1>\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-revealed.png'/>\n\nThe flight planning game is a metaphor for life.    \nThe central circle that you start from represents your present circumstances. The six circles at the end of each path represent your possible futures. The circles in-between show the different paths you can take and how rewarding or unrewarding they are in the short-term.\n\nWhenever you move to the circle the value inside of it is added to your total score.        \n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+      return markdown("<h1> Flight Planning </h1>\n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/flight-planning-revealed.png'/>\n\nThe flight planning game is a metaphor for life.    \nThe central circle that you start from represents your present circumstances. The six circles at the end of each path represent your possible futures. The circles in-between show the different paths you can take and how rewarding or unrewarding they are in the short-term.\n\nWhenever you move to the circle the value inside of it is added to your total score.        \n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
     }
   });
   train_basic3 = new TextBlock({
     text: function() {
       SCORE = 0;
-      return markdown("   <h1> Node Inspector </h1>\n\n   Initially, all of the rewards will be hidden. It is hard to decide where to go when you don't know the rewards. Fortunately, you will have access to a ***node inspector*** which can reveal\n the value of a node. To use the node inspector, simply ***click on a node***. The image below illustrates how this works, and you can try this out on the **next** screen. \n\n **Note:** you can only use the node inspector when you're on the first\n node. \n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash.png'/>\n\n One more thing: **You must spend *at least* 7 seconds on each round.**\n If you finish a round early, you'll have to wait until 7 seconds have\n passed.      \n");
+      return markdown("   <h1> Node Inspector </h1>\n\n   Initially, all of the rewards will be hidden. It is hard to decide where to go when you don't know the rewards. Fortunately, you will have access to a ***node inspector*** which can reveal\n the value of a node. To use the node inspector, simply ***click on a node***. The image below illustrates how this works, and you can try this out on the **next** screen. \n\n **Note:** you can only use the node inspector when you're on the first\n node. \n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/flight-planning.png'/>\n\n One more thing: **You must spend *at least* 7 seconds on each round.**\n If you finish a round early, you'll have to wait until 7 seconds have\n passed.      \n");
     }
   });
   train_basic4 = new TextBlock({
@@ -702,12 +702,12 @@ initializeExperiment = function() {
   });
   refresher1 = new TextBlock({
     text: function() {
-      return markdown("  <h1> Refresher 1</h1>\n\n  In this HIT, you will play a game called *Web of Cash*. You will guide a\n  money-loving spider through a spider web. When you land on a gray circle\n  (a ***node***) the value of the node is added to your score.\n\n  You will be able to move the spider with the arrow keys, but only in the direction\n  of the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.\n\n <img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
+      return markdown("  <h1> Web of Cash</h1>\n\n  In this HIT, you will play a game called *Web of Cash*. You will guide a\n  money-loving spider through a spider web. When you land on a gray circle\n  (a ***node***) the value of the node is added to your score.\n\n  You will be able to move the spider with the arrow keys, but only in the direction\n  of the arrows between the nodes. The image below shows the web that you will be navigating when the game starts.\n\n <img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash-unrevealed.png'/>\n\n<div align=\"center\">Press <code>space</code> to proceed.</div>");
     }
   });
   refresher2 = new TextBlock({
     text: function() {
-      return markdown("<h1> Refresher 2</h1>\n\nIt's hard to make good decision when you can't see what you will get!\nFortunately, you will have access to a ***node inspector*** which can reveal\nthe value of a node. To use the node inspector, simply ***click on a node***. The image below illustrates how this works, and you can try this out on the **next** screen. \n\n**Note:** you can only use the node inspector when you're on the first\nnode. \n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash.png'/>\n\nOne more thing: **You must spend *at least* 7 seconds on each round.**\nIf you finish a round early, you'll have to wait until 7 seconds have\npassed.      \n\n<div align=\"center\"> Press <code>space</code> to continue. </div>\n");
+      return markdown("<h1> Web of Cash</h1>\n\nIt's hard to make good decision when you can't see what you will get!\nFortunately, you will have access to a ***node inspector*** which can reveal\nthe value of a node. To use the node inspector, simply ***click on a node***. The image below illustrates how this works, and you can try this out on the **next** screen. \n\n**Note:** you can only use the node inspector when you're on the first\nnode. \n\n<img class='display' style=\"width:50%; height:auto\" src='static/images/web-of-cash.png'/>\n\nOne more thing: **You must spend *at least* 7 seconds on each round.**\nIf you finish a round early, you'll have to wait until 7 seconds have\npassed.      \n\n<div align=\"center\"> Press <code>space</code> to continue. </div>\n");
     }
   });
   principle1 = new TextBlock({

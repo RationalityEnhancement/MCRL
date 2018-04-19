@@ -15,7 +15,7 @@ getTestTrials = undefined
 DEBUG = false
 TALK = no
 SHOW_PARTICIPANT = false
-STAGE = 1
+STAGE = 2
 
 STAGE1 = STAGE == 1
 STAGE2 = STAGE == 2
@@ -29,7 +29,7 @@ if DEBUG
   X X X X X X X X X X X X X X X X X
   """
   condition = 0
-  workerId = ['debugFRED']
+  workerId = ['debugV3Vl2']
   
 else
   console.log """
@@ -41,7 +41,7 @@ if mode is "{{ mode }}"
   # Viewing experiment not through the PsiTurk server
   DEMO = true
   condition = 0
-  workerId = ['debugFRED']
+  workerId = ['debugV3Vl2']
   # counterbalance = 0
  
 CONDITION = parseInt condition
@@ -340,7 +340,7 @@ initializeExperiment = ->
     check_returning = do ->
         console.log 'worker', uniqueId
         if DEBUG
-          worker_id = 'A13R19R7EQQNVA'
+          worker_id = 'debugV3Vl2'
         else
           worker_id = uniqueId.split(':')[0]
 
@@ -367,10 +367,6 @@ initializeExperiment = ->
                 Thanks for returning to complete Stage 2!
 
                 If you have already completed Stage 2 of this experiment earlier today, then please return this HIT. You cannot be paid for Stage 2 twice.
-
-                After practicing on the simple version of Web of Cash in Stage 1, you can now use what you have learned to earn real money in the difficult version.
-
-                Before you begin, let us give you a brief refresher on how the game works.
               """
           else
             return new Block
@@ -513,8 +509,10 @@ initializeExperiment = ->
         text: ->
           SCORE = 0        
           markdown """ 
-          <h1>Test block</h1>
-         Welcome to the test block! Here, you can use what you have learned to earn a bonus. Concretely, #{bonus_text('long')} <br/> To thank you for your work so far, we'll start you off with **$100**.
+          <h1>Web of Cash</h1>
+          Get ready to play Web of Cash! 
+In this game #{bonus_text('long')} <br/> 
+To thank you for your work so far, we'll start you off with **$100**.
           Good luck! 
           <div style='text-align: center;'> Press <code>space</code> to continue. </div>
           """
@@ -552,7 +550,7 @@ initializeExperiment = ->
           You will be able to move the plane with the arrow keys, but only in the direction
           of the arrows between the nodes. The image below shows the network of airports.
 
-          <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash-unrevealed.png'/>
+          <img class='display' style="width:50%; height:auto" src='static/images/flight-planning-unrevealed.png'/>
 
           <div align="center">Press <code>space</code> to proceed.</div>
         """
@@ -563,7 +561,7 @@ initializeExperiment = ->
           markdown """
           <h1> Flight Planning </h1>
 
-          <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash-revealed.png'/>
+          <img class='display' style="width:50%; height:auto" src='static/images/flight-planning-revealed.png'/>
 
           The flight planning game is a metaphor for life.    
           The central circle that you start from represents your present circumstances. The six circles at the end of each path represent your possible futures. The circles in-between show the different paths you can take and how rewarding or unrewarding they are in the short-term.
@@ -585,7 +583,7 @@ initializeExperiment = ->
           **Note:** you can only use the node inspector when you're on the first
           node. 
 
-         <img class='display' style="width:50%; height:auto" src='static/images/web-of-cash.png'/>
+         <img class='display' style="width:50%; height:auto" src='static/images/flight-planning.png'/>
 
           One more thing: **You must spend *at least* 7 seconds on each round.**
           If you finish a round early, you'll have to wait until 7 seconds have
@@ -862,7 +860,7 @@ After having seen 10 demonstrations of this principle you will hopefully be able
       refresher1 = new TextBlock
         text: ->
           markdown """
-          <h1> Refresher 1</h1>
+          <h1> Web of Cash</h1>
 
           In this HIT, you will play a game called *Web of Cash*. You will guide a
           money-loving spider through a spider web. When you land on a gray circle
@@ -879,7 +877,7 @@ After having seen 10 demonstrations of this principle you will hopefully be able
       refresher2 = new TextBlock
         text: ->
           markdown """
-          <h1> Refresher 2</h1>
+          <h1> Web of Cash</h1>
 
           It's hard to make good decision when you can't see what you will get!
           Fortunately, you will have access to a ***node inspector*** which can reveal
