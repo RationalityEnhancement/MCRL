@@ -136,6 +136,14 @@ def bo_policy(envs, max_cost=10., normalize_voi=True, n_calls=60,
     else:
         return LiederPolicy(theta)
 
+def read_ombo_policy(reward_mu, reward_sigma, outcome_probs, cost=0.01):
+    """Returns optimized policy for the given environment parameters"""
+    stakes = 'hs' if reward_mu == 5.0 else 'ls'
+    disp = 'hd' if np.max(outcome_probs) >= 0.85 else 'ld'
+    cents = str(int(100*cost))
+    polfil = 'data/om_bmps_pols/best/'+stakes+'_'+disp+'_'+cents+'cents.npy'
+    bo_pol_theta = np.load(polfil)
+    return LiederPolicy(list(bo_pol_theta))
 
 from exact import solve
 from policies import FunctionPolicy
