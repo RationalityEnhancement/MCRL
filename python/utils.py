@@ -18,6 +18,7 @@ lmap = curry(compose(list, map))
 amap = curry(compose(np.array, lmap))
 
 # ---------- Other ---------- #
+
 def str_join(args, sep=' '):
     return sep.join(map(str, args))
 
