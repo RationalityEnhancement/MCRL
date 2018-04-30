@@ -15,7 +15,8 @@ getTestTrials = undefined
 DEBUG = false
 TALK = no
 SHOW_PARTICIPANT = false
-STAGE = 2
+STAGE = 1
+TUTOR_DEMO = true
 
 STAGE1 = STAGE == 1
 STAGE2 = STAGE == 2
@@ -43,6 +44,11 @@ if mode is "{{ mode }}"
   condition = 0
   workerId = ['debugV3Vl2']
   # counterbalance = 0
+    
+if TUTOR_DEMO
+ condition = 2
+ DEMO = true
+ STAGE = 1    
  
 CONDITION = parseInt condition
 
@@ -152,24 +158,32 @@ $(window).on 'load', ->
 
 
   delay 300, ->
-    console.log 'Loading data'
-        
-    psiturk.recordUnstructuredData 'params', PARAMS
+    console.log 'Loading data'    
 
     if PARAMS.variance
       id = "#{PARAMS.branching}_#{PARAMS.variance}"
     else
       id = "#{PARAMS.branching}"
-    STRUCTURE_TEST = loadJson "static/json/structure/31123.json"
-    STRUCTURE_TRAINING = loadJson "static/json/structure/312.json"
+    
+    if STAGE2
+        STRUCTURE_TEST = loadJson "static/json/structure/31123.json"
+    
+    if STAGE1
+        STRUCTURE_TRAINING = loadJson "static/json/structure/312.json"
+        TRIALS_TRAINING = loadJson "static/json/mcrl_trials/increasing.json"
+        console.log "loaded #{TRIALS_TRAINING?.length} training trials"
+
+        
     #TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
+    if not DEMO
+        psiturk.recordUnstructuredData 'params', PARAMS
+        
     TRIALS_TEST = loadJson "static/json/rewards/31123_increasing1.json"
     console.log "loaded #{TRIALS_TEST?.length} test trials"
-    TRIALS_TRAINING = loadJson "static/json/mcrl_trials/increasing.json"
-    console.log "loaded #{TRIALS_TRAINING?.length} training trials"
     DEMO_TRIALS = _.shuffle loadJson "static/json/demo/exp2_312_optimal.json"
     console.log "loaded #{DEMO_TRIALS?.length} demo trials"
 
+    
     getTrainingTrials = do ->
       t = _.shuffle TRIALS_TRAINING
       idx = 0
@@ -189,11 +203,11 @@ $(window).on 'load', ->
       createStartButton()
       clearTimeout loadTimeout
     else
-      console.log 'Testing saveData'
       if DEMO
         clearTimeout loadTimeout
         delay 500, createStartButton
       else
+        console.log 'Testing saveData'
         saveData().then(->
           clearTimeout loadTimeout
           delay 500, createStartButton
@@ -206,7 +220,7 @@ createStartButton = ->
   if DEBUG or TALK
     initializeExperiment()
     return
-  if DEMO
+  if DEMO and not TUTOR_DEMO
     $('#jspsych-target').append """
       <div class='alert alert-info'>
         <h3>Demo mode</h3>
@@ -1082,9 +1096,11 @@ After having seen 10 demonstrations of this principle you will hopefully be able
         #  return [demo]
           tl = []
           if STAGE1
-            tl.push retention_instruction
+            if not DEMO    
+                tl.push retention_instruction
           if STAGE2
-            tl.push check_returning
+            if not DEMO        
+                tl.push check_returning
             tl.push refresher1
             tl.push refresher2
           #tl.push instruct_loop
