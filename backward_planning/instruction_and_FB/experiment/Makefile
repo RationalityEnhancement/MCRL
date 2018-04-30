@@ -12,5 +12,5 @@ clean:
 	rm static/json/*
 
 demo:
-	cp templates/exp.html index.html
-	rsync -av --delete-after --copy-links . cocosci@cocosci-mcrl.dreamhosters.com:/home/cocosci/cocosci.dreamhosters.com/webexpt/webofcash-demo
+	cp templates/demo.html index.html
+	rsync -av --delete-after --copy-links . cocosci@cocosci-mcrl.dreamhosters.com:/home/cocosci/cocosci.dreamhosters.com/webexpt/cognitive-tutor-demo
