@@ -98,7 +98,6 @@ def solve(env, hash_state=None, actions=None, blinkered=None):
     else:
         hash_key = None
 
-    @memoize
     def Q(s, a):
         # print('Q', s, a)
         info['q'] += 1
@@ -107,7 +106,7 @@ def solve(env, hash_state=None, actions=None, blinkered=None):
 
     @memoize(key=hash_key)
     def V(s, action_subset=None):
-        if s is None:
+        if s is None or s == '__term_state__':
             return 0
         info['v'] += 1
         acts = actions(s)
@@ -115,7 +114,6 @@ def solve(env, hash_state=None, actions=None, blinkered=None):
             acts = tuple(a for a in acts if a in action_subset)
         return max((Q(s, a) for a in acts), default=0)
     
-    @memoize
     def pi(s):
         return max(actions(s), key=lambda a: Q(s, a))
     

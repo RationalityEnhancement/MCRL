@@ -17,7 +17,7 @@ class OldMouselabEnv(gym.Env):
 
     term_state = '__term_state__'
     def __init__(self, gambles=4, attributes=5, reward=None, cost=0,
-                 ground_truth=None, initial_states=None, randomness=1, quantization=4,
+                 ground_truth=None, initial_states=None, randomness=1, quantization=None,
                  sample_term_reward=False):
 
         self.gambles = gambles # number of gambles
@@ -32,6 +32,8 @@ class OldMouselabEnv(gym.Env):
             self.dist = np.random.dirichlet(np.ones(attributes)*randomness,size=1)[0]
         # reward for the payoffs
         self.reward = reward if reward is not None else Normal(1, 1)
+        if quantization:
+            self.discrete_reward = self.reward.to_discrete(quantization)
 
         if hasattr(reward, 'sample'):
             self.iid_rewards = True
@@ -48,11 +50,15 @@ class OldMouselabEnv(gym.Env):
         elif ground_truth is not None:
             self.ground_truth = np.array(ground_truth)
         else:
-            self.ground_truth = np.array(list(map(sample, self.init)))
+            if self.quantization:
+                self.ground_truth = np.array([self.discrete_reward.sample() for _ in self.init])
+            else:
+                self.ground_truth = np.array(list(map(sample, self.init)))
 
         self.sample_term_reward = sample_term_reward
         self.term_action = self.gambles*self.outcomes
         self.reset()
+
 #         self.ground_truth = np.array(ground_truth) if ground_truth is not None else None
 #         self.grid = np.arange(self.gambles*self.outcomes).reshape((self.gambles, self.outcomes))
 #         self.exact = hasattr(reward, 'vals')
@@ -110,6 +116,9 @@ class OldMouselabEnv(gym.Env):
 #         print('obs ' + str(action))
         if self.ground_truth is not False:
             result = self.ground_truth[action]
+        elif self.quantization:
+            assert hasattr(self._state[action], 'sample')
+            result = self.discrete_reward.sample()
         else:
             result = self._state[action].sample()
         s = list(self._state)

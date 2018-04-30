@@ -66,10 +66,16 @@ class SoftmaxPolicy(Policy):
         return np.random.choice(len(probs), p=probs)
 
     def action_distribution(self, state):
-        q = np.zeros(self.n_action) - 1e9
+        q = np.zeros(self.n_action) - 1e30
         for a in self.env.actions(state):
             q[a] = self.preference(state, a)
         return softmax(q, self.temp)
+
+    def preferences(self, state):
+        q = np.zeros(self.n_action) - 1e30
+        for a in self.env.actions(state):
+            q[a] = self.preference(state, a)
+        return q
 
 
 class RandomTreePolicy(Policy):
@@ -116,6 +122,15 @@ class LiederPolicy(Policy):
                     raise
         action = max(self.env.actions(state), key=Q)
         return action
+
+    def preference(self, action):
+        if action == self.env.term_action:
+            return self.env.expected_term_reward(self.env._state)
+        else:
+            if not hasattr(self.env._state[action], 'sample'):
+                return -100
+            else:
+                return np.dot(self.theta, self.env.action_features(action))
 
 
 class MaxQSamplePolicy(Policy):
