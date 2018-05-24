@@ -1,4 +1,4 @@
-<HTML>
+    <HTML>
 <HEAD>
 <script language="JavaScript" src="js/jquery-min.js"></script>
 <script language="JavaScript" src="js/jstat.js"></script>
@@ -26,7 +26,7 @@
 //override defaults
     
 // for debugging
-SKIP_INSTRUCTIONS = true;
+SKIP_INSTRUCTIONS = false;
 
 mlweb_outtype="CSV";
 mlweb_fname="mlwebform";
@@ -136,7 +136,12 @@ nr_points=0;
             }
             else{
                 $("#consentForm").hide();
-                $("#Instructions").show();
+                if (isFullyRevealed){
+                    $("#Instructions_isFullyRevealed").show();
+                }
+                else{
+                    $("#Instructions").show();
+                }
                 start_quizTime();
             }
             return document.getElementById('consent_checkbox').checked
@@ -295,7 +300,7 @@ nr_points=0;
         And Bet 6 wins $2.01 if a purple ball is drawn. You may also wish to explore other values. Note that you have paid $0.04 for making four observations.  
     </p>
 	<p class="block-text">
-        <b>You will be required to wait at least 30 seconds before placing a bet.</b>
+        <b>You will be required to wait at least 30 seconds before placing a bet (but you can make observations anytime).</b>
     </p>
 	<p class="block-text">
         When you have finished revealing grey boxes, you will select a Bet by clicking on a red box. In this pretend example, let's imagine that you select Bet 3. You would do this by clicking on "Bet 3"...
@@ -459,7 +464,7 @@ nr_points=0;
     </div>
     
     <div id='question3' style='display:none' class='block-text'>
-        True or false: <p>I will play 20 games, but the values hidden behind the grey boxes stay the same in each game.</p>
+        True or false: <p>I will play 20 games, but the values hidden behind the grey boxes stay the same across games.</p>
         <table cellpadding='8'>
             <tr>
                 <td> True <input type="radio" name="Quiz3" id='Q3A1' value="1"> </td>
@@ -517,6 +522,18 @@ nr_points=0;
             </tr>                  
         </table>
     </div>
+    
+    <div id='question8' style='display:none' class='block-text'>
+        True or false: <p>I can make obsservation anytime during each game, but I must wait at least 30 seconds before betting.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz7" id='Q7A1' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz7" id='Q7A2' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
 
     <div align='center'> <button onclick='nextQuestion()'>Next</button></div>
 </div>
@@ -529,8 +546,297 @@ nr_points=0;
 <div id='FailedQuiz' style='display:none; font-size:125%; color:red' class='block-text'>
     Sorry, but you failed the quiz. Please read the instructions again and retake the quiz. We cannot let you play the game until you have demonstrated that you understand the rules. 
     <div align='center'><button onclick='$("#FailedQuiz").hide();$("#Instructions").show();$("#InstructionsDiv13").hide();$("#InstructionsDiv1").show();'>Re-read instructions</button></div>
+</div>    
+    
+    
+    
+    
+    
+    
+<!--================ Fully-revealed control condition-->
+<div id="Instructions_isFullyRevealed" style="display:none;">
+	<h1 align="center">Instructions</h1>
+
+    <div id="InstructionsDiv_isFullyRevealed1">
+	<p class="block-text">
+        Welcome! In this HIT you will play a series of 20 betting games. In each game, you will choose one of seven bets. After you have placed your bet, a ball will be drawn from a lottery machine with 100 balls. In the example below, the bin contains 16 yellow balls, 33 brown balls, 18 blue balls, and 33 purple balls. Which kind of ball wins you the most money depends on the bet you chose.
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_revealAll_isFullyRevealed.png" width="600">        
+    </div>
+
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed1').hide(); $('#InstructionsDiv_isFullyRevealed2').show();">Next</button>        
+        </div>
+  </div>
+    
+  <div id="InstructionsDiv_isFullyRevealed2" style="display:none">
+
+        
+	<p class="block-text">
+        
+    </p>
+	<p class="block-text">
+        <b>The value of each color ball is determined by which of the seven bets you make. Before making a bet, you may observe the value of each ball for each bet.</b> This may help you decide which bet to make.
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_revealAll_isFullyRevealed.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed2').hide(); $('#InstructionsDiv_isFullyRevealed1').show();">Previous</button>  
+            <button onclick="$('#InstructionsDiv_isFullyRevealed2').hide(); $('#InstructionsDiv_isFullyRevealed3').show();">Next</button>        
+        </div>
+
+    </div>    
+
+  <div id="InstructionsDiv_isFullyRevealed3" style="display:none">
+	<p class="block-text">
+        For example, for Bet 6, the 16 yellow balls are each worth $6.96. (But the value of the yellow balls for other bets is different).
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_revealAll_isFullyRevealed.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed3').hide(); $('#InstructionsDiv_isFullyRevealed2').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv_isFullyRevealed3').hide(); $('#InstructionsDiv_isFullyRevealed4').show();">Next</button>        
+        </div>
+    </div>  
+    
+  <div id="InstructionsDiv_isFullyRevealed4" style="display:none">
+	<p class="block-text">
+        The third box under Bet 2 wins $5.86 if a blue ball is drawn....
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_revealAll_isFullyRevealed.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed4').hide(); $('#InstructionsDiv_isFullyRevealed3').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv_isFullyRevealed4').hide(); $('#InstructionsDiv_isFullyRevealed5').show();">Next</button>        
+        </div>
+    </div>
+    
+  <div id="InstructionsDiv_isFullyRevealed5" style="display:none">
+	<p class="block-text">
+        Bet 2 wins $1.98 if a purple ball is drawn...
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_revealAll_isFullyRevealed.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed5').hide(); $('#InstructionsDiv_isFullyRevealed4').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv_isFullyRevealed5').hide(); $('#InstructionsDiv_isFullyRevealed6').show();">Next</button>        
+        </div>
+    </div>
+    
+  <div id="InstructionsDiv_isFullyRevealed6" style="display:none">
+	<p class="block-text">
+        And Bet 6 wins $2.01 if a purple ball is drawn. You may also take note of the other values.  
+    </p>
+	<p class="block-text">
+        <b>You will be required to wait at least 30 seconds before placing a bet.</b>
+    </p>
+	<p class="block-text">
+        You will select a Bet by clicking on a red box. In this pretend example, let's imagine that you select Bet 3. You would do this by clicking on "Bet 3"...
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_revealAll_isFullyRevealed.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed6').hide(); $('#InstructionsDiv_isFullyRevealed5').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv_isFullyRevealed6').hide(); $('#InstructionsDiv_isFullyRevealed7').show();">Next</button>        
+        </div>
+    </div>
+    
+<div id="InstructionsDiv_isFullyRevealed7" style="display:none">
+	<p class="block-text">
+        The outcome was a purple ball, and you would have won $5.53, as indicated by the feedback.
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_revealAll_isFullyRevealed_outcome.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed7').hide(); $('#InstructionsDiv_isFullyRevealed6').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv_isFullyRevealed7').hide();$('#instructions_text2').html(instructions);$('#InstructionsDiv_isFullyRevealed9').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv_isFullyRevealed9" style="display:none">
+	<p class="block-text">
+        After making a bet, you move-on to a new game. With each new game, <u>the value of each box will change</u>. Also, <u>the number of yellow, brown, blue, and purple balls will change</u>, and therefore the most likely outcome may change, too.
+    </p>
+	<p class="block-text">
+        <b>You will win <u><i>real</i> money</u> for your bets:</b> You will play 20 seperate games, and therefore you will win 20 seperate rewards. At the end of the task, one of these 20 rewards will be randomly selected, and <b>paid to you as real bonus money.</b>
+    </p>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed9').hide(); $('#InstructionsDiv_isFullyRevealed8').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv_isFullyRevealed9').hide();$('#instructions_text2').html(instructions);$('#InstructionsDiv_isFullyRevealed10').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv_isFullyRevealed10" style="display:none">
+	<p class="block-text">
+        There are two more important things to understand:
+    </p>
+	<p class="block-text">
+        <span id='instructions_text2'></span>
+    </p>
+	<p class="block-text">
+        2. In some games, there will be many more balls of a certain color than of all other colors combined. In the new example below, 89 out of 100 balls are brown. Therefore, a brown ball is much more likely to be drawn than any other ball. That is, for any Bet, 1 thru 7, the most likely outcome will come from the box under that bet in the <i>second</i> row.
+    </p>
+        
+    <div align="center">
+        <img src="images/unequalGambleProbs_revealAll_isFullyRevealed.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed10').hide(); $('#InstructionsDiv_isFullyRevealed9').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv_isFullyRevealed10').hide(); $('#InstructionsDiv_isFullyRevealed12').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv_isFullyRevealed12" style="display:none">
+	<p class="block-text">
+        Let's imagine you clicked on "Bet 5". A brown ball was selected and you won $0.36. This game is high-stakes.
+    </p>
+        
+    <div align="center">
+        <img src="images/unequalGambleProbs_revealAll_isFullyRevealed_outcome.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed12').hide(); $('#InstructionsDiv_isFullyRevealed11').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv_isFullyRevealed12').hide();$('#InstructionsDiv_isFullyRevealed14').show();">Next</button>        
+        </div>
+</div>
+         
+    <div id="InstructionsDiv_isFullyRevealed14" style="display:none">
+        <p class="block-text">
+            You may either review the instructions, or take an entry quiz.
+        </p>         
+         
+        <div align="center">
+            <button onclick="$('#InstructionsDiv_isFullyRevealed14').hide(); $('#InstructionsDiv_isFullyRevealed1').show();">Re-read instructions</button> 
+            <button type="button" id="start" onclick="$('#InstructionsDiv_isFullyRevealed14').hide();$('#Instructions').hide();$('#quiz_isFullyRevealed').show();">Take quiz</button>  
+        </div>
+     </div>
+</div>
+    
+
+<div id='quiz_isFullyRevealed' style='display:none' class='block-text'>
+    <h1>Quiz</h1>
+    <div id='question1_isFullyRevealed' class='block-text'>
+        <span id='quiz_intro_isFullyRevealed'> True or false: <p>The number of balls of each color tells me which color is most likely to be drawn from the bin.</p></span>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz1_isFullyRevealed" id='Q1A1_isFullyRevealed' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz1_isFullyRevealed" id='Q1A2_isFullyRevealed' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question2_isFullyRevealed' style='display:none' class='block-text'>
+        True or false: <p>I will play 20 games, but the value of each box stays the same across games.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz2_isFullyRevealed" id='Q2A1_isFullyRevealed' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz2_isFullyRevealed" id='Q2A2_isFullyRevealed' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question3_isFullyRevealed' style='display:none' class='block-text'>
+        True or false: <p>In some games, the vast majority of balls will be one single color.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz3_isFullyRevealed" id='Q3A1_isFullyRevealed' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz3_isFullyRevealed" id='Q3A2_isFullyRevealed' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question4_isFullyRevealed' style='display:none' class='block-text'>
+        True or false: <p>In "high-stakes" games, the range of possible values behind the grey boxes is $0.01 to $9.99.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz4_isFullyRevealed" id='Q4A1_isFullyRevealed' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz4_isFullyRevealed" id='Q4A2_isFullyRevealed' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question5_isFullyRevealed' style='display:none' class='block-text'>
+        True or false: <p>The number of yellow, brown, blue and purple balls in the bin is the same in all 20 games.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz5_isFullyRevealed" id='Q5A1_isFullyRevealed' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz5_isFullyRevealed" id='Q5A2_isFullyRevealed' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question6_isFullyRevealed' style='display:none' class='block-text'>
+        True or false: <p>In "low-stakes" games, the highest possible reward is $0.25</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz6_isFullyRevealed" id='Q6A1_isFullyRevealed' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz6_isFullyRevealed" id='Q6A2_isFullyRevealed' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question7_isFullyRevealed' style='display:none' class='block-text'>
+        True or false: <p>I must wait at least 30 seconds before betting.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz7_isFullyRevealed" id='Q7A1_isFullyRevealed' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz7_isFullyRevealed" id='Q7A2_isFullyRevealed' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+
+    <div align='center'> <button onclick='nextQuestion()'>Next</button></div>
+    
 </div>
 
+<div id='PassedQuiz_isFullyRevealed' style='display:none; font-size:125%; color:green' class='block-text'>
+    Congratulations! You passed the entry quiz. You are now ready to start the game.
+    <div align='center'><button onclick="$('#PassedQuiz_isFullyRevealed').hide();$('#Gambling').show();end_quizTime();start_experimentTime();start_block()">Play</button></div>
+</div>
+    
+<div id='FailedQuiz_isFullyRevealed' style='display:none; font-size:125%; color:red' class='block-text'>
+    Sorry, but you failed the quiz. Please read the instructions again and retake the quiz. We cannot let you play the game until you have demonstrated that you understand the rules. 
+    <div align='center'><button onclick='$("#FailedQuiz_isFullyRevealed").hide();$("#Instructions_isFullyRevealed").show();$("#InstructionsDiv_isFullyRevealed13").hide();$("#InstructionsDiv_isFullyRevealed1").show();'>Re-read instructions</button></div>
+</div>
+    
+ 
     
 <div id="HalfwayMessage" style="display:none">
     <p class="block-text">

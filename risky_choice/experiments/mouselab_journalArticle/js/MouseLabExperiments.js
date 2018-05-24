@@ -26,8 +26,8 @@ isHighCompensatory[0] = shuffle([1,1,1,1,1,0,0,0,0,0]);
 isHighCompensatory[1] = shuffle([1,1,1,1,1,0,0,0,0,0]);
 var nr_trials = 2;
 var question_nr=1;
-var nr_questions=7;
-correct_answers = [1,1,0,1,1,0,1];
+var nr_questions=8;
+correct_answers = [1,1,0,1,1,0,1,1];
 var failed_quiz = new Array();
 var seconds_left = 0;
 var trialTime = new Array;
@@ -37,6 +37,15 @@ var nr_outcomes = Math.floor(Math.random() * (range_nr_outcomes[1]+1 - range_nr_
 var nr_gambles = Math.floor(Math.random() * (range_nr_gambles[1]+1 - range_nr_gambles[0]) + range_nr_gambles[0]);
 for (o=0;o<nr_trials;o++){        
     RTs[o]=fillArray(-1,nr_outcomes*nr_gambles);
+}
+var isFullyRevealed = Math.round(Math.random());
+if (isFullyRevealed==1){
+    var nr_questions=7;
+    correct_answers = [1,0,1,1,0,1,1];
+    condStr = '_isFullyRevealed';
+}
+else{
+    condStr = '';
 }
 
 //
@@ -54,7 +63,7 @@ $("#MaxBonus").html(max_bonus)
 function nextQuestion(){
     
     //Did they forget to check the box?
-    checked_box=$('#Q'+question_nr+'A1').is(':checked') || $('#Q'+question_nr+'A2').is(":checked")
+    checked_box=$('#Q'+question_nr+'A1'+condStr).is(':checked') || $('#Q'+question_nr+'A2'+condStr).is(":checked")
     
     if (!checked_box){
         alert('Please check the box next to your preferred answer.')
@@ -62,14 +71,14 @@ function nextQuestion(){
     }
     
     if (question_nr<nr_questions){
-        $("#question"+question_nr).hide()
+        $("#question"+question_nr+condStr).hide()
         question_nr++;
-        $("#question"+question_nr).show()
+        $("#question"+question_nr+condStr).show()
     }
     else{
-        $("#question"+question_nr).hide()
-        $("#question1").show()        
-        $("#quiz").hide();
+        $("#question"+question_nr+condStr).hide()
+        $("#question1"+condStr).show()        
+        $("#quiz"+condStr).hide();
         question_nr=1;
         scoreQuiz()
     }
@@ -78,19 +87,30 @@ function nextQuestion(){
 
 function scoreQuiz(){    
     
-    if ($("input[name='Quiz1"+"']:checked").val()==correct_answers[0] && 
+    if ((isFullyRevealed==0 && $("input[name='Quiz1"+"']:checked").val()==correct_answers[0] && 
         $("input[name='Quiz2"+"']:checked").val()==correct_answers[1] &&
         $("input[name='Quiz3"+"']:checked").val()==correct_answers[2] &&
         $("input[name='Quiz4"+"']:checked").val()==correct_answers[3] &&
-        $("input[name='Quiz5"+"']:checked").val()==correct_answers[4]
-       )
+        $("input[name='Quiz5"+"']:checked").val()==correct_answers[4] &&
+        $("input[name='Quiz6"+"']:checked").val()==correct_answers[5] &&
+        $("input[name='Quiz7"+"']:checked").val()==correct_answers[6] &&
+        $("input[name='Quiz8"+"']:checked").val()==correct_answers[7]
+       ) ||
+        (isFullyRevealed==1 && $("input[name='Quiz1_isFullyRevealed"+"']:checked").val()==correct_answers[0] && 
+        $("input[name='Quiz2_isFullyRevealed"+"']:checked").val()==correct_answers[1] &&
+        $("input[name='Quiz3_isFullyRevealed"+"']:checked").val()==correct_answers[2] &&
+        $("input[name='Quiz4_isFullyRevealed"+"']:checked").val()==correct_answers[3] &&
+        $("input[name='Quiz5_isFullyRevealed"+"']:checked").val()==correct_answers[4] &&
+        $("input[name='Quiz6_isFullyRevealed"+"']:checked").val()==correct_answers[5] &&
+        $("input[name='Quiz7_isFullyRevealed"+"']:checked").val()==correct_answers[6]
+       ))
     {
-        $("#Quiz").hide()
-        $("#PassedQuiz").show()        
+        $("#Quiz"+condStr).hide()
+        $("#PassedQuiz"+condStr).show()        
     }
     else{
-        $("#Quiz").hide()
-        $("#FailedQuiz").show()
+        $("#Quiz"+condStr).hide()
+        $("#FailedQuiz"+condStr).show()
         failed_quiz.push(true);
     }
 }
@@ -361,7 +381,7 @@ function generateGrid(range_nr_outcomes, range_nr_gambles){
             payoffs[o][g] = parseFloat(Math.round(randn_trunc(payoff_mu,payoff_std,payoff_range)*100)/100).toFixed(2)
             mus[g] = payoff_mu;
             sigmas[g] = payoff_std;
-            revealed[o][g] = false;
+            revealed[o][g] = true;
             reveal_order[o][g] = 0; 
         }
     }
@@ -638,7 +658,8 @@ function saveAnswers(){
         payoff_mu2: payoff_mu2,
         payoff_std2: payoff_std2,
         isHighCompensatory: isHighCompensatory,
-        failed_quiz: failed_quiz
+        failed_quiz: failed_quiz,
+        isFullyRevealed: isFullyRevealed
     }
     
     data={           
