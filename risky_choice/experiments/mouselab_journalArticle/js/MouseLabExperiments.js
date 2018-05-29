@@ -39,6 +39,7 @@ for (o=0;o<nr_trials;o++){
     RTs[o]=fillArray(-1,nr_outcomes*nr_gambles);
 }
 var isFullyRevealed = Math.round(Math.random());
+var tmp_2 = 1;
 if (isFullyRevealed==1){
     var nr_questions=7;
     correct_answers = [1,0,1,1,0,1,1];
