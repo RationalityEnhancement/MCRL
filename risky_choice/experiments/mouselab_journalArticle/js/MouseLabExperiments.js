@@ -24,7 +24,7 @@ var range_nr_gambles = [7, 7];
 var isHighCompensatory = new Array();
 isHighCompensatory[0] = shuffle([1,1,1,1,1,0,0,0,0,0]);
 isHighCompensatory[1] = shuffle([1,1,1,1,1,0,0,0,0,0]);
-var nr_trials = 2;
+var nr_trials = 20;
 var question_nr=1;
 var nr_questions=8;
 correct_answers = [1,1,0,1,1,0,1,1];
@@ -39,6 +39,7 @@ for (o=0;o<nr_trials;o++){
     RTs[o]=fillArray(-1,nr_outcomes*nr_gambles);
 }
 var isFullyRevealed = Math.round(Math.random());
+var tmp_2 = 1;
 if (isFullyRevealed==1){
     var nr_questions=7;
     correct_answers = [1,0,1,1,0,1,1];
@@ -381,7 +382,7 @@ function generateGrid(range_nr_outcomes, range_nr_gambles){
             payoffs[o][g] = parseFloat(Math.round(randn_trunc(payoff_mu,payoff_std,payoff_range)*100)/100).toFixed(2)
             mus[g] = payoff_mu;
             sigmas[g] = payoff_std;
-            revealed[o][g] = true;
+            revealed[o][g] = isFullyRevealed;
             reveal_order[o][g] = 0; 
         }
     }
@@ -523,8 +524,8 @@ function update_pseudorewards(matrices,dp){
         if (dp.revealed[r][c]==false){
             sample_nr++;
             end_RT();
-            RTs[trial_nr_total-1][sample_nr-1] = RT;
             start_RT();
+            RTs[trial_nr_total-1][sample_nr-1] = RT;
         }
         else{
             return matrices;
@@ -582,9 +583,10 @@ function generate_feedback(probabilities,payoffs,chosen_gamble){
 }
 
 function hasChosen(gamble){
+    end_RT();
     end_RTtrial();
     trialTime[trial_nr_total-1] = RTtrial;
-    end_RT();
+    RTs[trial_nr_total-1][sample_nr] = RT;
     feedback[block_nr-1][trial_nr-1]=generate_feedback(decision_problem.probabilities,decision_problem.payoffs,gamble);
     nr_points+=feedback[block_nr-1][trial_nr-1];
     outcomes[trial_nr_total-1] = parseFloat(feedback[block_nr-1][trial_nr-1])
@@ -607,11 +609,17 @@ function hasChosen(gamble){
         //alert("Gamble "+gamble+" has been chosen. Payoff: "+payoff)
         
         if (feedback[block_nr-1][trial_nr-1]>0){
-            outcome_html=["The sampled ball is: "+ball_html+"&nbsp;&nbsp;&nbsp;You won $"+feedback[block_nr-1][trial_nr-1]]
             net_pay = feedback[block_nr-1][trial_nr-1] - clickCost/100
-            netPay[trial_nr_total-1] = net_pay
             net_pay = parseFloat(net_pay).toFixed(2);
-            clickCost_html = ["Net earnings (winning minus click costs): <font color='green'><b>$"+net_pay+"</b></font>"]
+            netPay[trial_nr_total-1] = net_pay
+            if (isFullyRevealed==1){
+                outcome_html=["The sampled ball is: "+ball_html+"&nbsp;&nbsp;&nbsp;You won <font color='green'><b>$"+feedback[block_nr-1][trial_nr-1]+"</b></font>"]
+                clickCost_html = [""]
+            }
+            else{
+                outcome_html=["The sampled ball is: "+ball_html+"&nbsp;&nbsp;&nbsp;You won $"+feedback[block_nr-1][trial_nr-1]]
+                clickCost_html = ["Net earnings (winning minus click costs): <font color='green'><b>$"+net_pay+"</b></font>"]
+            }
             //win_sound.play();
         }
         else{ if (feedback[block_nr-1][trial_nr-1]<0){
@@ -644,7 +652,22 @@ function saveAnswers(){
                 
     //bonus = outcomes[Math.floor(Math.random()*trial_nr_total)+1-1];
     end_experimentTime();
-    bonus = Math.max(0,netPay[Math.floor(Math.random()*trial_nr_total)+1-1]);
+    var foo1 = [];
+    for (var i = 0; i < nr_trials/2; i++) {
+        foo1.push(i);
+    }
+    var foo2 = [];
+    for (var i = nr_trials/2; i < nr_trials; i++) {
+        foo2.push(i);
+    }
+    tmp1 = shuffle(foo1);
+    bonus1 = netPay[tmp1[0]];
+    tmp2 = shuffle(foo2);
+    bonus2 = netPay[tmp2[0]];
+    bonus = Math.max(0,(Math.max(bonus1)+Math.max(bonus2))/2);
+    bonus = parseFloat(bonus).toFixed(2);
+    
+//    bonus = Math.max(0,netPay[Math.floor(Math.random()*trial_nr_total)+1-1]);
     
     basic_info={
         nr_trials:nr_trials,
