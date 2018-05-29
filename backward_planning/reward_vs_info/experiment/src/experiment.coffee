@@ -45,7 +45,9 @@ CONSTANT_DELAY = 3
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 psiturk.recordUnstructuredData 'condition', CONDITION   
-psiturk.recordUnstructuredData 'with_feedback', with_feedback
+#psiturk.recordUnstructuredData 'with_feedback', with_feedback
+psiturk.recordUnstructuredData 'with_reward', with_reward
+psiturk.recordUnstructuredData 'with_info', with_info
 
 saveData = ->
   new Promise (resolve, reject) ->
