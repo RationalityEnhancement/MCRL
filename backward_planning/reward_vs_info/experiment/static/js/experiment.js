@@ -3,7 +3,7 @@
 var BLOCKS, CONDITION, CONSTANT_DELAY, DEBUG, DEMO, DEMO_TRIALS, N_TRIAL, PARAMS, SCORE, SHOW_PARTICIPANT, STRUCTURE, TALK, TRIALS, calculateBonus, createStartButton, getTrials, initializeExperiment, psiturk, saveData, with_feedback, with_info, with_reward,
   modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
-DEBUG = true;
+DEBUG = false;
 
 TALK = false;
 
