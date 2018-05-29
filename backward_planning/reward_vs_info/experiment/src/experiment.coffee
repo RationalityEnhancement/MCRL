@@ -489,7 +489,7 @@ initializeExperiment = ->
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
       when DEBUG then TRIALS.slice(6, 7)
-      else getTrials 1
+      else getTrials 5
     startScore: 50        
 
         
@@ -515,7 +515,7 @@ initializeExperiment = ->
     timeline: switch
       when SHOW_PARTICIPANT then DEMO_TRIALS
       when DEBUG then TRIALS.slice(6, 8)
-      else getTrials 20
+      else getTrials 15
     startScore: 50
     
     

@@ -53,7 +53,11 @@ psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
 
 psiturk.recordUnstructuredData('condition', CONDITION);
 
-psiturk.recordUnstructuredData('with_feedback', with_feedback);
+
+//psiturk.recordUnstructuredData 'with_feedback', with_feedback
+psiturk.recordUnstructuredData('with_reward', with_reward);
+
+psiturk.recordUnstructuredData('with_info', with_info);
 
 saveData = function() {
   return new Promise(function(resolve, reject) {
@@ -468,7 +472,7 @@ initializeExperiment = function() {
         case !DEBUG:
           return TRIALS.slice(6, 7);
         default:
-          return getTrials(1);
+          return getTrials(5);
       }
     })(),
     startScore: 50
@@ -504,7 +508,7 @@ initializeExperiment = function() {
         case !DEBUG:
           return TRIALS.slice(6, 8);
         default:
-          return getTrials(20);
+          return getTrials(15);
       }
     })(),
     startScore: 50
