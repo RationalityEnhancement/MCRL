@@ -41,8 +41,8 @@ for (o=0;o<nr_trials;o++){
 var isFullyRevealed = Math.round(Math.random());
 var tmp_2 = 1;
 if (isFullyRevealed==1){
-    var nr_questions=7;
-    correct_answers = [1,0,1,1,0,1,1];
+    var nr_questions=6;
+    correct_answers = [1,0,1,1,0,1];
     condStr = '_isFullyRevealed';
 }
 else{
@@ -102,8 +102,8 @@ function scoreQuiz(){
         $("input[name='Quiz3_isFullyRevealed"+"']:checked").val()==correct_answers[2] &&
         $("input[name='Quiz4_isFullyRevealed"+"']:checked").val()==correct_answers[3] &&
         $("input[name='Quiz5_isFullyRevealed"+"']:checked").val()==correct_answers[4] &&
-        $("input[name='Quiz6_isFullyRevealed"+"']:checked").val()==correct_answers[5] &&
-        $("input[name='Quiz7_isFullyRevealed"+"']:checked").val()==correct_answers[6]
+        $("input[name='Quiz6_isFullyRevealed"+"']:checked").val()==correct_answers[5]
+//        $("input[name='Quiz7_isFullyRevealed"+"']:checked").val()==correct_answers[6]
        ))
     {
         $("#Quiz"+condStr).hide()
@@ -188,7 +188,12 @@ function start_trial(trial_nr){
 
 function start_trial2(trial_nr){
     
-    seconds_left = 30;//30;
+    if (isFullyRevealed==1){
+        seconds_left = 0;
+    }
+    else{
+        seconds_left = 30;//30;
+    }
     var interval = setInterval(function() {
         //document.getElementById('timer_div').innerHTML = --seconds_left;
         seconds_left--
