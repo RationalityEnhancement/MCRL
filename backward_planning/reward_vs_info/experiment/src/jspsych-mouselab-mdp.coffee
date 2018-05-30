@@ -496,11 +496,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             else
                 if @termAction in optimal 
                     msg = """        
-                    You shouldn't have inspected any more nodes.
+                    It would have been better to stop clicking and start moving.
                     """
                 else
                     msg = """          
-                    You should have inspected one of the highlighted nodes.          
+                    It would have been better to inspect one of the highlighted nodes.          
                     """
                     for a in optimal
                         @states[a].circle.set('fill', '#49f')
@@ -510,11 +510,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         if with_info and not with_reward
             if @termAction in optimal 
                 msg = """        
-                The optimal strategy would have stopped clicking and started moving.
+                It would have been better to stop clicking and start moving.
                 """
             else
                 msg = """          
-                The optimal strategy would have inspected one of the highlighted nodes.          
+                It would have been better to inspect one of the highlighted nodes.          
                 """
                 for a in optimal
                     @states[a].circle.set('fill', '#49f')
@@ -524,7 +524,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             msg = ''
 
         if with_reward
-            msg += "<br> Please wait #{delay} seconds."
+            msg = "Delay penalty for poor planning: #{delay} seconds. <br>" + msg
 
             @prompt.html """
             <div align='center' style='color:#FF0000; font-weight:bold; font-size:18pt'>
