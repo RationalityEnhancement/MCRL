@@ -1,0 +1,15 @@
+pid,responses,rt,time_elapsed
+0,"{""Q0"":""I just tried different directions"",""Q1"":""I could not tell where not to click"",""Q2"":""after I decided which direction I was going"",""Q3"":""up"",""Q4"":""no""}",70048,1522059
+0,"{""Q0"":""I do not like spiders!"",""Q1"":""yes"",""Q2"":""44"",""Q3"":""none""}",32439,1555503
+1,"{""Q0"":""i don't like clicking because it spends a dollar "",""Q1"":""tried to avoid the bad spaces"",""Q2"":""when I was satisfied "",""Q3"":""at the first step"",""Q4"":""""}",35953,1132625
+1,"{""Q0"":""sometimes you win, sometimes you lose "",""Q1"":""no"",""Q2"":""29"",""Q3"":""""}",15591,1149232
+2,"{""Q0"":""I used the node to help decide"",""Q1"":""I calculated the path "",""Q2"":""When I seen the most positive path"",""Q3"":""the the left"",""Q4"":""I tried to notice a pattern but did not see on so I used the peek tool to help me""}",99589,1201105
+2,"{""Q0"":""It would be real hard to get a 5 bonus"",""Q1"":""no"",""Q2"":""36"",""Q3"":""Thx for game""}",49052,1251170
+3,"{""Q0"":""I went for the +48. "",""Q1"":""I didn't want to waste clicks on the smaller value nodes, so I mostly clicked on the ending nodes."",""Q2"":""When I felt my choice was correct. "",""Q3"":""The ending nodes."",""Q4"":""No.""}",58830,769541
+3,"{""Q0"":""Patience and thoughtfulness"",""Q1"":""No"",""Q2"":""39"",""Q3"":""No""}",23606,794165
+4,"{""Q0"":""After I discovered I could click on more than just the first tiles, I clicked on the last ones first to see the final amount."",""Q1"":""The middle tiles were unimportant to know about."",""Q2"":""If I found a $48 I would mostly just head in that direction."",""Q3"":""Any of the final tiles were first for me to click on."",""Q4"":""Sometimes I'd click on the first ones to see if some were better than others.""}",90823,722361
+4,"{""Q0"":""I learned after the first practice round I was able to click on any tile, not just adjacent ones."",""Q1"":""No."",""Q2"":""29"",""Q3"":""NA""}",38189,761556
+5,"{""Q0"":""I decided to click on the second node, and then click on the third node after that. "",""Q1"":""I never clicked the first node, figured it wouldn't be worth it. The last node was the most important to spend my $1 on."",""Q2"":""after i had 2 positive numbers, or the the 3rd node was 48"",""Q3"":""Start from left to right, on the second node"",""Q4"":""Save money sometimes by clicking on more nodes""}",138944,878768
+5,"{""Q0"":""To take your time sometimes, at least in the trial runs."",""Q1"":""I didn't understand the delay at first in the trial, until I started to spend more of my $1 on finding more node amounts"",""Q2"":""24"",""Q3"":""""}",71156,950931
+6,"{""Q0"":""First click would be the goal or destination"",""Q1"":""would not click the route towards the goal if the goal was the best outcome"",""Q2"":""When I found the best outcome"",""Q3"":""far corners"",""Q4"":""I hope I did it properly""}",108167,694100
+6,"{""Q0"":""That I was supposed to learn something, but I just now learned that"",""Q1"":""At first yes, at the end, well I don't know, If I made incorrect decisions, then I suppose yes."",""Q2"":""46"",""Q3"":""Have a nice day""}",129197,824346

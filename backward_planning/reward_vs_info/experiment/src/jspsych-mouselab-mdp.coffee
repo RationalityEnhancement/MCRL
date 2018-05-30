@@ -496,11 +496,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             else
                 if @termAction in optimal 
                     msg = """        
-                    It would have been better to stop clicking and start moving.
+                    An expert player would have stopped clicking and started moving.
                     """
                 else
                     msg = """          
-                    It would have been better to inspect one of the highlighted nodes.          
+                    An expert player would have inspected one of the highlighted nodes.          
                     """
                     for a in optimal
                         @states[a].circle.set('fill', '#49f')
@@ -510,11 +510,11 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         if with_info and not with_reward
             if @termAction in optimal 
                 msg = """        
-                It would have been better to stop clicking and start moving.
+                An expert player would have stopped clicking and started moving.
                 """
             else
                 msg = """          
-                It would have been better to inspect one of the highlighted nodes.          
+                An expert player would have inspected one of the highlighted nodes.          
                 """
                 for a in optimal
                     @states[a].circle.set('fill', '#49f')

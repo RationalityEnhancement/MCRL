@@ -553,9 +553,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
             this.prompt.html("<div align='center' style='color:#008800; font-weight:bold; font-size:18pt'>\nGood job!\n</div>");
           } else {
             if (ref = this.termAction, indexOf.call(optimal, ref) >= 0) {
-              msg = "It would have been better to stop clicking and start moving.";
+              msg = "An expert player would have stopped clicking and started moving.";
             } else {
-              msg = "It would have been better to inspect one of the highlighted nodes.          ";
+              msg = "An expert player would have inspected one of the highlighted nodes.          ";
               for (i = 0, len = optimal.length; i < len; i++) {
                 a = optimal[i];
                 this.states[a].circle.set('fill', '#49f');
@@ -566,9 +566,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         }
         if (with_info && !with_reward) {
           if (ref1 = this.termAction, indexOf.call(optimal, ref1) >= 0) {
-            msg = "It would have been better to stop clicking and start moving.";
+            msg = "An expert player would have stopped clicking and started moving.";
           } else {
-            msg = "It would have been better to inspect one of the highlighted nodes.          ";
+            msg = "An expert player would have inspected one of the highlighted nodes.          ";
             for (j = 0, len1 = optimal.length; j < len1; j++) {
               a = optimal[j];
               this.states[a].circle.set('fill', '#49f');
