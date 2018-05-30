@@ -1,0 +1,3 @@
+action_times,actions,block,button_pressed,key_press,path,queries,responses,rewards,rt,score,simulation_mode,stimulus,time_elapsed,trial_index,trial_id,trial_type,pid
+,,,,,,,"{""Q0"":""Yes, it was confusing and maybe buggy?"",""Q1"":""I just clicked one or two on the wings. Then I picked a side that I thought would probably be better."",""Q2"":""35"",""Q3"":""""}",,102082,,,,599898,,,survey-text,1
+,,,,,,,"{""Q0"":""no"",""Q1"":""i was such a lousy player that eventually i just stopped paying the $1. once I forgot about the $1 charge and over clicked on an empty cell. Got me deep in the hole."",""Q2"":""68"",""Q3"":""fun!""}",,99009,,,,689444,,,survey-text,2

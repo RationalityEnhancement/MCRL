@@ -167,21 +167,23 @@ $(window).on 'load', ->
     
     if STAGE2
         STRUCTURE_TEST = loadJson "static/json/structure/31123.json"
+        TRIALS_TEST = loadJson "static/json/rewards/31123_increasing1.json"
     
     if STAGE1
         STRUCTURE_TRAINING = loadJson "static/json/structure/312.json"
-        TRIALS_TRAINING = loadJson "static/json/mcrl_trials/increasing.json"
+        if TUTOR_DEMO
+            TRIALS_TRAINING = loadJson "static/json/mcrl_trials/web-demo.json"
+        else        
+            TRIALS_TRAINING = loadJson "static/json/mcrl_trials/increasing.json"
         console.log "loaded #{TRIALS_TRAINING?.length} training trials"
 
         
     #TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
     if not DEMO
-        psiturk.recordUnstructuredData 'params', PARAMS
-        
-    TRIALS_TEST = loadJson "static/json/rewards/31123_increasing1.json"
-    console.log "loaded #{TRIALS_TEST?.length} test trials"
-    DEMO_TRIALS = _.shuffle loadJson "static/json/demo/exp2_312_optimal.json"
-    console.log "loaded #{DEMO_TRIALS?.length} demo trials"
+        psiturk.recordUnstructuredData 'params', PARAMS        
+        console.log "loaded #{TRIALS_TEST?.length} test trials"
+        DEMO_TRIALS = _.shuffle loadJson "static/json/demo/exp2_312_optimal.json"
+        console.log "loaded #{DEMO_TRIALS?.length} demo trials"
 
     
     getTrainingTrials = do ->
@@ -455,8 +457,8 @@ initializeExperiment = ->
 
         questions: ['If you would like a reminder email, you can optionally enter it here.']
         button: 'Submit HIT'
-
-      if STAGE1
+      
+      if STAGE1 
         finish = new Block
             type: 'button-response'
             stimulus: ->     
@@ -969,24 +971,6 @@ After having seen 10 demonstrations of this principle you will hopefully be able
                     Now that you have learned about this principle, you can hopefully apply it to make better decisions in your own life if you want to
 <div align="center"> Please press <code>space</code> to continue. </div>
                 """
-    
-                
-      pre_test = new MouselabBlock
-        minTime: 7
-        show_feedback: false
-        blockName: 'pre_test'
-        stateDisplay: 'click'
-        stateClickCost: PARAMS.inspectCost
-        timeline: switch
-          when SHOW_PARTICIPANT then DEMO_TRIALS
-          when DEBUG then getTestTrials 1
-          else getTestTrials 1
-        startScore: 50        
-        _init: ->
-          _.extend(this, STRUCTURE_TEST)
-          @trialCount = 0
-
-
       training = new MouselabBlock
         minTime: 7
         show_feedback: with_feedback
@@ -1003,92 +987,92 @@ After having seen 10 demonstrations of this principle you will hopefully be able
           @playerImage = 'static/images/plane.png'
           @trialCount = 0
             
-    
-    demo = new MouselabBlock
-        minTime: 7
-        show_feedback: with_feedback
-        blockName: 'demo'
-        stateDisplay: 'click'
-        stateClickCost: PARAMS.inspectCost
-        timeline: DEMO_TRIALS.slice(0,10)
-        startScore: 50
-        _init: ->
-          _.extend(this, STRUCTURE_TRAINING)
-          @playerImage = 'static/images/plane.png'
-          @trialCount = 0
-
-
-      post_test = new MouselabBlock
-        minTime: 7
-        show_feedback: false
-        blockName: 'test'
-        stateDisplay: 'click'
-        stateClickCost: PARAMS.inspectCost
-        timeline: switch
-          when SHOW_PARTICIPANT then DEMO_TRIALS
-          when DEBUG then getTestTrials 10
-          else getTestTrials 20
-        startScore: 100
-        _init: ->
-          _.extend(this, STRUCTURE_TEST)
-          @trialCount = 0
-
-
-      verbal_responses = new Block
-        type: 'survey-text'
-        preamble: -> markdown """
-            # Please answer these questions
-
-          """
-
-        questions: [
-            'How did you decide where to click?'
-            'How did you decide where NOT to click?'
-            'How did you decide when to stop clicking?'
-            'Where were you most likely to click at the beginning of each round?'
-            'Can you describe anything else about your strategy?'
-        ]
-        button: 'Finish'
-
-      # TODO: ask about the cost of clicking
-      finish = new Block
-        type: 'survey-text'
-        preamble: -> markdown """
-            # You've completed the HIT
-
-            Thanks for participating. We hope you had fun! Based on your
-            performance, you will be awarded a bonus of
-            **$#{calculateBonus().toFixed(2)}**.
-
-            Please briefly answer the questions below before you submit the HIT.
-          """
-
-        questions: [
-          'What did you learn?'    
-          'Did you apply the principle in your own life? If so, which decision(s) did you use it for?' 
-          'Was anything confusing or hard to understand?'
-          'What is your age?'
-          'Additional coments?'
-        ]
-        button: 'Submit HIT'
-
-      talk_demo = new Block
-        timeline: [
-          # new MouselabBlock
-          #   lowerMessage: 'Move with the arrow keys.'
-          #   stateDisplay: 'always'
-          #   prompt: null
-          #   stateClickCost: PARAMS.inspectCost
-          #   timeline: getTrials 3
-
-          divider
-
-          new MouselabBlock
+    if not TUTOR_DEMO
+        demo = new MouselabBlock
+            minTime: 7
+            show_feedback: with_feedback
+            blockName: 'demo'
             stateDisplay: 'click'
-            prompt: null
             stateClickCost: PARAMS.inspectCost
-            timeline: getTestTrials 4
-        ]
+            timeline: DEMO_TRIALS.slice(0,10)
+            startScore: 50
+            _init: ->
+              _.extend(this, STRUCTURE_TRAINING)
+              @playerImage = 'static/images/plane.png'
+              @trialCount = 0
+
+
+          post_test = new MouselabBlock
+            minTime: 7
+            show_feedback: false
+            blockName: 'test'
+            stateDisplay: 'click'
+            stateClickCost: PARAMS.inspectCost
+            timeline: switch
+              when SHOW_PARTICIPANT then DEMO_TRIALS
+              when DEBUG then getTestTrials 10
+              else getTestTrials 20
+            startScore: 100
+            _init: ->
+              _.extend(this, STRUCTURE_TEST)
+              @trialCount = 0
+
+
+          verbal_responses = new Block
+            type: 'survey-text'
+            preamble: -> markdown """
+                # Please answer these questions
+
+              """
+
+            questions: [
+                'How did you decide where to click?'
+                'How did you decide where NOT to click?'
+                'How did you decide when to stop clicking?'
+                'Where were you most likely to click at the beginning of each round?'
+                'Can you describe anything else about your strategy?'
+            ]
+            button: 'Finish'
+
+          # TODO: ask about the cost of clicking
+          finish = new Block
+            type: 'survey-text'
+            preamble: -> markdown """
+                # You've completed the HIT
+
+                Thanks for participating. We hope you had fun! Based on your
+                performance, you will be awarded a bonus of
+                **$#{calculateBonus().toFixed(2)}**.
+
+                Please briefly answer the questions below before you submit the HIT.
+              """
+
+            questions: [
+              'What did you learn?'    
+              'Did you apply the principle in your own life? If so, which decision(s) did you use it for?' 
+              'Was anything confusing or hard to understand?'
+              'What is your age?'
+              'Additional coments?'
+            ]
+            button: 'Submit HIT'
+
+          talk_demo = new Block
+            timeline: [
+              # new MouselabBlock
+              #   lowerMessage: 'Move with the arrow keys.'
+              #   stateDisplay: 'always'
+              #   prompt: null
+              #   stateClickCost: PARAMS.inspectCost
+              #   timeline: getTrials 3
+
+              divider
+
+              new MouselabBlock
+                stateDisplay: 'click'
+                prompt: null
+                stateClickCost: PARAMS.inspectCost
+                timeline: getTestTrials 4
+            ]
 
 
       if DEBUG
@@ -1096,10 +1080,10 @@ After having seen 10 demonstrations of this principle you will hopefully be able
         #  return [demo]
           tl = []
           if STAGE1
-            if not DEMO    
+            unless TUTOR_DEMO    
                 tl.push retention_instruction
           if STAGE2
-            if not DEMO        
+            unless TUTOR_DEMO        
                 tl.push check_returning
             tl.push refresher1
             tl.push refresher2
@@ -1131,9 +1115,11 @@ After having seen 10 demonstrations of this principle you will hopefully be able
             tl.push test_block_intro
             tl.push post_test
           if STAGE1
-            tl.push ask_email
+            unless TUTOR_DEMO    
+                tl.push ask_email
           else
-            tl.push finish
+            unless TUTOR_DEMO        
+                tl.push finish
           return tl
         
       else
@@ -1141,7 +1127,8 @@ After having seen 10 demonstrations of this principle you will hopefully be able
         #  return [demo]
           tl = []
           if STAGE1
-            tl.push retention_instruction
+            unless TUTOR_DEMO    
+                tl.push retention_instruction
           if STAGE2
             tl.push check_returning
             tl.push refresher1
@@ -1174,9 +1161,11 @@ After having seen 10 demonstrations of this principle you will hopefully be able
             tl.push test_block_intro
             tl.push post_test
           if STAGE1
-            tl.push ask_email
+            unless TUTOR_DEMO    
+                tl.push ask_email   
           else
-            tl.push finish
+            unless TUTOR_DEMO        
+                tl.push finish
           return tl
         
       calculateBonus = ->

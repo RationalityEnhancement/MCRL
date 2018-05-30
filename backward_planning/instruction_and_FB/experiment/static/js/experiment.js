@@ -194,21 +194,25 @@ $(window).on('load', function() {
     }
     if (STAGE2) {
       STRUCTURE_TEST = loadJson("static/json/structure/31123.json");
+      TRIALS_TEST = loadJson("static/json/rewards/31123_increasing1.json");
     }
     if (STAGE1) {
       STRUCTURE_TRAINING = loadJson("static/json/structure/312.json");
-      TRIALS_TRAINING = loadJson("static/json/mcrl_trials/increasing.json");
+      if (TUTOR_DEMO) {
+        TRIALS_TRAINING = loadJson("static/json/mcrl_trials/web-demo.json");
+      } else {
+        TRIALS_TRAINING = loadJson("static/json/mcrl_trials/increasing.json");
+      }
       console.log(`loaded ${(TRIALS_TRAINING != null ? TRIALS_TRAINING.length : void 0)} training trials`);
     }
     
     //TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
     if (!DEMO) {
       psiturk.recordUnstructuredData('params', PARAMS);
+      console.log(`loaded ${(TRIALS_TEST != null ? TRIALS_TEST.length : void 0)} test trials`);
+      DEMO_TRIALS = _.shuffle(loadJson("static/json/demo/exp2_312_optimal.json"));
+      console.log(`loaded ${(DEMO_TRIALS != null ? DEMO_TRIALS.length : void 0)} demo trials`);
     }
-    TRIALS_TEST = loadJson("static/json/rewards/31123_increasing1.json");
-    console.log(`loaded ${(TRIALS_TEST != null ? TRIALS_TEST.length : void 0)} test trials`);
-    DEMO_TRIALS = _.shuffle(loadJson("static/json/demo/exp2_312_optimal.json"));
-    console.log(`loaded ${(DEMO_TRIALS != null ? DEMO_TRIALS.length : void 0)} demo trials`);
     getTrainingTrials = (function() {
       var idx, t;
       t = _.shuffle(TRIALS_TRAINING);
@@ -268,7 +272,7 @@ createStartButton = function() {
 };
 
 initializeExperiment = function() {
-  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, ask_email, bonus_text, check_code, check_returning, demo, demo_basic1, demo_basic2, demo_basic3, demo_basic4, divider, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, post_test, pre_test, pre_test_intro1, pre_test_intro2, principle1, principle2, principle3, principle4, principle5, prompt_resubmit, quiz, refresher1, refresher2, reprompt, reset_score, retention_instruction, save_data, talk_demo, test_block_intro, text, train_basic1, train_basic2, train_basic3, train_basic4, training, verbal_responses;
+  var Block, ButtonBlock, MouselabBlock, QuizLoop, TextBlock, ask_email, bonus_text, check_code, check_returning, demo, demo_basic1, demo_basic2, demo_basic3, demo_basic4, divider, divider_pretest_training, divider_training_test, experiment_timeline, finish, fullMessage, img, post_test, pre_test_intro1, pre_test_intro2, principle1, principle2, principle3, principle4, principle5, prompt_resubmit, quiz, refresher1, refresher2, reprompt, reset_score, retention_instruction, save_data, talk_demo, test_block_intro, text, train_basic1, train_basic2, train_basic3, train_basic4, training, verbal_responses;
   $('#jspsych-target').html('');
   console.log('INITIALIZE EXPERIMENT');
   //  ======================== #
@@ -753,28 +757,6 @@ initializeExperiment = function() {
       return markdown("Now that you have learned about this principle, you can hopefully apply it to make better decisions in your own life if you want to\n<div align=\"center\"> Please press <code>space</code> to continue. </div>");
     }
   });
-  pre_test = new MouselabBlock({
-    minTime: 7,
-    show_feedback: false,
-    blockName: 'pre_test',
-    stateDisplay: 'click',
-    stateClickCost: PARAMS.inspectCost,
-    timeline: (function() {
-      switch (false) {
-        case !SHOW_PARTICIPANT:
-          return DEMO_TRIALS;
-        case !DEBUG:
-          return getTestTrials(1);
-        default:
-          return getTestTrials(1);
-      }
-    })(),
-    startScore: 50,
-    _init: function() {
-      _.extend(this, STRUCTURE_TEST);
-      return this.trialCount = 0;
-    }
-  });
   training = new MouselabBlock({
     minTime: 7,
     show_feedback: with_feedback,
@@ -798,88 +780,90 @@ initializeExperiment = function() {
       return this.trialCount = 0;
     }
   });
-  demo = new MouselabBlock({
-    minTime: 7,
-    show_feedback: with_feedback,
-    blockName: 'demo',
-    stateDisplay: 'click',
-    stateClickCost: PARAMS.inspectCost,
-    timeline: DEMO_TRIALS.slice(0, 10),
-    startScore: 50,
-    _init: function() {
-      _.extend(this, STRUCTURE_TRAINING);
-      this.playerImage = 'static/images/plane.png';
-      return this.trialCount = 0;
-    }
-  });
-  post_test = new MouselabBlock({
-    minTime: 7,
-    show_feedback: false,
-    blockName: 'test',
-    stateDisplay: 'click',
-    stateClickCost: PARAMS.inspectCost,
-    timeline: (function() {
-      switch (false) {
-        case !SHOW_PARTICIPANT:
-          return DEMO_TRIALS;
-        case !DEBUG:
-          return getTestTrials(10);
-        default:
-          return getTestTrials(20);
+  if (!TUTOR_DEMO) {
+    demo = new MouselabBlock({
+      minTime: 7,
+      show_feedback: with_feedback,
+      blockName: 'demo',
+      stateDisplay: 'click',
+      stateClickCost: PARAMS.inspectCost,
+      timeline: DEMO_TRIALS.slice(0, 10),
+      startScore: 50,
+      _init: function() {
+        _.extend(this, STRUCTURE_TRAINING);
+        this.playerImage = 'static/images/plane.png';
+        return this.trialCount = 0;
       }
-    })(),
-    startScore: 100,
-    _init: function() {
-      _.extend(this, STRUCTURE_TEST);
-      return this.trialCount = 0;
-    }
-  });
-  verbal_responses = new Block({
-    type: 'survey-text',
-    preamble: function() {
-      return markdown("# Please answer these questions\n");
-    },
-    questions: ['How did you decide where to click?', 'How did you decide where NOT to click?', 'How did you decide when to stop clicking?', 'Where were you most likely to click at the beginning of each round?', 'Can you describe anything else about your strategy?'],
-    button: 'Finish'
-  });
-  // TODO: ask about the cost of clicking
-  finish = new Block({
-    type: 'survey-text',
-    preamble: function() {
-      return markdown(`# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance, you will be awarded a bonus of\n**$${calculateBonus().toFixed(2)}**.\n\nPlease briefly answer the questions below before you submit the HIT.`);
-    },
-    questions: ['What did you learn?', 'Did you apply the principle in your own life? If so, which decision(s) did you use it for?', 'Was anything confusing or hard to understand?', 'What is your age?', 'Additional coments?'],
-    button: 'Submit HIT'
-  });
-  talk_demo = new Block({
-    timeline: [
-      // new MouselabBlock
-      //   lowerMessage: 'Move with the arrow keys.'
-      //   stateDisplay: 'always'
-      //   prompt: null
-      //   stateClickCost: PARAMS.inspectCost
-      //   timeline: getTrials 3
-      divider,
-      new MouselabBlock({
-        stateDisplay: 'click',
-        prompt: null,
-        stateClickCost: PARAMS.inspectCost,
-        timeline: getTestTrials(4)
-      })
-    ]
-  });
+    });
+    post_test = new MouselabBlock({
+      minTime: 7,
+      show_feedback: false,
+      blockName: 'test',
+      stateDisplay: 'click',
+      stateClickCost: PARAMS.inspectCost,
+      timeline: (function() {
+        switch (false) {
+          case !SHOW_PARTICIPANT:
+            return DEMO_TRIALS;
+          case !DEBUG:
+            return getTestTrials(10);
+          default:
+            return getTestTrials(20);
+        }
+      })(),
+      startScore: 100,
+      _init: function() {
+        _.extend(this, STRUCTURE_TEST);
+        return this.trialCount = 0;
+      }
+    });
+    verbal_responses = new Block({
+      type: 'survey-text',
+      preamble: function() {
+        return markdown("# Please answer these questions\n");
+      },
+      questions: ['How did you decide where to click?', 'How did you decide where NOT to click?', 'How did you decide when to stop clicking?', 'Where were you most likely to click at the beginning of each round?', 'Can you describe anything else about your strategy?'],
+      button: 'Finish'
+    });
+    // TODO: ask about the cost of clicking
+    finish = new Block({
+      type: 'survey-text',
+      preamble: function() {
+        return markdown(`# You've completed the HIT\n\nThanks for participating. We hope you had fun! Based on your\nperformance, you will be awarded a bonus of\n**$${calculateBonus().toFixed(2)}**.\n\nPlease briefly answer the questions below before you submit the HIT.`);
+      },
+      questions: ['What did you learn?', 'Did you apply the principle in your own life? If so, which decision(s) did you use it for?', 'Was anything confusing or hard to understand?', 'What is your age?', 'Additional coments?'],
+      button: 'Submit HIT'
+    });
+    talk_demo = new Block({
+      timeline: [
+        // new MouselabBlock
+        //   lowerMessage: 'Move with the arrow keys.'
+        //   stateDisplay: 'always'
+        //   prompt: null
+        //   stateClickCost: PARAMS.inspectCost
+        //   timeline: getTrials 3
+        divider,
+        new MouselabBlock({
+          stateDisplay: 'click',
+          prompt: null,
+          stateClickCost: PARAMS.inspectCost,
+          timeline: getTestTrials(4)
+        })
+      ]
+    });
+  }
   if (DEBUG) {
     experiment_timeline = (function() {
       var tl;
       //  return [demo]
       tl = [];
       if (STAGE1) {
-        if (!DEMO) {
+        if (!TUTOR_DEMO) {
           tl.push(retention_instruction);
         }
       }
       if (STAGE2) {
-        if (!DEMO) {
+        if (!TUTOR_DEMO) {
           tl.push(check_returning);
         }
         tl.push(refresher1);
@@ -916,9 +900,13 @@ initializeExperiment = function() {
         tl.push(post_test);
       }
       if (STAGE1) {
-        tl.push(ask_email);
+        if (!TUTOR_DEMO) {
+          tl.push(ask_email);
+        }
       } else {
-        tl.push(finish);
+        if (!TUTOR_DEMO) {
+          tl.push(finish);
+        }
       }
       return tl;
     })();
@@ -928,7 +916,9 @@ initializeExperiment = function() {
       //  return [demo]
       tl = [];
       if (STAGE1) {
-        tl.push(retention_instruction);
+        if (!TUTOR_DEMO) {
+          tl.push(retention_instruction);
+        }
       }
       if (STAGE2) {
         tl.push(check_returning);
@@ -966,9 +956,13 @@ initializeExperiment = function() {
         tl.push(post_test);
       }
       if (STAGE1) {
-        tl.push(ask_email);
+        if (!TUTOR_DEMO) {
+          tl.push(ask_email);
+        }
       } else {
-        tl.push(finish);
+        if (!TUTOR_DEMO) {
+          tl.push(finish);
+        }
       }
       return tl;
     })();
