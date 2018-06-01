@@ -1,9 +1,10 @@
 % filename=['../data/05302018/DataExp',int2str(experiment_nr),'JSON.csv'];
 experiment_nr = '05302018';
-filename=['../data/',experiment_nr,'/experiment_results2.csv'];
-filename_metadata=['../data/',experiment_nr,'/experiment_results.csv']
+filename=['../data/',experiment_nr,'/DataExp2JSON.csv'];
+filename_metadata=['../data/',experiment_nr,'/MetaData.csv'];
 
 addpath ../../matlab_code/MatlabTools/parse_json/
+addpath ../../matlab_code/MatlabTools/
 
 fid=fopen(filename);
 nr_subjects=linecount(fid)-1;
@@ -26,7 +27,7 @@ end
 fclose(fid)
 
 data=cellOfStructs2StructOfCells(data_by_sub)
-save(['../data/',int2str(experiment_nr),'/Mouselab_data_Experiment.mat'], 'data_by_sub','data')
+save(['../data/',experiment_nr,'/Mouselab_data_Experiment.mat'], 'data_by_sub','data')
 
 %{
 % pay bonuses
