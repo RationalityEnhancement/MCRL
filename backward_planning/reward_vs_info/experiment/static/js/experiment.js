@@ -47,7 +47,7 @@ calculateBonus = void 0;
 
 getTrials = void 0;
 
-CONSTANT_DELAY = 3;
+CONSTANT_DELAY = 4;
 
 psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
 
@@ -553,7 +553,19 @@ initializeExperiment = function() {
       case !SHOW_PARTICIPANT:
         return [test];
       case !DEBUG:
-        return [train_basic1, pre_test_intro, pre_test, divider_pretest_training, training, divider_training_test, test_block_intro, post_test, quiz, verbal_responses, finish];
+        return [
+          train_basic1,
+          pre_test_intro,
+          //pre_test
+          divider_pretest_training,
+          training,
+          divider_training_test,
+          test_block_intro,
+          post_test,
+          quiz,
+          verbal_responses,
+          finish
+        ];
       case !TALK:
         return [talk_demo];
       default:
@@ -563,7 +575,7 @@ initializeExperiment = function() {
           //train_inspect_cost
           //instructions1    
           pre_test_intro,
-          pre_test,
+          //pre_test
           divider_pretest_training,
           training,
           divider_training_test,

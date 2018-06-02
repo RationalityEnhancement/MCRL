@@ -184,6 +184,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         rewards: [],
         path: [],
         rt: [],
+        delays: [],
         actions: [],
         actionTimes: [],
         queries: {
@@ -590,6 +591,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           await sleep(delay * 1000);
           // Reset.
           this.prompt.html(defaultMessage);
+          data.delays.push(delay);
         } else {
           msg += `<br> Please wait ${CONSTANT_DELAY} seconds.`;
           this.prompt.html(`<div align='center' style='color:#000000; font-weight:bold; font-size:18pt'>\n${msg}\n</div>`);
@@ -597,6 +599,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           
           // Reset.
           this.prompt.html(defaultMessage);
+          data.delays.push(CONSTANT_DELAY);
         }
       } else {
         console.log('no');

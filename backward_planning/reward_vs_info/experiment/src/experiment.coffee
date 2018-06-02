@@ -40,7 +40,7 @@ SCORE = 0
 calculateBonus = undefined
 getTrials = undefined
 
-CONSTANT_DELAY = 3
+CONSTANT_DELAY = 4
 
 psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
@@ -583,7 +583,7 @@ initializeExperiment = ->
     when DEBUG then [
       train_basic1
       pre_test_intro
-      pre_test
+      #pre_test
       divider_pretest_training    
       training
       divider_training_test
@@ -602,7 +602,7 @@ initializeExperiment = ->
       #train_inspect_cost
       #instructions1    
       pre_test_intro
-      pre_test
+      #pre_test
       divider_pretest_training    
       training
       divider_training_test

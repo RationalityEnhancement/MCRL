@@ -177,6 +177,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         rewards: []
         path: []
         rt: []
+        delays: []
         actions: []
         actionTimes: []
         queries: {
@@ -541,6 +542,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
             # Reset.
             @prompt.html defaultMessage
+            
+            data.delays.push delay
+            
         else
             msg += "<br> Please wait #{CONSTANT_DELAY} seconds."
 
@@ -553,7 +557,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             await sleep CONSTANT_DELAY * 1000
             
             # Reset.
-            @prompt.html defaultMessage            
+            @prompt.html defaultMessage      
+            
+            data.delays.push CONSTANT_DELAY
                 
       else
         console.log 'no'
