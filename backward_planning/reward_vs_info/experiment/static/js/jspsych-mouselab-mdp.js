@@ -588,18 +588,20 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
           // $('#mdp-feedback-content')
           //   .html msg
           // $('#mdp-feedback').hide()
-          await sleep(delay * 1000);
+          if (delay >= 1) {
+            await sleep(delay * 1000);
+          }
           // Reset.
           this.prompt.html(defaultMessage);
-          data.delays.push(delay);
+          this.data.delays.push(delay);
         } else {
-          msg += `<br> Please wait ${CONSTANT_DELAY} seconds.`;
+          msg += `<br> Please wait ${Math.round(CONSTANT_DELAY)} seconds.`;
           this.prompt.html(`<div align='center' style='color:#000000; font-weight:bold; font-size:18pt'>\n${msg}\n</div>`);
           await sleep(CONSTANT_DELAY * 1000);
           
           // Reset.
           this.prompt.html(defaultMessage);
-          data.delays.push(CONSTANT_DELAY);
+          this.data.delays.push(CONSTANT_DELAY);
         }
       } else {
         console.log('no');

@@ -10,7 +10,7 @@ if DEBUG
    X X X X X DEBUG  MODE X X X X X
   X X X X X X X X X X X X X X X X X
   """
-  CONDITION = 1
+  CONDITION = 2
 
 else
   console.log """
@@ -23,13 +23,16 @@ else
 
 if mode is "{{ mode }}"
   DEMO = true
-  CONDITION = 1
+  CONDITION = 2
 
-with_feedback = CONDITION > 0    
+with_feedback = CONDITION > 0
+with_meta_level_FB = CONDITION == 1
+with_object_level_FB = CONDITION == 2
 
 BLOCKS = undefined
 PARAMS = undefined
 TRIALS = undefined
+OBJECT_LEVEL_PR = undefined
 DEMO_TRIALS = undefined
 STRUCTURE = undefined
 N_TRIAL = undefined
@@ -41,6 +44,8 @@ psiturk = new PsiTurk uniqueId, adServerLoc, mode
 
 psiturk.recordUnstructuredData 'condition', CONDITION   
 psiturk.recordUnstructuredData 'with_feedback', with_feedback
+psiturk.recordUnstructuredData 'with_meta_level_FB', with_meta_level_FB
+psiturk.recordUnstructuredData 'with_object_level_FB', with_object_level_FB
 
 saveData = ->
   new Promise (resolve, reject) ->
@@ -91,6 +96,7 @@ $(window).on 'load', ->
     STRUCTURE = loadJson "static/json/structure/312.json"
     TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
     console.log "loaded #{TRIALS?.length} trials"
+    OBJECT_LEVEL_PR = loadJson "static/json/object_prs.json"
 
     getTrials = do ->
       t = _.shuffle TRIALS

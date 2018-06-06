@@ -402,7 +402,10 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
     move: (s0, a, s1) =>
       unless @moved
-        await @showFeedback @termAction
+        if with_object_level_FB
+            await @showObjectLevelFB a
+        else
+            await @showFeedback @termAction
       @moved = true
       if @freeze
         LOG_INFO 'freeze!'
@@ -532,6 +535,57 @@ jsPsych.plugins['mouselab-mdp'] = do ->
           @states[s].circle.set('fill', '#bbb')
         @canvas.renderAll()
  
+    showObjectLevelFB: (direction) =>
+      console.log 'showObjectLevelFB'
+        
+      PRs = OBJECT_LEVEL_PR[0]
+
+      @freeze = true
+
+      strictness = 1
+      loss = - PRs.prs[direction]
+      if loss > 0
+        delay = 2 + Math.round(strictness * loss)
+      else
+        delay = 0
+      
+    
+      if @_block.show_feedback
+          defaultMessage = ""    
+          @prompt.html(defaultMessage)
+          #oldFeedbackMessage = @prompt.html()
+          
+          if loss == 0
+               @prompt.html """
+                <div align='center' style='color:#008800; font-weight:bold; font-size:18pt'>
+                Good job!
+                </div>"""
+                
+          else      
+                msg = """        
+                You should have moved #{PRs.opt_act}! Delay penalty: #{delay} seconds
+                """
+
+                @prompt.html """
+                <div align='center' style='color:#FF0000; font-weight:bold; font-size:18pt'>
+                #{msg}
+                </div>
+                """
+                # @freeze = true
+                # $('#mdp-feedback').show()
+                # $('#mdp-feedback-content')
+                #   .html msg
+                # $('#mdp-feedback').hide()
+
+                await sleep delay * 1000
+
+                # Reset.
+                @prompt.html defaultMessage
+      else
+            console.log 'no'
+             
+      @freeze = false
+       
             
     mouseoverState: (g, s) =>
       # LOG_DEBUG "mouseoverState #{s}"

@@ -20,7 +20,7 @@ if (DEBUG) {
 
 if (mode === "{{ mode }}") {
   DEMO = true;
-  CONDITION = 3;
+  CONDITION = 1;
 }
 
 with_feedback = true;
@@ -47,7 +47,7 @@ calculateBonus = void 0;
 
 getTrials = void 0;
 
-CONSTANT_DELAY = 4;
+CONSTANT_DELAY = 3;
 
 psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
 

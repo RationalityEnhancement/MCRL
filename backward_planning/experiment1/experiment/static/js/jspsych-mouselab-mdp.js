@@ -119,6 +119,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.move = this.move.bind(this);
       this.clickState = this.clickState.bind(this);
       this.showFeedback = this.showFeedback.bind(this);
+      this.showObjectLevelFB = this.showObjectLevelFB.bind(this);
       this.mouseoverState = this.mouseoverState.bind(this);
       this.mouseoutState = this.mouseoutState.bind(this);
       this.clickEdge = this.clickEdge.bind(this);
@@ -449,7 +450,11 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     async move(s0, a, s1) {
       var nClick, newTop, notEnoughClicks, r, s1g;
       if (!this.moved) {
-        await this.showFeedback(this.termAction);
+        if (with_object_level_FB) {
+          await this.showObjectLevelFB(a);
+        } else {
+          await this.showFeedback(this.termAction);
+        }
       }
       this.moved = true;
       if (this.freeze) {
@@ -583,6 +588,42 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         }
         return this.canvas.renderAll();
       }
+    }
+
+    async showObjectLevelFB(direction) {
+      var PRs, defaultMessage, delay, loss, msg, strictness;
+      console.log('showObjectLevelFB');
+      PRs = OBJECT_LEVEL_PR[0];
+      this.freeze = true;
+      strictness = 1;
+      loss = -PRs.prs[direction];
+      if (loss > 0) {
+        delay = 2 + Math.round(strictness * loss);
+      } else {
+        delay = 0;
+      }
+      if (this._block.show_feedback) {
+        defaultMessage = "";
+        this.prompt.html(defaultMessage);
+        //oldFeedbackMessage = @prompt.html()
+        if (loss === 0) {
+          this.prompt.html("<div align='center' style='color:#008800; font-weight:bold; font-size:18pt'>\nGood job!\n</div>");
+        } else {
+          msg = `You should have moved ${PRs.opt_act}! Delay penalty: ${delay} seconds`;
+          this.prompt.html(`<div align='center' style='color:#FF0000; font-weight:bold; font-size:18pt'>\n${msg}\n</div>`);
+          // @freeze = true
+          // $('#mdp-feedback').show()
+          // $('#mdp-feedback-content')
+          //   .html msg
+          // $('#mdp-feedback').hide()
+          await sleep(delay * 1000);
+          // Reset.
+          this.prompt.html(defaultMessage);
+        }
+      } else {
+        console.log('no');
+      }
+      return this.freeze = false;
     }
 
     mouseoverState(g, s) {

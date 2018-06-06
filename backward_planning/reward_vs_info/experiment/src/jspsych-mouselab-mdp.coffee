@@ -538,15 +538,16 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             # $('#mdp-feedback-content')
             #   .html msg
             # $('#mdp-feedback').hide()
-            await sleep delay * 1000
+            if delay >= 1
+                await sleep delay * 1000
 
             # Reset.
             @prompt.html defaultMessage
             
-            data.delays.push delay
+            @data.delays.push delay
             
         else
-            msg += "<br> Please wait #{CONSTANT_DELAY} seconds."
+            msg += "<br> Please wait #{Math.round(CONSTANT_DELAY)} seconds."
 
             @prompt.html """
             <div align='center' style='color:#000000; font-weight:bold; font-size:18pt'>
@@ -559,7 +560,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
             # Reset.
             @prompt.html defaultMessage      
             
-            data.delays.push CONSTANT_DELAY
+            @data.delays.push CONSTANT_DELAY
                 
       else
         console.log 'no'
