@@ -94,7 +94,7 @@ $(window).on 'load', ->
     else
       id = "#{PARAMS.branching}"
     STRUCTURE = loadJson "static/json/structure/312.json"
-    TRIALS = loadJson "static/json/mcrl_trials/increasing.json"
+    TRIALS = loadJson "static/json/mcrl_trials/increasing_prs.json"
     console.log "loaded #{TRIALS?.length} trials"
     OBJECT_LEVEL_PR = loadJson "static/json/object_prs.json"
 

@@ -109,6 +109,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
         @edgeDisplay='always'  # one of 'never', 'hover', 'click', 'always'
         @edgeClickCost=0  # subtracted from score every time an edge is clicked
         @stateRewards=null
+        @prs=null
 
         @clickDelay=0
         @moveDelay=500
@@ -137,6 +138,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
         # leftMessage="Round: #{TRIAL_INDEX}/#{N_TRIAL}"
         trial_id=null
+        prs = null
         blockName='none'
         prompt='&nbsp;'
         leftMessage='&nbsp;'
@@ -170,6 +172,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
       @data =
         stateRewards: @stateRewards
         trial_id: trial_id
+        prs: @prs
         block: blockName
         trialIndex: @trialIndex
         score: 0
@@ -452,7 +455,9 @@ jsPsych.plugins['mouselab-mdp'] = do ->
 
 
       if @stateLabels and @stateDisplay is 'click' and not g.label.text
-        await @showFeedback s # Note: this must be called before g.setLabel r
+        
+        if not with_object_level_FB    
+            await @showFeedback s # Note: this must be called before g.setLabel r
         @addScore -@stateClickCost
         @recordQuery 'click', 'state', s
         @spendEnergy @clickEnergy
@@ -538,12 +543,20 @@ jsPsych.plugins['mouselab-mdp'] = do ->
     showObjectLevelFB: (direction) =>
       console.log 'showObjectLevelFB'
         
-      PRs = OBJECT_LEVEL_PR[0]
+      PRs = this.data.prs
+    
+      if PRs["up"]==0            
+        opt_act = "up"   
+      if PRs["left"]==0            
+        opt_act = "left" 
+      if PRs["right"]==0            
+        opt_act = "right"
+        
 
       @freeze = true
 
       strictness = 1
-      loss = - PRs.prs[direction]
+      loss = - PRs[direction]
       if loss > 0
         delay = 2 + Math.round(strictness * loss)
       else
@@ -563,7 +576,7 @@ jsPsych.plugins['mouselab-mdp'] = do ->
                 
           else      
                 msg = """        
-                You should have moved #{PRs.opt_act}! Delay penalty: #{delay} seconds
+                You should have moved #{opt_act}! Delay penalty: #{delay} seconds
                 """
 
                 @prompt.html """

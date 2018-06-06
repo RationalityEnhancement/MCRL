@@ -104,7 +104,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
   // =============================== #
   MouselabMDP = class MouselabMDP {
     constructor(config) {
-      var blockName, centerMessage, leftMessage, lowerMessage, prompt, rightMessage, size, trial_id;
+      var blockName, centerMessage, leftMessage, lowerMessage, prompt, prs, rightMessage, size, trial_id;
       this.runDemo = this.runDemo.bind(this);
       this.startTimer = this.startTimer.bind(this);
       // ---------- Responding to user input ---------- #
@@ -153,7 +153,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       // @transition=null  # function `(s0, a, s1, r) -> null` called after each transition
       
       // leftMessage="Round: #{TRIAL_INDEX}/#{N_TRIAL}"
-      ({display: this.display, graph: this.graph, layout: this.layout, initial: this.initial, stateLabels: this.stateLabels = 'reward', stateDisplay: this.stateDisplay = 'never', stateClickCost: this.stateClickCost = 0, edgeLabels: this.edgeLabels = 'never', edgeDisplay: this.edgeDisplay = 'always', edgeClickCost: this.edgeClickCost = 0, stateRewards: this.stateRewards = null, clickDelay: this.clickDelay = 0, moveDelay: this.moveDelay = 500, clickEnergy: this.clickEnergy = 0, moveEnergy: this.moveEnergy = 0, startScore: this.startScore = 0, actions: this.actions = null, clicks: this.clicks = null, pid: this.pid = null, allowSimulation: this.allowSimulation = false, revealRewards: this.revealRewards = true, training: this.training = false, special: this.special = '', timeLimit: this.timeLimit = null, minTime: this.minTime = null, energyLimit: this.energyLimit = null, qs: this.qs = null, keys: this.keys = KEYS, trialIndex: this.trialIndex = TRIAL_INDEX, playerImage: this.playerImage = 'static/images/plane.png', size = 80, trial_id = null, blockName = 'none', prompt = '&nbsp;', leftMessage = '&nbsp;', centerMessage = '&nbsp;', rightMessage = RIGHT_MESSAGE, lowerMessage = '&nbsp;'} = config); // html display element // defines transition and reward functions // defines position of states // initial state of player // object mapping from state names to labels // one of 'never', 'hover', 'click', 'always' // subtracted from score every time a state is clicked // object mapping from edge names (s0 + '__' + s1) to labels // one of 'never', 'hover', 'click', 'always' // subtracted from score every time an edge is clicked // mapping from actions to keycodes // number of trial (starts from 1) // determines the size of states, text, etc...
+      ({display: this.display, graph: this.graph, layout: this.layout, initial: this.initial, stateLabels: this.stateLabels = 'reward', stateDisplay: this.stateDisplay = 'never', stateClickCost: this.stateClickCost = 0, edgeLabels: this.edgeLabels = 'never', edgeDisplay: this.edgeDisplay = 'always', edgeClickCost: this.edgeClickCost = 0, stateRewards: this.stateRewards = null, prs: this.prs = null, clickDelay: this.clickDelay = 0, moveDelay: this.moveDelay = 500, clickEnergy: this.clickEnergy = 0, moveEnergy: this.moveEnergy = 0, startScore: this.startScore = 0, actions: this.actions = null, clicks: this.clicks = null, pid: this.pid = null, allowSimulation: this.allowSimulation = false, revealRewards: this.revealRewards = true, training: this.training = false, special: this.special = '', timeLimit: this.timeLimit = null, minTime: this.minTime = null, energyLimit: this.energyLimit = null, qs: this.qs = null, keys: this.keys = KEYS, trialIndex: this.trialIndex = TRIAL_INDEX, playerImage: this.playerImage = 'static/images/plane.png', size = 80, trial_id = null, prs = null, blockName = 'none', prompt = '&nbsp;', leftMessage = '&nbsp;', centerMessage = '&nbsp;', rightMessage = RIGHT_MESSAGE, lowerMessage = '&nbsp;'} = config); // html display element // defines transition and reward functions // defines position of states // initial state of player // object mapping from state names to labels // one of 'never', 'hover', 'click', 'always' // subtracted from score every time a state is clicked // object mapping from edge names (s0 + '__' + s1) to labels // one of 'never', 'hover', 'click', 'always' // subtracted from score every time an edge is clicked // mapping from actions to keycodes // number of trial (starts from 1) // determines the size of states, text, etc...
       this.termAction = `${this.stateRewards.length}`;
       if (this.pid != null) {
         this.showParticipant = true;
@@ -178,6 +178,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
       this.data = {
         stateRewards: this.stateRewards,
         trial_id: trial_id,
+        prs: this.prs,
         block: blockName,
         trialIndex: this.trialIndex,
         score: 0,
@@ -507,7 +508,9 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         this.lowerMessage.css('color', '#000');
       }
       if (this.stateLabels && this.stateDisplay === 'click' && !g.label.text) {
-        await this.showFeedback(s); // Note: this must be called before g.setLabel r
+        if (!with_object_level_FB) {
+          await this.showFeedback(s); // Note: this must be called before g.setLabel r
+        }
         this.addScore(-this.stateClickCost);
         this.recordQuery('click', 'state', s);
         this.spendEnergy(this.clickEnergy);
@@ -591,12 +594,21 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
     }
 
     async showObjectLevelFB(direction) {
-      var PRs, defaultMessage, delay, loss, msg, strictness;
+      var PRs, defaultMessage, delay, loss, msg, opt_act, strictness;
       console.log('showObjectLevelFB');
-      PRs = OBJECT_LEVEL_PR[0];
+      PRs = this.data.prs;
+      if (PRs["up"] === 0) {
+        opt_act = "up";
+      }
+      if (PRs["left"] === 0) {
+        opt_act = "left";
+      }
+      if (PRs["right"] === 0) {
+        opt_act = "right";
+      }
       this.freeze = true;
       strictness = 1;
-      loss = -PRs.prs[direction];
+      loss = -PRs[direction];
       if (loss > 0) {
         delay = 2 + Math.round(strictness * loss);
       } else {
@@ -609,7 +621,7 @@ jsPsych.plugins['mouselab-mdp'] = (function() {
         if (loss === 0) {
           this.prompt.html("<div align='center' style='color:#008800; font-weight:bold; font-size:18pt'>\nGood job!\n</div>");
         } else {
-          msg = `You should have moved ${PRs.opt_act}! Delay penalty: ${delay} seconds`;
+          msg = `You should have moved ${opt_act}! Delay penalty: ${delay} seconds`;
           this.prompt.html(`<div align='center' style='color:#FF0000; font-weight:bold; font-size:18pt'>\n${msg}\n</div>`);
           // @freeze = true
           // $('#mdp-feedback').show()
