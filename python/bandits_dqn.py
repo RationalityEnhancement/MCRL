@@ -55,9 +55,12 @@ class MetaBanditEnv(gym.Env):
     def _step(self, action):
         # print(action)
         # print(self._state)
-        if action == self.term_action:
+        if self._state is self.term_state:
+            return np.ravel(np.array(self._state)), 0, True, {}
+        elif action == self.term_action:
+            reward = self.expected_term_reward(self._state)
             self._state = self.term_state
-            return np.ravel(np.array(self._state)), self.expected_term_reward(self._state), True, {}
+            return np.ravel(np.array(self._state)), reward, True, {}
         else:
             arm = action
             p = self.p_win(self._state, arm)
@@ -71,6 +74,8 @@ class MetaBanditEnv(gym.Env):
             self._state = tuple(s)
             done = sum(concat(self._state)) >= self._max_sum
             reward = self.expected_term_reward(self._state) if done else self.cost
+            if done:
+                self._state = self.term_state
             return np.ravel(np.array(self._state)), reward, done, {}
 
 
