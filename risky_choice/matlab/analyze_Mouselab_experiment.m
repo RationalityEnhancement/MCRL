@@ -3,14 +3,15 @@ addpath('~/Dropbox/PhD/MatlabTools/')
 addpath('~/Dropbox/PhD/MatlabTools/parse_json/')
 clear
 
-experiment_nr = 2;
+load(['../data/05302018/Mouselab_data_Experiment.mat'])
 
-try
-    load(['../data/Mouselab_data_Experiment',int2str(experiment_nr),'.mat'])
-catch
-    import_Mouselab_data
-    pay_bonus
-end
+% experiment_nr = 2;
+% try
+%     load(['../data/Mouselab_data_Experiment',int2str(experiment_nr),'.mat'])
+% catch
+%     import_Mouselab_data
+%     pay_bonus
+% end
 
 avg_completion_time = mean([data.experimentTime{:}])/60
 for s=1:numel(data_by_sub)
@@ -61,11 +62,15 @@ for sub=1:numel(data_by_sub)
             end
             
             
-            most_probable=argmax(probabilities);
+            [~,p_sorted]=sort(probabilities,'descend');
+            most_probable=p_sorted(1);
+            second_most_probable=p_sorted(2);
+            third_most_probable=p_sorted(3);
             data.percent_most_probable(sub,b,t)=sum([data.decision_problems{sub}{b}{t}.revealed{most_probable}{:}])/sum(revealed);
             
             for o=1:nr_outcomes
                 data.acquisition_order(sub,b,t,o,:)=[data.decision_problems{sub}{b}{t}.reveal_order{o}{:}];
+                data.probabilities(sub,b,t,:)=[data.decision_problems{sub}{b}{t}.probabilities{:}];
                 for g=1:nr_gambles
                     data.payoff_matrices(sub,b,t,o,g)=str2num(data.decision_problems{sub}{b}{t}.payoffs{o}{g});
                 end
@@ -84,6 +89,11 @@ for sub=1:numel(data_by_sub)
             gamble=NaN(nr_acquisitions,1);
             outcome=NaN(nr_acquisitions,1);
             inspected_most_probable_outcome=NaN(nr_acquisitions,1);
+            inspected_second_most_probable_outcome=NaN(nr_acquisitions,1);
+            inspected_third_most_probable_outcome=NaN(nr_acquisitions,1);
+            values_of_most_probable_outcome = squeeze(data.payoff_matrices(sub,b,t,most_probable,:));
+            gamble_of_most_valueable_of_most_probable_outcome = argmax(values_of_most_probable_outcome);
+            inspected_gamble_of_most_valueable_of_most_probable_outcome=NaN(nr_acquisitions,1);
             for a=1:nr_acquisitions
                 [outcome(a),gamble(a)]=find(squeeze(data.acquisition_order(sub,b,t,:,:))==a);
                 
@@ -91,6 +101,24 @@ for sub=1:numel(data_by_sub)
                     inspected_most_probable_outcome(a)=true;
                 else
                     inspected_most_probable_outcome(a)=false;
+                end
+                
+                if outcome(a)==second_most_probable
+                    inspected_second_most_probable_outcome(a)=true;
+                else
+                    inspected_second_most_probable_outcome(a)=false;
+                end
+                
+                if outcome(a)==third_most_probable
+                    inspected_third_most_probable_outcome(a)=true;
+                else
+                    inspected_third_most_probable_outcome(a)=false;
+                end
+                
+                if gamble(a)==gamble_of_most_valueable_of_most_probable_outcome
+                    inspected_gamble_of_most_valueable_of_most_probable_outcome(a)=true;
+                else
+                    inspected_gamble_of_most_valueable_of_most_probable_outcome(a)=false;
                 end
 
                 
@@ -102,7 +130,8 @@ for sub=1:numel(data_by_sub)
                     end
                     
                 end
-            end
+            end            
+            
             data.pattern(sub,b,t)=-(nr_moves_within_alternatives-nr_moves_within_outcomes)/(nr_moves_within_alternatives+nr_moves_within_outcomes);
             
             temp_acquisitions=squeeze(data.acquisition_order(sub,b,t,:,:));
@@ -116,7 +145,7 @@ for sub=1:numel(data_by_sub)
             data.var_alternatives(sub,b,t)=var(nr_acquisitions_by_alternative(:));
             data.var_outcomes(sub,b,t)=var(nr_acquisitions_by_outcome(:));
             data.inspected_most_probable{sub,b,t}=inspected_most_probable_outcome;
-            data.consistent_with_SAT_TTB(sub,b,t)=and(all(inspected_most_probable_outcome),data.nr_gambles_inspected(sub,b,t)<nr_gambles);
+            data.consistent_with_SAT_TTB(sub,b,t)=nr_acquisitions>0 && and(all(inspected_most_probable_outcome),data.nr_gambles_inspected(sub,b,t)<nr_gambles);
             data.consistent_with_TTB(sub,b,t)=and(all(inspected_most_probable_outcome),data.nr_gambles_inspected(sub,b,t)==nr_gambles);
             data.consistent_with_SAT(sub,b,t)=and(and(data.nr_gambles_inspected(sub,b,t)<nr_gambles,...
                 nr_moves_within_outcomes==data.nr_gambles_inspected(sub,b,t)-1),...
@@ -124,6 +153,26 @@ for sub=1:numel(data_by_sub)
 
             data.consistent_with_WADD(sub,b,t)=and(nr_acquisitions==nr_gambles*nr_outcomes,...
                 nr_moves_within_outcomes==nr_gambles-1);
+            
+            data.consistent_with_SAT_TTB2(sub,b,t) = nr_gambles>sum(inspected_most_probable_outcome) && sum(inspected_most_probable_outcome)>0 && nr_gambles>sum(inspected_second_most_probable_outcome) && sum(inspected_second_most_probable_outcome)>0 && ((sum(inspected_most_probable_outcome)+sum(inspected_second_most_probable_outcome))==nr_acquisitions);
+%             this TTB2plus is relaxed to include TTB2:
+            data.consistent_with_TTB2plus(sub,b,t) = nr_acquisitions>=(2*nr_gambles) && sum(inspected_most_probable_outcome(1:2*nr_gambles))==nr_gambles && sum(inspected_second_most_probable_outcome(1:2*nr_gambles))==nr_gambles && nr_acquisitions<nr_gambles*nr_outcomes;
+            data.consistent_with_SAT_TTB3(sub,b,t) = nr_gambles>sum(inspected_most_probable_outcome) && sum(inspected_most_probable_outcome)>0 && nr_gambles>sum(inspected_second_most_probable_outcome) && sum(inspected_second_most_probable_outcome)>0 && nr_gambles>sum(inspected_third_most_probable_outcome) && sum(inspected_third_most_probable_outcome)>0 && ((sum(inspected_most_probable_outcome)+sum(inspected_second_most_probable_outcome)+sum(inspected_third_most_probable_outcome))==nr_acquisitions);
+            data.consistent_with_TTBplus(sub,b,t) = sum(inspected_most_probable_outcome(:))==nr_gambles...
+                && sum(inspected_most_probable_outcome(1:nr_gambles))==nr_gambles ...
+                && nr_acquisitions>nr_gambles  && nr_acquisitions<nr_gambles*nr_outcomes;
+            data.consistent_with_random = nr_acquisitions==0;
+            
+%              [?TTB?, ?WADD?, ?SAT_TTB?, ?random_choice?, ?SAT_TTB2?, ?SAT?, ?TTB2_plus?, ?SAT_TTB3?, ?TTB_plus?, 'other']
+% % old TTBplus definition
+%             data.consistent_with_TTBplus(sub,b,t) = sum(inspected_most_probable_outcome(:))==nr_gambles...
+%                 && sum(inspected_most_probable_outcome(1:nr_gambles))==nr_gambles ...
+%                 && sum(inspected_gamble_of_most_valueable_of_most_probable_outcome(:))==nr_outcomes;
+% % this is equivalent (sanity check):
+%             data.consistent_with_TTBplus(sub,b,t) = nr_acquisitions>=(nr_gambles+nr_outcomes-1) &&...
+%                 all(outcome(1:nr_gambles)==most_probable) &&...
+%                 sum(gamble(nr_gambles+1:end)==gamble_of_most_valueable_of_most_probable_outcome)==(nr_outcomes-1);
+            
         end
         
         try
@@ -136,6 +185,8 @@ for sub=1:numel(data_by_sub)
     end
     data.avg_percent_most_probable(sub,1)=nanmean(data.percent_most_probable(sub,data.high_dispersion(sub,:)));
     data.avg_percent_most_probable(sub,2)=nanmean(data.percent_most_probable(sub,~data.high_dispersion(sub,:)));
+    
+    data.isFullyRevealed(sub,1) = data_by_sub{sub}.basic_info.isFullyRevealed;
 end
 
 data.consistent_with_random = data.nr_acquisitions == 0;
@@ -143,6 +194,7 @@ data.consistent_with_random = data.nr_acquisitions == 0;
 has_low_stakes=repmat(~data.high_stakes,[1,1,10]);
 has_high_stakes=~has_low_stakes;
 has_high_dispersion=data.high_dispersion;
+has_low_dispersion=~has_high_dispersion;
 
 %TODO: add estimated strategy frequencies
 DVs={'nr_acquisitions','pattern','percent_most_probable','relative_performance'};
@@ -391,6 +443,50 @@ mean(data.consistent_with_WADD(has_high_stakes))
 [p_2b,chi2_2b,df_2b,cohens_w_2b] = chi2test({data.consistent_with_WADD(has_low_stakes),...
     data.consistent_with_WADD(has_high_stakes)})
 
+disp(['consistent_with_SAT_TTB2 (total,HS-HD,HS-LD,LS-HD,LS_LD): ',num2str(mean(data.consistent_with_SAT_TTB2(:))),' ',...
+num2str(mean(data.consistent_with_SAT_TTB2(has_high_stakes&has_high_dispersion))),' ',...
+num2str(mean(data.consistent_with_SAT_TTB2(has_high_stakes&has_low_dispersion))),' ',...
+num2str(mean(data.consistent_with_SAT_TTB2(has_low_stakes&has_high_dispersion))),' ',...
+num2str(mean(data.consistent_with_SAT_TTB2(has_low_stakes&has_low_dispersion)))])
+[p,chi2,df,cohens_w] = chi2test({data.consistent_with_SAT_TTB2(has_high_stakes&has_high_dispersion),...
+    [data.consistent_with_SAT_TTB2(has_high_stakes&has_low_dispersion);data.consistent_with_SAT_TTB2(has_low_stakes&has_high_dispersion);data.consistent_with_SAT_TTB2(has_low_stakes&has_low_dispersion)]})
+
+disp(['consistent_with_TTB2plus (total,HS-HD,HS-LD,LS-HD,LS_LD): ',num2str(mean(data.consistent_with_TTB2plus(:))),' ',...
+num2str(mean(data.consistent_with_TTB2plus(has_high_stakes&has_high_dispersion))),' ',...
+num2str(mean(data.consistent_with_TTB2plus(has_high_stakes&has_low_dispersion))),' ',...
+num2str(mean(data.consistent_with_TTB2plus(has_low_stakes&has_high_dispersion))),' ',...
+num2str(mean(data.consistent_with_TTB2plus(has_low_stakes&has_low_dispersion)))])
+[p,chi2,df,cohens_w] = chi2test({data.consistent_with_TTB2plus(has_high_stakes&has_high_dispersion),...
+    [data.consistent_with_TTB2plus(has_high_stakes&has_low_dispersion);data.consistent_with_TTB2plus(has_low_stakes&has_high_dispersion);data.consistent_with_TTB2plus(has_low_stakes&has_low_dispersion)]})
+
+disp(['consistent_with_SAT_TTB3 (total,HS-HD,HS-LD,LS-HD,LS_LD): ',num2str(mean(data.consistent_with_SAT_TTB3(:))),' ',...
+num2str(mean(data.consistent_with_SAT_TTB3(has_high_stakes&has_high_dispersion))),' ',...
+num2str(mean(data.consistent_with_SAT_TTB3(has_high_stakes&has_low_dispersion))),' ',...
+num2str(mean(data.consistent_with_SAT_TTB3(has_low_stakes&has_high_dispersion))),' ',...
+num2str(mean(data.consistent_with_SAT_TTB3(has_low_stakes&has_low_dispersion)))])
+[p,chi2,df,cohens_w] = chi2test({data.consistent_with_SAT_TTB3(has_high_stakes&has_high_dispersion),...
+    [data.consistent_with_SAT_TTB3(has_high_stakes&has_low_dispersion);data.consistent_with_SAT_TTB3(has_low_stakes&has_high_dispersion);data.consistent_with_SAT_TTB3(has_low_stakes&has_low_dispersion)]})
+
+disp(['consistent_with_TTBplus (total,HS-HD,HS-LD,LS-HD,LS_LD): ',num2str(mean(data.consistent_with_TTBplus(:))),' ',...
+num2str(mean(data.consistent_with_TTBplus(has_high_stakes&has_high_dispersion))),' ',...
+num2str(mean(data.consistent_with_TTBplus(has_high_stakes&has_low_dispersion))),' ',...
+num2str(mean(data.consistent_with_TTBplus(has_low_stakes&has_high_dispersion))),' ',...
+num2str(mean(data.consistent_with_TTBplus(has_low_stakes&has_low_dispersion)))])
+[p,chi2,df,cohens_w] = chi2test({data.consistent_with_TTBplus(has_high_stakes&has_high_dispersion),...
+    [data.consistent_with_TTBplus(has_high_stakes&has_low_dispersion);data.consistent_with_TTBplus(has_low_stakes&has_high_dispersion);data.consistent_with_TTBplus(has_low_stakes&has_low_dispersion)]})
+
+% [?TTB?, ?WADD?, ?SAT_TTB?, ?random_choice?, ?SAT_TTB2?, ?SAT?, ?TTB2_plus?, ?SAT_TTB3?, ?TTB_plus?, 'other']
+strategies = [
+mean(data.consistent_with_TTB(has_high_stakes&has_high_dispersion)),mean(data.consistent_with_TTB(has_high_stakes&has_low_dispersion)),mean(data.consistent_with_TTB(has_low_stakes&has_high_dispersion)),mean(data.consistent_with_TTB(has_low_stakes&has_low_dispersion));
+mean(data.consistent_with_WADD(has_high_stakes&has_high_dispersion)),mean(data.consistent_with_WADD(has_high_stakes&has_low_dispersion)),mean(data.consistent_with_WADD(has_low_stakes&has_high_dispersion)),mean(data.consistent_with_WADD(has_low_stakes&has_low_dispersion));
+mean(data.consistent_with_SAT_TTB(has_high_stakes&has_high_dispersion)),mean(data.consistent_with_SAT_TTB(has_high_stakes&has_low_dispersion)),mean(data.consistent_with_SAT_TTB(has_low_stakes&has_high_dispersion)),mean(data.consistent_with_SAT_TTB(has_low_stakes&has_low_dispersion));
+mean(data.consistent_with_random(has_high_stakes&has_high_dispersion)),mean(data.consistent_with_random(has_high_stakes&has_low_dispersion)),mean(data.consistent_with_random(has_low_stakes&has_high_dispersion)),mean(data.consistent_with_random(has_low_stakes&has_low_dispersion));
+mean(data.consistent_with_SAT_TTB2(has_high_stakes&has_high_dispersion)),mean(data.consistent_with_SAT_TTB2(has_high_stakes&has_low_dispersion)),mean(data.consistent_with_SAT_TTB2(has_low_stakes&has_high_dispersion)),mean(data.consistent_with_SAT_TTB2(has_low_stakes&has_low_dispersion));
+mean(data.consistent_with_SAT(has_high_stakes&has_high_dispersion)),mean(data.consistent_with_SAT(has_high_stakes&has_low_dispersion)),mean(data.consistent_with_SAT(has_low_stakes&has_high_dispersion)),mean(data.consistent_with_SAT(has_low_stakes&has_low_dispersion));
+mean(data.consistent_with_TTB2plus(has_high_stakes&has_high_dispersion)),mean(data.consistent_with_TTB2plus(has_high_stakes&has_low_dispersion)),mean(data.consistent_with_TTB2plus(has_low_stakes&has_high_dispersion)),mean(data.consistent_with_TTB2plus(has_low_stakes&has_low_dispersion));
+mean(data.consistent_with_SAT_TTB3(has_high_stakes&has_high_dispersion)),mean(data.consistent_with_SAT_TTB3(has_high_stakes&has_low_dispersion)),mean(data.consistent_with_SAT_TTB3(has_low_stakes&has_high_dispersion)),mean(data.consistent_with_SAT_TTB3(has_low_stakes&has_low_dispersion));
+mean(data.consistent_with_TTBplus(has_high_stakes&has_high_dispersion)),mean(data.consistent_with_TTBplus(has_high_stakes&has_low_dispersion)),mean(data.consistent_with_TTBplus(has_low_stakes&has_high_dispersion)),mean(data.consistent_with_TTBplus(has_low_stakes&has_low_dispersion))];
+strategies = [strategies; 1-sum(strategies(:,1)), 1-sum(strategies(:,2)), 1-sum(strategies(:,3)), 1-sum(strategies(:,4))];
 %% Test prediction 2c: When the dispersion is high, then higher stakes decrease the frequency of SAT-TTB relative to the frequency of TTB.
 
 hd_hs = and(has_high_stakes(:), has_high_dispersion(:));
@@ -436,3 +532,4 @@ disp(['In the high-dispersion environment increasing the stakes significantly in
     int2str(round(100*mean(ratio_TTB_to_SATTTB_ls))),'% to ', int2str(round(100*mean(ratio_TTB_to_SATTTB_hs))),...
     '% and we can be 97.5% confident the relative frequency of TTB increased by at least ',...
     int2str(round(100*CI_delta_ratio(1),2)),'%.'])
+

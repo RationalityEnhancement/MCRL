@@ -7,15 +7,18 @@ addpath ../../matlab_code/MatlabTools/parse_json/
 addpath ../../matlab_code/MatlabTools/
 
 fid=fopen(filename);
-nr_subjects=linecount(fid)-1;
+nr_subjects=linecount(fid)-1+1;  % for some reason the header line isn't being read, so +1
 fclose(fid);
 
-fid=fopen(filename)
-header = fgetl(fid);
+fid=fopen(filename);
+% header = fgetl(fid); % for some reason the header line isn't being read
 
 
 for sub=1:nr_subjects
     subject_str = fgetl(fid);
+    if sub == 1
+        subject_str = subject_str(4:end);
+    end
     subject_str=strrep(regexprep(subject_str,'["]+','"'),'[]','[-999999999]');
     subject_str=regexprep(subject_str,'(?<=\:[0-9\.]+)"','');
     subject_str=regexprep(subject_str,'(?<=(\:\[[0-9\.]+)+)"','');

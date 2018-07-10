@@ -16,10 +16,10 @@ text=fileread(filename_metadata);
 
 worker_IDs=regexp(text,'[A-Z0-9]*(?=,Approved,)','match');
 
-temp=regexp(text,'(?<=\=3WJGKMRWVI9L0ARR9VU4U5TG12DCDY,)[A-Z0-9]*','match');
-for s=1:numel(temp)
-    assignment_IDs{s}=temp{s};
-end
+% temp=regexp(text,'(?<=\=3WJGKMRWVI9L0ARR9VU4U5TG12DCDY,)[A-Z0-9]*','match');
+% for s=1:numel(temp)
+%     assignment_IDs{s}=temp{s};
+% end
 
 bonus_file='';
 for s=1:numel(worker_IDs)
