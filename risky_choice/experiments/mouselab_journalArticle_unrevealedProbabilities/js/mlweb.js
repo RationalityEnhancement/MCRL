@@ -242,6 +242,10 @@ if (objEvent.srcElement)
 	}
 	
 var row = abc_num(fieldname);
+// THIS IF STATEMENT IS A HACK-- DON'T KNOW THE UNDERLYING REASON WHY THIS IS NECESSARY
+if (fieldname[1]=="0"){
+    row--
+    } 
 var col = parseInt(fieldname.substr(1));
 
 thisElem = new objElem
@@ -293,9 +297,9 @@ prevCell = currCell;
 delay=window.setTimeout("HandleTxt.style.visibility='visible';HandleBox.style.visibility='hidden';",dtime)  //make image transparant
 
 for (r=0; r<matrices.names.length;r++){ 
-    for (c=1;c<matrices.names[0].length;c++){
+    for (c=0;c<matrices.names[0].length;c++){
         if (matrices.names[r][c]==fieldname){
-            matrices.newly_revealed = [r, c-1];
+            matrices.newly_revealed = [r, c];
         }
     }
 }
@@ -315,6 +319,10 @@ if (!boxOpen) {return;} // do not close boxes that are not open...
 window.clearTimeout(delay);
 
 var row = abc_num(fieldname);
+// THIS IF STATEMENT IS A HACK-- DON'T KNOW THE UNDERLYING REASON WHY THIS IS NECESSARY
+if (fieldname[1]=="0"){
+    row--
+    } 
 var col = parseInt(fieldname.substr(1));
 
 // check if open cell should be recorded
@@ -367,6 +375,10 @@ if (objEvent.srcElement)
 	
 thisElem = new objElem
 var row = abc_num(fieldname);
+// THIS IF STATEMENT IS A HACK-- DON'T KNOW THE UNDERLYING REASON WHY THIS IS NECESSARY
+if (fieldname[1]=="0"){
+    row--
+    } 
 var col = parseInt(fieldname.substr(1));
 // check if open cell should be recorded
 if ((statecont[RowOut[row]][ColOut[col]]=="0") & !(recOpenCells)) {return;}

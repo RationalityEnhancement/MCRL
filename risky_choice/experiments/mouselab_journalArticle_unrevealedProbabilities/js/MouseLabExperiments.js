@@ -562,7 +562,7 @@ function update_pseudorewards(matrices,dp){
         for (c=0;c<dp.revealed[0].length;c++){
             if (dp.revealed[r][c]){
                 hInd++
-                fn = matrices.names[r][c+1]
+                fn = matrices.names[r][c]
                 eval("HandleTxt"+hInd+"=document.all['"+fn+"_box"+"']");
                 eval("HandleBox"+hInd+"=document.all['"+fn+"_box"+"']");
                 eval("delay=window.setTimeout(\"HandleTxt"+hInd+".style.visibility='visible';HandleBox"+hInd+".style.visibility='hidden';\",dtime)");
