@@ -24,10 +24,10 @@ var range_nr_gambles = [7, 7];
 var isHighCompensatory = new Array();
 isHighCompensatory[0] = shuffle([1,1,1,1,1,0,0,0,0,0]);
 isHighCompensatory[1] = shuffle([1,1,1,1,1,0,0,0,0,0]);
-var nr_trials = 20;
+var nr_trials = 4;
 var question_nr=1;
-var nr_questions=8;
-correct_answers = [1,1,0,1,1,0,1,1];
+var nr_questions=6;
+correct_answers = [1,1,0,1,1,0];
 var failed_quiz = new Array();
 var seconds_left = 0;
 var trialTime = new Array;
@@ -39,10 +39,11 @@ for (o=0;o<nr_trials;o++){
     RTs[o]=fillArray(-1,nr_outcomes*nr_gambles);
 }
 var isFullyRevealed = 0;//Math.round(Math.random());
+var isHiddenProbability = 1;//Math.round(Math.random());
 var tmp_2 = 1;
 if (isFullyRevealed==1){
     var nr_questions=6;
-    correct_answers = [1,0,1,1,0,1];
+    correct_answers = [1,1,0,1,1,0];
     condStr = '_isFullyRevealed';
 }
 else{
@@ -192,12 +193,12 @@ function start_trial2(trial_nr){
         seconds_left = 0;
     }
     else{
-        seconds_left = 30;//30;
+        seconds_left = 25;//30;
     }
     var interval = setInterval(function() {
         //document.getElementById('timer_div').innerHTML = --seconds_left;
         seconds_left--
-        $("#Timer").html(["You must wait at least <b>"+seconds_left+"</b> seconds before betting"]);
+        $("#Timer").html(["You can Bet in <b>"+seconds_left+"</b> seconds"]);
 
         if (seconds_left <= 0)
         {
@@ -298,7 +299,7 @@ function choice_buttons_row(nr_choices){
     buttons_row_html="<TR>";
     
     //The first button says "No thanks!"
-    buttons_row_html+=mouselab_cell("a0","Balls:","Balls",false);
+    buttons_row_html+=mouselab_cell("a0","100 Balls:","Balls",false);
 
     for (c=0; c<nr_choices; c++){
         
@@ -692,7 +693,8 @@ function saveAnswers(){
         payoff_std2: payoff_std2,
         isHighCompensatory: isHighCompensatory,
         failed_quiz: failed_quiz,
-        isFullyRevealed: isFullyRevealed
+        isFullyRevealed: isFullyRevealed,
+        isHiddenProbability: isHiddenProbability
     }
     
     data={           
