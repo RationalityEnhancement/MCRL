@@ -1,4 +1,0 @@
-bonus,bonusRate,completed,inspectCost,pid,startTime,variance,version
-0.0,0.01,False,1,0,Sun Jan 21 2018 14:23:10 GMT-0800 (Pacific Standard Time),constant_high,c0.3
-0.09,0.01,True,1,1,Sun Jan 21 2018 17:06:21 GMT-0500 (EST),constant_high,c0.3
--0.44,0.01,True,1,2,Sun Jan 21 2018 17:41:59 GMT-0500 (EST),constant_high,c0.3
