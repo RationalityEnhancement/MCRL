@@ -19,7 +19,7 @@
   "homepage": "https://github.com/probmods/webppl-package-template",
   "dependencies": {
     "deepcopy": "^0.6.3",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.13",
     "lru-cache": "^4.1.1"
   }
 }
