@@ -1,0 +1,18 @@
+this folder contains algorithms for the original mouselab mdp.
+
+1) mouselab.py - mouselab gym environment
+2) Dynammic_prog.py - optimal strategy using dp. Uses code in exact.py
+3) dqn.py - get approx optimal strategy using DQN. 
+4) dqn-rnn.py - get approx optimal strategy using DQN-RNN
+5) meta-rl.py - meta-rl algorithm, file version here operates on 2 types of environment and accordingly learns to perform well in both.
+
+- in all the above strategies an array of environments are taken for training. we can directly generate the envs using a function as done in dqn.py or use functions present in generate_environments.py. the functions in generate_envs.py takes in theta_hat (mostly represented by a number in case the theta_hat space is small) and then uses one of the below 3 posterior functions to get the distribution of theta.
+
+posterior.py - theta space varies in how the variance across levels change as per depth. likehood depends on 2 process models. P1 - prob of extreme values magnified, P2 - mistake delta_variance of 2 with 1 and 4, etc.
+0.2 times P1 and 0.8 times P2
+
+posterior1.py - theta space is all 27 possiblities. (variance can be high,medium or low in each of the 3 levels). prior is dependent of how similar the values between levels are. theta_hat space same as theta_space. likelihood dependent on how similar each of the 27 types are from that particular theta. temprature parameter used to control the similarity.
+
+posterior2.py - similar to above, but prior is uniform.
+
+ - in the above three algos, the model is stored and then used for evaluation on set of environment we want. the action sequences and returns are stored in csv. functions to analyse this csv to generate action frequency plots are in gen_plots.py

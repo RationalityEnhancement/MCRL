@@ -1,0 +1,6 @@
+Contains code for robust strategy discovery project.
+algorithms operate on 2 versions of mouselab mdp and are present in 2 different folders.
+Detailed readme present inside each folder. 
+#todo - detailed code commenting.
+All the files have been explained in the respective readme's itself.
+the project uses python 3.6 and other dependencies have been mentioned in requirements.txt file.

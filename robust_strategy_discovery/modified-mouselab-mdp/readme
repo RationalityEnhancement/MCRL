@@ -1,0 +1,19 @@
+this folder contains robust strategy discovery algorithms for modified mouselab mdp.
+
+1) the modified mouse lab mdp has been internally implemented as original mdp itself with branching 3,3,3 
+just there are one to one mapping function that is used to change state representation and action effect.
+while creating the env call the new_symmetric function in mouselab.py. (this function has been modified for the new version)
+
+2) first train the posterior function by running train_posterior_function() in posterior.py.
+the current version uses both the process models.
+
+3) generate_environments.py contains the code to simulate many theta as per the posterior distribution that is used to train different algorithms.
+
+4) dqrnn contains the implementation of DQN+RNN algorithm for the solving this new mouse-lab mdp.
+call train_dqrnn function with the env_array you want to train with. this env_array could be generated as per the posterior distribution for the given theta hat. use function in generate_environments.py for this.
+
+5) meta-rl-normal.py contains code for the meta-rl algorithm (without process model prediction part for heirarchical training)
+
+6) meta-rl-pmodel.py does the same thing as the above with an addition the it has been trained to predict which process model the env belongs to.
+
+7) in the above three algos, the model is stored and then used for evaluation on set of environment we want. the action sequences and returns are stored in csv. functions to analyse this csv to generate action frequency plots are in gen_plots.py
