@@ -38,17 +38,17 @@ def get_train_dataP1(num_samples=3000):
     temperature =.3
 
     theta_space = [
-    [0,0,0],[0,1,1],[0,4,4],
-    [1,0,0],[1,1,1],[1,4,4],
-    [2,0,0],[2,1,1],[2,4,4],
-    [3,0,0],[3,1,1],[3,4,4],
-    [4,0,0],[4,1,1],[4,4,4],
-    [5,0,0],[5,1,1],[5,4,4],
+    [0,0,0],[0,1,1],[0,2,2],[0,3,3],[0,4,4],[0,5,5],
+    [1,0,0],[1,1,1],[1,2,2],[1,3,3],[1,4,4],[1,5,5],
+    [2,0,0],[2,1,1],[2,2,2],[2,3,3],[2,4,4],[2,5,5],
+    [3,0,0],[3,1,1],[3,2,2],[3,3,3],[3,4,4],[3,5,5],
+    [4,0,0],[4,1,1],[4,2,2],[4,3,3],[4,4,4],[4,5,5],
+    [5,0,0],[5,1,1],[5,2,2],[5,3,3],[5,4,4],[5,5,5],
     ]
 
-    one_hot_vectors = np.eye(36, dtype=int)
+    one_hot_vectors = np.eye(72, dtype=int)
 
-    all_theta = np.empty((0,36))
+    all_theta = np.empty((0,72))
     all_that = np.empty((0,3,36,1))
     for y in range(len(theta_space)):
 
@@ -142,17 +142,17 @@ def get_train_dataP2(num_samples=3000):
     temperature =.3
 
     theta_space = [
-    [0,0,0],[0,1,1],[0,4,4],
-    [1,0,0],[1,1,1],[1,4,4],
-    [2,0,0],[2,1,1],[2,4,4],
-    [3,0,0],[3,1,1],[3,4,4],
-    [4,0,0],[4,1,1],[4,4,4],
-    [5,0,0],[5,1,1],[5,4,4],
+    [0,0,0],[0,1,1],[0,2,2],[0,3,3],[0,4,4],[0,5,5],
+    [1,0,0],[1,1,1],[1,2,2],[1,3,3],[1,4,4],[1,5,5],
+    [2,0,0],[2,1,1],[2,2,2],[2,3,3],[2,4,4],[2,5,5],
+    [3,0,0],[3,1,1],[3,2,2],[3,3,3],[3,4,4],[3,5,5],
+    [4,0,0],[4,1,1],[4,2,2],[4,3,3],[4,4,4],[4,5,5],
+    [5,0,0],[5,1,1],[5,2,2],[5,3,3],[5,4,4],[5,5,5],
     ]
 
-    one_hot_vectors = np.eye(36, dtype=int)
+    one_hot_vectors = np.eye(72, dtype=int)
 
-    all_theta = np.empty((0,36))
+    all_theta = np.empty((0,72))
     all_that = np.empty((0,3,36,1))
     for y in range(len(theta_space)):
 
@@ -176,7 +176,7 @@ def get_train_dataP2(num_samples=3000):
         temp_that = np.array([level_outcomes[tarr[0]],level_outcomes[tarr[1]],level_outcomes[tarr[2]]]).reshape((3,36,1))
         temp_that = np.array([temp_that]*num_samples)
 
-        temp_theta = np.array([list(one_hot_vectors[y+18])]*temp_that.shape[0])
+        temp_theta = np.array([list(one_hot_vectors[y+36])]*temp_that.shape[0])
 
         all_that = np.append(temp_that,all_that,axis=0)
         all_theta = np.append(temp_theta,all_theta,axis=0)
@@ -213,7 +213,7 @@ def train_posterior_function():
       model.add(Flatten())
       model.add(Dense(128, activation='relu'))
       model.add(Dropout(0.5))
-      model.add(Dense(36, activation='softmax'))
+      model.add(Dense(72, activation='softmax'))
 
       return model
 
@@ -276,18 +276,19 @@ def get_eval_that(type=0):
 # In[ ]:
 
 
-def get_train_envs(theta_hat_num,repeat_cost=2,num_envs=3000):
+
+def get_train_envs(theta_hat_num,repeat_cost=3,num_envs=4000):
     pos = get_posterior(get_eval_that(theta_hat_num))
-    pos1 = np.array(pos[:18])
-    pos2 = np.array(pos[18:])
+    pos1 = np.array(pos[:36])
+    pos2 = np.array(pos[36:])
 
     theta_space = [
-    [0,0,0],[0,1,1],[0,4,4],
-    [1,0,0],[1,1,1],[1,4,4],
-    [2,0,0],[2,1,1],[2,4,4],
-    [3,0,0],[3,1,1],[3,4,4],
-    [4,0,0],[4,1,1],[4,4,4],
-    [5,0,0],[5,1,1],[5,4,4],
+    [0,0,0],[0,1,1],[0,2,2],[0,3,3],[0,4,4],[0,5,5],
+    [1,0,0],[1,1,1],[1,2,2],[1,3,3],[1,4,4],[1,5,5],
+    [2,0,0],[2,1,1],[2,2,2],[2,3,3],[2,4,4],[2,5,5],
+    [3,0,0],[3,1,1],[3,2,2],[3,3,3],[3,4,4],[3,5,5],
+    [4,0,0],[4,1,1],[4,2,2],[4,3,3],[4,4,4],[4,5,5],
+    [5,0,0],[5,1,1],[5,2,2],[5,3,3],[5,4,4],[5,5,5],
     ]
 
 
@@ -373,6 +374,75 @@ def get_particular_theta(repeat_cost=50,num_envs=500):
 # In[ ]:
 
 
+
+def get_train_envs1(repeat_cost=50,num_envs=500):
+    pos1 = np.zeros(36)
+    pos1[28]=0.5
+    pos2 = np.zeros(36)
+    pos2[28]=0.5
+
+    theta_space = [
+    [0,0,0],[0,1,1],[0,2,2],[0,3,3],[0,4,4],[0,5,5],
+    [1,0,0],[1,1,1],[1,2,2],[1,3,3],[1,4,4],[1,5,5],
+    [2,0,0],[2,1,1],[2,2,2],[2,3,3],[2,4,4],[2,5,5],
+    [3,0,0],[3,1,1],[3,2,2],[3,3,3],[3,4,4],[3,5,5],
+    [4,0,0],[4,1,1],[4,2,2],[4,3,3],[4,4,4],[4,5,5],
+    [5,0,0],[5,1,1],[5,2,2],[5,3,3],[5,4,4],[5,5,5],
+    ]
+
+
+    var = {'h':[-48,-24,24,48],'m':[-8,-4,4,8],'l':[-2,-1,1,2]}
+    level_types=[
+    [Categorical(var['l']),Categorical(var['m']),Categorical(var['h'])],
+    [Categorical(var['l']),Categorical(var['h']),Categorical(var['m'])],
+    [Categorical(var['m']),Categorical(var['l']),Categorical(var['h'])],
+    [Categorical(var['m']),Categorical(var['h']),Categorical(var['l'])],
+    [Categorical(var['h']),Categorical(var['l']),Categorical(var['m'])],
+    [Categorical(var['h']),Categorical(var['m']),Categorical(var['l'])],
+    ]
+
+    reward_arr=[]
+    for temp in theta_space:
+        tarray = [level_types[temp[2]],level_types[temp[1]],level_types[temp[0]]]
+        reward_arr.append(tarray)
+
+
+
+    env_array=[]
+    branching = [3, 3, 3]
+    cost=1
+
+
+    num_arr=[]
+
+    pos=pos1
+    pmodel_num=-1
+    j=0
+
+    for rarray in reward_arr:
+        tnum = int(pos[j]*num_envs)
+        num_arr.append(tnum)
+        tenv = [MouselabEnv.new_symmetric(branching, rarray, seed=j, cost=cost, sample_term_reward=False, env_type='new',repeat_cost=repeat_cost,process_model=pmodel_num) for j in range(tnum)]
+        env_array = env_array+tenv
+        j=j+1
+
+
+    pos=pos2
+    pmodel_num=1
+    j=0
+    for rarray in reward_arr:
+        tnum = int(pos[j]*num_envs)
+        num_arr.append(tnum)
+        tenv = [MouselabEnv.new_symmetric(branching, rarray, seed=j, cost=cost, sample_term_reward=False, env_type='new',repeat_cost=repeat_cost,process_model=pmodel_num) for j in range(tnum)]
+        env_array = env_array+tenv
+        j=j+1
+
+
+
+    print(num_arr)
+    pos=pos1+pos2
+
+    return env_array,pos
 # In[ ]:
 
 # In[ ]:
