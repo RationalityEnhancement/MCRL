@@ -78,6 +78,6 @@ tr = agent.run_episode()
 print(tr['actions'])
 env.render()
 # In[1]:
-print(dp_eval(pol,0)
+print(dp_eval(pol, 0))
 
 # In[1]:

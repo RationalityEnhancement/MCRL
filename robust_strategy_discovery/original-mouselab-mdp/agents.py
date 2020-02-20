@@ -4,7 +4,7 @@ from collections import namedtuple, defaultdict, Counter, deque
 import itertools as it
 import numpy as np
 from abc import ABC, abstractmethod
-from utils import clear_screen, PriorityQueue
+# from utils import clear_screen, PriorityQueue
 import time
 np.set_printoptions(precision=3, linewidth=200)
 
@@ -136,14 +136,14 @@ class Agent(ABC):
             while x:
                 print(eval(x))
                 x = input('> ')
-            clear_screen()
+            # clear_screen()
             self.env.render()
         elif mode == 'clear':
-            clear_screen()
+            # clear_screen()
             self.env.render()
         elif mode == 'auto':
             time.sleep(.4)      
-            clear_screen()
+            # clear_screen()
             self.env.render()
         elif mode:
             self.env.render(mode=mode)

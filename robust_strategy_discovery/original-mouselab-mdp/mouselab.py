@@ -18,12 +18,14 @@ CACHE_SIZE = int(2**16)
 SMALL_CACHE_SIZE = int(2**14)
 ZERO = PointMass(0)
 
+
 class MouselabEnv(gym.Env):
     """MetaMDP for a tree with a discrete unobserved reward function."""
     metadata = {'render.modes': ['human', 'array']}
     term_state = '__term_state__'
 
-    def __init__(self, tree, init, ground_truth=None, cost=0, sample_term_reward=False,env_type='same',repeat_cost=1):
+    def __init__(self, tree, init, ground_truth=None, cost=0,
+                 sample_term_reward=False, env_type='same', repeat_cost=1):
         self.tree = tree
         self.init = (0, *init[1:])
         if ground_truth is not None:
@@ -42,7 +44,7 @@ class MouselabEnv(gym.Env):
 
         # Required for gym.Env API.
         self.action_space = spaces.Discrete(len(self.init) + 1)
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=len(self.init))
+        # self.observation_space = spaces.Box(-np.inf, np.inf, shape=len(self.init))
         if(env_type!='same'):
             self.n_actions = self.action_space.n-1
             self.n_obs = len(self.init)-1
@@ -55,7 +57,7 @@ class MouselabEnv(gym.Env):
         self.paths = self.get_paths(0)
         self.env_type = env_type
         self.repeat_cost= - abs(repeat_cost)
-        self.reset()
+        self._reset()
 
     def _reset(self):
         if self.initial_states:
@@ -143,7 +145,7 @@ class MouselabEnv(gym.Env):
                 s1 = list(state)
                 s1[action] = r
                 yield (p, tuple(s1), self.cost)
-
+    
     def action_features(self, action, state=None):
         state = state if state is not None else self._state
         assert state is not None
@@ -199,7 +201,7 @@ class MouselabEnv(gym.Env):
         return max((self.node_value(n1, state) + state[n1]
                     for n1 in self.tree[node]),
                    default=ZERO, key=expectation)
-
+    
     def node_value_to(self, node, state=None):
         """A distribution over rewards up to and including the given node."""
         state = state if state is not None else self._state
@@ -355,7 +357,7 @@ class MouselabEnv(gym.Env):
         return [tuple(gen(n)) for n in range(len(self.tree))]
 
     @classmethod
-    def new_symmetric(cls, branching, reward, seed=None, **kwargs):
+    def new_symmetric(cls, branching, reward, repl_init=None, seed=None, **kwargs):
         """Returns a MouselabEnv with a symmetric structure.
 
         Arguments:
@@ -381,6 +383,8 @@ class MouselabEnv(gym.Env):
             return my_idx
 
         expand(0)
+        if repl_init is not None:
+            init = repl_init
         return cls(tree, init, **kwargs)
 
     def _render(self, mode='notebook', close=False):

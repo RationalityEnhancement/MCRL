@@ -402,22 +402,34 @@ def sample(val):
 
 #     return Categorical(outcomes.keys(), outcomes.values())
 
-def cross(dists, f=None):
+def cross(dists, f=None, verbose=False):
+    """
+    For a given distribution, finds best possible values and probabilities.
+    Returns a categorical distribution of new values.
+    """
+    # if(verbose):
+    print("In Cross, Dist = {}".format(*dists))
     if f is None:
         f = lambda *x: x
-    outcomes = Counter()
+    outcomes = Counter() # Fancy dictionary whose key are possible node value and the corresponsing field value is its probability
     for outcome_probs in it.product(*dists):
         o, p = zip(*outcome_probs)
         outcomes[f(*o)] += reduce(lambda x, y: x*y, p)
-
+        if verbose:
+            print("Outcomes = {}".format(outcomes))
+    if verbose:
+        print("Cross Return: {}".format(Categorical(outcomes.keys(), outcomes.values())))
     return Categorical(outcomes.keys(), outcomes.values())
-
 
 
 __no_default__ = 25
 
+
 # @lru_cache(maxsize=None)
-def cmax(dists, default=__no_default__):
+def cmax(dists, verbose=False, default=__no_default__):
+    """
+    Returns the best possible value for a given distribution. Look at cross function for more clarity!
+    """
     dists = tuple(dists)
     if len(dists) == 1:
         return dists[0]
@@ -427,7 +439,7 @@ def cmax(dists, default=__no_default__):
         else:
             raise ValueError('dmax() arg is an empty sequence')
     else:
-        return cross(dists, max)
+        return cross(dists, max,verbose)
 
 
 # @lru_cache(maxsize=None)
