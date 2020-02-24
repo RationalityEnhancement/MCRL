@@ -595,7 +595,7 @@ if __name__ == '__main__':
 
     if train_flag:
         # Read posterior CSV file
-        CSV_PATH = 'posterior3/two_observation/200x_samples_100_epochs/posteriors.csv'
+        CSV_PATH = 'posterior3_old/two_observation/200x_samples_100_epochs/posteriors.csv'
         POSTERIOR_DF = pd.read_csv(CSV_PATH, index_col='theta_hat_idx')
 
         # Read posterior distribution for current theta_hat

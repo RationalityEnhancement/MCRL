@@ -276,6 +276,13 @@ class Worker:
                 self.episode_lengths.append(episode_step_count)
                 self.episode_mean_values.append(np.mean(episode_values))
 
+                print('=====')
+                print('Episode step count:', episode_step_count)
+                print('Episode reward:', episode_reward)
+                print('Episode values:', episode_values)
+                print('Mean episode values:', np.mean(episode_values))
+                print()
+
                 # Update the network using the experience buffer at the end of the episode.
                 if len(episode_buffer) != 0 and train:
                     v_l, p_l, e_l, g_n, v_n = self.train(
@@ -440,7 +447,7 @@ if __name__ == '__main__':
 
     if train_flag:
         # Read posterior CSV file
-        CSV_PATH = 'posterior3/two_observation/200x_samples_100_epochs/posteriors.csv'
+        CSV_PATH = 'posterior3_old/two_observation/200x_samples_100_epochs/posteriors.csv'
         POSTERIOR_DF = pd.read_csv(CSV_PATH, index_col='theta_hat_idx')
         if posterior_flag:
             MODEL_PATH = f"models/posterior3/meta_rl/posterior/{theta_hat_idx}"
@@ -505,7 +512,7 @@ if __name__ == '__main__':
 
     else:
         if final_avg:
-            freq_df = pd.read_csv('posterior3/theta_hat_freq.csv',
+            freq_df = pd.read_csv('posterior3_old/theta_hat_freq.csv',
                                   index_col='theta_hat_idx')
             freq = freq_df.values
             prob = freq / np.sum(freq)
@@ -547,7 +554,7 @@ if __name__ == '__main__':
                 os.makedirs(MODEL_PATH)
             except Exception as e:
                 print(str(e))
-            CSV_PATH = 'posterior3/two_observation/200x_samples_100_epochs/posteriors.csv'
+            CSV_PATH = 'posterior3_old/two_observation/200x_samples_100_epochs/posteriors.csv'
             POSTERIOR_DF = pd.read_csv(CSV_PATH, index_col='theta_hat_idx')
             
             # Read posterior distribution for current theta_hat

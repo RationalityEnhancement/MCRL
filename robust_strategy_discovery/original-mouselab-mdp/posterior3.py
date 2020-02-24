@@ -1,6 +1,6 @@
 from datetime import datetime
 from itertools import permutations, product
-# from pprint import pprint
+from pprint import pprint
 from random import choice
 from sklearn.utils import shuffle
 from tensorflow import keras
@@ -20,25 +20,25 @@ LEVEL_LENGTH = (
     3, 3, 3
 )
 
+# Random remembering
 LEVEL_CONFUSION_PROBABILITIES = (
-    (('L', 'M'), (0.2, 0.8)),
-    (('L', 'M'), (0.3, 0.7)),
-    (('M', 'H'), (0.2, 0.8))
+    (('L', None), (1.0, 0.0)),
+    (('L', None), (1.0, 0.0)),
+    (('M', 'H'), (0.1, 0.9))
 )
 
+# Confused remembering
 LEVEL_PREFERENCES = (
     {
-        'L': (('L', 'M'), (0.2, 0.8)),
-        'M': (('L', 'M'), (0.1, 0.9)),
+        'L': (('L', None), (1.0, 0.0)),
     },
     {
-        'L': (('L', 'M'), (0.3, 0.7)),
-        'M': (('L', 'M'), (0.2, 0.8)),
+        'M': (('M', None), (1.0, 0.0)),
     },
     {
-        'M': (('M', 'H'), (0.2, 0.8)),
-        'H': (('M', 'H'), (0.1, 0.9))
-    },
+        'M': (('M', 'H'), (0.45, 0.55)),
+        'H': (('M', 'H'), (0.10, 0.90))
+    }
 )
 
 # Preference matrix | P_MTX[e1][e2] = Probability of "remembering" e1 over e2
@@ -51,11 +51,11 @@ TWO_OBSERVATION_CONFUSION = {
     'M': {
         'L': 0.8,
         'M': 0.,
-        'H': 0.2,
+        'H': 0.4,
     },
     'H': {
         'L': 0.9,
-        'M': 0.8,
+        'M': 0.6,
         'H': 0.
     }
 }
@@ -69,11 +69,8 @@ NODE_TYPES = {
 
 # Possible outcomes
 OUTCOMES = {
-    # 'L': [-2.0, -1.0, 1.0, 2.0],
-    # 'M': [-8.0, -4.0, 4.0, 8.0],
-    # 'H': [-32.0, -16.0, 16.0, 32.0]
     'L': [-4.0, -2.0, 2.0, 4.0],
-    'M': [-16.0, -8.0, 8.0, 16.0],
+    'M': [-8.0, -4.0, 4.0, 8.0],
     'H': [-48.0, -24.0, 24.0, 48.0]
 }
 
@@ -130,10 +127,11 @@ THREE_SAME = {
     'L': ('L', 'L', 'L')
 }
 
+# New environment (8 environments)
 THETAS = list(
-    product(L2M1_PERM + M2L1_PERM + [THREE_SAME['M']] + [THREE_SAME['L']],
-            L2M1_PERM + M2L1_PERM + [THREE_SAME['M']] + [THREE_SAME['L']],
-            H2M1_PERM + M2H1_PERM + [THREE_SAME['H']] + [THREE_SAME['M']])
+    product([THREE_SAME['L']],
+            [THREE_SAME['M']],
+            [THREE_SAME['M']] + M2H1_PERM + H2M1_PERM + [THREE_SAME['H']])
 )
 
 ENUM_THETA = {
@@ -244,10 +242,10 @@ def generate_data(n_items=1, verbose=False):
         # Get real environment (theta)
         theta, theta_one_hot = get_theta()
         
-        # Get biased environment
-        # theta_hat, theta_hat_one_hot = get_confused_theta_hat(theta)
+        # Get biased environment | # TODO: Change this before run!
+        theta_hat, theta_hat_one_hot = get_confused_theta_hat(theta)
         # theta_hat, theta_hat_one_hot = get_random_theta_hat()
-        theta_hat, theta_hat_one_hot = get_two_observation_theta_hat(theta)
+        # theta_hat, theta_hat_one_hot = get_two_observation_theta_hat(theta)
 
         # Append theta_hat vector
         theta_hats += [theta_hat]
@@ -282,7 +280,7 @@ def generate_path(path, with_timestamp=False):
     if with_timestamp:
         timestamp = get_timestamp()
         path = f'{path}{timestamp}/'
-    os.makedirs(path)
+    os.makedirs(path, exist_ok=True)
     
     return path
 
@@ -419,10 +417,11 @@ if __name__ == '__main__':
     MODE = TRAIN
     N_PLOTS = len(THETAS)
     
-    SAMPLE_FACTOR = 200
-    NUM_EPOCHS = 100
+    SAMPLE_FACTOR = 1250
+    NUM_SAMPLES = len(THETAS) * SAMPLE_FACTOR
+    NUM_EPOCHS = 20
     
-    PATH = f'posterior3/two_observation/' \
+    PATH = f'posterior3/confused_remebemring/' \
            f'{SAMPLE_FACTOR}x_samples_{NUM_EPOCHS}_epochs'
 
     # Variables
@@ -433,59 +432,69 @@ if __name__ == '__main__':
     if MODE == TRAIN:
         path = generate_path(PATH)
         data, labels, theta_hats = \
-            generate_data(n_items=len(THETAS) * SAMPLE_FACTOR)
+            generate_data(n_items=NUM_SAMPLES)
         model = train_process_posterior_function(data, labels, path,
                                                  epochs=NUM_EPOCHS)
 
     # Load model
     if MODE == LOAD:
-        path = f'{PATH}/2020-01-24 12_48_29/'
+        path = f'{PATH}'
         model = keras.models.load_model(f'{path}/model.h5')
 
     os.makedirs(f'{path}/plots/{N_PLOTS}/01_scale/', exist_ok=True)
     os.makedirs(f'{path}/plots/{N_PLOTS}/opt_scale/', exist_ok=True)
+
+    # Generate posterior distributions for each theta_hat
+    if MODE == TRAIN:
+        print('Generating and plotting posterior distributions...')
+        for i in tqdm(range(len(THETAS))):
+            
+            # Get biased environment (theta_hat)
+            theta_hat = THETAS[i]
+            theta_hat_one_hot = env_to_one_hot(theta_hat)
+
+            # Cast theta(_hat) vector into NumPy array
+            theta_hat_one_hot = np.array(theta_hat_one_hot).flatten().reshape([1, -1])
+            
+            posterior_dist = evaluate(model, theta_hat_one_hot)
     
-    for i in tqdm(range(len(THETAS))):
-        # Get real environment (theta)
-        # theta_one_hot = number_to_one_hot(i, len(THETAS))
-        # theta, theta_one_hot = get_theta()
-        
-        # Get biased environment (theta_hat)
-        # theta_hat, theta_hat_one_hot = get_theta_hat(theta)
-        theta_hat = THETAS[i]
-        theta_hat_one_hot = env_to_one_hot(theta_hat)
-
-        # Cast theta(_hat) vector into NumPy array
-        # theta_one_hot = np.array(theta_one_hot).flatten().reshape([1, -1])
-        theta_hat_one_hot = np.array(theta_hat_one_hot).flatten().reshape([1, -1])
-
-        posterior_dist = evaluate(model, theta_hat_one_hot)
-        # print(type, '|', np.round(posterior_dist, 3))
-        
-        posteriors += [posterior_dist]
-
-        # output = np.argmax(posterior_dist)
-        # target = np.argmax(theta_one_hot)
-        # if output == target:
-        #     accuracy += 1
-
-        if i < N_PLOTS:
+            posteriors += [posterior_dist]
+    
             plt.figure(figsize=(24, 10))
             plt.bar(np.arange(len(posterior_dist)), posterior_dist)
-            # plt.title(f'Ground truth = {target} | MAP: {output}')
             plt.title(f'Theta_hat idx = {i}')
             plt.savefig(f'{path}/plots/{N_PLOTS}/opt_scale/{i}')
 
             plt.figure(figsize=(24, 10))
             plt.bar(np.arange(len(posterior_dist)), posterior_dist)
-            # plt.title(f'Ground truth = {target} | MAP: {output}')
             plt.title(f'Theta_hat idx = {i}')
             plt.ylim(-.1, 1.1)
             plt.savefig(f'{path}/plots/{N_PLOTS}/01_scale/{i}')
-    
-    # print(f'Correct: {accuracy} | Total {len(THETAS)} | '
-    #       f'Accuracy: {accuracy / len(THETAS) * 100:.3f}%')
 
-    # Save posterior distributions to CSV
-    pd.DataFrame(posteriors).to_csv(f"{path}/posteriors.csv",
-                                    index_label="theta_hat_idx")
+        # Save posterior distributions to CSV
+        pd.DataFrame(posteriors).to_csv(f"{path}/posteriors.csv",
+                                        index_label="theta_hat_idx")
+        
+    # Check accuracy
+    print('Calculating accuracy...')
+    for i in tqdm(range(NUM_SAMPLES)):
+        # Sample real environment (theta)
+        theta, theta_one_hot = get_theta()
+        
+        # Get biased environment (theta_hat)
+        theta_hat, theta_hat_one_hot = get_confused_theta_hat(theta)
+
+        # Cast theta(_hat) vector into NumPy array
+        theta_one_hot = np.array(theta_one_hot).flatten().reshape([1, -1])
+        theta_hat_one_hot = np.array(theta_hat_one_hot).flatten().reshape([1, -1])
+
+        posterior_dist = evaluate(model, theta_hat_one_hot)
+        # print(i, '|', np.round(posterior_dist, 3))
+        
+        output = np.argmax(posterior_dist)
+        target = np.argmax(theta_one_hot)
+        if output == target:
+            accuracy += 1
+
+    print(f'Correct: {accuracy} | Total {NUM_SAMPLES} | '
+          f'Accuracy: {accuracy / NUM_SAMPLES * 100:.3f}%')
