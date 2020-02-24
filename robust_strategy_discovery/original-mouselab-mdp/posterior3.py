@@ -231,7 +231,7 @@ def get_value(node_type):
 
 
 # TODO: Add theta_hat function as a parameter
-def generate_data(n_items=1, verbose=False):
+def generate_data(bias_type, n_items=1, verbose=False):
     print(f'Generating {n_items} items of data...')
     
     items = []
@@ -243,9 +243,13 @@ def generate_data(n_items=1, verbose=False):
         theta, theta_one_hot = get_theta()
         
         # Get biased environment | # TODO: Change this before run!
-        theta_hat, theta_hat_one_hot = get_confused_theta_hat(theta)
-        # theta_hat, theta_hat_one_hot = get_random_theta_hat()
-        # theta_hat, theta_hat_one_hot = get_two_observation_theta_hat(theta)
+        theta_hat, theta_hat_one_hot = None, None
+        if bias_type == 'confused_remembering':
+            theta_hat, theta_hat_one_hot = get_confused_theta_hat(theta)
+        if bias_type == 'random_remembering':
+            theta_hat, theta_hat_one_hot = get_random_theta_hat()
+        if bias_type == 'two_observation':
+            theta_hat, theta_hat_one_hot = get_two_observation_theta_hat(theta)
 
         # Append theta_hat vector
         theta_hats += [theta_hat]
@@ -417,11 +421,12 @@ if __name__ == '__main__':
     MODE = TRAIN
     N_PLOTS = len(THETAS)
     
+    BIAS_TYPE = 'confused_remembering'  # 'random_remembering', 'two_observation'
     SAMPLE_FACTOR = 1250
     NUM_SAMPLES = len(THETAS) * SAMPLE_FACTOR
     NUM_EPOCHS = 20
     
-    PATH = f'posterior3/confused_remebemring/' \
+    PATH = f'posterior3/{BIAS_TYPE}/' \
            f'{SAMPLE_FACTOR}x_samples_{NUM_EPOCHS}_epochs'
 
     # Variables
@@ -432,7 +437,7 @@ if __name__ == '__main__':
     if MODE == TRAIN:
         path = generate_path(PATH)
         data, labels, theta_hats = \
-            generate_data(n_items=NUM_SAMPLES)
+            generate_data(bias_type=BIAS_TYPE, n_items=NUM_SAMPLES)
         model = train_process_posterior_function(data, labels, path,
                                                  epochs=NUM_EPOCHS)
 
