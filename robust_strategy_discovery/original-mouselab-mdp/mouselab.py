@@ -25,7 +25,7 @@ class MouselabEnv(gym.Env):
     term_state = '__term_state__'
 
     def __init__(self, tree, init, ground_truth=None, cost=0,
-                 sample_term_reward=False, env_type='same', repeat_cost=1):
+                 sample_term_reward=False, term_belief=True, env_type='same', repeat_cost=1):
         self.tree = tree
         self.init = (0, *init[1:])
         if ground_truth is not None:
@@ -36,6 +36,7 @@ class MouselabEnv(gym.Env):
             self.ground_truth = np.array(list(map(sample, init)))
         self.ground_truth[0] = 0.
         self.cost = - abs(cost)
+        self.term_belief = term_belief
         self.sample_term_reward = sample_term_reward
         if(env_type=='same'):
             self.term_action = len(self.init)
@@ -104,8 +105,11 @@ class MouselabEnv(gym.Env):
 
 
     def _term_reward(self):
+        if self.term_belief:
+            return self.expected_term_reward(self._state)
         returns = [self.ground_truth[list(path)].sum()
                    for path in self.optimal_paths()]
+        print(returns)
         if self.sample_term_reward:
             return np.random.sample(returns)
         else:
