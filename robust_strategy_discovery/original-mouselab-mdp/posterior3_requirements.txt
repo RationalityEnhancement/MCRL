@@ -11,7 +11,7 @@ PyContracts==1.8.0
 PyYAML==5.1.2
 scikit-learn==0.19.1
 scipy==1.1.0
-tensorflow==1.12.0
+tensorflow==1.15.4
 # tensorflow-gpu==1.12.0
 toolz==0.9.0
 tqdm==4.41.1
