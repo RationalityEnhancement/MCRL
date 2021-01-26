@@ -18,7 +18,7 @@ cloudpickle==0.5.2
 cmd2==0.8.9
 contexttimer==0.3.3
 corner==2.0.1
-cryptography==2.9.2
+cryptography==3.2
 cycler==0.10.0
 Cython==0.27.3
 decorator==4.1.2
