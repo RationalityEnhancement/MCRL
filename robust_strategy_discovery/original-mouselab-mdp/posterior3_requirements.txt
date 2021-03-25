@@ -8,7 +8,7 @@ numpy==1.17.0
 pandas==0.25.1
 Pillow==6.1.0
 PyContracts==1.8.0
-PyYAML==5.1.2
+PyYAML==5.4
 scikit-learn==0.19.1
 scipy==1.1.0
 tensorflow==1.12.0
