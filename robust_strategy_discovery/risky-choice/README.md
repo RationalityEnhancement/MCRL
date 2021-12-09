@@ -1,4 +1,13 @@
-# RSD for Risky Choice
+# RSD for Mouselab Risky Choice
+
+Methodology followed: 
+1. Formulate true distributions
+2. Run experiment to capture people's biases (with Mateo Tosic)
+3. Model biases (with Yash Raj Jain) and arrive at posterior distributions of true reward structure
+4. Utilize them in RL algorithms and compare to their vanilla counterparts
+5. Run experiment to teach discovered strategies to people and test them on the true distributions in step 1 (with Yash Raj Jain)
+
+Note: The 2 experiments (Steps 2 & 5) are in their respective repositories.
 
 ## About the reward distributions
 * General distribution structure: 
