@@ -76,7 +76,7 @@ nbconvert==5.6.0
 nbformat==4.4.0
 networkx==2.3
 notebook==6.0.1
-numpy==1.18.1
+numpy==1.21.0
 orthopy==0.6.2
 packaging==20.3
 pandas==0.25.1
