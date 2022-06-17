@@ -75,7 +75,7 @@ mpmath==1.1.0
 nbconvert==5.6.0
 nbformat==4.4.0
 networkx==2.3
-notebook==6.0.1
+notebook==6.4.12
 numpy==1.18.1
 orthopy==0.6.2
 packaging==20.3
