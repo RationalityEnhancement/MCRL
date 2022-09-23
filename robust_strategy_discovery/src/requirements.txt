@@ -56,7 +56,7 @@ Pillow==6.1.0
 pkg-resources==0.0.0
 prometheus-client==0.7.1
 prompt-toolkit==2.0.9
-protobuf==3.9.1
+protobuf==3.18.3
 ptyprocess==0.5.2
 pycodestyle==2.5.0
 PyContracts==1.8.0
