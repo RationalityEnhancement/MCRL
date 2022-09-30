@@ -54,7 +54,7 @@ itsdangerous==1.1.0
 jedi==0.11.1
 Jinja2==2.10.1
 jmespath==0.10.0
-joblib==0.13.2
+joblib==1.2.0
 jsonschema==3.0.2
 jupyter==1.0.0
 jupyter-client==5.3.1
