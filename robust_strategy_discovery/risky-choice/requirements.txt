@@ -95,7 +95,7 @@ protobuf==3.9.1
 PsiTurk==2.3.8
 psutil==5.6.7
 ptyprocess==0.5.2
-py==1.8.1
+py==1.11.0
 pycodestyle==2.5.0
 PyContracts==1.8.0
 pycparser==2.20
