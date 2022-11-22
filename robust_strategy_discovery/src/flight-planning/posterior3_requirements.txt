@@ -6,7 +6,7 @@ matplotlib==3.1.1
 moviepy==1.0.1 
 numpy==1.17.0
 pandas==0.25.1
-Pillow==6.1.0
+Pillow==9.3.0
 PyContracts==1.8.0
 PyYAML==5.1.2
 scikit-learn==0.19.1
